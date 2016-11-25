@@ -1,0 +1,6 @@
+Pinging [2001::2ba8:691a:2c0f:5f01] with 56 bytes of data:
+Request timed out.
+Ping statistics for 2001::2ba8:691a:2c0f:5f01:
+Packets: Sent = 1, Received: 0, Lost = 1 (1.000000 loss),
+Approximate roung trip times in milli-seconds:
+Minimum = -1ms, Maximum = -1ms, Average = 0ms

@@ -1,0 +1,7 @@
+PING 2001::a00:27ff:fe6e:2243(2001::a00:27ff:fe6e:2243) 56 data bytes
+From 2001::a00:27ff:fe13:735c icmp_seq=1 Destination unreachable: Address unreachable
+From 2001::a00:27ff:fe13:735c icmp_seq=2 Destination unreachable: Address unreachable
+From 2001::a00:27ff:fe13:735c icmp_seq=3 Destination unreachable: Address unreachable
+
+--- 2001::a00:27ff:fe6e:2243 ping statistics ---
+3 packets transmitted, 0 received, +3 errors, 100% packet loss, time 1999ms

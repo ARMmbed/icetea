@@ -1,0 +1,14 @@
+PING www.dummy_domain.com (333.444.555.666) 56(84) bytes of data.
+64 bytes from www.dummy_domain.com (333.444.555.666): icmp_seq=1 ttl=56 time=50.7 ms
+64 bytes from www.dummy_domain.com (333.444.555.666): icmp_seq=1 ttl=55 time=56.6 ms (DUP!)
+64 bytes from www.dummy_domain.com (333.444.555.666): icmp_seq=1 ttl=54 time=58.6 ms (DUP!)
+64 bytes from www.dummy_domain.com (333.444.555.666): icmp_seq=1 ttl=53 time=68.6 ms (DUP!)
+64 bytes from www.dummy_domain.com (333.444.555.666): icmp_seq=1 ttl=52 time=68.6 ms (DUP!)
+64 bytes from www.dummy_domain.com (333.444.555.666): icmp_seq=1 ttl=51 time=80.6 ms (DUP!)
+64 bytes from www.dummy_domain.com (333.444.555.666): icmp_seq=1 ttl=50 time=186 ms (DUP!)
+64 bytes from www.dummy_domain.com (333.444.555.666): icmp_seq=1 ttl=49 time=355 ms (DUP!)
+64 bytes from www.dummy_domain.com (333.444.555.666): icmp_seq=1 ttl=48 time=504 ms (DUP!)
+
+--- www.dummy_domain.com ping statistics ---
+1 packets transmitted, 1 received, +8 duplicates, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 50.705/159.022/504.678/154.117 ms

@@ -1,0 +1,30 @@
+PING testtesttest(testtesttest) from fe80::aaaa:aaaa:aaaa:aaaa 56 data bytes
+64 bytes from fe80::aaaa:aaaa:aaaa:aaaa: icmp_seq=1 ttl=64 time=0.018 ms
+64 bytes from fe80::bbbb:bbbb:bbbb:bbbb: icmp_seq=1 ttl=64 time=0.490 ms (DUP!)
+64 bytes from fe80::cccc:cccc:cccc:cccc: icmp_seq=1 ttl=64 time=0.739 ms (DUP!)
+64 bytes from fe80::aaaa:aaaa:aaaa:aaaa: icmp_seq=2 ttl=64 time=0.037 ms
+64 bytes from fe80::bbbb:bbbb:bbbb:bbbb: icmp_seq=2 ttl=64 time=0.513 ms (DUP!)
+64 bytes from fe80::cccc:cccc:cccc:cccc: icmp_seq=2 ttl=64 time=0.674 ms (DUP!)
+64 bytes from fe80::dddd:dddd:dddd:dddd: icmp_seq=2 ttl=64 time=228 ms (DUP!)
+64 bytes from fe80::aaaa:aaaa:aaaa:aaaa: icmp_seq=3 ttl=64 time=0.033 ms
+64 bytes from fe80::bbbb:bbbb:bbbb:bbbb: icmp_seq=3 ttl=64 time=0.460 ms (DUP!)
+64 bytes from fe80::cccc:cccc:cccc:cccc: icmp_seq=3 ttl=64 time=0.611 ms (DUP!)
+64 bytes from fe80::aaaa:aaaa:aaaa:aaaa: icmp_seq=4 ttl=64 time=0.045 ms
+64 bytes from fe80::bbbb:bbbb:bbbb:bbbb: icmp_seq=4 ttl=64 time=0.485 ms (DUP!)
+64 bytes from fe80::cccc:cccc:cccc:cccc: icmp_seq=4 ttl=64 time=0.609 ms (DUP!)
+64 bytes from fe80::aaaa:aaaa:aaaa:aaaa: icmp_seq=5 ttl=64 time=0.035 ms
+64 bytes from fe80::bbbb:bbbb:bbbb:bbbb: icmp_seq=5 ttl=64 time=0.518 ms (DUP!)
+64 bytes from fe80::cccc:cccc:cccc:cccc: icmp_seq=5 ttl=64 time=0.580 ms (DUP!)
+64 bytes from fe80::eeee:eeee:eeee:eeee: icmp_seq=5 ttl=255 time=201 ms (DUP!)
+64 bytes from fe80::dddd:dddd:dddd:dddd: icmp_seq=5 ttl=64 time=237 ms (DUP!)
+64 bytes from fe80::aaaa:aaaa:aaaa:aaaa: icmp_seq=6 ttl=64 time=0.032 ms
+64 bytes from fe80::bbbb:bbbb:bbbb:bbbb: icmp_seq=6 ttl=64 time=0.508 ms (DUP!)
+64 bytes from fe80::cccc:cccc:cccc:cccc: icmp_seq=6 ttl=64 time=0.540 ms (DUP!)
+64 bytes from fe80::aaaa:aaaa:aaaa:aaaa: icmp_seq=7 ttl=64 time=0.038 ms
+64 bytes from fe80::bbbb:bbbb:bbbb:bbbb: icmp_seq=7 ttl=64 time=0.550 ms (DUP!)
+64 bytes from fe80::cccc:cccc:cccc:cccc: icmp_seq=7 ttl=64 time=0.640 ms (DUP!)
+64 bytes from fe80::dddd:dddd:dddd:dddd: icmp_seq=7 ttl=64 time=76.6 ms (DUP!)
+
+---- ip6-allnodes ping statistics ---
+7 packets transmitted, 7 received, +18 duplicates, 0% packet loss, time 6020ms
+rtt min/avg/max/mdev = 0.018/30.086/237.386/72.776 ms

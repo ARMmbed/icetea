@@ -1,0 +1,93 @@
+#
+#Copyright 2016 ARM Limited
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+#
+
+_clitest()
+{
+    #
+    # This script prvides some tab completitions for clitest.py. This is still 
+    # a work in progress but added here in a hope that someone will complete it;-)
+    #
+    # It is based on the totorial found in 
+    # http://www.debian-administration.org/article/316/An_introduction_to_bash_completion_part_1
+    #
+    # Installation:
+    # You can read this file from your .bashrc or .bash_profile like this:
+    # `source ~/src/mbed-clitest/bash_completion/clitest`
+    #
+    local cur prev opts base
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+    #
+    #  Complete the arguments to some of the basic commands.
+    #
+    case "${prev}" in
+    "--tcdir"|"--suitedir")
+        # Options that require directory
+        COMPREPLY=( $(compgen -o dirnames ${cur}) )
+        return 0
+        ;;
+    "--env_cfg"|"--bin"|"--tc_cfg")
+        # Options that require filename
+        COMPREPLY=( $(compgen -o default -A file ${cur}) )
+        return 0
+        ;;
+    "--tc")
+        local names=$(find testcases -name \*.py -and -not -name __init__.py | xargs basename -s.py)
+        COMPREPLY=( $(compgen -o default -W "${names}" -- ${cur}) )
+        return 0
+        ;;
+    "--suite")
+        local names=$(find testcases/suites -name \*.json | xargs basename -s.json)
+        COMPREPLY=( $(compgen -o default -W "${names}" -- ${cur}) )
+        return 0
+        ;;
+    "--type")
+        COMPREPLY=( $(compgen -W "hardware process simulate" -- ${cur}) )
+        return 0
+        ;;
+    "--valgrind_tool")
+        COMPREPLY=( $(compgen -W "memcheck callgrind massif" -- ${cur}) )
+        return 0
+        ;;
+    *)
+        #
+        # Generate list of options by parsing
+        # output of "./clitest -h"
+        # like this: [--list | --listsuites | --tc TC | --suite SUITE | --clean | --version]
+        #
+        opts=$($1 -h | awk '
+            function parse(line) {
+                n = split(line,a,"[")      # Split using '[' arguement lines like this: [-s] [-v] [-w] [--reset]
+                for (i=2;i<=n;i++) {       # Skip the first empty field, i=2
+                    sub(/\]/,"",a[i])      # Remove ']' from end of option
+                    m = split(a[i],arg,"|"); # Split sub options like this: [--gdb GDB | --gdbs GDBS | --vgdb VGDB]
+                    for (j=1;j<=m;j++) {
+                        gsub(/^ +/,"", arg[j]);   # Remove leading whitespace
+                        gsub(/ +.[A-Za-z{},_]*/,"", arg[j]); # Remove trailing whitespace and option parameters
+                        print arg[j];
+                    }
+                }
+            }
+            /\[--.*\]/{parse($0);}') # Parse only lines starting with '[--' and ending ']'
+        COMPREPLY=($(compgen -W "${opts}" -- ${cur}))
+        return 0
+        ;;
+    esac
+}
+
+complete -F _clitest clitest.py ./clitest.py

@@ -1,0 +1,28 @@
+{
+  "name": "example-cliapp",
+  "version": "0.0.1",
+  "description": "Example Command Line Application",
+  "keywords": [
+    "cliapp",
+    "clitest"
+  ],
+  "author": "Jussi Vatjus-Anttila",
+  "repository": {
+    "url": "git@github.com:ARMmbed/mbed-clitest.git",
+    "type": "git"
+  },
+  "homepage": "https://github.com/ARMmbed/mbed-clitest",
+  "license": "Apache-2.0",
+  "extraIncludes": [ ],
+  "dependencies": {
+    "mbed-client-trace": "ARMmbed/mbed-client-trace",
+    "mbed-client-cli": "ARMmbed/mbed-client-cli"
+  },
+  "targetDependencies": {
+   "mbed-os": {
+      "mbed-drivers": "*",
+      "compiler-polyfill": "^1.2.1"
+    }
+  },
+  "bin": "./source"
+}

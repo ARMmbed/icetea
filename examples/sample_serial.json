@@ -1,0 +1,13 @@
+{
+    "execution": {"skip": {"value":  false}},
+    "requirements": {
+      "duts": {
+        "*": {
+          "rf_channel": 15
+        },
+        "1": {
+          "rf_channel": 16
+        }
+      }
+    }
+}

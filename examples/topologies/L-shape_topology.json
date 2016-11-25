@@ -1,0 +1,43 @@
+{
+  "l-shape_topology": {
+    "nodes": [
+      {
+        "id": "router#1",
+        "x": 0,
+        "y": 20
+      },
+      {
+        "id": "router#2",
+        "x": 0,
+        "y": 10
+      },
+      {
+        "id": "router#3",
+        "x": 0,
+        "y": 0
+      },
+      {
+        "id": "router#4",
+        "x": 10,
+        "y": 0
+      }
+    ],
+    "edges": [
+      {
+        "id": "26",
+        "source": "router#3",
+        "target": "router#2"
+      },
+      {
+        "id": "29",
+        "source": "router#4",
+        "target": "router#3"
+      },
+      {
+        "id": "31",
+        "source": "router#1",
+        "target": "router#2"
+      }
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+11:51:03.342 | D2 <-- DutThread: Mac: status: 0
+11:51:03.342 | D2 <-- DutThread: Mac: timestamp: 0
+11:51:03.343 | D2 <-- DutThread: Mac: cca_retries: 0
+11:51:03.343 | D2 <-- DutThread: Mac: tx_retries: 0
