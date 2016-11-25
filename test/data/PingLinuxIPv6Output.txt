@@ -1,0 +1,8 @@
+PING 2001::a00:27ff:fe6e:2242(2001::a00:27ff:fe6e:2242) 56 data bytes
+64 bytes from 2001::a00:27ff:fe6e:2242: icmp_seq=1 ttl=64 time=0.251 ms
+64 bytes from 2001::a00:27ff:fe6e:2242: icmp_seq=2 ttl=64 time=0.322 ms
+64 bytes from 2001::a00:27ff:fe6e:2242: icmp_seq=3 ttl=64 time=0.310 ms
+
+--- 2001::a00:27ff:fe6e:2242 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 1999ms
+rtt min/avg/max/mdev = 0.251/0.294/0.322/0.034 ms

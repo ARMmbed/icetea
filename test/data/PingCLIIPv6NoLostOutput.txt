@@ -1,0 +1,4 @@
+Ping statistics for ff02::2:
+Packets: Sent = 1, Received: 3,
+Approximate roung trip times in milli-seconds:
+Minimum = 0ms, Maximum = 0ms, Average = 0ms

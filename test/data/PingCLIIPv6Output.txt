@@ -1,0 +1,10 @@
+Pinging [fe80::166e:a00:0:2] with 56 bytes of data:
+Reply[0001] from fe80::166e:a00:0:2: bytes=56 time<0ms
+Reply[0002] from fe80::166e:a00:0:2: bytes=56 time<0ms
+Reply[0003] from fe80::166e:a00:0:2: bytes=56 time<0ms
+Reply[0004] from fe80::166e:a00:0:2: bytes=56 time<0ms
+Reply[0005] from fe80::166e:a00:0:2: bytes=56 time<0ms
+Ping statistics for fe80::166e:a00:0:2:
+  Packets: Sent = 5, Received: 5, Lost = 0 (0.000000 loss),
+Approximate roung trip times in milli-seconds:
+  Minimum = 0ms, Maximum = 0ms, Average = 0ms

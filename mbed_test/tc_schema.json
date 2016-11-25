@@ -1,0 +1,75 @@
+{
+    "type": "object",
+    "properties": {
+        "name": { "type": "string"  },
+        "title": { "type": "string" },
+        "type": { "type": "string",
+            "enum": [
+                "installation",
+                "compatibility",
+                "smoke",
+                "regression",
+                "acceptance",
+                "alpha",
+                "beta",
+                "stability",
+                "functional",
+                "destructive",
+                "performance",
+                "reliability"
+            ]
+        },
+        "status": { "type": "string",
+            "enum": [
+                "released",
+                "development",
+                "maintenance",
+                "broken",
+                "unknown"
+            ]
+        },
+
+        "purpose": { "type": "string" },
+        "component": { "type": "array", "items": { "type": "string"} },
+        "feature": { "type": "array", "items": { "type": "string"} },
+        "compatible": {
+            "type": "object",
+            "properties": {
+                "framework": {
+                    "type": "object",
+                    "properties": {
+                        "name": { "type": "string" },
+                        "version": { "type": "string" }
+                    }
+                },
+                "automation": {
+                    "type": "object",
+                    "properties": {
+                        "value": {"type": "boolean" },
+                        "reason": {"type": "string" }
+                    }
+                },
+                "hw": { "type": "object",
+                    "properties": {
+                        "value": {"type": "boolean" }
+                    }
+                }
+            }
+        },
+        "requirements": {
+            "type": "object",
+            "properties": {
+                "*": {
+                    "type": "object",
+                    "properties": {
+
+                    }
+                }
+            }
+        },
+        "external": {
+            "type": "object",
+            "properties": {}
+        }
+    }
+}

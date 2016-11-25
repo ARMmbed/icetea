@@ -1,0 +1,14 @@
+{
+  "line_3duts": {
+      "nodes": [
+        {"id": "1", "x": 0,  "y": 0},
+        {"id": "2", "x": 10, "y": 0},
+        {"id": "3", "x": 20, "y": 0}
+      ],
+      "edges": [
+        {"source": "1", "target": "2"},
+        {"source": "2", "target": "3"},
+        {"source": "3", "target": "1"}
+      ]
+  }
+}
