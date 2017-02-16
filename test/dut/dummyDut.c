@@ -92,7 +92,7 @@ int main(void) {
         }
         printf( "retcode: %d\r\n", retcode );
         fflush( stdout );
-        //todo loppu viela c:lla:  if line.startswith("exit()"): ...
+        
     }
     return 0;
 }
