@@ -28,7 +28,7 @@ class Result(object):
     def __init__(self, kwargs = {}):
         self.__verdict = 'unknown'
         self.duration = 0
-        self.fw_name = "clitest"
+        self.fw_name = "mbedtest"
         self.fw_version = '0.1'
         self.build = 'unknown'
 

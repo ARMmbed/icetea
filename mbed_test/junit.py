@@ -46,7 +46,7 @@ Example output formats:
 from Result import Result
 from yattag import Doc, indent
 import os
-import mbed_clitest.LogManager as LogManager
+import mbed_test.LogManager as LogManager
 
 class Junit:
     def __init__(self, results):

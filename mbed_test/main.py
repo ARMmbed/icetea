@@ -16,8 +16,8 @@ limitations under the License.
 
 import sys
 
-def mbed_clitest_main():
-    import clitestManagement
-    ctm = clitestManagement.clitestManager()
+def mbed_test_main():
+    import mbedtestManagement
+    ctm = mbedtestManagement.mbedtestManager()
     returnCode = ctm.run()
     sys.exit(returnCode)

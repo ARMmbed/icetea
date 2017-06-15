@@ -200,8 +200,8 @@ def set_level(name, level):
     logging.getLogger(loggername).setLevel(level)
 
 def init_base_logging(dir="./log", verbose=False, silent=False, color=False, list=False):
-    """ Initialize the clitest logging by creating a directory to store logs for this run and initialize the console
-    logger for clitest itself
+    """ Initialize the mbedtest logging by creating a directory to store logs for this run and initialize the console
+    logger for mbedtest itself
     :param dir: Directory where to store the resulting logs
     :return:
     """
@@ -212,9 +212,9 @@ def init_base_logging(dir="./log", verbose=False, silent=False, color=False, lis
     if not os.path.exists(logpathdir) and not list:
         os.makedirs(logpathdir)
 
-    # Initialize the simple console logger for clitestManagement
-    clitestlogger = logging.getLogger("clitest")
-    clitestlogger.setLevel(logging.DEBUG)
+    # Initialize the simple console logger for mbedtestManagement
+    mbedtestlogger = logging.getLogger("mbedtest")
+    mbedtestlogger.setLevel(logging.DEBUG)
     sh = logging.StreamHandler()
     formatter = logging.Formatter("%(asctime)s.%(msecs)03d %(message)s", "%H:%M:%S")
     if not color:
@@ -223,17 +223,17 @@ def init_base_logging(dir="./log", verbose=False, silent=False, color=False, lis
         sh.setFormatter(coloredlogs.ColoredFormatter("%(asctime)s.%(msecs)03d %(message)s", "%H:%M:%S"))
 
     if not list:
-        fh = logging.FileHandler(get_base_logfilename("clitest.log"))
+        fh = logging.FileHandler(get_base_logfilename("mbedtest.log"))
         fh.setFormatter(formatter)
         fh.setLevel(logging.DEBUG)
-        clitestlogger.addHandler(fh)
+        mbedtestlogger.addHandler(fh)
     if verbose:
         sh.setLevel(logging.DEBUG)
     elif silent:
         sh.setLevel(logging.WARN)
     else:
         sh.setLevel(logging.INFO)
-    clitestlogger.addHandler(sh)
+    mbedtestlogger.addHandler(sh)
 
     standalone_logging = False
 

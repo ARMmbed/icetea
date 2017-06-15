@@ -26,11 +26,11 @@ import string
 from sys import platform as _platform
 from sys import version_info
 from threading import Thread, Lock
-from mbed_clitest.tools import strip_escape, is_pid_running
+from mbed_test.tools import strip_escape, is_pid_running
 from collections import deque
-from mbed_clitest.TestStepError import TestStepError
-from mbed_clitest.tools import strip_escape, is_pid_running, unixPlatform
-import mbed_clitest.LogManager as LogManager
+from mbed_test.TestStepError import TestStepError
+from mbed_test.tools import strip_escape, is_pid_running, unixPlatform
+import mbed_test.LogManager as LogManager
 
 class StreamDescriptor():
     def __init__(self, stream, callback):

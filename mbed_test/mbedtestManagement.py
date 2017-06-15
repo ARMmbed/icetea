@@ -26,15 +26,15 @@ import importlib
 #it's very likely a broken installation.
 import json
 import time
-import mbed_clitest.LogManager as LogManager
-from mbed_clitest.arguments import get_parser
-from mbed_clitest.arguments import get_base_arguments
-from mbed_clitest.arguments import get_tc_arguments
-from mbed_clitest.tools import loadClass
-from mbed_clitest.arguments import get_parser
-from mbed_clitest.arguments import get_base_arguments
-from mbed_clitest.arguments import get_tc_arguments
-from mbed_clitest.bench import ReturnCodes
+import mbed_test.LogManager as LogManager
+from mbed_test.arguments import get_parser
+from mbed_test.arguments import get_base_arguments
+from mbed_test.arguments import get_tc_arguments
+from mbed_test.tools import loadClass
+from mbed_test.arguments import get_parser
+from mbed_test.arguments import get_base_arguments
+from mbed_test.arguments import get_tc_arguments
+from mbed_test.bench import ReturnCodes
 from ReportGenerator import PrintReport
 from ReportGenerator import getSummary
 from inspect import isclass
@@ -49,17 +49,17 @@ class ExitCodes:
     EXIT_FAIL = 2
 
 
-class clitestManager(object):
+class mbedtestManager(object):
     def __init__(self):
         self.ACCEPTED_FILTER_KEYS = ['tc_name', 'tc_group', 'tc_status', 'tc_type', 'tc_subtype', 'tc_list', 'tc_comp']
 
         if platform.system() == 'Linux' or platform.system() == 'Darwin':
             #This little line takes the path to the current module and chops the filename off.
-            #clitest/lib is added to path
+            #mbedtest/lib is added to path
             self.libpath = '/'.join(os.path.abspath(sys.modules[__name__].__file__).split('/')[:-1])
             #The advantage is that we don't have to care where the lib directory is,
-            #as long as it's the same directory where clitestManagement.py resides.
-            #Of course, to import clitestManagement itself requires that the lib
+            #as long as it's the same directory where mbedtestManagement.py resides.
+            #Of course, to import mbedtestManagement itself requires that the lib
             #directory is in the python path or is importable some other way.
             #This solution may be os-specific and is pretty much just a hack until
             #a proper package is built.
@@ -68,7 +68,7 @@ class clitestManager(object):
             #There is an issue that some lib/ExtApps modules want '..' to be on the
             #path, and not '../lib', because the assumption was that '..' would always
             #be the working directory and that thus possible to import lib.module
-            #clitest added to path
+            #mbedtest added to path
             #TODO: get rid of this and change lib.module imports in Extapps and every testcase
             libpath2 = '/'.join(self.libpath.split('/')[:-1])
             sys.path.append(libpath2)
@@ -87,7 +87,7 @@ class clitestManager(object):
         self.args = self.parseArguments()
 
         LogManager.init_base_logging(self.args.log, verbose=self.args.verbose, silent=self.args.silent, color=self.args.color, list=self.args.list)
-        self.logger = LogManager.get_logger("clitest")
+        self.logger = LogManager.get_logger("mbedtest")
 
         missingModules = []
         missingCount = 0
@@ -309,7 +309,7 @@ class clitestManager(object):
         args, unknown = parser.parse_known_args()
         if len(unknown) > 0:
             for para in unknown:
-                self.logger.warn("Clitest received unknown parameter {}".format(para))
+                self.logger.warn("mbed test received unknown parameter {}".format(para))
             if not args.ignore_invalid_params:
                 self.logger.error("Unknown parameters received, exiting. To ignore this add --ignore_invalid_params flag.")
                 parser.print_help()
@@ -478,7 +478,7 @@ class clitestManager(object):
         return results
 
     def getFailResult(self, tc):
-        from mbed_clitest.Result import Result
+        from mbed_test.Result import Result
         result = Result()
         result.setTcMetadata({'name':tc['tc_name']})
         result.setVerdict("fail", -1)
@@ -818,16 +818,16 @@ class clitestManager(object):
         if tc_instance.config["compatible"]["framework"]["name"] and self.args.check_version:
             framework = tc_instance.config["compatible"]["framework"]
 
-            if framework["version"] and framework["name"] == "clitest":
+            if framework["version"] and framework["name"] == "mbedtest":
                 ver_string = framework["version"]
-                framework_version = pkg_resources.require("mbed-clitest")[0].version
+                framework_version = pkg_resources.require("mbed-test")[0].version
             if ver_string[0].isdigit():
                 if int(framework_version[0]) > 0 and ver_string[0] == "0":
                     result = self.__wrong_version(tc_instance, ver_string, "B1 Testcase not suitable for version >1.0.0. Installed version: {}".format(framework_version))
                     return result
 
                 if framework_version != ver_string:
-                    result = self.__wrong_version(tc_instance, ver_string, "Testcase suitable only for clitest version {}".format(ver_string))
+                    result = self.__wrong_version(tc_instance, ver_string, "Testcase suitable only for mbedtest version {}".format(ver_string))
                     return result
             else:
                 if ver_string[1].isdigit():
@@ -845,7 +845,7 @@ class clitestManager(object):
             return None
 
     def __wrong_version(self, tc_instance, ver_string, msg=None):
-        msg = msg if msg else "Version {} of mbed-clitest required.".format(ver_string)
+        msg = msg if msg else "Version {} of mbed-test required.".format(ver_string)
         self.logger.info("TC %s will be skipped because of '%s'" % (tc_instance.getTestName(), msg))
         result = tc_instance.getResult()
         result.skip_reason = msg
@@ -929,7 +929,7 @@ class clitestManager(object):
 
         if args.version:
             import pkg_resources  # part of setuptools
-            version = pkg_resources.require("mbed-clitest")[0].version
+            version = pkg_resources.require("mbed-test")[0].version
             print(version)
             sys.exit(0)
 
@@ -1080,8 +1080,8 @@ class clitestManager(object):
                 print("Invalid TC: "+tc['tc_path'])
 
     def parseArguments(self):
-        if not pkgutil.find_loader('mbed_clitest.arguments'):
-            self.logger.error("Missing module:mbed_clitest/arguments")
+        if not pkgutil.find_loader('mbed_test.arguments'):
+            self.logger.error("Missing module:mbed_test/arguments")
             sys.exit(0)
 
         parser = get_base_arguments( get_parser() )
@@ -1104,7 +1104,7 @@ class clitestManager(object):
 '''
 #An example of how the module could be used
 if __name__=='__main__':
-    ctm = clitestManager()
+    ctm = mbedtestManager()
 
     returnCode = ctm.run()
 

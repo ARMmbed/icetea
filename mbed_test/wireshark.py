@@ -21,8 +21,8 @@ from threading import Lock
 import sys
 import re
 from datetime import datetime
-from mbed_clitest.TestStepError import TestStepError
-import mbed_clitest.LogManager as LogManager
+from mbed_test.TestStepError import TestStepError
+import mbed_test.LogManager as LogManager
 
 class NwPacket:
 

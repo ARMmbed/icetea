@@ -19,10 +19,10 @@ from datetime import datetime
 from datetime import timedelta
 from yattag import Doc
 from prettytable import PrettyTable
-from mbed_clitest import LogManager
+from mbed_test import LogManager
 
 
-from mbed_clitest.Result import Result
+from mbed_test.Result import Result
 
 head = """
 <style type="text/css">

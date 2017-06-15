@@ -193,13 +193,13 @@ class TestVerify(unittest.TestCase):
             'title': 'Sample',
             'status': 'unknown'
             }
-        result = Result( {"retcode":0, "fw_name":"clitest", "fw_version":"1.2", "tc_metadata":tc_metadata})
+        result = Result( {"retcode":0, "fw_name":"mbedtest", "fw_version":"1.2", "tc_metadata":tc_metadata})
         cloud.updateTestcase( result.tc_metadata )
 
     #def test_sendResult(self):
     #    cloud = Cloud()
     #    tc_metadata = {'name': 'sample2'}
-    #    result = Result( retcode=0, framework="clitest:1.2", metadata=tc_metadata, logpath='./log')
+    #    result = Result( retcode=0, framework="mbedtest:1.2", metadata=tc_metadata, logpath='./log')
     #    cloud.sendResult(result)
 
 if __name__=='__main__':

@@ -15,9 +15,9 @@ limitations under the License.
 """
 
 import logging
-import mbed_clitest.LogManager as LogManager
-from mbed_clitest.Searcher import *
-from mbed_clitest.TestStepError import TestStepFail
+import mbed_test.LogManager as LogManager
+from mbed_test.Searcher import *
+from mbed_test.TestStepError import TestStepFail
 
 #Command Response
 class CliResponse(object):
