@@ -15,11 +15,11 @@ limitations under the License.
 """
 
 import os
-import mbed_clitest.LogManager as LogManager
+import mbed_test.LogManager as LogManager
 
-from mbed_clitest.DeviceConnectors.DutSerial import DutSerial
-from mbed_clitest.DeviceConnectors.DutProcess import DutProcess
-from mbed_clitest.DeviceConnectors.DutConsole import DutConsole
+from mbed_test.DeviceConnectors.DutSerial import DutSerial
+from mbed_test.DeviceConnectors.DutProcess import DutProcess
+from mbed_test.DeviceConnectors.DutConsole import DutConsole
 from ResourceConfig import ResourceConfig
 from exceptions import ResourceInitError
 from Allocators.exceptions import AllocationError

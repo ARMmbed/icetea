@@ -17,7 +17,7 @@ limitations under the License.
 import copy
 import math
 import re
-from mbed_clitest import LogManager
+from mbed_test import LogManager
 
 class ResourceConfig(object):
     """

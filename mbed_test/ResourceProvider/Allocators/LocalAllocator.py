@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 import logging
-from mbed_clitest.DeviceConnectors.DutDetection import DutDetection
+from mbed_test.DeviceConnectors.DutDetection import DutDetection
 from BaseAllocator import BaseAllocator
 from exceptions import AllocationError
 
