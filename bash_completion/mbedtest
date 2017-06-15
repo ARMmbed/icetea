@@ -14,10 +14,10 @@
 #limitations under the License.
 #
 
-_clitest()
+_mbedtest()
 {
     #
-    # This script prvides some tab completitions for clitest.py. This is still 
+    # This script prvides some tab completitions for mbedtest.py. This is still
     # a work in progress but added here in a hope that someone will complete it;-)
     #
     # It is based on the totorial found in 
@@ -25,7 +25,7 @@ _clitest()
     #
     # Installation:
     # You can read this file from your .bashrc or .bash_profile like this:
-    # `source ~/src/mbed-clitest/bash_completion/clitest`
+    # `source ~/src/mbed-test/bash_completion/mbedtest`
     #
     local cur prev opts base
     COMPREPLY=()
@@ -67,7 +67,7 @@ _clitest()
     *)
         #
         # Generate list of options by parsing
-        # output of "./clitest -h"
+        # output of "./mbedtest -h"
         # like this: [--list | --listsuites | --tc TC | --suite SUITE | --clean | --version]
         #
         opts=$($1 -h | awk '
@@ -90,4 +90,4 @@ _clitest()
     esac
 }
 
-complete -F _clitest clitest.py ./clitest.py
+complete -F _mbedtest mbedtest.py ./mbedtest.py
