@@ -4,14 +4,14 @@
   "description": "Example Command Line Application",
   "keywords": [
     "cliapp",
-    "clitest"
+    "mbedtest"
   ],
   "author": "Jussi Vatjus-Anttila",
   "repository": {
-    "url": "git@github.com:ARMmbed/mbed-clitest.git",
+    "url": "git@github.com:ARMmbed/mbed-test.git",
     "type": "git"
   },
-  "homepage": "https://github.com/ARMmbed/mbed-clitest",
+  "homepage": "https://github.com/ARMmbed/mbed-test",
   "license": "Apache-2.0",
   "extraIncludes": [ ],
   "dependencies": {
