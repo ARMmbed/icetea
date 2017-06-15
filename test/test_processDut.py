@@ -21,7 +21,7 @@ import psutil
 
 from testcases.crash_testcase import Testcase as CrashTestcase
 from testcases.exception_testcase import Testcase as ExceptionTestcase
-from mbed_clitest.bench import ReturnCodes
+from mbed_test.bench import ReturnCodes
 
 def get_processes_by_name(name):
     procs = []

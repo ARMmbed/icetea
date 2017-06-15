@@ -18,8 +18,8 @@ import unittest
 import mock
 import jsonmerge
 from requests.exceptions import RequestException
-from mbed_clitest.Extensions.HTTP.Api import HttpApi
-from mbed_clitest.TestStepError import TestStepFail
+from mbed_test.Extensions.HTTP.Api import HttpApi
+from mbed_test.TestStepError import TestStepFail
 # Schema to make sure header fields are overwritten
 schema = {
     "properties": {
@@ -73,7 +73,7 @@ class APITestCase(unittest.TestCase):
         self.assertDictEqual(heads, ref, msg="Header merging does not work correctly")
 
 
-    @mock.patch("mbed_clitest.Extensions.HTTP.Api.requests.get")
+    @mock.patch("mbed_test.Extensions.HTTP.Api.requests.get")
     def test_get(self, mock_requests_get):
         #First test successfull get request. Assert if get was called
         self.http = HttpApi(self.host)
@@ -90,7 +90,7 @@ class APITestCase(unittest.TestCase):
 
 
 
-    @mock.patch("mbed_clitest.Extensions.HTTP.Api.requests.post")
+    @mock.patch("mbed_test.Extensions.HTTP.Api.requests.post")
     def test_post(self, mock_requests_post):
         #Successfull post
         self.http = HttpApi(self.host)
@@ -108,7 +108,7 @@ class APITestCase(unittest.TestCase):
 
 
 
-    @mock.patch("mbed_clitest.Extensions.HTTP.Api.requests.put")
+    @mock.patch("mbed_test.Extensions.HTTP.Api.requests.put")
     def test_put(self, mock_requests_put):
         #Successfull put
         self.http = HttpApi(self.host)
@@ -125,7 +125,7 @@ class APITestCase(unittest.TestCase):
             self.http.put(path, data=data)
 
 
-    @mock.patch("mbed_clitest.Extensions.HTTP.Api.requests.delete")
+    @mock.patch("mbed_test.Extensions.HTTP.Api.requests.delete")
     def test_delete(self, mock_requests_delete):
         #Successfull delete
         self.http = HttpApi(self.host)

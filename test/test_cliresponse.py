@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 import unittest
-from mbed_clitest.CliResponse import CliResponse
+from mbed_test.CliResponse import CliResponse
 
 class TestVerify(unittest.TestCase):
 

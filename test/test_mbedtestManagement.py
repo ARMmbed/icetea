@@ -23,10 +23,10 @@ from os.path import join, abspath, dirname
 import subprocess
 import mock
 
-from mbed_clitest.clitestManagement import clitestManager
-from mbed_clitest.clitestManagement import ExitCodes
-from mbed_clitest import Result
-#Add clitest/test to path, to allow importing testbase files
+from mbed_test.mbedtestManagement import ExitCodes
+from mbed_test.mbedtestManagement import mbedtestManager
+from mbed_test import Result
+#Add mbedtest/test to path, to allow importing testbase files
 testpath = dirname(abspath(__file__))
 sys.path.append(testpath)
 
@@ -40,7 +40,7 @@ class TestVerify(unittest.TestCase):
     def setUp(self):
         global silent_on
         silent_on = True
-        self.ctm = clitestManager()
+        self.ctm = mbedtestManager()
 
         #variables for testing getLocalTestcases, parseLocalTestcases, parseLocalTest, loadClass, printListTestcases
 
@@ -184,8 +184,8 @@ class TestVerify(unittest.TestCase):
 
 
     def test_getLocalTestcases_Success(self):
-        #relativepath = join(testpath, '../../mbed-clitest/test/testbase')
-        #weird_path = join(testpath, '../test/../../mbed-clitest/test/testbase')
+        #relativepath = join(testpath, '../../mbed-test/test/testbase')
+        #weird_path = join(testpath, '../test/../../mbed-test/test/testbase')
         #Test that the right form of testcase list is returned
         files =  self.ctm.getLocalTestcases(self.testdir)
         for x in self.files:
@@ -252,7 +252,7 @@ class TestVerify(unittest.TestCase):
     def test_parseLocalTestcases_Success(self):
         #Test that the right list of dictionaries is returned
         #The list is ordered, therefore the comparison happens in order. The dictionaries aren't, and the comparison happens by key:value.
-        paths = ['./testbase']#, '../../mbed-clitest/test/testbase', '../test/../../mbed-clitest/test/testbase']
+        paths = ['./testbase']#, '../../mbed-test/test/testbase', '../test/../../mbed-test/test/testbase']
         for path in paths:
             gotCases = self.ctm.getLocalTestcases(join(testpath, path))
             parsedCases = self.ctm.parseLocalTestcases(gotCases, False)
@@ -499,7 +499,7 @@ class TestVerify(unittest.TestCase):
         cases = self.ctm.filterTestcases(parsedCases,{'tc_group':'rutabaga'})
         self.assertTrue(len(cases)==0)
 
-    @mock.patch("mbed_clitest.clitestManagement.pkg_resources.require", return_value=[MockObject()])
+    @mock.patch("mbed_test.mbedtestManagement.pkg_resources.require", return_value=[MockObject()])
     def test_runTest_Success(self, mock_pkg):
         #Test running a single test
         result = self.ctm.runTest(self.comparisonCase['tc_path'])
@@ -513,12 +513,12 @@ class TestVerify(unittest.TestCase):
 
         #Commented out due to CI.
         self.ctm.args.check_version = True
-        compat = {"framework": {"name": "clitest", "version": "0.5.0"}}
+        compat = {"framework": {"name": "mbedtest", "version": "0.5.0"}}
         result = self.ctm.runTest(self.comparisonCase['tc_path'], defaultConf={"name": "testname", "compatible": compat, "requirements": {
             "duts": {"*": {"count": 0}, 1: {"nick": "None"}}}})
         self.assertEquals(result.getVerdict(), "pass")
 
-        compat = {"framework": {"name": "clitest", "version": ">0.3.2"}}
+        compat = {"framework": {"name": "mbedtest", "version": ">0.3.2"}}
         result = self.ctm.runTest(self.comparisonCase['tc_path'],
                                   defaultConf={"name": "testname", "compatible": compat, "requirements": {
                                       "duts": {"*": {"count": 0}, 1: {"nick": "None"}}}})
@@ -530,7 +530,7 @@ class TestVerify(unittest.TestCase):
         #print isinstance(result, Result.Result)    #False, apparently
         #self.assertTrue(isinstance(result, Result.Result))
 
-    @mock.patch("mbed_clitest.clitestManagement.pkg_resources.require", return_value=[MockObject()])
+    @mock.patch("mbed_test.mbedtestManagement.pkg_resources.require", return_value=[MockObject()])
     def test_runTest_Fail(self, mock_pkg):
         #Missing module
         with self.assertRaises(ImportError) as cm:
@@ -540,7 +540,7 @@ class TestVerify(unittest.TestCase):
             self.ctm.runTest(5)
 
         self.ctm.args.check_version = True
-        non_compat = {"framework": {"name": "clitest", "version": "0.3.2"}}
+        non_compat = {"framework": {"name": "mbedtest", "version": "0.3.2"}}
         result = self.ctm.runTest(self.comparisonCase['tc_path'],
                                   defaultConf={"name": "testname", "compatible": non_compat, "requirements": {
                                       "duts": {"*": {"count": 0}, 1: {"nick": "None"}}}})
@@ -548,7 +548,7 @@ class TestVerify(unittest.TestCase):
         self.assertEquals("skip", verdict)
 
 
-        non_compat = {"framework": {"name": "clitest", "version": "<0.3.2"}}
+        non_compat = {"framework": {"name": "mbedtest", "version": "<0.3.2"}}
         result = self.ctm.runTest(self.comparisonCase['tc_path'],
                                   defaultConf={"name": "testname", "compatible": non_compat, "requirements": {
                                       "duts": {"*": {"count": 0}, 1: {"nick": "None"}}}})
@@ -556,7 +556,7 @@ class TestVerify(unittest.TestCase):
         self.assertEquals("skip", verdict)
 
 
-        non_compat = {"framework": {"name": "clitest", "version": ">0.5.0"}}
+        non_compat = {"framework": {"name": "mbedtest", "version": ">0.5.0"}}
         result = self.ctm.runTest(self.comparisonCase['tc_path'],
                                   defaultConf={"name": "testname", "compatible": non_compat, "requirements": {
                                       "duts": {"*": {"count": 0}, 1: {"nick": "None"}}}})
@@ -570,14 +570,14 @@ class TestVerify(unittest.TestCase):
         verdict = result.getVerdict()
         self.assertEquals("skip", verdict)
 
-        non_compat = {"framework": {"name": "clitest", "version": "0.5.0"}}
+        non_compat = {"framework": {"name": "mbedtest", "version": "0.5.0"}}
         result = self.ctm.runTest(self.comparisonCase['tc_path'],
                                   defaultConf={"name": "testname", "compatible": non_compat, "requirements": {
                                       "duts": {"*": {"count": 0}, 1: {"nick": "None"}}}})
         verdict = result.getVerdict()
         self.assertEquals("skip", verdict)
 
-        non_compat = {"framework": {"name": "clitest", "version": ">=0.5.0"}}
+        non_compat = {"framework": {"name": "mbedtest", "version": ">=0.5.0"}}
         result = self.ctm.runTest(self.comparisonCase['tc_path'],
                                   defaultConf={"name": "testname", "compatible": non_compat, "requirements": {
                                       "duts": {"*": {"count": 0}, 1: {"nick": "None"}}}})
@@ -630,14 +630,14 @@ class TestVerify(unittest.TestCase):
 
 
     def test_run_returnCodes(self):
-        retcode = subprocess.call("python clitest.py --tc test_run_retcodes_fail --tcdir test --type process -s",
+        retcode = subprocess.call("python mbedtest.py --tc test_run_retcodes_fail --tcdir test --type process -s",
                                   shell = True)
         self.assertEquals(retcode, ExitCodes.EXIT_FAIL)
-        retcode = subprocess.call("python clitest.py --tc test_run_retcodes_success --tcdir test --type process -s",
+        retcode = subprocess.call("python mbedtest.py --tc test_run_retcodes_success --tcdir test --type process -s",
                                   shell = True)
         self.assertEquals(retcode, ExitCodes.EXIT_SUCCESS)
 
-        retcode = subprocess.call("python clitest.py --tc test_run_retcodes_notfound --tcdir test --type process -s",
+        retcode = subprocess.call("python mbedtest.py --tc test_run_retcodes_notfound --tcdir test --type process -s",
                                   shell = True)
         self.assertEquals(retcode, ExitCodes.EXIT_ERROR)
 

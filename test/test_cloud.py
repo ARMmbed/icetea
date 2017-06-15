@@ -16,7 +16,7 @@ limitations under the License.
 
 import unittest
 import mock
-from mbed_clitest.cloud import Cloud, CloudResult
+from mbed_test.cloud import Cloud, CloudResult
 
 
 

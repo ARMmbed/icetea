@@ -22,15 +22,15 @@ import argparse
 import os
 import json
 
-#Adds clitest/ to path, to allow importing using mbed_clitest.module form
+#Adds mbedtest/ to path, to allow importing using mbed_test.module form
 libpath = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 sys.path.append(libpath)
-from mbed_clitest.clitestManagement import clitestManager
-from mbed_clitest import Result
+from mbed_test.mbedtestManagement import mbedtestManager
+from mbed_test import Result
 
 class TestVerify(unittest.TestCase):
     def setUp(self):
-        self.ctm = clitestManager()
+        self.ctm = mbedtestManager()
 
         #variables for testing getLocalTestcases, parseLocalTestcases, parseLocalTest, loadClass, printListTestcases
 
@@ -48,7 +48,7 @@ class TestVerify(unittest.TestCase):
         self.ctm.cleanLogs()
 
     def test_getSuites(self):
-        #suitedir = os.join(testpath, 'suites') #mbed-clitest/test/suites
+        #suitedir = os.join(testpath, 'suites') #mbed-test/test/suites
         suitedir = self.testpath
         suitelist = self.ctm.getSuites(os.path.join(self.testpath, 'suites'))
         #Assert is list

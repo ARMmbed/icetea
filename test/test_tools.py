@@ -18,7 +18,7 @@ __author__ = 'jaakuk03'
 import unittest
 import sys
 import os
-import mbed_clitest.tools as tools
+import mbed_test.tools as tools
 
 class TestClass():
     def __init__(self):

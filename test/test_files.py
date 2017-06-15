@@ -18,12 +18,12 @@ import unittest
 import os
 import json
 import time
-from mbed_clitest.Extensions.file.SessionFiles import JsonFile
-import mbed_clitest.Extensions.file.FileUtils as fileutil
+from mbed_test.Extensions.file.SessionFiles import JsonFile
+import mbed_test.Extensions.file.FileUtils as fileutil
 import jsonmerge
 import uuid
 import mock
-import mbed_clitest.Extensions.file.FileUtils as FileUtils
+import mbed_test.Extensions.file.FileUtils as FileUtils
 from sys import platform as _platform
 
 unixPlatform = _platform == "linux" or _platform == "linux2" or _platform == "darwin"
@@ -46,8 +46,8 @@ class FileTestCase(unittest.TestCase):
     '''
         FileUtils tests here
     '''
-    @mock.patch("mbed_clitest.Extensions.file.FileUtils.os.chdir")
-    @mock.patch("mbed_clitest.Extensions.file.FileUtils.os.remove")
+    @mock.patch("mbed_test.Extensions.file.FileUtils.os.chdir")
+    @mock.patch("mbed_test.Extensions.file.FileUtils.os.remove")
     def test_remove_file(self, mock_rm, mock_chdir):
         mock_chdir.side_effect = [OSError, 1, 1, 1, 1]
         mock_rm.side_effect = [OSError, 1]
@@ -58,8 +58,8 @@ class FileTestCase(unittest.TestCase):
         self.assertTrue(FileUtils.removeFile("testName", "testPath/to/somewhere"))
 
 
-    @mock.patch("mbed_clitest.Extensions.file.FileUtils.os.chdir")
-    @mock.patch("mbed_clitest.Extensions.file.FileUtils.os.rename")
+    @mock.patch("mbed_test.Extensions.file.FileUtils.os.chdir")
+    @mock.patch("mbed_test.Extensions.file.FileUtils.os.rename")
     def test_rename_file(self, mock_rn, mock_chdir):
         mock_chdir.side_effect = [OSError, 1, 1, 1, 1]
         mock_rn.side_effect = [OSError, 1]
@@ -106,9 +106,9 @@ class FileTestCase(unittest.TestCase):
 
         #ToDo: write malformed data
 
-    @mock.patch("mbed_clitest.Extensions.file.SessionFiles.JsonFile._write_json")
-    @mock.patch("mbed_clitest.Extensions.file.SessionFiles.os.path.exists")
-    @mock.patch("mbed_clitest.Extensions.file.SessionFiles.os.makedirs")
+    @mock.patch("mbed_test.Extensions.file.SessionFiles.JsonFile._write_json")
+    @mock.patch("mbed_test.Extensions.file.SessionFiles.os.path.exists")
+    @mock.patch("mbed_test.Extensions.file.SessionFiles.os.makedirs")
     def test_write_file_errors(self, mock_mkdir, mock_exists, mock_json):
         mock_mkdir.side_effect = [OSError]
         mock_exists.side_effect = [False, True, True]

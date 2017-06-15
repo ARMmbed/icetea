@@ -16,7 +16,7 @@ limitations under the License.
 
 import unittest
 import mock
-from mbed_clitest.ResourceProvider.ResourceConfig import ResourceConfig
+from mbed_test.ResourceProvider.ResourceConfig import ResourceConfig
 
 class TestVerify(unittest.TestCase):
     def setUp(self):

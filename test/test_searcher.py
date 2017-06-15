@@ -15,8 +15,8 @@ limitations under the License.
 """
 
 import unittest
-from mbed_clitest.Searcher import verifyMessage
-from mbed_clitest.Searcher import Invert
+from mbed_test.Searcher import verifyMessage
+from mbed_test.Searcher import Invert
 
 class TestVerify(unittest.TestCase):
     def test_default(self):

@@ -22,14 +22,14 @@ import logging
 import sys
 import os
 
-# Add clitest/ to path, to allow importing using mbed_clitest.module form
+# Add mbedtest/ to path, to allow importing using mbed_test.module form
 libpath = '/'.join(os.path.abspath(sys.modules[__name__].__file__).split('/')[:-2])
 sys.path.append(libpath)
 
-from mbed_clitest.bench import Bench
-from mbed_clitest.TestStepError import TestStepError
-from mbed_clitest.TestStepError import TestStepFail
-from mbed_clitest.TestStepError import TestStepTimeout
+from mbed_test.bench import Bench
+from mbed_test.TestStepError import TestStepError
+from mbed_test.TestStepError import TestStepFail
+from mbed_test.TestStepError import TestStepTimeout
 from testcases.test_tcTearDown import Testcase as TearDownTest
 
 """
@@ -105,8 +105,8 @@ class TestVerify(unittest.TestCase):
     def setUp(self):
         logging.disable(logging.FATAL)
 
-    #def test_clitest(self):
-    #    proc = subprocess.Popen(['python', 'clitest.py', '-s', '--tc', 'dummy', '--tcdir'], cwd="./")
+    #def test_mbedtest(self):
+    #    proc = subprocess.Popen(['python', 'mbedtest.py', '-s', '--tc', 'dummy', '--tcdir'], cwd="./")
     #    proc.communicate()
     #    self.assertEqual( proc.returncode, 0, "Test execution didn't return success retcode")
 
@@ -201,8 +201,8 @@ class TestVerify(unittest.TestCase):
         TestingTestcase().run()
         self.assertEqual(n, threading.active_count())
 
-    @mock.patch('mbed_clitest.bench.resource_provider', create=True)
-    @mock.patch('mbed_clitest.bench.executeCommand', create=True)
+    @mock.patch('mbed_test.bench.resource_provider', create=True)
+    @mock.patch('mbed_test.bench.executeCommand', create=True)
     def test_precmds_to_two_duts(self, mock_ec, mock_rp):
         tc = Bench()
         tc.resource_provider = mock.Mock()
@@ -222,8 +222,8 @@ class TestVerify(unittest.TestCase):
                                             mock.call("*", "somecommand")])
 
 
-    @mock.patch('mbed_clitest.bench.resource_provider', create=True)
-    @mock.patch('mbed_clitest.bench.executeCommand', create=True)
+    @mock.patch('mbed_test.bench.resource_provider', create=True)
+    @mock.patch('mbed_test.bench.executeCommand', create=True)
     def test_run_exceptions(self, mock_ec, mock_rp):
         tc = Bench()
         with mock.patch.object(tc, "_Bench__initialize", mock_initialize()):

@@ -17,8 +17,8 @@ limitations under the License.
 import unittest
 import sys
 sys.path.append("../")
-from mbed_clitest.Result import Result
-from mbed_clitest.junit import Junit
+from mbed_test.Result import Result
+from mbed_test.junit import Junit
 
 class TestVerify(unittest.TestCase):
     def test_default(self):

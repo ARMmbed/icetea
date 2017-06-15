@@ -21,14 +21,14 @@ import sys
 import os
 import subprocess
 
-#Adds clitest/ to path, to allow importing using mbed_clitest.module form
+#Adds mbedtest/ to path, to allow importing using mbed_test.module form
 libpath = os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))
 sys.path.append(libpath)
-from mbed_clitest.clitestManagement import clitestManager, ExitCodes
+from mbed_test.mbedtestManagement import mbedtestManager, ExitCodes
 
 class TestFileTestCase(unittest.TestCase):
     def setUp(self):
-        self.ctm = clitestManager()
+        self.ctm = mbedtestManager()
 
         #variables for testing getLocalTestcases, parseLocalTestcases, parseLocalTest, loadClass, printListTestcases
 
@@ -39,17 +39,17 @@ class TestFileTestCase(unittest.TestCase):
         #variables for testing run()
 
     def test_init_with_non_existing_file(self):
-        proc = subprocess.Popen(['python', os.path.join(self.root_path, 'clitest.py'), '-s', '--tc', 'test_cmdline', '--tcdir', 'examples', '--type', 'process', '--bin', 'file.bin'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(['python', os.path.join(self.root_path, 'mbedtest.py'), '-s', '--tc', 'test_cmdline', '--tcdir', 'examples', '--type', 'process', '--bin', 'file.bin'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         out, error = proc.communicate()
         self.assertTrue(out.find('Given binary file.bin does not exist') != -1, "non exitent file error was not risen")
-        self.assertEqual(proc.returncode, ExitCodes.EXIT_FAIL, "clitest execution with nonexisting file crashed")
+        self.assertEqual(proc.returncode, ExitCodes.EXIT_FAIL, "mbedtest execution with nonexisting file crashed")
 
     def test_init_with_an_existing_file(self):
-        proc = subprocess.Popen(['python', os.path.join(self.root_path, 'clitest.py'), '-s', '--tc', 'test_cmdline', '--tcdir', 'examples', '--type', 'process', '--bin', os.path.join(self.testpath, 'dut/dummyDut')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        proc = subprocess.Popen(['python', os.path.join(self.root_path, 'mbedtest.py'), '-s', '--tc', 'test_cmdline', '--tcdir', 'examples', '--type', 'process', '--bin', os.path.join(self.testpath, 'dut/dummyDut')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         out, error = proc.communicate()
         self.assertTrue(out.find('test_cmdline') != -1, "test case was not accepted")
         self.assertTrue(out.find('pass') != -1, "verdict was not accepted")
-        self.assertEqual(proc.returncode, ExitCodes.EXIT_SUCCESS, "clitest execution with existing file crashed")
+        self.assertEqual(proc.returncode, ExitCodes.EXIT_SUCCESS, "mbedtest execution with existing file crashed")
 
     def tearDown(self):
         #Delete generated log files

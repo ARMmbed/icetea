@@ -24,9 +24,9 @@ if sys.version_info[0] == 2:  # Python2
 else:                         # Python3
     from unittest import mock
 
-from mbed_clitest.CliResponse import CliResponse
-from mbed_clitest.CliResponseParser import CliResponseParser
-from mbed_clitest.TestStepError import TestStepError
+from mbed_test.CliResponse import CliResponse
+from mbed_test.CliResponseParser import CliResponseParser
+from mbed_test.TestStepError import TestStepError
 
 class TestVerify(unittest.TestCase):
     pass

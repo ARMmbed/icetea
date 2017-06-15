@@ -17,13 +17,13 @@ limitations under the License.
 import unittest
 import mock
 import logging
-from mbed_clitest.ResourceProvider.Allocators.LocalAllocator import LocalAllocator
-from mbed_clitest.ResourceProvider.Allocators.exceptions import AllocationError
+from mbed_test.ResourceProvider.Allocators.LocalAllocator import LocalAllocator
+from mbed_test.ResourceProvider.Allocators.exceptions import AllocationError
 
-@mock.patch("mbed_clitest.ResourceProvider.Allocators.LocalAllocator.DutDetection", create=False)
+@mock.patch("mbed_test.ResourceProvider.Allocators.LocalAllocator.DutDetection", create=False)
 class TestVerify(unittest.TestCase):
 
-    @mock.patch("mbed_clitest.ResourceProvider.Allocators.LocalAllocator.logging", create=True)
+    @mock.patch("mbed_test.ResourceProvider.Allocators.LocalAllocator.logging", create=True)
     def test_init_with_no_logger(self, mock_logging, mock_dutdetection):
         dutdetect = mock.Mock()
         mock_dutdetection.return_value = dutdetect

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from mbed_clitest.bench import Bench
+from mbed_test.bench import Bench
 
 class Testcase(Bench):
     def __init__(self):
@@ -24,7 +24,7 @@ class Testcase(Bench):
                        status="development",
                        type="acceptance",
                        purpose = "dummy",
-                       component=["clitest_ut"],
+                       component=["mbedtest_ut"],
                        requirements={
                            "duts": {
                                '*': { #requirements for all nodes

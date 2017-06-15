@@ -16,9 +16,9 @@ limitations under the License.
 
 import unittest
 import mock
-from mbed_clitest.ResourceProvider.ResourceProvider import ResourceProvider
-from mbed_clitest.ResourceProvider.exceptions import ResourceInitError
-from mbed_clitest.ResourceProvider.Allocators.exceptions import AllocationError
+from mbed_test.ResourceProvider.ResourceProvider import ResourceProvider
+from mbed_test.ResourceProvider.exceptions import ResourceInitError
+from mbed_test.ResourceProvider.Allocators.exceptions import AllocationError
 
 #Stubbed methods in a mock object of ResourceConfig
 class Mock_ResourceConfig():
@@ -89,8 +89,8 @@ class ResourceProvider_Testcase(unittest.TestCase):
     def tearDown(self):
         del self._resource_configuration
 
-    @mock.patch("mbed_clitest.ResourceProvider.ResourceProvider.ResourceConfig")
-    @mock.patch("mbed_clitest.ResourceProvider.ResourceProvider.LogManager.get_bench_logger")
+    @mock.patch("mbed_test.ResourceProvider.ResourceProvider.ResourceConfig")
+    @mock.patch("mbed_test.ResourceProvider.ResourceProvider.LogManager.get_bench_logger")
     def test_initialize_duts(self, mock_logger, mock_config):
         mock_config.side_effect = [None, Mock_ResourceConfig()]
         #mock_allocator.side_effect = [AllocationError]
