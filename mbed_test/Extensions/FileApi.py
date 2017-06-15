@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import mbed_clitest.Extensions.file.SessionFiles as files
+import mbed_test.Extensions.file.SessionFiles as files
 import os
 import inspect
 

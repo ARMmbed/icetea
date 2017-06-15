@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 '''
-REST API methods for use with clitest. Implements GET, PUT, POST and DELETE methods for now.
+REST API methods for use with mbedtest. Implements GET, PUT, POST and DELETE methods for now.
 Also includes helper functions to set values for default headers, cert and host address.
 
 Basic logger also included, can be easily replaced by custom loggers when constructing HttpApi object or later with setter

@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from mbed_clitest.TestStepError import TestStepFail
+from mbed_test.TestStepError import TestStepFail
 import json
 
 class Asserts():
