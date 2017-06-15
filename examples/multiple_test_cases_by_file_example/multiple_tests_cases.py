@@ -16,7 +16,7 @@ limitations under the License.
 
 # LISTING TESTS IN THIS FILE
 #
-# $ python clitest.py --tcdir examples/multiple_test_cases_by_file_example --list
+# $ python mbedtest.py --tcdir examples/multiple_test_cases_by_file_example --list
 # TCs:
 # +-------+------------------------------+---------+------------+---------+-------+-----------+
 # | Index |             Name             |  Status |    Type    | Subtype | Group | Component |
@@ -28,7 +28,7 @@ limitations under the License.
 #
 # EXECUTION OF TESTS IN THIS FILE
 #
-# $ python clitest.py --tcdir examples/multiple_test_cases_by_file_example --tc all
+# $ python mbedtest.py --tcdir examples/multiple_test_cases_by_file_example --tc all
 # START TEST CASE EXECUTION: 'multipleTests_SecondTestCase'
 # 09:29:10.770|TC     MainThread: Start Test case 'multipleTests_SecondTestCase'
 # 09:29:10.770|TC     MainThread: ====setUpTestBench====
@@ -37,14 +37,14 @@ limitations under the License.
 # 09:29:10.770|TC     MainThread: ------TC START---------
 # 09:29:10.770|TC     MainThread: not implemented
 # Traceback (most recent call last):
-#   File "C:\Work\me\tests\mbed-clitest\mbed_clitest\bench.py", line 1154, in run
+#   File "C:\Work\me\tests\mbed-test\mbed_test\bench.py", line 1154, in run
 #     self.case()
-#   File "C:\Work\me\tests\mbed-clitest\examples\multiple_test_cases_by_file_example\multiple_tests_cases.py", line 109, in multipleTests_SecondTestCase
+#   File "C:\Work\me\tests\mbed-test\examples\multiple_test_cases_by_file_example\multiple_tests_cases.py", line 109, in multipleTests_SecondTestCase
 #     raise TestStepError( "not implemented" )
 # TestStepError: not implemented
 # 09:29:10.780|TC     MainThread: Test Case fails because of: not implemented
 # 09:29:10.780|TC     MainThread: Exception details:
-# 09:29:10.780|TC     MainThread: TC Name: C:\Work\me\tests\mbed-clitest\mbed_clitest\bench.py
+# 09:29:10.780|TC     MainThread: TC Name: C:\Work\me\tests\mbed-test\mbed_test\bench.py
 # 09:29:10.780|TC     MainThread: Line number: 1154
 # 09:29:10.780|TC     MainThread: Line: self.case()
 # 09:29:10.780|TC     MainThread: ------TC END-----------
@@ -83,8 +83,8 @@ limitations under the License.
 
 
 import sys
-from mbed_clitest.bench import Bench
-from mbed_clitest.bench import TestStepError
+from mbed_test.bench import Bench
+from mbed_test.bench import TestStepError
 from test_helper import test_case
 
 # Test environment which will be shared by all tests cases in this file
