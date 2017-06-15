@@ -20,13 +20,13 @@ import types
 #compatible fix with python 2.6 and 3.4:
 import sys
 from collections import deque, namedtuple
-from mbed_clitest.timer import Timer
-from mbed_clitest.tools import *
-from mbed_clitest.CliRequest import *
-from mbed_clitest.CliResponse import *
-from mbed_clitest.CliAsyncResponse import CliAsyncResponse
-from mbed_clitest.TestStepError import TestStepError, TestStepFail, TestStepTimeout
-import mbed_clitest.LogManager as LogManager
+from mbed_test.timer import Timer
+from mbed_test.tools import *
+from mbed_test.CliRequest import *
+from mbed_test.CliResponse import *
+from mbed_test.CliAsyncResponse import CliAsyncResponse
+from mbed_test.TestStepError import TestStepError, TestStepFail, TestStepTimeout
+import mbed_test.LogManager as LogManager
 
 class DutConnectionError(Exception):
     pass

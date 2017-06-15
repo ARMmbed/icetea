@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from mbed_clitest.DeviceConnectors.DutProcess import DutProcess
+from mbed_test.DeviceConnectors.DutProcess import DutProcess
 
 """
     Configuration for DutConsole. The supported configuration parameters are:

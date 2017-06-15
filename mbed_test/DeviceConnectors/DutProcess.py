@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 from Dut import Dut, DutConnectionError
-from mbed_clitest.TestStepError import TestStepError,TestStepFail
+from mbed_test.TestStepError import TestStepError,TestStepFail
 from ..GenericProcess import GenericProcess
 
 class DutProcess(Dut, GenericProcess):
