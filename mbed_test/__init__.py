@@ -16,4 +16,4 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from .main import mbed_clitest_main
+from .main import mbed_test_main
