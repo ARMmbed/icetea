@@ -24,25 +24,25 @@ import subprocess
 from jsonmerge import merge
 import logging
 # Internal libraries
-import mbed_clitest.LogManager as LogManager
-from mbed_clitest.tools import loadClass, strintkey_to_intkey
-from mbed_clitest.CliRequest import *
-from mbed_clitest.CliResponse import *
-from mbed_clitest.CliResponseParser import *
+import mbed_test.LogManager as LogManager
+from mbed_test.tools import loadClass, strintkey_to_intkey
+from mbed_test.CliRequest import *
+from mbed_test.CliResponse import *
+from mbed_test.CliResponseParser import *
 
-from mbed_clitest.Searcher import *
-from mbed_clitest.TestStepError import TestStepError, TestStepFail, TestStepTimeout
-from mbed_clitest.arguments import get_parser
-from mbed_clitest.arguments import get_base_arguments
-from mbed_clitest.arguments import get_tc_arguments
-from mbed_clitest.Result import Result
+from mbed_test.Searcher import *
+from mbed_test.TestStepError import TestStepError, TestStepFail, TestStepTimeout
+from mbed_test.arguments import get_parser
+from mbed_test.arguments import get_base_arguments
+from mbed_test.arguments import get_tc_arguments
+from mbed_test.Result import Result
 
-from mbed_clitest.GenericProcess import GenericProcess
-from mbed_clitest.ExtApps import ExtApps
-from mbed_clitest.Extensions import Extensions
-from mbed_clitest.GitTool import get_git_info
+from mbed_test.GenericProcess import GenericProcess
+from mbed_test.ExtApps import ExtApps
+from mbed_test.Extensions import Extensions
+from mbed_test.GitTool import get_git_info
 
-from mbed_clitest.ResourceProvider.ResourceProvider import ResourceProvider
+from mbed_test.ResourceProvider.ResourceProvider import ResourceProvider
 import pkg_resources
 
 class ReturnCodes:
@@ -103,7 +103,7 @@ class Bench(CliResponseParser):
         self.config = {
                 "compatible": {
                     "framework": {
-                        "name": "clitest",
+                        "name": "mbedtest",
                         "version": ">=0.4.0"
                     },
                     "automation": {
@@ -231,7 +231,7 @@ class Bench(CliResponseParser):
         tc_cfg = None
         if self.args.tc_cfg:
             tc_cfg = self.args.tc_cfg
-        #TODO: this bit is not compatible with clitestManagement's --tc argument.
+        #TODO: this bit is not compatible with mbedtestManagement's --tc argument.
         elif isinstance(self.args.tc, basestring) and os.path.exists(self.args.tc+'.json'):
             tc_cfg = self.args.tc +'.json'
 
@@ -255,7 +255,7 @@ class Bench(CliResponseParser):
         self.Name = self.config['name']
 
     def __extClassLoader(self, cp, type="ExtApps"):
-        cp = "mbed_clitest."+type+"." + cp
+        cp = "mbed_test."+type+"." + cp
         return loadClass(cp)
 
     def __loadExtensions(self):
@@ -393,7 +393,7 @@ class Bench(CliResponseParser):
 
             if self.resource_provider.get_resource_configuration().count_hardware() > 0:
                 result.dutType = 'hw'
-                # @todo need to link mbed-ls with clitest
+                # @todo need to link mbed-ls with mbedtest
                 result.dutVendor = 'Atmel',
                 result.dutModel = 'sam4eXplained'
                 #result.dutSn = ''
