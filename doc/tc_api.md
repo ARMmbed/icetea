@@ -1,11 +1,11 @@
-# Test Case API for clitest
+# Test Case API for mbed test
 
 Each test case contains two mandatory sections:
 * test meta-information
 * case() function
 
 Test meta-information defines all test related information, such as requirements and default values for the execution phase.
-Some of the information can be overwritten with `clitest` command line parameters, or by the test suite.
+Some of the information can be overwritten with `mbedtest` command line parameters, or by the test suite.
 
 Each test case can also contain a setUp function and a tearDown function (rampUp and rampDown in older test cases). 
 If either setUp fails due to errors such as invalid commands (TestStepFail exception), the case function is skipped and tearDown is called.
@@ -15,7 +15,7 @@ If setUp fails due to TestStepError exceptions or other fatal errors, both case 
 A Test Case base should look like this:
 
 ```python
-from mbed_clitest.bench import Bench
+from mbed_test.bench import Bench
 
 class Testcase(Bench):
     def __init__(self,
@@ -49,14 +49,14 @@ to decide whether a test can be executed automatically.
 
 | Name | Description | Required | Example |
 |--- | --- | --- | --- |
-| name | Short name for testcase, have to be unique | Yes, required for clitest to find the testcase | "sample" |
+| name | Short name for testcase, have to be unique | Yes, required for mbedtest to find the testcase | "sample" |
 | title | Short title | No | "smoke sample test" |
 | status | Implementation status, valid values are described below | No | "released" |
 | type | Test case type, valid values described below | No | "acceptance" |
 | sub_type | Type specific sub-type: Allowed values described below | No | "certification" |
 | purpose | Purpose of test case | No | "Demostrate FW TC API" |
 | specification_href | Link to specification | No | "http://....." |
-| component | Component under test | No | "mbed-clitest" |
+| component | Component under test | No | "mbed-test" |
 | feature | List of features under test | No | [] |
 | compatible| Compatibility related configurations. Can normally be omitted. Examples below | No | {} |
 | execution | This section can exist if case should be skipped on every run.  | No | {"skip": {"value":  False, "reason": "This is just dummy sample"}} |
@@ -100,7 +100,7 @@ The compatible field describes configurations related to compatibility with hard
 |---|---|---|
 | "automation" | by default all cases are automation compatible | { "reason" : "Reason why this is not automation compatible" } |
 | "hw" | More information on this later | {"value": True} |
-| "framework" | Name and version of framework this testcase is for | {"name": "mbed-clitest", "version": "1.0.0"} |
+| "framework" | Name and version of framework this testcase is for | {"name": "mbed-test", "version": "1.0.0"} |
 
 ### Requirements
 The requirements field is a dictionary where test case requirements can be specified.

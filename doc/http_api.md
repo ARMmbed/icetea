@@ -1,13 +1,13 @@
-# Rest API for clitest
-The purpose of the extension is to provide a generic API for HTTP methods for clitest framework so that testers can develop and run test for applications that host a HTTP web service. 
+# Rest API for mbed test
+The purpose of the extension is to provide a generic API for HTTP methods for mbed test framework so that testers can develop and run test for applications that host a HTTP web service. 
 
 The extension is built on top of the python requests library and it contains implementations of HTTP GET, POST, PUT and DELETE methods that wrap the corresponding requests methods to a simple interface that can be extended to use all requests library parameters for those methods if needed. 
 
 #Structure
 The API is built into two parts:
 
-* a simple wrapper that is used to extend the Bench class with a link to the HttpApi class [here](../mbed_clitest/Extensions/HttpApi.py).
-* the interface logic in [Api.py](../mbed_clitest/Extensions/HTTP/Api.py)
+* a simple wrapper that is used to extend the Bench class with a link to the HttpApi class [here](../mbed_test/Extensions/HttpApi.py).
+* the interface logic in [Api.py](../mbed_test/Extensions/HTTP/Api.py)
 
 All logic is contained in Api.py. 
 

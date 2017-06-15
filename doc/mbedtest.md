@@ -1,18 +1,18 @@
-# clitest
+# mbed test
 
-`clitest` is the entry-point for test execution.
+`mbedtest` is the entry-point for test execution.
 
 ## Installation
 
-You can install `clitest` with all required dependencies easily with this command:
+You can install `mbed test` with all required dependencies easily with this command:
 
 `/> python setup.py install`
 
-If everything goes well you can start tests from any location. The test cases must be located under the `./testcases` subfolder, OR you can set the testcase root folder manually with `clitest` option: `--tcdir`.
+If everything goes well you can start tests from any location. The test cases must be located under the `./testcases` subfolder, OR you can set the testcase root folder manually with `mbedtest` option: `--tcdir`.
 
 ### Dependecies
 
-To use `clitest`, make sure that you have the following tools available in your computer. All the pip modules should be automatically installed.
+To use `mbed test`, make sure that you have the following tools available in your computer. All the pip modules should be automatically installed.
 
 * Python (2.7<)
 * pip (python package manager)
@@ -33,11 +33,11 @@ To use `clitest`, make sure that you have the following tools available in your 
 ## Folder structure
 
 ```
-/mbed-clitest> tree
+/mbed-test> tree
 ├───doc         // these documents
 ├───examples    // some test case examples
-├───log         // test execution logs, when running clitest directly from GIT repository root
-├───mbed_clitest    // clitest -libraries
+├───log         // test execution logs, when running mbedtest directly from GIT repository root
+├───mbed_test    // mbed test -libraries
 │   ├───DeviceConnectors  // DUT connectors
 │   ├───ExtApps           // test required external modules
 │   └───Extensions        // default extensions, which are loaded automatically
@@ -56,15 +56,15 @@ To use `clitest`, make sure that you have the following tools available in your 
 ├───folder2
 │   ├ test22.py
 ├ test.py
-/my-testcases> clitest --tc test3
+/my-testcases> mbedtest --tc test3
 ...
-/my-testcases> clitest --tcdir folder2 --tc test22
+/my-testcases> mbedtest --tcdir folder2 --tc test22
 ...
 ```
 
 ## Development
 
-Install `clitest` in development mode:
+Install `mbedtest` in development mode:
 
 `/> python setup.py develop`
 
@@ -73,8 +73,8 @@ This allows you to modify the source code and debug easily.
 ## Command line parameters
 
 ```
-/>clitest
-usage: clitest [-h]
+/>mbedtest
+usage: mbedtest [-h]
                [--list | --listsuites | --tc TC | --suite SUITE | --clean | --version]
                [--status STATUS] [--group GROUP] [--testtype TESTTYPE]
                [--subtype SUBTYPE] [--component COMPONENT] [--jobId JOBID]
@@ -201,13 +201,13 @@ optional arguments:
 
 ## Bash command completion
 
-Initial support for bash command completion is provided in file `bash_completion/clitest`
+Initial support for bash command completion is provided in file `bash_completion/mbedtest`
 
 You can include this file from your `.bashrc` or `.bash_profile` files like this:
 
 ~~~
-if [ -f ~/src/mbed-clites/bash_completion/clitest ]; then
-  source ~/src/mbed-clites/bash_completion/clitest
+if [ -f ~/src/mbed-clites/bash_completion/mbedtest ]; then
+  source ~/src/mbed-clites/bash_completion/mbedtest
 fi
 ~~~
 

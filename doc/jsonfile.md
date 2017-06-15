@@ -2,10 +2,10 @@
 JsonFile is an extension that provides users with an interface for writing and reading json data to and from files.
 
 ##Structure
-This module is built as an extension to clitest. It is split into two files:
+This module is built as an extension to mbed test. It is split into two files:
 
-* a wrapper for the extension in [FileApi.py](../mbed_clitest/Extensions/FileApi.py)
-* The logic in [SessionFiles.py](../mbed_clitest/Extensions/file/SessionFiles.py)
+* a wrapper for the extension in [FileApi.py](../mbed_test/Extensions/FileApi.py)
+* The logic in [SessionFiles.py](../mbed_test/Extensions/file/SessionFiles.py)
 
 ##JsonFile class
 JsonFile class is the main functional part of this extension. It contains the following public methods:
@@ -40,7 +40,7 @@ Internally the extension uses the python json module as well as the os module.
 You can set a custom logger for the JsonFile class when calling it's init. If a logger is not provided, it will use a bare-bones default streamlogger.
 
 ##Example use
-In a mbed-clitest testcase you have access to this extension through bench.JsonFile:
+In a mbed-test testcase you have access to this extension through bench.JsonFile:
 
 self.jf = self.JsonFile()
 self.fileName = "test_file.json"
