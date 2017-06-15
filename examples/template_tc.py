@@ -17,7 +17,7 @@ limitations under the License.
 '''
     Sample test case
 
-    This Sample test case purpose is to show how to implement new test cases with clitest -framework.
+    This Sample test case purpose is to show how to implement new test cases with mbedtest -framework.
     Framework itself manage Test Bench with given parameters ( Bench.__init__(...) ). With those parameters,
     user can manage all TC related and required details, like what is TC name, status and type, what is purpose,
     how many devices it needs etc..
@@ -34,13 +34,13 @@ limitations under the License.
 '''
 # Import Bench Class
 import sys
-from mbed_clitest.bench import Bench
+from mbed_test.bench import Bench
 
 # All TC related stuff should be inside Testcase class
 class Testcase(Bench):
     def __init__(self):
         Bench.__init__(self,
-                       name="template",               # short name for testcase, have to be unique, e.g. "clitest-sample"
+                       name="template",               # short name for testcase, have to be unique, e.g. "mbedtest-sample"
                        title="Smoke sample test",   # short title
 
                        # Implementation Status
@@ -86,8 +86,8 @@ class Testcase(Bench):
                                # there will be more information later
                            },
                            "framework":{
-                               "name": "clitest",
-                               # Version of framework required. This will be checked if you run clitest with --check_version
+                               "name": "mbedtest",
+                               # Version of framework required. This will be checked if you run mbedtest with --check_version
                                "version": ">1.0.0"
                                # Allowed values in semantic version format. See semver.org.
                            }
@@ -114,13 +114,13 @@ class Testcase(Bench):
                                     ],
                                     "application":{
                                         # Application name and version requirements
-                                        # clitest -verified that cliapp contains this kind of software by sending nname -command
+                                        # mbedtest -verified that cliapp contains this kind of software by sending nname -command
                                         # @todo implementation missing!
                                         "name":"generalTestApplication",
                                         "version": "1.0",
                                         # Required node -binary (url/absolute/relative):
                                         # process/simulator: this process will be launched when rampUpBenc() is called inside Bench
-                                        # hardware: this file need to be flashed on board, not used directly by clitest
+                                        # hardware: this file need to be flashed on board, not used directly by mbedtest
                                         #   @todo further development ideas:
                                         #   you can also specify yotta-application (as yt module), which is suitable to use with this test case
                                         #   e.g. yt:/ARMmbed/mbed-client-cliapp

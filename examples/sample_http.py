@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from mbed_clitest.bench import Bench
+from mbed_test.bench import Bench
 
 '''
 Testcase for demonstrating usage of HttpApi extension.

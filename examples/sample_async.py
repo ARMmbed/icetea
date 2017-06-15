@@ -18,7 +18,7 @@ limitations under the License.
 import sys
 sys.path.append('../')
 # Import Bench Class
-from mbed_clitest.bench import Bench
+from mbed_test.bench import Bench
 
 __author__ = 'vincent coubard'
 

@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 """
-This is a sample implementation of a cloud module that can be used with clitest. It does nothing but provides an example
+This is a sample implementation of a cloud module that can be used with mbedtest. It does nothing but provides an example
 of a module that could be used to store testcase results, campaigns, suites etc.
 
 @Author: Joonas Nikula
@@ -23,7 +23,7 @@ of a module that could be used to store testcase results, campaigns, suites etc.
 
 def create(host, port, result_converter, testcase_converter):
     """
-    Function which is called by clitest to create an instance of the cloud client. This function must exists.
+    Function which is called by mbedtest to create an instance of the cloud client. This function must exists.
     """
     return SampleClient(host, port, result_converter, testcase_converter)
 

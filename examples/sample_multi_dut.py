@@ -20,7 +20,7 @@ import sys
 sys.path.append('../')
 
 # Import Bench Class
-from mbed_clitest.bench import Bench
+from mbed_test.bench import Bench
 class Testcase(Bench):
     def __init__(self):
         Bench.__init__(self,
