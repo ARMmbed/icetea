@@ -15,8 +15,8 @@ limitations under the License.
 """
 
 import sys
-from mbed_clitest.bench import Bench
-from mbed_clitest.bench import TestStepError
+from mbed_test.bench import Bench
+from mbed_test.bench import TestStepError
 
 class TestcaseBase(Bench):
 

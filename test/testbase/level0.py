@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 import sys
-from mbed_clitest.bench import Bench
+from mbed_test.bench import Bench
 
 class Testcase(Bench):
 
