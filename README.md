@@ -1,10 +1,10 @@
-# Command-line test framework
+# mbed test framework
 
-*clitest* is a test framework that allows you to execute commands via the command line interface (for example in a device).
+*mbed test* is a test framework that allows you to execute commands via the command line interface (for example in a device).
 
 The interface between the test framework and a device can be for example UART, process or simulator. You can also connect to any other interface.
 
-A more detailed description of the *clitest* concept is available [here](doc/README.md).
+A more detailed description of the *mbed test* concept is available [here](doc/README.md).
 
 ## Installation
 
@@ -15,8 +15,8 @@ Linux:
 First, clone this repository to the desired location, and install the test framework as follows:
 
 ```
-git clone https://github.com/ARMmbed/mbed-clitest.git
-cd mbed-clitest
+git clone https://github.com/ARMmbed/mbed-test.git
+cd mbed-test
 python setup.py install
 ```
 
@@ -33,11 +33,11 @@ This command will add the user 'username' to the 'dialout' group and grant the r
 
 To print the help page:
 
-`clitest --help`
+`mbedtest --help`
 
 To list all local testcases from the `./testcases` subfolder:
 
-`clitest --list`
+`mbedtest --list`
 
 ## Test Case API
 
@@ -62,18 +62,18 @@ arguments[dictionary]   #optional argument list
 
 To print available parameters:
 
-`clitest --help`
+`mbedtest --help`
 
 To run a single test case from the examples folder:
 
-`clitest --tc sample_process_multidut_testcase --tcdir examples`
+`mbedtest --tc sample_process_multidut_testcase --tcdir examples`
 
 To run all existing test cases from the `testcases` folder:
 
-`clitest --tc all`
+`mbedtest --tc all`
 
 
-## Running unit tests with *clitest*
+## Running unit tests with *mbed test*
 
 To build a test application for DUT and execute the test:
 
@@ -85,7 +85,7 @@ coverage run -m unittest discover -s test
 To generate a coverage report:
 
 ```
-coverage html --include "mbed_clitest/*"
+coverage html --include "mbed_test/*"
 ```
 
 #Dependencies

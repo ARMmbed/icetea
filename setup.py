@@ -18,7 +18,7 @@ import os
 from distutils.core import setup
 from setuptools import find_packages
 
-DESCRIPTION = "mbed-clitest - test framework"
+DESCRIPTION = "mbed-test - test framework"
 OWNER_NAMES = 'Jussi Vatjus-Anttila'
 OWNER_EMAILS = 'jussi.vatjus-anttila@arm.com'
 
@@ -28,7 +28,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-setup(name='mbed-clitest',
+setup(name='mbed-test',
       version='1.0.0',
       description=DESCRIPTION,
       long_description=read('README.md'),
@@ -36,7 +36,7 @@ setup(name='mbed-clitest',
       author_email=OWNER_EMAILS,
       maintainer=OWNER_NAMES,
       maintainer_email=OWNER_EMAILS,
-      url='https://github.com/ARMmbed/mbed-clitest.git',
+      url='https://github.com/ARMmbed/mbed-test.git',
       packages=find_packages(exclude=['testcases', 'test', 'suites', 'log', 'htmlcov']),
       package_data={'': ['tc_schema.json']},
       include_package_data=True,
@@ -45,7 +45,7 @@ setup(name='mbed-clitest',
       test_suite = 'test',
       entry_points={
           "console_scripts": [
-              "clitest=mbed_clitest:mbed_clitest_main",
+              "mbedtest=mbed_test:mbed_test_main",
           ]
       },
       install_requires=[
