@@ -506,9 +506,6 @@ class TestVerify(unittest.TestCase):
         self.assertTrue(result != None)
         result = self.ctm.runTest(self.comparisonCase['tc_path'], defaultConf={"name": "testname", "requirements": {"duts": {"*": {"count": 0}, 1: {"nick": "None"}}}})
         self.assertTrue(result != None)
-        result = self.ctm.runTest('testcases.skip_tc.Testcase', defaultConf={"requirements": {"duts": {"*": {"type": "process"}}}})
-        self.assertTrue(result != None)
-        self.assertEquals(result.getVerdict(), "skip", "Result should be skip. It was {}".format(result.getVerdict()))
 
 
         #Commented out due to CI.

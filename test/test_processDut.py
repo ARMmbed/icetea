@@ -19,8 +19,8 @@ import sys
 sys.path.append("../")
 import psutil
 
-from testcases.crash_testcase import Testcase as CrashTestcase
-from testcases.exception_testcase import Testcase as ExceptionTestcase
+from tests.crash_testcase import Testcase as CrashTestcase
+from tests.exception_testcase import Testcase as ExceptionTestcase
 from mbed_test.bench import ReturnCodes
 
 def get_processes_by_name(name):

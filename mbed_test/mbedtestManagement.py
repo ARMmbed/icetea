@@ -35,8 +35,8 @@ from mbed_test.arguments import get_parser
 from mbed_test.arguments import get_base_arguments
 from mbed_test.arguments import get_tc_arguments
 from mbed_test.bench import ReturnCodes
-from ReportGenerator import PrintReport
-from ReportGenerator import getSummary
+from mbed_test.ReportGenerator import PrintReport
+from mbed_test.ReportGenerator import getSummary
 from inspect import isclass
 from jsonmerge import merge
 import pkg_resources

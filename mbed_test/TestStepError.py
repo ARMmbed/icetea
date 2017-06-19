@@ -16,7 +16,7 @@ limitations under the License.
 
 import traceback
 import sys
-import LogManager
+from mbed_test import LogManager
 
 class TestStepError(Exception):
     '''

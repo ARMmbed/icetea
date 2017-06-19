@@ -30,7 +30,7 @@ from mbed_test.bench import Bench
 from mbed_test.TestStepError import TestStepError
 from mbed_test.TestStepError import TestStepFail
 from mbed_test.TestStepError import TestStepTimeout
-from testcases.test_tcTearDown import Testcase as TearDownTest
+from tests.test_tcTearDown import Testcase as TearDownTest
 
 """
 Testcase class for testing all exception cases
@@ -150,7 +150,7 @@ class TestVerify(unittest.TestCase):
         self.assertNotEqual( TestingTestcase(kbinterrupt=True, inSetUp=True).run(), 0, "Test execution returned success retcode")
         self.assertEqual(n, threading.active_count())
 
-    @mock.patch("testcases.test_tcTearDown.Testcase.tearDown")
+    @mock.patch("tests.test_tcTearDown.Testcase.tearDown")
     def test_rampDown_called(self, mock_tearDown):
         retCode = TearDownTest(testStepFail=True).run()
         self.assertEquals(retCode, 1001)
