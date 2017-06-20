@@ -53,6 +53,3 @@ class Testcase(Bench):
     def tearDown(self):
         pass
 
-# for execute directly
-if __name__=='__main__':
-    sys.exit( Testcase().run() )

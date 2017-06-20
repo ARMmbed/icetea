@@ -89,6 +89,3 @@ class TestVerify(unittest.TestCase):
         #failing testcase?
 
         self.assertEqual(self.ctm.run(self.args_suite), 0)
-
-if __name__=='__main__':
-    unittest.main()

@@ -638,5 +638,3 @@ class TestVerify(unittest.TestCase):
                                   shell = True)
         self.assertEquals(retcode, ExitCodes.EXIT_ERROR)
 
-if __name__=='__main__':
-    unittest.main()

@@ -139,8 +139,3 @@ class APITestCase(unittest.TestCase):
         # Assert that RequestException is raised
         with self.assertRaises(RequestException, msg="request.delete exception not raised properly"):
             self.http.delete(path)
-
-
-
-if __name__ == '__main__':
-    unittest.main()

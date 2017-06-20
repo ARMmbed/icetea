@@ -224,6 +224,3 @@ class TestVerify(unittest.TestCase):
         alloc = LocalAllocator()
         dut = {"type": "hardware"}
         self.assertRaises(AllocationError, alloc.allocate, {"type": "hardware"})
-
-if __name__ == '__main__':
-    unittest.main()

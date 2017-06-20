@@ -6,6 +6,7 @@ Testcase for Testcase and Bench, test teardown with invalid command sent to dut.
 Should fail in all cases and cause execution to skip case and go to from setUp to tearDown.
 '''
 
+
 class Testcase(Bench):
     def __init__(self, testStepFail=None, testStepError=None, testStepTimeout=None, exception=None, nameError=None,
                  valueError=None):
@@ -47,13 +48,8 @@ class Testcase(Bench):
         elif self.kbinterrupt:
             raise KeyboardInterrupt()
 
-
     def case(self):
         pass
 
-
     def tearDown(self):
         pass
-
-if __name__=='__main__':
-    sys.exit( Testcase().run() )

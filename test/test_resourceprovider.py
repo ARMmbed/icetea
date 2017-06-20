@@ -111,8 +111,3 @@ class ResourceProvider_Testcase(unittest.TestCase):
             with self.assertRaises(ResourceInitError):
                 rp._duts = [mock_duts(), 2]
                 rp.initialize_duts()
-
-
-
-if __name__ == '__main__':
-    unittest.main()
