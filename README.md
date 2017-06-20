@@ -1,10 +1,13 @@
 # mbed test framework
 
-*mbed test* is a test framework that allows you to execute commands via the command line interface (for example in a device).
+*mbed-test* is a [mbed](www.mbed.com) testing framework written with python. It is generally used to verify the ARM mbed
+IoT Device Platform provides the operating system and cloud services.
 
-The interface between the test framework and a device can be for example UART, process or simulator. You can also connect to any other interface.
+When testing [`mbed-os`](https://www.mbed.com/en/platform/mbed-os/) `mbed-test` allows you to execute commands remotely
+via the command line interface in board (`DUT`). The interface between the test framework and `DUT` can be for example,
+UART, sockets or stdio (process `DUT`).
 
-A more detailed description of the *mbed test* concept is available [here](doc/README.md).
+A more detailed description of the *mbed-test* concept is available [here](doc/README.md).
 
 ## Installation
 
