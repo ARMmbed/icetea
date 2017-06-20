@@ -138,10 +138,3 @@ def __run_git(cmd, path=None):
         return None, p.returncode
     else:
         return out.strip(), p.returncode
-
-
-if __name__ == "__main__":
-    import sys
-    import json
-    file = sys.argv[1] if sys.argv.count > 1 else "./../setup.py"
-    print(json.dumps(get_git_info(file), sort_keys=True, indent=4))

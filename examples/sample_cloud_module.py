@@ -17,8 +17,6 @@ limitations under the License.
 """
 This is a sample implementation of a cloud module that can be used with mbedtest. It does nothing but provides an example
 of a module that could be used to store testcase results, campaigns, suites etc.
-
-@Author: Joonas Nikula
 """
 
 def create(host, port, result_converter, testcase_converter):

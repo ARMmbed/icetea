@@ -1098,15 +1098,3 @@ class mbedtestManager(object):
             shutil.rmtree('log', ignore_errors=silent, onerror=None if silent else self.clean_onerror)
         except:
             pass
-
-
-
-'''
-#An example of how the module could be used
-if __name__=='__main__':
-    ctm = mbedtestManager()
-
-    returnCode = ctm.run()
-
-    sys.exit(returnCode)
-'''

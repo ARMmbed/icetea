@@ -14,13 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-# These two lines are required when calling this test case directly without run.py
-import sys
-sys.path.append('../')
 # Import Bench Class
 from mbed_test.bench import Bench
-
-__author__ = 'vincent coubard'
 
 
 class Testcase(Bench):

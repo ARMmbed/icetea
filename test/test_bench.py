@@ -232,10 +232,3 @@ class TestVerify(unittest.TestCase):
                 with mock.patch.object(tc, "_Bench__tearDownBench", mock.Mock()):
                     for i in range(0, 7):
                         self.assertGreater(tc.run(), 0, "Success retcode returned!")
-
-
-
-
-if __name__=='__main__':
-    unittest.main()
-

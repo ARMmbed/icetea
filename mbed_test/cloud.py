@@ -202,5 +202,3 @@ class TestVerify(unittest.TestCase):
     #    result = Result( retcode=0, framework="mbedtest:1.2", metadata=tc_metadata, logpath='./log')
     #    cloud.sendResult(result)
 
-if __name__=='__main__':
-    unittest.main()

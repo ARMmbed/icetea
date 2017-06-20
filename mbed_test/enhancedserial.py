@@ -125,15 +125,3 @@ class EnhancedSerial(Serial):
             if not line or line[-1:] != '\n':
                 break
         return lines
-
-if __name__=='__main__':
-    #do some simple tests with a Loopback HW (see test.py for details)
-    PORT = 0
-    #test, only with Loopback HW (shortcut RX/TX pins (3+4 on DSUB 9 and 25) )
-    s = EnhancedSerial(PORT)
-    #write out some test data lines
-    s.write('\n'.join("hello how are you".split()))
-    #and read them back
-    print( s.readlines() )
-    #this one should print an empty list
-    print( s.readlines(timeout=0.4) )

@@ -101,15 +101,3 @@ class Junit:
             else:
                 failures += 1
         return {'tests': str(tests), 'passes': str(passes), 'skipped': str(skipped), 'failures': str(failures) }
-
-# just for example
-if __name__=='__main__':
-    results = [
-                Result({ "testcase": "test-case-A1", "verdict": "PASS", "duration":20}),
-                Result({ "testcase": "test-case-A2", "verdict": "PASS", "duration":50}),
-                Result({ "testcase": "test-case-A3", "verdict": "PASS", "duration":120}),
-                Result({ "testcase": "test-case-A4", "verdict": "FAIL", "reason": "unknown", "duration":120}),
-                Result({ "testcase": "test-case-A4", "verdict": "INCONCLUSIVE", "reason": "WIN blue screen", "duration":1220}),
-              ]
-    junit = Junit(results)
-    junit.save("./../log/result.junit.xml")

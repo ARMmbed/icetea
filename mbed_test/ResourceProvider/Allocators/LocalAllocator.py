@@ -17,7 +17,7 @@ limitations under the License.
 import logging
 from mbed_test.DeviceConnectors.DutDetection import DutDetection
 from BaseAllocator import BaseAllocator
-from exceptions import AllocationError
+from mbed_test.ResourceProvider.Allocators.exceptions import AllocationError
 
 class LocalAllocator(BaseAllocator):
     def __init__(self, logger=None):

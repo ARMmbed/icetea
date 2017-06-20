@@ -443,29 +443,3 @@ class Dut(DutInformation):
 
     def finished(self):
         return self._finished
-
-if __name__ == '__main__':
-    from DutProcess import ProcessDut
-    dut = ProcessDut()
-    #dut = SerialDut()
-
-    dut.setDutName("D1")
-    dut.setLogLevel(logging.DEBUG)
-
-    # use process:
-    dut.Open('../tools/sample.exe')
-    # use serial port:
-    #dut.Open("COM14")
-
-    ret = dut.executeCommand("ifconfig")  # wait for reponse
-    print(ret.lines)  # print just retcode
-
-    ret = dut.executeCommand("hep2")  # wait for reponse
-    print(ret.lines)  # print just retcode
-
-    ret = dut.executeCommand("hep3")  # wait for reponse
-    print(ret.lines)  # print just retcode
-
-    #dut.Wait(5)
-    Timer().Wait(5)  # wait all duts
-    dut.Close()

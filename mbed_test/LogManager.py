@@ -14,8 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-__author__ = 'jaakuk03'
-
 import os
 import time
 import logging
@@ -332,15 +330,3 @@ def _get_filehandler_with_formatter(logname, formatter=None):
     if formatter is not None:
         h.setFormatter(formatter)
     return h
-
-if __name__ == "__main__":
-    print("test")
-    init_base_logging()
-    init_testcase_logging("moro")
-    logging.getLogger("bench").setLevel(logging.INFO)
-    b = get_bench_logger("bench", "TC")
-    b.info("Testi benkki")
-    d = get_bench_logger("bench.dut", "D1")
-    d.info("Testi dutti", extra = {"type": "<<<"})
-    s = get_bench_logger("bench.switch", "SW")
-    s.info("Testing")

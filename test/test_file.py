@@ -54,6 +54,3 @@ class TestFileTestCase(unittest.TestCase):
     def tearDown(self):
         #Delete generated log files
         self.ctm.cleanLogs()
-
-if __name__=='__main__':
-    unittest.main()

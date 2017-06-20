@@ -229,16 +229,3 @@ def PrintReport( results = [] ):
         x.add_row(["skip", str(summary["skip"])])
     x.add_row(["Duration", durationToStr(summary["duration"])])
     print(x)
-
-if __name__ == '__main__':
-    htmldoc = ReportGenerator('Results',
-        {   "Date" : datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            'Build': 'build-a',
-        },
-        [
-            { "testcase": "test-case-A1", "verdict": "PASS"},
-            { "testcase": "test-case-A2", "verdict": "PASS"},
-            { "testcase": "test-case-A3", "verdict": "FAIL", "reason": "unknown"},
-        ]
-    )
-    StoreReport( 'report.html', htmldoc )

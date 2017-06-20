@@ -91,11 +91,3 @@ class CloudTestcase(unittest.TestCase):
                           {'status': {'value': 'ready'}, 'requirements': {'node': {'count': 1}},
                            'other_info': {'features': 'unit test', 'components': 'clitest', 'title': 'this_is_title'},
                            'tcid': 'tc_name'})
-
-
-
-
-
-
-if __name__ == '__main__':
-    unittest.main()

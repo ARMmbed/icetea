@@ -21,7 +21,7 @@ from mbed_test.DeviceConnectors.DutSerial import DutSerial
 from mbed_test.DeviceConnectors.DutProcess import DutProcess
 from mbed_test.DeviceConnectors.DutConsole import DutConsole
 from ResourceConfig import ResourceConfig
-from exceptions import ResourceInitError
+from mbed_test.ResourceProvider.exceptions import ResourceInitError
 from Allocators.exceptions import AllocationError
 from Allocators.LocalAllocator import LocalAllocator
 

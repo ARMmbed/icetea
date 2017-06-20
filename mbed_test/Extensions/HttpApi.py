@@ -17,8 +17,6 @@ limitations under the License.
 
 '''
 HTTP API extension for use with mbed test.
-
-@Author: Joonas Nikula
 '''
 from mbed_test.Extensions.HTTP import Api as api
 from mbed_test.TestStepError import TestStepFail

@@ -201,9 +201,3 @@ class FileTestCase(unittest.TestCase):
             if os.path.exists(self.filePath2 + self.fileName + ".json"):
                 fileutil.removeFile(self.fileName + ".json", self.filePath2)
             os.removedirs(self.filePath2)
-
-
-
-
-if __name__ == '__main__':
-    unittest.main()

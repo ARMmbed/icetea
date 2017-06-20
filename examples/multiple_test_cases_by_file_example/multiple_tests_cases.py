@@ -82,7 +82,6 @@ limitations under the License.
 # +---------------+----------------+
 
 
-import sys
 from mbed_test.bench import Bench
 from mbed_test.bench import TestStepError
 from test_helper import test_case
