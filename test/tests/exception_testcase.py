@@ -1,5 +1,3 @@
-__author__ = 'jaakuk01'
-
 from mbed_test.bench import Bench
 from mbed_test.TestStepError import TestStepFail
 from mbed_test.TestStepError import TestStepError

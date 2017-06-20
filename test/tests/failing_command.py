@@ -1,5 +1,3 @@
-__author__ = 'jaakuk01'
-
 from mbed_test.bench import Bench
 from mbed_test.TestStepError import TestStepFail, TestStepError, TestStepTimeout
 
@@ -39,5 +37,3 @@ class Testcase(Bench):
         except TestStepTimeout:
             print("TIMEOUT")
             pass
-
-
