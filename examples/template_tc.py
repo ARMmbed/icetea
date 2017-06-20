@@ -17,23 +17,21 @@ limitations under the License.
 '''
     Sample test case
 
-    This Sample test case purpose is to show how to implement new test cases with mbedtest -framework.
-    Framework itself manage Test Bench with given parameters ( Bench.__init__(...) ). With those parameters,
+    This Sample test case purpose is to show how to implement new test cases with mbedtest framework.
+    Framework itself manages Test Bench with given parameters ( Bench.__init__(...) ). With those parameters,
     user can manage all TC related and required details, like what is TC name, status and type, what is purpose,
     how many devices it needs etc..
-    Some of those details are just for test automation and so on not yet used, but are already reserved keywords..
 
-    Test Bench parameters can be overridden by calling run.py with "--tc_cfg <json-file>" -parameter.
+    Test Bench parameters can be overridden by calling "--tc_cfg <json-file>" -parameter.
     Also some individual configs can be overridden by command line parameters, like:
     duts type (--type <type>)
 
     All Test functions are "happy-day-functions" -by default which should pass in every time.
-    If function fails it raises TestStepError or TestStepFail exception and start doing ramp down phases and finally end
+    If function fails it raises TestStepError or TestStepFail exception and start doing tear down phases and finally end
     test case execution with FAILURE -status (retcode != 0).
 
 '''
 # Import Bench Class
-import sys
 from mbed_test.bench import Bench
 
 # All TC related stuff should be inside Testcase class
@@ -115,26 +113,15 @@ class Testcase(Bench):
                                     "application":{
                                         # Application name and version requirements
                                         # mbedtest -verified that cliapp contains this kind of software by sending nname -command
-                                        # @todo implementation missing!
                                         "name":"generalTestApplication",
                                         "version": "1.0",
-                                        # Required node -binary (url/absolute/relative):
-                                        # process/simulator: this process will be launched when rampUpBenc() is called inside Bench
+                                        # Required node -binary (absolute/relative):
+                                        # process: this process will be launched inside Bench
                                         # hardware: this file need to be flashed on board, not used directly by mbedtest
-                                        #   @todo further development ideas:
-                                        #   you can also specify yotta-application (as yt module), which is suitable to use with this test case
-                                        #   e.g. yt:/ARMmbed/mbed-client-cliapp
-                                        #   You can also specify HTTP url for binary file, which will be downloaded and flashed
-                                        #   e.g. https://www.some.thing.com/mybin.hex
                                         "bin": "test/dut/dummyDut", # this is relative path
                                         "init_cli_cmds": [], # overwrite default dut init commands, list of commands to run
                                         "post_cli_cmds": [], # overwrite default dut post commands, list of commands to run
                                     },
-                                    "rf_channel": 11,   # Default RF channel to be use. Can be overwritten via command line parameters
-                                    # Specify location: x = 0.0, y = 10.0 (units)
-                                    # In simulator config, set range limiter model with appropriate range value
-                                    # @note: can be overriden in dut-specific sections below
-                                    "location": [0.0, 10.0],
                                },
                                # specific values for node 1
                                "1": {
@@ -162,7 +149,7 @@ class Testcase(Bench):
                                #  -> put 7 nodes to a circle, which distance is 50 meter
                                "3..10": { "nick": "Router{i}", "location": ["{n}", "{n}*{i}*{pi}"]}
                            }
-                           # External applications which should be started before TC rampUp and
+                           # External applications which should be started before TC setUp and
                            # will be killed in end of test
                            # ,"external": {
                            #    "apps": [
@@ -190,23 +177,13 @@ class Testcase(Bench):
         )
 
     def setUp(self):
-
         # All 'preconditions' for test case execution should be here
-        self.logger.info("Test Case RAMP-UP phase started")
-
-
+        self.logger.info("Test case setup phase started")
 
     def case(self):
-        # Test  case logic should be here
+        # Test case logic should be here
         self.logger.info("Test case started!")
 
     def tearDown(self):
         # All required post-conditions should be here. Cleanup, delete temporary files, shut down interfaces etc.
-        self.logger.info("Testcase teardown started!")
-
-# This part is needed when this test case is executed directly without run.py
-if __name__=='__main__':
-    # actually this just construct Testcase object, run test case and
-    # exit with corresponding return code
-    sys.exit( Testcase().run() )
-
+        self.logger.info("Test case teardown started!")
