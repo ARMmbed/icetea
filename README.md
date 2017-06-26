@@ -91,7 +91,7 @@ To generate a coverage report:
 coverage html --include "mbed_test/*"
 ```
 
-#Dependencies
+# Dependencies
 
 Unit tests depend on mock, preferably version 1.0.1, version 2.0.0 is known to fail
 

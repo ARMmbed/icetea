@@ -117,7 +117,6 @@ It contains several dictionaries under the following keys:
             * "version", application version requirement.
             * "bin", required node -binary (url/absolute/relative). For process this process will be launched from Bench. For hardware this file is to be flashed to the boards.
             * "init_cli_cmds", table of command line commands that are used to initialize nodes. If table is gicen as command, second parameter defines whether command is run asynchronous or not (True/False).
-       * "rf_channel", default rf-channel to be used. Can be overwritten with command line parameters
        * "location", Location of nodes as x and y, in format 0.0, for example "location": [0.0, 10.0]
     * "1", specific configurations for node 1
         * "nick", nickname for DUT 1

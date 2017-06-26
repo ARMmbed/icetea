@@ -122,6 +122,9 @@ class Testcase(Bench):
                                         "init_cli_cmds": [], # overwrite default dut init commands, list of commands to run
                                         "post_cli_cmds": [], # overwrite default dut post commands, list of commands to run
                                     },
+                                    # Specify location: x = 0.0, y = 10.0 (units)
+                                    # @note: can be overriden in dut-specific sections below
+                                    "location": [0.0, 10.0],
                                },
                                # specific values for node 1
                                "1": {
