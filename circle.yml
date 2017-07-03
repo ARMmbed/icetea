@@ -6,6 +6,7 @@ dependencies:
   post:
     - python setup.py develop
     - pip install coveralls
+    - pip install mock==1.0.1
     
 test:
   override:
