@@ -5,7 +5,7 @@ machine:
 dependencies:
   post:
     - python setup.py develop
-    - pip install coveralls
+    - pip install coverage
     - pip install mock==1.0.1
     - make
     
