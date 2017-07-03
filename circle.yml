@@ -5,6 +5,7 @@ machine:
 dependencies:
   post:
     - python setup.py install
+    - pip install coveralls
     
 test:
   override:
