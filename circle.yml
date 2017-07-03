@@ -1,0 +1,17 @@
+machine:
+  python:
+    version: 2.7.12
+
+dependencies:
+  post:
+    - python setup.py develop
+    - pip install coverage
+    - pip install mock==1.0.1
+    - make
+    
+test:
+  override:
+    - coverage run -m unittest discover -s test
+
+  post:
+    - coverage html --include="*mbed_test*" -d $CIRCLE_ARTIFACTS
