@@ -1,0 +1,56 @@
+@startuml
+
+Bench -> AllocationContextList: initialize_duts()
+activate AllocationContextList
+
+AllocationContextList --> Bench: duts
+deactivate AllocationContextList
+activate Bench
+
+Bench -> Dut: init_wait_register()
+deactivate Bench
+activate Dut
+
+create EventMatcher
+Dut -> EventMatcher: EventMatcher()
+activate EventMatcher
+EventMatcher --> Dut
+deactivate EventMatcher
+Dut --> Bench
+deactivate Dut
+activate Bench
+
+Bench -> AllocationContextList: open_dut_connections()
+deactivate Bench
+activate AllocationContextList
+
+AllocationContextList -> Dut: start_dut_thread
+activate Dut
+
+create Dut.readthread
+Dut -> Dut.readthread: run()
+activate Dut.readthread #DarkSalmon
+Dut --> AllocationContextList
+deactivate Dut
+
+AllocationContextList --> Bench
+deactivate AllocationContextList
+activate Bench
+
+Bench -> Dut: wait_init()
+deactivate Bench
+activate Dut
+
+create Event
+Dut.readthread -> Event: Event()
+activate Event #DarkSalmon
+Event -> EventMatcher: _event_received()
+deactivate Event
+activate EventMatcher #DarkSalmon
+EventMatcher -> Dut: init_done.set()
+deactivate EventMatcher
+
+Dut --> Bench
+deactivate Dut
+
+@enduml

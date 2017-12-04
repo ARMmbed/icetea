@@ -1,0 +1,55 @@
+"""
+Copyright 2017 ARM Limited
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
+import unittest
+import mock
+
+from icedtea_lib.DeviceConnectors.DutSerial import DutSerial
+
+
+class MockArgspec(object):
+    def __init__(self, lst):
+        self.args = lst
+
+
+class DutSerialTestcase(unittest.TestCase):
+
+    # Mock base class
+    @mock.patch("icedtea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
+    @mock.patch("icedtea_lib.DeviceConnectors.DutSerial.inspect")
+    @mock.patch("icedtea_lib.DeviceConnectors.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icedtea_lib.DeviceConnectors.DutSerial.Flash")
+    @mock.patch("icedtea_lib.DeviceConnectors.DutSerial.Build")
+    def test_flasher_logger_insert(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
+                                   mock_bench_logger):
+        mock_inspect.getargspec = mock.MagicMock()
+        mock_inspect.getargspec.return_value = MockArgspec(["logger"])
+        mocked_logger_for_flasher = mock.MagicMock()
+        mocked_logger.return_value = mocked_logger_for_flasher
+        dut = DutSerial(port="test",
+                        config={"allocated": {"target_id": "thing"}, "application": "thing"})
+        dut.flash("this_is_not_a_binary")
+        mock_flasher.assert_called_with(logger=mocked_logger_for_flasher)
+
+        mock_flasher.reset_mock()
+        mock_inspect.getargspec.return_value = MockArgspec([])
+        dut = DutSerial(port="test",
+                        config={"allocated": {"target_id": "thing"}, "application": "thing"})
+        dut.flash("this_is_not_a_binary")
+        mock_flasher.assert_called_with()
+
+
+if __name__ == '__main__':
+    unittest.main()

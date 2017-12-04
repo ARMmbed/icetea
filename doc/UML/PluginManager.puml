@@ -1,0 +1,26 @@
+@startuml
+
+class PluginManager{
+-_external_services : dict
+-_started_services : list
++logger: logging.Logger
++responseparser: ParserManager
++bench: Bench
++registered_plugins: list
++plugin_types: dict
+
+-_register_bench_extension(str, PluginBenchExtension)
+-_register_dataparser(str, PluginDataParser)
+-_register_external_service(str, PluginExternalService)
+
++register_tc_plugins(str, class)
++register_run_plugins(str, class)
++load_default_tc_plugins()
++load_custom_tc_plugins(str)
++load_default_run_plugins()
++load_custom_run_plugins(str)
++start_external_service(str, dict)
++stop_external_services()
+
+}
+@enduml

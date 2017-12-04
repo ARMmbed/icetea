@@ -1,0 +1,157 @@
+{
+    "type": "object",
+    "properties": {
+        "name": { "type": "string"  },
+        "title": { "type": "string" },
+        "type": { "type": "string",
+            "enum": [
+                "installation",
+                "compatibility",
+                "smoke",
+                "regression",
+                "acceptance",
+                "alpha",
+                "beta",
+                "stability",
+                "functional",
+                "destructive",
+                "performance",
+                "reliability",
+                "stress",
+                "recovery"
+            ]
+        },
+        "status": { "type": "string",
+            "enum": [
+                "released",
+                "development",
+                "maintenance",
+                "broken",
+                "unknown"
+            ]
+        },
+
+        "purpose": { "type": "string" },
+        "component": { "type": "array", "items": { "type": "string"} },
+        "feature": { "type": "array", "items": { "type": "string"} },
+        "compatible": {
+            "type": "object",
+            "properties": {
+                "framework": {
+                    "type": "object",
+                    "properties": {
+                        "name": { "type": "string" },
+                        "version": { "type": "string" }
+                    }
+                },
+                "automation": {
+                    "type": "object",
+                    "properties": {
+                        "value": {"type": "boolean" },
+                        "reason": {"type": "string" }
+                    }
+                },
+                "hw": { "type": "object",
+                    "properties": {
+                        "value": {"type": "boolean" }
+                    }
+                }
+            }
+        },
+        "execution": {"type": "object", "properties": {
+           "skip": {
+               "type": "object", "properties": {
+                   "value": {"type": "boolean"},
+                   "only_type": {"type": "string", "enum": ["process", "hardware"]},
+                   "platforms": {"type": "array", "items": {"type": "string"}},
+                   "reason": {"type": "string"}
+               }
+           }
+        }
+        },
+        "requirements": {
+            "type": "object",
+            "properties": {
+                "duts": {
+                    "type": "object",
+                    "properties": {
+                        "*": {
+                            "type": "object",
+                            "properties": {
+                                "count": {
+                                    "type": "number"
+                                },
+                                "type": {
+                                    "type": "string",
+                                    "enum": [
+                                        "hardware",
+                                        "process"
+                                    ]
+                                },
+                                "allowed_platforms": {
+                                    "type": "array",
+                                    "items": {
+                                                "type": "string"
+                                            }
+                                },
+                                "platform_name": {
+                                    "type": "string"
+                                },
+                                "application": {
+                                    "type": "object",
+                                    "properties": {
+                                        "name": {
+                                            "type": "string"
+                                        },
+                                        "version": {
+                                            "type": "string"
+                                        },
+                                        "bin": {
+                                            "type": ["string", "null"]
+                                        },
+                                        "cli_ready_trigger": {
+                                            "type": "string"
+                                        },
+                                        "cli_ready_trigger_timeout": {
+                                            "type": "number"
+                                        },
+                                        "init_cli_cmds": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "post_cli_cmds": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "bin_args": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                },
+                                "location": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number"
+                                    },
+                                    "minItems": 0,
+                                    "maxItems": 2
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "external": {
+            "type": "object",
+            "properties": {}
+        }
+    }
+}

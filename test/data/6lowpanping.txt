@@ -1,0 +1,59 @@
+Packet (Length: 87)
+Layer WPAN:
+	Extended Source: 14:6e:0a:00:00:00:00:01 (14:6e:0a:00:00:00:00:01)
+	.... 11.. .... .... = Destination Addressing Mode: Long/64-bit (0x0003)
+	..00 .... .... .... = Frame Version: 0
+	FCS: 0x2c55 (Correct)
+	.... .... ..1. .... = Acknowledge Request: True
+	Destination: 14:6e:0a:00:00:00:00:02 (14:6e:0a:00:00:00:00:02)
+	Sequence Number: 172
+	11.. .... .... .... = Source Addressing Mode: Long/64-bit (0x0003)
+	.... .... .... .001 = Frame Type: Data (0x0001)
+	.... .... .1.. .... = Intra-PAN: True
+	.... .... .... 0... = Security Enabled: False
+	Frame Control Field: 0xcc61, Frame Type: Data, Acknowledge Request, Intra-PAN, Destination Addressing Mode: Long/64-bit, Source Addressing Mode: Long/64-bit
+	Destination PAN: 0xface
+	.... .... ...0 .... = Frame Pending: False
+Layer 6LOWPAN:
+	IPHC Header
+	.... .... .0.. .... = Source address compression: Stateless
+	011. .... = Pattern: IP header compression (0x03)
+	.... ..00 .... .... = Hop limit: Inline (0x0000)
+	Source context: fe80:: (fe80::)
+	Source: fe80::166e:a00:0:1 (fe80::166e:a00:0:1)
+	Destination context: fe80:: (fe80::)
+	.... .... .... 0... = Multicast address compression: False
+	.... .0.. .... .... = Next header: Inline
+	.... .... .... ..11 = Destination address mode: Compressed (0x0003)
+	Next header: ICMPv6 (0x3a)
+	Hop limit: 64
+	.... .... .... .0.. = Destination address compression: Stateless
+	...1 1... .... .... = Traffic class and flow label: Version, traffic class, and flow label compressed (0x0003)
+	Destination: fe80::166e:a00:0:2 (fe80::166e:a00:0:2)
+	.... .... ..11 .... = Source address mode: Compressed (0x0003)
+	.... .... 0... .... = Context identifier extension: False
+Layer IPV6:
+	Source GeoIP: Unknown
+	Source: fe80::166e:a00:0:1 (fe80::166e:a00:0:1)
+	Next header: ICMPv6 (58)
+	Destination: fe80::166e:a00:0:2 (fe80::166e:a00:0:2)
+	.... .... ...0 .... .... .... .... .... = ECN-CE: Not set
+	0110 .... = Version: 6
+	Payload length: 60
+	.... .... ..0. .... .... .... .... .... = ECN-Capable Transport (ECT): Not set
+	.... 0000 00.. .... .... .... .... .... = Differentiated Services Field: Default (0x00000000)
+	0110 .... = This field makes the filter "ip.version == 6" possible: 6
+	Hop limit: 64
+	.... .... .... 0000 0000 0000 0000 0000 = Flowlabel: 0x00000000
+	.... 0000 0000 .... .... .... .... .... = Traffic class: 0x00000000
+	Destination GeoIP: Unknown
+Layer ICMPV6:
+	Response Time: 3,964 ms
+	Type: Echo (ping) reply (129)
+	Sequence: 1
+	Checksum: 0x0e7f [correct]
+	Response To: 17
+	Code: 0
+	Identifier: 0x1efb
+	Length: 52
+	Data: 404142434445464748494a4b4c4d4e4f5051525354555657...

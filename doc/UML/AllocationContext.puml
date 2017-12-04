@@ -1,0 +1,53 @@
+@startuml
+
+package AllocationContext {
+
+class AllocationContext{
+-_alloc_id : str
+-_resource_id : str
+-_alloc_data :dict
+
++alloc_id : str
++resource_id : str
+
+-__init__(str, str, dict)
+-__getitem__(str)
+-__setitem__(str, str)
+
++get(str)
++set(str, str)
++get_alloc_data() : dict
+}
+
+class AllocationContextList{
+    -_allocation_contexts : list
+    -_duts : list
+    -_dutinformations : list
+    -_resource_configuration : ResourceConfig
+    +logger : logging.Logger
+
+    -__init__(logging.Logger)
+    -__len__() : int
+    -__iter__() : iterator
+    -__getitem__(int) : any
+    -__setitem__(int, any)
+    -_open_dut_connections()
+    -_check_flashing_need(str, str, bool)
+    +{static}get_build(str) : str
+    +set_resconf(ResourceConfig)
+    +set_logger(logging.Logger)
+    +set_dut_init(str, callable)
+    +open_dut_connections()
+    +get_duts() : list
+    +get_dutinformations() : list
+    +get_dut_init(str) : callable
+    +get_resconf() : ResourceConfig
+    +append(AllocationContext)
+    +init_duts(argparse.Namespace) : list
+
+}
+
+AllocationContextList --o AllocationContext
+
+}
+@enduml

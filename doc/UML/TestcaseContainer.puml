@@ -1,0 +1,71 @@
+@startuml
+
+enum TestStatus {
+PENDING = 4
+PREPARED = 3
+READY = 2
+RUNNING = 1
+FINISHED = 0
+}
+
+class TestcaseContainer {
++ logger : logging.Logger
++ status : TestStatus
++ tcname : str
+- _instance : Bench
+- _modulename : str
+- _final_configuration : dict
+- _meta_schema : dict
+- _ result : Result
+- _filepath: str
+- _suiteconfig : dict
+- _infodict : dict
+__
++ {static} find_testcases(str, str, dict, str, dict, logging.Logger) : list
++ {static} _import_module(str) : Bench
++ __copy__() : TestcaseContainer
++ __init__(logging.logger) : TestcaseContainer
++ validate_tc_instance()
++ validate_testcase_metadata(Bench) : bool
++ run(bool) : Result
+- _create_new_bench_instance(str) : Bench
+- _load_testcase(str, bool) : Bench
+
+- _check_skip(Bench) : Result
+- _check_major_version(str, str) : bool
+- _check_version(Bench): Result
+- _wrong_version(Bench, str, str) : Result
+__ getters __
++ get_infodict() : dict
++ get(str)
++ get_suiteconfig() dict
++ get_instance() : Bench
++ get_result() : Result
++ get_name() : str
+__ setters __
++ set_suiteconfig(dict)
++ set_final_config()
++ set_result(Result)
++ merge_tc_config(dict)
+}
+
+class DummyContainer {
+- _instance : None
+- _modulename : str
+- _final_configuration : dict
+- _meta_schema : dict
+- _ result : Result
+- _filepath: str
+- _suiteconfig : dict
+- _infodict : dict
+
+-__init__()
++run(bool) : Result
++get(str) : None
++set_final_config()
++set_result_verdict(str)
++validate_tc_instance() : bool
+}
+
+DummyContainer --|> TestcaseContainer
+@enduml

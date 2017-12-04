@@ -1,0 +1,21 @@
+@startuml
+
+note top of TestcaseFilter : tc function parameter can be str, int, tuple or list
+
+class TestcaseFilter {
+
+- _filter : dict
+__ setters __
++ tc(string) : TestcaseFilter
++ status(string) : TestcaseFilter
++ group(string) : TestcaseFilter
++ testtype(string) : TestcaseFilter
++ subtype(string) : TestcaseFilter
++ component(string) : TestcaseFilter
+- _add_filter_key(string, string) : TestcaseFilter
+__
++ match(TestcaseContainer, int) : bool
+
+}
+
+@enduml

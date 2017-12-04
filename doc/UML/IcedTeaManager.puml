@@ -1,0 +1,34 @@
+@startuml
+class IcedTeaManager {
++ libpath : string
++ args : dict
++ logger : logging.Logger
++ resourceprovider : ResourceProvider
+
++ {static}list_suites(string, bool) : PrettyTable
+- {static}_parse_arguments() : argparse.Namespace
++ __init__() : IcedTeaManager
++ run(argparse.Namespace) : ExitCodes
++ runtestsuite(TestSuite) : ResultList
++ check_args() : bool
+- _cleanup_resourceprovider()
+- _cleanlogs(bool)
+- _clean_onerror(str, str, str)
+- _init_cloud(bool) : bool or Cloud
+
+}
+
+enum ExitCodes{
+EXIT_SUCCESS = 0
+EXIT_ERROR = 1
+EXIT_FAIL = 2
+EXIT_INCONC = 3
+}
+
+class TCMetaSchema{
+__metaclass__ = Singleton
+- _tc_meta_schema : dict
++ __init__(str) : TCMetaSchema
++ get_meta_schema() : dict
+}
+@enduml

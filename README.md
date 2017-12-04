@@ -65,8 +65,8 @@ install the coloredlogs module using pip. `pip install coloredlogs`
 ### Installation step-by-step
 
 ```
-git clone https://github.com/ARMmbed/mbed-test.git
-cd mbed-test
+git clone https://github.com/ARMmbed/icedtea.git
+cd icedtea
 python setup.py install
 ```
 

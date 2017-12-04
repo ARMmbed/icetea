@@ -1,0 +1,75 @@
+{
+    "suiteTimeout": 10,
+    "__comment": "total timeout in second for this suite. Functionality for this could be implemented later with separate JIRA task",
+
+    "default": {
+        "__comment": "default configurations for below TC's",
+        "requirements": {
+            "duts": {
+               "__comment": "same as requirements.duts in bench",
+
+               "1": {
+                   "application": {
+                    }
+               }
+            }
+        }
+    },
+    "testcases": [
+        {
+            "name": "sample_process_multidut_testcase",
+            "__comment0": "example",
+            "config": {
+                "requirements": {
+                    "duts": {
+                        "*": {
+                            "count": 10,
+                            "application": {
+                                "bin": "test/dut/dummyDut"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "sample_process_multidut_testcase_notfound",
+            "__comment0": "example",
+            "config": {
+                "requirements": {
+                    "duts": {
+                        "*": {
+                            "count": 10,
+                            "application": {
+                                "bin": "test/dut/dummyDut"
+                            },
+                            "should_not": "be here"
+                        }
+                    }
+                }
+            }
+                },
+          {
+            "name": "sample_process_multidut_testcase",
+            "__comment0": "example2",
+            "config": {
+                "requirements": {
+                    "duts": {
+                        "*": {
+                            "count": 20,
+                            "application": {
+                                "bin": "test/dut/dummyDut"
+                            },
+                            "should_be": "here"
+                        },
+                        "1": {
+                            "application": {
+                                "test": "dut"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+  ]
+}

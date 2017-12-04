@@ -1,0 +1,12 @@
+@startuml
+
+class ParserManager{
++parsers : dict
++logger : logging.Logger
+
++has_parser(str)
++add_parser(str, callable)
++parse(list, dict)
+}
+
+@enduml
