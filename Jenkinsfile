@@ -9,14 +9,7 @@ properties ([
             daysToKeepStr: '30',
             numToKeepStr: '100'
         )
-    ),
-    parameters ([
-        string(
-            name: "CLINODE_BUILD_NUMBER",
-            description: 'Need verified stable cliNode build from simulator job, was: 190, 299, 341, 624, 647(not working!), 657, 702, 1012, 1061, 1111.',
-            defaultValue: ''
-        )
-    ])
+    )
 ])
 
 
