@@ -22,11 +22,13 @@ Basic logger also included, can be easily replaced by custom loggers when constr
 @Author: Joonas Nikula
 """
 
+import json
 import jsonmerge
 import requests
 import urllib
 import logging
 from requests import RequestException
+from six import binary_type, string_types
 from icedtea_lib.tools.tools import combine_urls
 
 
@@ -264,8 +266,20 @@ class HttpApi(object):
         self.logger.debug("Request headers: {}".format(resp.request.headers))
         self.logger.debug("Server responded with {}".format(resp.status_code))
         self.logger.debug("Response headers: {}".format(resp.headers))
-        if hasattr(resp, "text") and len(resp.text) > 0:
-            self.logger.debug("Response payload: {}".format(resp.text))
+        if hasattr(resp, "content") and len(resp.content) > 0:
+            try:
+                json_content = json.loads(resp.content)
+                self.logger.debug("Response content: {}".format(json_content))
+            except ValueError:
+                if type(resp.content) == binary_type:
+                    try:
+                        self.logger.debug("Response payload: {}".format(resp.content))
+                    except UnicodeDecodeError:
+                        self.logger.debug("Response payload: {}".format(repr(resp.content)))
+                elif type(resp.content) in string_types:
+                    self.logger.debug("Response payload: {}".format(resp.content.decode("utf-8")))
+                else:
+                    self.logger.debug("Unable to parse response payload")
 
     def _log_exception(self, exception):
         if hasattr(exception, "request") and exception.request:

@@ -14,10 +14,12 @@ limitations under the License.
 """
 
 import unittest
-
+import os
 import jsonmerge
 import mock
+
 from requests.exceptions import RequestException
+from requests import Response
 
 from icedtea_lib.tools.HTTP.Api import HttpApi
 
@@ -49,7 +51,6 @@ class APITestCase(unittest.TestCase):
         self.host = "http://somesite.com"
         self.host2 = "http://somesite.com/api/"
         self.cert = "/path/to/cert.pem"
-
 
     def test_init(self):
         self.http = HttpApi(self.host)
@@ -97,7 +98,6 @@ class APITestCase(unittest.TestCase):
         self.http.get("/test_path")
         mock_get.assert_called_with(self.host + "/test_path", {}, headers={})
 
-
     @mock.patch("icedtea_lib.tools.HTTP.Api.requests.get")
     def test_get(self, mock_requests_get):
         #First test successfull get request. Assert if get was called
@@ -123,8 +123,6 @@ class APITestCase(unittest.TestCase):
         self.http = HttpApi(self.host2)
         resp = self.http.get(path3)
         self.assertTrue(mock_requests_get.called, "Failed to call requests.get")
-
-
 
     @mock.patch("icedtea_lib.tools.HTTP.Api.requests.post")
     def test_post(self, mock_requests_post):
@@ -152,8 +150,6 @@ class APITestCase(unittest.TestCase):
         self.http = HttpApi(self.host2)
         resp = self.http.post(path3, json=json)
         self.assertTrue(mock_requests_post.called, "Failed to call requests.post")
-
-
 
     @mock.patch("icedtea_lib.tools.HTTP.Api.requests.put")
     def test_put(self, mock_requests_put):
@@ -209,7 +205,6 @@ class APITestCase(unittest.TestCase):
         resp = self.http.patch(path3, data=data)
         self.assertTrue(mock_requests_patch.called, "Failed to call requests.patch")
 
-
     @mock.patch("icedtea_lib.tools.HTTP.Api.requests.delete")
     def test_delete(self, mock_requests_delete):
         #Successfull delete
@@ -235,6 +230,20 @@ class APITestCase(unittest.TestCase):
         self.http = HttpApi(self.host2)
         resp = self.http.delete(path3)
         self.assertTrue(mock_requests_delete.called, "Failed to call requests.delete")
+
+    @mock.patch("icedtea_lib.tools.HTTP.Api.HttpApi.get")
+    def test_huge_binary_content(self, mocked_get):
+        var = os.urandom(10000000)
+        for i in range(6):
+            var = var + os.urandom(10000000)
+        r = Response()
+        r._content = var
+        r.encoding = "utf-8"
+        r.status_code = 200
+        mocked_get.return_value = r
+        self.http = HttpApi(self.host)
+        resp = self.http.get("/")
+        self.assertEqual(resp, r)
 
 
 if __name__ == '__main__':
