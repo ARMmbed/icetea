@@ -8,7 +8,7 @@
             "duts": {
                "__comment": "same as requirements.duts in bench",
                "*":{
-                   "application": { "bin": "./../CliNode" }
+                   "application": { "bin": "./test/dut/dummyDut" }
                }
         }},
         "timeout":40,
@@ -26,8 +26,6 @@
         "__comment1": "TC name to be run bench, same as bench.config['name']",
 
         "config": {
-            "timeout": 20,
-            "__comment2": "TC specific timeout. Functionality for this could be implemented later with separate JIRA task",
 
             "iteration": 2,
             "__comment3": "how many times this should be executed, 1=default value",
