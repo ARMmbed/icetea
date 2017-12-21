@@ -13,11 +13,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 
 '''
-IcedTea framework usage example for implementing a test case.
+Icetea framework usage example for implementing a test case.
 
 Mandatory:
     1. def __init__():
@@ -56,8 +56,8 @@ class Testcase(Bench):
                        title="test case functions example usage",
                        status="development",
                        type="smoke",
-                       purpose="show an example usage of IcedTea test case functions",
-                       component=["IcedTea"],
+                       purpose="show an example usage of Icetea test case functions",
+                       component=["Icetea"],
                        requirements={
                             "duts": {
                                 '*': {

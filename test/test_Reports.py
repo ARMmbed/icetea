@@ -24,10 +24,10 @@ except ImportError:
     # python3
     from io import StringIO
 
-from icedtea_lib.Result import Result
-from icedtea_lib.ResultList import ResultList
-from icedtea_lib.Reports import ReportConsole, ReportHtml, ReportJunit
-from icedtea_lib.tools.tools import hex_escape_str
+from icetea_lib.Result import Result
+from icetea_lib.ResultList import ResultList
+from icetea_lib.Reports import ReportConsole, ReportHtml, ReportJunit
+from icetea_lib.tools.tools import hex_escape_str
 
 class ReportCase(unittest.TestCase):
 

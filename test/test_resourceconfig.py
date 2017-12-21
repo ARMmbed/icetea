@@ -15,8 +15,8 @@ limitations under the License.
 
 import unittest
 import mock
-from icedtea_lib.ResourceProvider.ResourceConfig import ResourceConfig
-from icedtea_lib.ResourceProvider.ResourceRequirements import ResourceRequirements
+from icetea_lib.ResourceProvider.ResourceConfig import ResourceConfig
+from icetea_lib.ResourceProvider.ResourceRequirements import ResourceRequirements
 
 class TestVerify(unittest.TestCase):
     def setUp(self):

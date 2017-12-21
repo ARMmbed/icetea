@@ -12,12 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-This is an example of the implementation of an allocator type global plugin for IcedTea.
+This is an example of the implementation of an allocator type global plugin for Icetea.
 """
 
-from icedtea_lib.Plugin.PluginBase import RunPluginBase
-from icedtea_lib.ResourceProvider.Allocators.BaseAllocator import BaseAllocator
-from icedtea_lib.AllocationContext import AllocationContextList
+from icetea_lib.Plugin.PluginBase import RunPluginBase
+from icetea_lib.ResourceProvider.Allocators.BaseAllocator import BaseAllocator
+from icetea_lib.AllocationContext import AllocationContextList
 
 
 class ExampleAllocatorPlugin(RunPluginBase):

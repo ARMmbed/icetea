@@ -20,7 +20,7 @@ import sys
 import os
 import subprocess
 
-from icedtea_lib.IcedTeaManager import IcedTeaManager
+from icetea_lib.IceteaManager import IceteaManager
 from dummy_dut import compile_dummy_dut
 
 libpath = os.path.abspath(os.path.join(os.path.dirname(__file__), ".." + os.path.sep))
@@ -29,7 +29,7 @@ sys.path.append(libpath)
 
 class TestFileTestCase(unittest.TestCase):
     def setUp(self):
-        self.ctm = IcedTeaManager()
+        self.ctm = IceteaManager()
 
         # variables for testing getLocalTestcases, parseLocalTestcases,
         # parseLocalTest, loadClass, printListTestcases
@@ -43,7 +43,7 @@ class TestFileTestCase(unittest.TestCase):
         compile_dummy_dut()
 
     def test_init_with_non_existing_file(self):
-        proc = subprocess.Popen(['python', 'icedtea.py', '-s', '--tc', 'test_cmdline',
+        proc = subprocess.Popen(['python', 'icetea.py', '-s', '--tc', 'test_cmdline',
                                  '--tcdir', 'examples', '--type', 'process', '--clean',
                                  '--bin', 'file.bin'],
                                 stdout=subprocess.PIPE,
@@ -57,7 +57,7 @@ class TestFileTestCase(unittest.TestCase):
     @unittest.skipIf(sys.platform == 'win32', "windows doesn't support process test")
     def test_init_with_an_existing_file(self):
         bin_path = "test" + os.path.sep + "dut" + os.path.sep + "dummyDut"
-        proc = subprocess.Popen(['python', 'icedtea.py', '-s', '--tc', 'test_cmdline',
+        proc = subprocess.Popen(['python', 'icetea.py', '-s', '--tc', 'test_cmdline',
                                  '--tcdir', 'examples', '--type', 'process',
                                  '--clean', '--bin', bin_path],
                                 stdout=subprocess.PIPE,
@@ -65,7 +65,7 @@ class TestFileTestCase(unittest.TestCase):
                                 cwd=self.root_path)
         out, error = proc.communicate()
         self.assertTrue(out.find('test_cmdline |   pass') != -1, "exitent file was not accepted")
-        self.assertEqual(proc.returncode, 0, "IcedTea execution with existing file crashed")
+        self.assertEqual(proc.returncode, 0, "Icetea execution with existing file crashed")
 
 
 if __name__=='__main__':

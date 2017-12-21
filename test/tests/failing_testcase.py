@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench
-from icedtea_lib.TestStepError import TestStepFail
+from icetea_lib.bench import Bench
+from icetea_lib.TestStepError import TestStepFail
 
 
 class Testcase(Bench):
@@ -25,7 +25,7 @@ class Testcase(Bench):
                        status="development",
                        type="acceptance",
                        purpose="dummy",
-                       component=["IcedTea_ut"],
+                       component=["Icetea_ut"],
                        requirements={
                           "duts": {
                               '*': {

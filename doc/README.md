@@ -12,7 +12,7 @@ Concept parts:
 
 ## Test Framework
 
-The Test Framework, [IcedTea](icedtea.md), executes the tests and collects the results. It is written in python, but could be extended with any other programming language as well. Python was our choice because it is already used in many existing projects.
+The Test Framework, [Icetea](icetea.md), executes the tests and collects the results. It is written in python, but could be extended with any other programming language as well. Python was our choice because it is already used in many existing projects.
 
 ## Test Case
 
@@ -64,4 +64,4 @@ set --vt100 on
 set --retcode false
 ```
 
-In brief, the _IcedTea_ is made for executing tests directly in the Linux shell (Device Under Test).
+In brief, the _Icetea_ is made for executing tests directly in the Linux shell (Device Under Test).

@@ -21,11 +21,11 @@ from jsonmerge import merge
 
 import mock
 
-from icedtea_lib.TestSuite.TestSuite import TestSuite, SuiteException, TestStatus
-from icedtea_lib.TestSuite.TestcaseContainer import DummyContainer
-from icedtea_lib.Result import Result
-from icedtea_lib.DeviceConnectors.DutInformation import DutInformation
-from icedtea_lib.build.build import Build
+from icetea_lib.TestSuite.TestSuite import TestSuite, SuiteException, TestStatus
+from icetea_lib.TestSuite.TestcaseContainer import DummyContainer
+from icetea_lib.Result import Result
+from icetea_lib.DeviceConnectors.DutInformation import DutInformation
+from icetea_lib.build.build import Build
 
 
 def mock_get_suite_tcs(arg1, arg2):
@@ -44,7 +44,7 @@ def mock_parse_local_tcs(arg1, arg2):
 class TestSuiteTestcase(unittest.TestCase):
 
     def setUp(self):
-        with open(os.path.join("./icedtea_lib", 'tc_schema.json')) as data_file:
+        with open(os.path.join("./icetea_lib", 'tc_schema.json')) as data_file:
             self.tc_meta_schema = json.load(data_file)
         testpath = os.path.dirname(os.path.abspath(__file__))
         self.testdir = os.path.join(testpath, 'testbase')
@@ -159,7 +159,7 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertIsNone(all_duts.get("should_not"))
         self.assertTrue(all_duts.get("should_be") == "here")
 
-    @mock.patch("icedtea_lib.TestSuite.TestSuite.TestSuite._prepare_testcase")
+    @mock.patch("icetea_lib.TestSuite.TestSuite.TestSuite._prepare_testcase")
     def test_prepare_suite_fail(self, mock_prep):
         self.args_suite.suite = "working_suite.json"
         mock_prep.side_effect = [TypeError, SyntaxError]
@@ -178,7 +178,7 @@ class TestSuiteTestcase(unittest.TestCase):
         tcs = suit._get_suite_tcs("./examples", ["sample_process_multidut_testcase", "sample_process_multidut_testcase"])
         self.assertEqual(len(tcs), 2)
 
-    @mock.patch("icedtea_lib.TestSuite.TestSuite.TestcaseFilter")
+    @mock.patch("icetea_lib.TestSuite.TestSuite.TestcaseFilter")
     def test_get_suite_tcs_errors(self, mock_filter):
         self.args_suite.suite = "working_suite.json"
         mock_filter.side_effect = [TypeError, {}]
@@ -209,7 +209,7 @@ class TestSuiteTestcase(unittest.TestCase):
         suit.args.tcdir = "examples"
         self.assertIsNot(suit._load_suite_list(), False)
 
-    @mock.patch("icedtea_lib.TestSuite.TestSuite.TestSuite._create_tc_list")
+    @mock.patch("icetea_lib.TestSuite.TestSuite.TestSuite._create_tc_list")
     def test_run(self, mock_tclist):
         ts = TestSuite(args=self.args_tc)
         cont1 = mock.MagicMock()
@@ -325,8 +325,8 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(pass_result.toolchain, "toolchain")
         self.assertEqual(pass_result.build_date, "today")
 
-    @mock.patch("icedtea_lib.TestSuite.TestSuite.TestSuite._create_tc_list")
-    @mock.patch("icedtea_lib.TestSuite.TestSuite.os.path")
+    @mock.patch("icetea_lib.TestSuite.TestSuite.TestSuite._create_tc_list")
+    @mock.patch("icetea_lib.TestSuite.TestSuite.os.path")
     def test_load_suite_file(self, mock_path, mock_tc):
         mock_path.join = mock.MagicMock()
         mock_path.join.return_value = "path"

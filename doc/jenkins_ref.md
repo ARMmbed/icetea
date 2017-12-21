@@ -26,7 +26,7 @@ The lable listed here would help to understand and quickly found what's wrong in
     - build result of tests for testing plugin module on Windows
 
 5. **pylint check**
-    - build result of pylint check for IcedTea
+    - build result of pylint check for Icetea
 
 6. **continuous-integration/jenkins/branch**
     - general build result

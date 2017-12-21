@@ -13,11 +13,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 
 '''
-IcedTea test case additional function usage example.
+Icetea test case additional function usage example.
 
 function:
     self.get_dut(index):  Get a handle to a DUT with index. There are functions can be accessed using DUT handle.
@@ -43,8 +43,8 @@ class Testcase(Bench):
                        title="get_dut(index) functions example usage",
                        status="development",
                        type="smoke",
-                       purpose="show an example usage of IcedTea get_dut(index) functions",
-                       component=["IcedTea"],
+                       purpose="show an example usage of Icetea get_dut(index) functions",
+                       component=["Icetea"],
                        requirements={
                             "duts": {
                                 '*': {

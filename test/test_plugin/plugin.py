@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.Plugin.PluginBase import PluginBase
+from icetea_lib.Plugin.PluginBase import PluginBase
 
 
 class Plugin(PluginBase):

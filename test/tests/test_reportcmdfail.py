@@ -13,9 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 from mock import MagicMock
-from icedtea_lib.TestStepError import TestStepTimeout
+from icetea_lib.TestStepError import TestStepTimeout
 
 
 class Testcase(Bench):

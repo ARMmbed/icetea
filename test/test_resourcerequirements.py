@@ -14,8 +14,8 @@ limitations under the License.
 """
 
 import unittest
-from icedtea_lib.ResourceProvider.ResourceRequirements import ResourceRequirements
-from icedtea_lib.ResourceProvider.Allocators.exceptions import AllocationError
+from icetea_lib.ResourceProvider.ResourceRequirements import ResourceRequirements
+from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
 
 class ResourceRequirementTestcase(unittest.TestCase):
 

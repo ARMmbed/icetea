@@ -1,23 +1,23 @@
 # Command-line test framework
 
-*IcedTea* is an [mbed](www.mbed.com) test framework written
+*Icetea* is an [mbed](www.mbed.com) test framework written
 with python 2.7. It is generally used to verify the ARM mbed
 IoT Device Platform provides the operating system and cloud services.
 
 When testing [`mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
-*IcedTea* allows you to execute commands remotely via
+*Icetea* allows you to execute commands remotely via
 the command line interface in board (`DUT`).
 The interface between the test framework and `DUT` can be
 for example UART, sockets or for example stdio (process `DUT`).
 
-A more detailed description of the *IcedTea* concept is
+A more detailed description of the *Icetea* concept is
 available [here](doc/README.md).
 
 ## Installation
 
 `> python setup.py install`
 
-When installing IcedTea, installing to a
+When installing Icetea, installing to a
 [virtualenv](https://virtualenv.pypa.io/en/stable/installation/) is
 a good idea.
 
@@ -29,7 +29,7 @@ a good idea.
   * [mbed-flasher](https://github.com/ARMmbed/mbed-flasher)
     * to flash devices automatically
   * Both of these should be installed automatically by
-  IcedTea installation.
+  Icetea installation.
 
 **OS specific:**
 
@@ -65,8 +65,8 @@ install the coloredlogs module using pip. `pip install coloredlogs`
 ### Installation step-by-step
 
 ```
-git clone https://github.com/ARMmbed/icedtea.git
-cd icedtea
+git clone https://github.com/ARMmbed/icetea.git
+cd icetea
 python setup.py install
 ```
 
@@ -86,13 +86,13 @@ grant the required permissions to the USB ports.
 
 To print the help page:
 
-`icedtea --help`
+`icetea --help`
 
-All cli parameters are described in [icedtea.md](doc/icedtea.md)
+All cli parameters are described in [icetea.md](doc/icetea.md)
 
 To list all local testcases from the `./testcases` subfolder:
 
-`icedtea --list`
+`icetea --list`
 
 ## Test Case API
 
@@ -122,29 +122,29 @@ To run following examples please compile `dummyDut` first using make:
 
 To print available parameters:
 
-`> icedtea --help`
+`> icetea --help`
 
 To run a single test case with the process dut:
 
-`> icedtea --tc test_cmdline --tcdir examples --type process --bin ./test/dut/dummyDut`
+`> icetea --tc test_cmdline --tcdir examples --type process --bin ./test/dut/dummyDut`
 
 To run all existing test cases from the `examples` folder:
 
-`> icedtea --tc all --tcdir examples --type process --bin ./test/dut/dummyDut`
+`> icetea --tc all --tcdir examples --type process --bin ./test/dut/dummyDut`
 
 To debug dut locally with [GDB](https://www.gnu.org/software/gdb/):
 
 **Note:** You have to install [gdb](https://www.gnu.org/software/gdb/) first (`apt-get install gdb`)
 
 ```
-> icedtea --tc test_cmdline --tcdir examples --type process --gdb 1 --bin ./test/dut/dummyDut
+> icetea --tc test_cmdline --tcdir examples --type process --gdb 1 --bin ./test/dut/dummyDut
 > sudo gdb ./CliNode 3460
 ```
 
 To debug dut remotely with GDB server:
 
 ```
-> icedtea --tc test_cmdline --tcdir examples --type process --gdbs 1 --bin  ./test/dut/dummyDut
+> icetea --tc test_cmdline --tcdir examples --type process --gdbs 1 --bin  ./test/dut/dummyDut
 > gdb  ./test/dut/dummyDut --eval-command="target remote localhost:2345"
 ```
 
@@ -152,10 +152,10 @@ To analyse memory leaks with valgrind:
 
 **Note:** You have to install [valgrind](http://valgrind.org) first (`apt-get install valgrind`)
 ```
-> icedtea --tc test_cmdline --tcdir examples --type process --valgrind --valgrind_tool memcheck --bin  ./test/dut/dummyDut
+> icetea --tc test_cmdline --tcdir examples --type process --valgrind --valgrind_tool memcheck --bin  ./test/dut/dummyDut
 ```
 
-## Running unit tests with *IcedTea*
+## Running unit tests with *Icetea*
 
 To build a test application for DUT and execute the test:
 
@@ -167,19 +167,19 @@ To build a test application for DUT and execute the test:
 To generate a coverage report (excluding plugins):
 
 ```
-> coverage html --include "icedtea_lib/*" --omit "icedtea_lib/Plugin/plugins/*"
+> coverage html --include "icetea_lib/*" --omit "icetea_lib/Plugin/plugins/*"
 ```
 
-To run unit tests for plugins that ship with IcedTea:
+To run unit tests for plugins that ship with Icetea:
 
 ```
-> coverage run -m unittest discover -s icedtea_lib/Plugin/plugins/plugin_tests
+> coverage run -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests
 ```
 
 To generate a coverage reports for plugin unit tests run:
 
 ```
-> coverage html --include "icedtea_lib/Plugin/plugins/*" --omit "icedtea_lib/Plugin/plugins/plugin_tests/*"
+> coverage html --include "icetea_lib/Plugin/plugins/*" --omit "icetea_lib/Plugin/plugins/plugin_tests/*"
 ```
 
 ### Dependencies

@@ -3,7 +3,7 @@ def setBuildStatus(String state, String context, String message) {
         $class: "GitHubCommitStatusSetter",
         reposSource: [
             $class: "ManuallyEnteredRepositorySource",
-            url: "https://github.com/ARMmbed/icedtea.git"
+            url: "https://github.com/ARMmbed/icetea.git"
         ],
         contextSource: [
             $class: "ManuallyEnteredCommitContextSource",
@@ -71,7 +71,8 @@ def baseBuild(String platform) {
     setBuildStatus('PENDING', "${pluginBuildName}", 'plugin tests start')
     try {
         stage("${pluginBuildName}") {
-            execute 'coverage run --parallel-mode -m unittest discover -s icedtea_lib/Plugin/plugins/plugin_tests -v'
+            execute 'coverage run --parallel-mode -m unittest discover -s
+            icetea_lib/Plugin/plugins/plugin_tests -v'
         }
         setBuildStatus('SUCCESS', "${pluginBuildName}", 'plugin tests success')
     } catch (Exception e) {
@@ -83,8 +84,8 @@ def baseBuild(String platform) {
 
     // Generate Coverage report
     execute 'coverage combine --append'
-    execute "coverage html --include='*icedtea_lib*' --directory=log_${platform}"
-    execute "coverage xml --include='*icedtea_lib*' -o log_${platform}/coverage.xml"
+    execute "coverage html --include='*icetea_lib*' --directory=log_${platform}"
+    execute "coverage xml --include='*icetea_lib*' -o log_${platform}/coverage.xml"
 
 
     // Archive artifacts
@@ -155,7 +156,7 @@ def pylint_linux_check() {
     try {
         echo "REST OF THESE ARE FOR PYLINT"
         sh 'pip install astroid pylint'
-        sh 'pylint ./setup.py ./icedtea.py ./icedtea_lib ./test ./examples > pylint.log ||  exit 0'
+        sh 'pylint ./setup.py ./icetea.py ./icetea_lib ./test ./examples > pylint.log ||  exit 0'
         setBuildStatus('SUCCESS', "${pylintBuildName}", 'done')
     } catch (Exception e) {
         // set build fail

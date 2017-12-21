@@ -16,8 +16,8 @@ limitations under the License.
 __author__ = 'joonik'
 
 import os
-from icedtea_lib.bench import Bench
-from icedtea_lib.TestStepError import TestStepFail
+from icetea_lib.bench import Bench
+from icetea_lib.TestStepError import TestStepFail
 
 class Testcase(Bench):
     def __init__(self):
@@ -27,7 +27,7 @@ class Testcase(Bench):
                        status="development",
                        type="acceptance",
                        purpose ="dummy",
-                       component=["IcedTea_ut"],
+                       component=["Icetea_ut"],
                        requirements={
                            "duts": {
                            }

@@ -1,6 +1,6 @@
-# Rest API for IcedTea
+# Rest API for Icetea
 The purpose of the extension is to provide a generic API
-for HTTP methods for IcedTea framework so that testers can
+for HTTP methods for Icetea framework so that testers can
 develop and run test for applications that host a HTTP web service.
 
 The extension is built on top of the python requests library
@@ -14,9 +14,9 @@ The API is built into two parts:
 
 * a simple wrapper that is used to extend
 the Bench class with a link to the HttpApi class
-[here](../icedtea_lib/Plugin/plugins/HttpApi.py).
+[here](../icetea_lib/Plugin/plugins/HttpApi.py).
 * the interface logic in
-[Api.py](../icedtea_lib/tools/HTTP/Api.py)
+[Api.py](../icetea_lib/tools/HTTP/Api.py)
 
 All logic is contained in Api.py.
 

@@ -14,7 +14,7 @@ limitations under the License.
 """
 
 import sys
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 
 class Testcase(Bench):

@@ -14,7 +14,7 @@ limitations under the License.
 """
 
 import unittest
-from icedtea_lib.CliResponse import CliResponse
+from icetea_lib.CliResponse import CliResponse
 
 class TestVerify(unittest.TestCase):
 

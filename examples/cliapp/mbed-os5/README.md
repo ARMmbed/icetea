@@ -1,6 +1,6 @@
 # Example cliapp for mbed OS 5
 
-This application demonstrates how to create a very basic cliapp to use with IcedTea.
+This application demonstrates how to create a very basic cliapp to use with Icetea.
 
 ## Using the application
 

@@ -1,4 +1,4 @@
-# Test Case API for IcedTea
+# Test Case API for Icetea
 
 Each test case contains two mandatory sections:
 * test meta-information
@@ -7,7 +7,7 @@ Each test case contains two mandatory sections:
 Test meta-information defines all test related information,
 such as requirements and default values for the execution phase.
 Some of the information can be overwritten with
-`IcedTea` command line parameters, or by the test suite.
+`Icetea` command line parameters, or by the test suite.
 
 Each test case can also contain a setUp function and a tearDown function
 (rampUp and rampDown in older test cases).
@@ -22,7 +22,7 @@ tearDown are skipped and the test bench is torn down.
 A Test Case base should look like:
 
 ```python
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 class Testcase(Bench):
     def __init__(self,
@@ -62,7 +62,7 @@ what a test case should do and what is required.
 | sub_type | Type specific sub-type: Allowed values described below | "certification" |
 | purpose | Purpose of test case | "Demostrate FW TC API" |
 | specification_href | Link to specification | "http://....." |
-| component | Component under test | "IcedTea" |
+| component | Component under test | "Icetea" |
 | feature | List of features under test | [] |
 | compatible| Compatibility related configurations. Can normally be omitted. Examples below | {} |
 | execution | This section can exist if case should be skipped on every run. Add "only_type" or "platforms" key to skip testcases for certain type/platforms of duts only, | {"skip": {"value":  False, "only_type": "process", "platforms": ["K64F", "SAM4E"], "reason": "This is just dummy sample"}} |
@@ -114,7 +114,7 @@ This can normally be omitted.
 |---|---|---|
 | "automation" | by default all cases are automation compatible | { "reason" : "Reason why this is not automation compatible" } |
 | "hw" | More information on this later | {"value": True} |
-| "framework" | Name and version of framework this testcase is for | {"name": "IcedTea", "version": "1.0.0"} |
+| "framework" | Name and version of framework this testcase is for | {"name": "Icetea", "version": "1.0.0"} |
 
 ### Requirements
 The requirements field is a dictionary
@@ -146,7 +146,7 @@ It can contain dictionaries under the following keys:
             If not defined either here or in command line
             and hardware duts are used, flashing will be skipped.
             * "cli_ready_trigger", string with prefix "regex:"
-            or no prefix. If this is defined, IcedTea will
+            or no prefix. If this is defined, Icetea will
             wait until a line matching this regex or string appears
             from the DUT before sending the cli init commands.
             See [Events.md](Events.md) for more details.
@@ -238,7 +238,7 @@ A testcase can take advantage of the built-in error
 types of the Bench class. These are TestStepFail,
 TestStepError and InconclusiveError.
 These errors can be imported for use
-from icedtea_lib.TestStepError module.
+from icetea_lib.TestStepError module.
 
 **TestStepFail**
 A testcase that raises this Exception will automatically
@@ -342,7 +342,7 @@ break_in_fail=True)
 ## Asserts
 Several assertions are available as plugins to the Bench class, or as
 functions you can import and use in your test cases. These asserts
-are implemented in [asserts.py](../icedtea_lib/tools/asserts.py).
+are implemented in [asserts.py](../icetea_lib/tools/asserts.py).
 These asserts usually raise TestStepFail if the assertion fails
 or an AttributeError if the asserted expression was not of correct type.
 
@@ -386,7 +386,7 @@ The following asserts are available:
 
 
 ## Multiple cases sharing setup and teardown
-IcedTea contains a decorator called test_case which can be used
+Icetea contains a decorator called test_case which can be used
 to implement multiple testcases that have
 the same setup and teardown steps.
 By using this decorator several testcases can be

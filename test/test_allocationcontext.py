@@ -14,12 +14,12 @@ limitations under the License.
 """
 
 import unittest
-from icedtea_lib.AllocationContext import AllocationContext, AllocationContextList
+from icetea_lib.AllocationContext import AllocationContext, AllocationContextList
 import logging
 import mock
 
-from icedtea_lib.DeviceConnectors.Dut import DutConnectionError
-from icedtea_lib.ResourceProvider.exceptions import ResourceInitError
+from icetea_lib.DeviceConnectors.Dut import DutConnectionError
+from icetea_lib.ResourceProvider.exceptions import ResourceInitError
 
 
 class AllocContextTestcase(unittest.TestCase):
@@ -110,8 +110,8 @@ class AllocContextListTestcase(unittest.TestCase):
         d2.close_dut.assert_called()
         d2.close_connection.assert_called()
 
-    @mock.patch("icedtea_lib.AllocationContext.os.path.isfile")
-    @mock.patch("icedtea_lib.AllocationContext.AllocationContextList.get_build")
+    @mock.patch("icetea_lib.AllocationContext.os.path.isfile")
+    @mock.patch("icetea_lib.AllocationContext.AllocationContextList.get_build")
     def test_check_flashing_need(self, mock_get_build, mock_isfile):
         con_list = AllocationContextList(self.nulllogger)
         mock_get_build.return_value = "test_name.bin"

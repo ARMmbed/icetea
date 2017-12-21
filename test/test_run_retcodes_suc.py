@@ -13,7 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 class Testcase(Bench):
     def __init__(self):
@@ -23,7 +23,7 @@ class Testcase(Bench):
                        status="development",
                        type="acceptance",
                        purpose = "dummy",
-                       component=["IcedTea_ut"],
+                       component=["Icetea_ut"],
                        requirements={
                            "duts": {
                                '*': { #requirements for all nodes

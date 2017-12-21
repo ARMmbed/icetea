@@ -14,7 +14,7 @@ limitations under the License.
 
 Sample test case
 
-This Sample test case purpose is to show how to implement new test cases with IcedTea -framework.
+This Sample test case purpose is to show how to implement new test cases with Icetea -framework.
 Framework itself manage Test Bench with given parameters ( Bench.__init__(...) ). With those parameters,
 user can manage all TC related and required details, like what is TC name, status and type, what is purpose,
 how many devices it needs etc.
@@ -31,14 +31,14 @@ test case execution with FAILURE -status (retcode != 0).
 """
 
 # Import Bench Class
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 # All TC related stuff should be inside Testcase class
 class Testcase(Bench):
     def __init__(self):
         Bench.__init__(self,
                        name="sample",  # short name for testcase, have to be unique,
-                       # e.g. "icedtea-sample"
+                       # e.g. "icetea-sample"
                        title="Smoke sample test",  # short title
 
                        # Implementation Status
@@ -91,9 +91,9 @@ class Testcase(Bench):
                                # there will be more information later.
                            },
                            "framework": {
-                               "name": "icedtea",
+                               "name": "icetea",
                                # Version of framework required.
-                               # This will be checked if you run icedtea with --check_version.
+                               # This will be checked if you run icetea with --check_version.
                                "version": ">0.3.2"
                                # Allowed values in semantic version format. See semver.org.
                            }

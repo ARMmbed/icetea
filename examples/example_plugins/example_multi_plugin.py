@@ -17,7 +17,7 @@ It demonstrated the implementation of external service type plugins and response
 """
 
 
-from icedtea_lib.Plugin.PluginBase import PluginBase
+from icetea_lib.Plugin.PluginBase import PluginBase
 
 
 class ExamplePlugin(PluginBase):

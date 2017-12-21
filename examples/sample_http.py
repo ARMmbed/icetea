@@ -15,7 +15,7 @@ limitations under the License.
 Testcase for demonstrating usage of HttpApi plugin.
 """
 
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 
 class Testcase(Bench):

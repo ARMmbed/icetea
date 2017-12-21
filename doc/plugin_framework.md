@@ -1,5 +1,5 @@
 # Plugin framework
-IcedTea implements a plugin framework that allows users to
+Icetea implements a plugin framework that allows users to
 develop their own features for select parts of the test framework.
 
 This plugin framework is meant to replace the previous extension and
@@ -7,14 +7,14 @@ extapps. The framework is still heavily under development and should
 be considered an alpha-level feature at this point in time.
 
 ## Enabling plugins
-IcedTea comes stock with a set of default plugins, which are
-located in icedtea_lib/Plugin/plugins. These plugins are always
+Icetea comes stock with a set of default plugins, which are
+located in icetea_lib/Plugin/plugins. These plugins are always
 automatically enabled. These default plugins are defined
-in icedtea_lib/Plugin/plugins/default_plugins.py
+in icetea_lib/Plugin/plugins/default_plugins.py
 
 To enable custom plugins, you can place them in
 a location of your choosing (must contain an __init__.py) and tell
-IcedTea the path to a file, which contains the required import
+Icetea the path to a file, which contains the required import
 statements and a dictionary with name plugins_to_load,
 which maps the names of the custom plugins to the imported classes.
 
@@ -34,8 +34,8 @@ plugins_to_load={
 }
 ```
 
-This file defaults to icedtea_lib/Plugin/plugins/plugins_to_load.py and
-can be set by giving IcedTea the path
+This file defaults to icetea_lib/Plugin/plugins/plugins_to_load.py and
+can be set by giving Icetea the path
 with the plugin_path cli argument.
 
 ## Plugin types
@@ -49,7 +49,7 @@ Currently the test case level plugins support three types of plugins:
 * Parsers for implementing custom response parsers.
 * Bench extension for implementing new features that attach user defined
 functionality to the test bench so they can be accessed from test cases.
-* External services, which can be started by IcedTea for use during
+* External services, which can be started by Icetea for use during
 test runs.
 
 Each plugin can implement one or several of these types.
@@ -67,7 +67,7 @@ reporters, resource management and logging. Of these, only resource
 management via allocators is implemented at present.
 
 ## PluginBase
-PluginBase is the base module for all plugins used by IcedTea.
+PluginBase is the base module for all plugins used by Icetea.
 It contains the classes used to define the plugin types.
 The two classes contained in PluginBase module are PluginBase, which is
 the base class for test case level plugins, and RunPluginBase, which is
@@ -121,11 +121,11 @@ described below.
 
 ### Response parsers
 Response parsers are meant for implementing custom response parsers
-for IcedTea. The parsers that are registered to Bench are
+for Icetea. The parsers that are registered to Bench are
 called every time a line is received from a DUT and they should return a
 dictionary of desired information from the matched line. Examples
 can be found from
-[default parsers](../icedtea_lib/Plugin/plugins/default_parsers.py)
+[default parsers](../icetea_lib/Plugin/plugins/default_parsers.py)
 
 #### Implementing a data parser
 To implement a data parser, you need to create a class,
@@ -168,7 +168,7 @@ plugin might need to function and to store the bench reference should
 your plugin need some of the bench APIs.
 
 ### External Services
-During test bench initialization, IcedTea can look for and start
+During test bench initialization, Icetea can look for and start
 external services you application or your tests might require.
 These services are started before the test case itself starts, during
 the test bench setup phase. A reference to the instance of the extapp
@@ -193,7 +193,7 @@ The init function also needs to save the service name from arguments
 into attribute name.
 
 ### Allocator
-Allocators are utilities used by the IcedTea ResourceProvider class
+Allocators are utilities used by the Icetea ResourceProvider class
 to allocate resources needed by the test bench. These resources are
 usually devices or processes being tested (DUT:s). The plugin framework
 provides a way to implement custom allocators so that developers can
@@ -202,7 +202,7 @@ utilize their own resource management solutions.
 #### Implementing an allocator
 Allocators are implemented as global plugins, which means that only one
 allocator can be used during a run. The used allocator can be selected
-from the IcedTea cli using parameter --allocator.
+from the Icetea cli using parameter --allocator.
 The actual allocator plugin implementation requires two parts:
 The plugin and the allocator.
 
@@ -214,11 +214,11 @@ that are searched through when selecting the allocator to use based on
 the --allocator cli parameter.
 
 The actual allocator class needs to inherit the
-[BaseAllocator](../icedtea_lib/ResourceProvider/Allocators/BaseAllocator.py)
+[BaseAllocator](../icetea_lib/ResourceProvider/Allocators/BaseAllocator.py)
 class and implement at least the allocate-function defined there.
 
 ## Examples
 Examples of different types of plugins can be found as generic examples
 in the examples-folder in the repository root. More detailed examples
 can be seen in the default plugins implemented in
-icedtea_lib/Plugin/plugins.
+icetea_lib/Plugin/plugins.

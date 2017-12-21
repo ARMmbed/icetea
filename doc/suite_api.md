@@ -1,5 +1,5 @@
-# Suite API for IcedTea
-IcedTea supports suites in json formatted files.
+# Suite API for Icetea
+Icetea supports suites in json formatted files.
 These files should contain only the json document
 and should end in .json.
 

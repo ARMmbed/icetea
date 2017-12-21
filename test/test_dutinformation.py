@@ -15,7 +15,7 @@ limitations under the License.
 
 import unittest
 
-from icedtea_lib.DeviceConnectors.DutInformation import DutInformationList, DutInformation
+from icetea_lib.DeviceConnectors.DutInformation import DutInformationList, DutInformation
 
 
 class DutInfoTestcase(unittest.TestCase):

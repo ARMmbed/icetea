@@ -16,7 +16,7 @@ limitations under the License.
 import unittest
 import mock
 
-from icedtea_lib.DeviceConnectors.DutSerial import DutSerial
+from icetea_lib.DeviceConnectors.DutSerial import DutSerial
 
 
 class MockArgspec(object):
@@ -27,11 +27,11 @@ class MockArgspec(object):
 class DutSerialTestcase(unittest.TestCase):
 
     # Mock base class
-    @mock.patch("icedtea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
-    @mock.patch("icedtea_lib.DeviceConnectors.DutSerial.inspect")
-    @mock.patch("icedtea_lib.DeviceConnectors.DutSerial.get_resourceprovider_logger")
-    @mock.patch("icedtea_lib.DeviceConnectors.DutSerial.Flash")
-    @mock.patch("icedtea_lib.DeviceConnectors.DutSerial.Build")
+    @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
+    @mock.patch("icetea_lib.DeviceConnectors.DutSerial.inspect")
+    @mock.patch("icetea_lib.DeviceConnectors.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.DeviceConnectors.DutSerial.Flash")
+    @mock.patch("icetea_lib.DeviceConnectors.DutSerial.Build")
     def test_flasher_logger_insert(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
                                    mock_bench_logger):
         mock_inspect.getargspec = mock.MagicMock()

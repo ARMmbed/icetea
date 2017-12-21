@@ -14,8 +14,8 @@ limitations under the License.
 """
 
 import unittest
-from icedtea_lib.Searcher import verifyMessage
-from icedtea_lib.Searcher import Invert
+from icetea_lib.Searcher import verifyMessage
+from icetea_lib.Searcher import Invert
 
 class TestVerify(unittest.TestCase):
     def test_default(self):

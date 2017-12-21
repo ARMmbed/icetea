@@ -1,15 +1,15 @@
-# IcedTea setup and first time use guide
+# Icetea setup and first time use guide
 This document is a walkthrough to the core features of
-IcedTea test framework. The document will take you through
-installation, running unit test for IcedTea and running tests with
-IcedTea.
+Icetea test framework. The document will take you through
+installation, running unit test for Icetea and running tests with
+Icetea.
 
 To run the steps outlined in this document, we expect the user
 to have a Linux environment. For further support for Windows users
 please refer to other documents in this repository.
 
 ## Pre-requisites
-To use IcedTea effectively, we expect the user and his/her setup
+To use Icetea effectively, we expect the user and his/her setup
 to fulfill the following requirements:
 * Basic knowledge of Python programming.
 * Python 2.7 environment running on a linux system.
@@ -29,13 +29,13 @@ This document uses the following terms and abbreviations:
 
 | Term | Meaning |
 |---| --- |
-| IcedTea | Host side test framework, "the product". |
+| Icetea | Host side test framework, "the product". |
 | CLI | Command line interface. |
 | cliapp | Device side application, which provides a command line interface. |
 | DUT | Device under test. |
 
-## About IcedTea
-IcedTea is a host side test framework written using Python
+## About Icetea
+Icetea is a host side test framework written using Python
 The biggest difference to other mbed OS related test frameworks,
 such as greentea, is that the host side application is the driver
 for the tests and controls the entire test execution phase.
@@ -46,10 +46,10 @@ More details are available in the repository documentation.
 ### Test case example for Hardware and process
 The basic structure, requirements and features of a test case are
 described in this section using a simple example test case that we
-will use later for verifying that IcedTea works as expected.
+will use later for verifying that Icetea works as expected.
 
 ```
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 
 class Testcase(Bench):
@@ -86,11 +86,11 @@ class Testcase(Bench):
         pass
 ```
 
-The code above is an example of what a test case for IcedTea looks like.
+The code above is an example of what a test case for Icetea looks like.
 It is a copy from [test_cmdline.py](examples/test_cmdline.py).
 
 The test case is implemented as a class that subclasses the Bench
-class from [icedtea_lib.bench](icedtea_lib/bench.py) and implements
+class from [icetea_lib.bench](icetea_lib/bench.py) and implements
 the init method as well as the case method. The two other methods
 defined in this example test case are optional.
 
@@ -121,7 +121,7 @@ as detected by mbed-ls.
 
 ### Test case example for REST Api
 ```
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 
 class Testcase(Bench):
@@ -159,7 +159,7 @@ a HTTP server or service that the test can access with HTTP requests.
 The test case in question can be found in [sample_http.py](examples/sample_http.py).
 
 The HttpApi tool used here is a plugin that extends its functionality
-to the test bench. The api can be found in [tools](icedtea_lib/tools/HTTP).
+to the test bench. The api can be found in [tools](icetea_lib/tools/HTTP).
 The plugin system is documented in
 [plugin_framework.md](doc/plugin_framework.md).
 
@@ -194,8 +194,8 @@ method needs to be present in the test case class and it should perform
 all logic needed to run the test case and assert the results.
 
 In this test case we first use the generic cli command interface of
-IcedTea to send the command "echo hello world" to device with index 1
-(note, dut indexes start from 1 in IcedTea). We include a 5 second timeout.
+Icetea to send the command "echo hello world" to device with index 1
+(note, dut indexes start from 1 in Icetea). We include a 5 second timeout.
 The command is successfull if we receive retcode: 0 from the dut during
 this 5 second period after sending the command.
 After the command has finished, we use the same command interface
@@ -205,7 +205,7 @@ timeout (which is the default).
 
 These calls return a response object, which contains the traces received
 during the command, possible parsed data from the response traces returned
-by IcedTea response parsers etc.
+by Icetea response parsers etc.
 
 #### Pre- and post steps
 The test bench (Bench class) implements some default pre- and post-steps
@@ -215,7 +215,7 @@ allocation of resources for the test, releasing of said resources,
 reporting and many others.
 
 The most common configurable step here are cli initialization commands.
-IcedTea runs a set of default commands for each dut it initializes.
+Icetea runs a set of default commands for each dut it initializes.
 These commands are
 ```
 set --retcode true
@@ -234,15 +234,15 @@ post_cli_cmds keys in test case requirements.
 See [tc_api.md](doc/tc_api.md) for more information.
 
 ## Developing your own cliapp
-IcedTea was originally designed with the assumption that the
-tested application contains a command line interface. IcedTea comes
+Icetea was originally designed with the assumption that the
+tested application contains a command line interface. Icetea comes
 with simple cliapp examples for both mbed OS 3 and 5. This document
 also contains some guidelines and snippets for developing your own
 cliapps.
 
 ### What is a cliapp?
 Any application based on the command line interface can be a valid test
-application. There are some basic requirements that IcedTea expects
+application. There are some basic requirements that Icetea expects
 from a cliapp, such as a set of basic commands. These requirements are:
 * Each tx/rx line must be terminated by <cr><lf> or at least <lf>.
 * Following commands:
@@ -252,8 +252,8 @@ from a cliapp, such as a set of basic commands. These requirements are:
     * set --vt100 on (use vt100 control characters)
     * set --retcode false (stop printing retcodes)
     * set --retcode true (print retcode after each command)
-* IcedTea assumes that a communication block is a single line
-* IcedTea assumes that a commands ends on a retcode print:
+* Icetea assumes that a communication block is a single line
+* Icetea assumes that a commands ends on a retcode print:
     * retcode 0\r\n
 
 The commands described above are expected default behaviours at the
@@ -311,27 +311,27 @@ mbed OS
 https://github.com/ARMmbed/mbed-os/
 
 ## Step-by-step for first runs
-1. Familiarize yourself with IcedTea documentation
-    *   https://github.com/ARMmbed/icedtea/blob/master/README.md
-    *   https://github.com/ARMmbed/icedtea/blob/master/doc/README.md
-    *   https://github.com/ARMmbed/icedtea/blob/master/doc/icedtea.md
-    *   https://github.com/ARMmbed/icedtea/blob/master/doc/cli.md
-    *   https://github.com/ARMmbed/icedtea/blob/master/doc/tc_api.md
-2. Install IcedTea
-    * Clone repository from github: https://github.com/armmbed/icedtea
-    * Follow installation instructions: https://github.com/ARMmbed/icedtea#installation
+1. Familiarize yourself with Icetea documentation
+    *   https://github.com/ARMmbed/icetea/blob/master/README.md
+    *   https://github.com/ARMmbed/icetea/blob/master/doc/README.md
+    *   https://github.com/ARMmbed/icetea/blob/master/doc/icetea.md
+    *   https://github.com/ARMmbed/icetea/blob/master/doc/cli.md
+    *   https://github.com/ARMmbed/icetea/blob/master/doc/tc_api.md
+2. Install Icetea
+    * Clone repository from github: https://github.com/armmbed/icetea
+    * Follow installation instructions: https://github.com/ARMmbed/icetea#installation
 3. Install coverage and mock
     * pip install coverage mock
-4. Run unit tests for IcedTea
+4. Run unit tests for Icetea
     * coverage run unittest discover -s test
-    * coverage run unittest discover -s icedtea_lib/Plugin/plugins/plugin_tests
+    * coverage run unittest discover -s icetea_lib/Plugin/plugins/plugin_tests
     * You should see many passed tests and perhaps some skipped tests,
     depending on your setup.
 5. Test using a process device
-    * Compile "dummyDut" by calling "make" in IcedTea root folder.
+    * Compile "dummyDut" by calling "make" in Icetea root folder.
     * Execute simple smoke test:
     ```
-    icedtea --tcdir examples --tc test_cmdline --type process --bin test/dut/dummyDut
+    icetea --tcdir examples --tc test_cmdline --type process --bin test/dut/dummyDut
     ```
     * Check that the test case passed from the console report.
 6. Implement a cliapp with help from examples available in
@@ -340,7 +340,7 @@ https://github.com/ARMmbed/mbed-os/
     * Connect your K64F to your host
     * Execute the same test against your cliapp and device:
     ```
-    icedtea --tcdir examples --tc test_cmdline --type hardware --bin mbed-os-cliapp.bin
+    icetea --tcdir examples --tc test_cmdline --type hardware --bin mbed-os-cliapp.bin
     ```
     * You should see similar results as in the previous test with the
     dummy process dut.

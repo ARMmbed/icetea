@@ -13,10 +13,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 '''
-IcedTea test case command and response public API usage example. For details, please check 
+Icetea test case command and response public API usage example. For details, please check 
 doc/tc_api.md
 
 function:
@@ -61,11 +61,11 @@ class Testcase(Bench):
     def __init__(self):
         Bench.__init__(self,
                        name="sample_command_response",
-                       title="IcedTea command and response APIs example usage",
+                       title="Icetea command and response APIs example usage",
                        status="development",
                        type="smoke",
-                       purpose="show an example usage of IcedTea command and response APIs",
-                       component=["IcedTea"],
+                       purpose="show an example usage of Icetea command and response APIs",
+                       component=["Icetea"],
                        requirements={
                             "duts": {
                                 '*': {

@@ -13,10 +13,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 '''
-IcedTea test case example: Command and response public API
+Icetea test case example: Command and response public API
 
 Command: async:
                Send command but wait for response in parallel. When sending next command previous response will be wait.
@@ -34,7 +34,7 @@ class Testcase(Bench):
                        status="development",
                        type="smoke",
                        purpose="show an example usage of async command",
-                       component=["IcedTea"],
+                       component=["Icetea"],
                        requirements={
                             "duts": {
                                 '*': {

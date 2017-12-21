@@ -16,8 +16,8 @@ This is an example plugin that implements no real functionality.
 It demonstrated the implementation of a BenchExtension type plugin.
 """
 
-from icedtea_lib.Plugin.PluginBase import PluginBase
-from icedtea_lib.Plugin.PluginManager import PluginException
+from icetea_lib.Plugin.PluginBase import PluginBase
+from icetea_lib.Plugin.PluginManager import PluginException
 
 
 class BenchPlugin(PluginBase):

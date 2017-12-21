@@ -18,7 +18,7 @@ import sys
 from distutils.core import setup
 from setuptools import find_packages
 
-DESCRIPTION = "IcedTea - test framework"
+DESCRIPTION = "Icetea - test framework"
 OWNER_NAMES = 'Jussi Vatjus-Anttila'
 OWNER_EMAILS = 'jussi.vatjus-anttila@arm.com'
 
@@ -27,7 +27,7 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-setup(name='icedtea',
+setup(name='icetea',
       version='1.0.0',
       description=DESCRIPTION,
       long_description=read('README.md'),
@@ -35,8 +35,8 @@ setup(name='icedtea',
       author_email=OWNER_EMAILS,
       maintainer=OWNER_NAMES,
       maintainer_email=OWNER_EMAILS,
-      url='https://github.com/ARMmbed/icedtea.git',
-      packages=find_packages(include=["icedtea_lib.*", "icedtea_lib"]),
+      url='https://github.com/ARMmbed/icetea.git',
+      packages=find_packages(include=["icetea_lib.*", "icetea_lib"]),
       package_data={'': ['tc_schema.json']},
       include_package_data=True,
       license="(R) ARM",
@@ -47,7 +47,7 @@ setup(name='icedtea',
       test_suite = 'test',
       entry_points={
           "console_scripts": [
-              "icedtea=icedtea_lib:icedtea_main",
+              "icetea=icetea_lib:icedea_main",
           ]
       },
       dependency_links=["git+https://github.com/ARMmbed/mbed-flasher#egg=mbed-flasher-0.4.5"],

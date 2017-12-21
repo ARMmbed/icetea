@@ -19,8 +19,8 @@ from time import sleep
 import mock
 from threading import Event as EventFlag
 
-from icedtea_lib.Events.EventMatcher import EventMatcher
-from icedtea_lib.Events.Generics import EventTypes, Event, Observer
+from icetea_lib.Events.EventMatcher import EventMatcher
+from icetea_lib.Events.Generics import EventTypes, Event, Observer
 
 
 class MockLineProvider(object):

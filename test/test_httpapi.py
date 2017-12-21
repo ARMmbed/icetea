@@ -21,7 +21,7 @@ import mock
 from requests.exceptions import RequestException
 from requests import Response
 
-from icedtea_lib.tools.HTTP.Api import HttpApi
+from icetea_lib.tools.HTTP.Api import HttpApi
 
 # Schema to make sure header fields are overwritten
 schema = {
@@ -78,7 +78,7 @@ class APITestCase(unittest.TestCase):
         #Assert that new headers are the same as reference
         self.assertDictEqual(heads, ref, msg="Header merging does not work correctly")
 
-    @mock.patch("icedtea_lib.tools.HTTP.Api.requests.get")
+    @mock.patch("icetea_lib.tools.HTTP.Api.requests.get")
     def test_url_combine(self, mock_get):
         self.http = HttpApi(self.host2)
         self.http.get("/test_path")
@@ -98,7 +98,7 @@ class APITestCase(unittest.TestCase):
         self.http.get("/test_path")
         mock_get.assert_called_with(self.host + "/test_path", {}, headers={})
 
-    @mock.patch("icedtea_lib.tools.HTTP.Api.requests.get")
+    @mock.patch("icetea_lib.tools.HTTP.Api.requests.get")
     def test_get(self, mock_requests_get):
         #First test successfull get request. Assert if get was called
         self.http = HttpApi(self.host)
@@ -124,7 +124,7 @@ class APITestCase(unittest.TestCase):
         resp = self.http.get(path3)
         self.assertTrue(mock_requests_get.called, "Failed to call requests.get")
 
-    @mock.patch("icedtea_lib.tools.HTTP.Api.requests.post")
+    @mock.patch("icetea_lib.tools.HTTP.Api.requests.post")
     def test_post(self, mock_requests_post):
         #Successfull post
         self.http = HttpApi(self.host)
@@ -151,7 +151,7 @@ class APITestCase(unittest.TestCase):
         resp = self.http.post(path3, json=json)
         self.assertTrue(mock_requests_post.called, "Failed to call requests.post")
 
-    @mock.patch("icedtea_lib.tools.HTTP.Api.requests.put")
+    @mock.patch("icetea_lib.tools.HTTP.Api.requests.put")
     def test_put(self, mock_requests_put):
         #Successfull put
         self.http = HttpApi(self.host)
@@ -178,7 +178,7 @@ class APITestCase(unittest.TestCase):
         resp = self.http.put(path3, data=data)
         self.assertTrue(mock_requests_put.called, "Failed to call requests.put")
 
-    @mock.patch("icedtea_lib.tools.HTTP.Api.requests.patch")
+    @mock.patch("icetea_lib.tools.HTTP.Api.requests.patch")
     def test_patch(self, mock_requests_patch):
         # Successfull patch
         self.http = HttpApi(self.host)
@@ -205,7 +205,7 @@ class APITestCase(unittest.TestCase):
         resp = self.http.patch(path3, data=data)
         self.assertTrue(mock_requests_patch.called, "Failed to call requests.patch")
 
-    @mock.patch("icedtea_lib.tools.HTTP.Api.requests.delete")
+    @mock.patch("icetea_lib.tools.HTTP.Api.requests.delete")
     def test_delete(self, mock_requests_delete):
         #Successfull delete
         self.http = HttpApi(self.host)
@@ -231,7 +231,7 @@ class APITestCase(unittest.TestCase):
         resp = self.http.delete(path3)
         self.assertTrue(mock_requests_delete.called, "Failed to call requests.delete")
 
-    @mock.patch("icedtea_lib.tools.HTTP.Api.HttpApi.get")
+    @mock.patch("icetea_lib.tools.HTTP.Api.HttpApi.get")
     def test_huge_binary_content(self, mocked_get):
         var = os.urandom(10000000)
         for i in range(6):

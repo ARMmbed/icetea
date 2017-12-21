@@ -21,10 +21,10 @@ if sys.version_info[0] == 2:  # Python2
     import mock
 else:                         # Python3
     from unittest import mock
-from icedtea_lib.wireshark import NwPacket
-from icedtea_lib.wireshark import NwPacketManager
-from icedtea_lib.wireshark import Wireshark
-from icedtea_lib.TestStepError import TestStepError
+from icetea_lib.wireshark import NwPacket
+from icetea_lib.wireshark import NwPacketManager
+from icetea_lib.wireshark import Wireshark
+from icetea_lib.TestStepError import TestStepError
 
 class TestVerify(unittest.TestCase):
 
@@ -162,7 +162,7 @@ class TestVerify(unittest.TestCase):
             }}
         ))
 
-    @mock.patch('icedtea_lib.LogManager.get_bench_logger')
+    @mock.patch('icetea_lib.LogManager.get_bench_logger')
     def test_packetMangager_happyday(self, loggerpatch):
         loggerpatch.return_value = mock.MagicMock()
         p1 = open('test/data/BeaconRequest.txt', 'r').read()
@@ -178,7 +178,7 @@ class TestVerify(unittest.TestCase):
             }
         }] ) is None)
 
-    @mock.patch('icedtea_lib.LogManager.get_bench_logger')
+    @mock.patch('icetea_lib.LogManager.get_bench_logger')
     def test_packetMangager_sadday(self, loggerpatch):
         loggerpatch.return_value = mock.MagicMock()
         p1 = open('test/data/BeaconRequest.txt', 'r').read()
@@ -202,7 +202,7 @@ class TestVerify(unittest.TestCase):
                 }
             }]) is None)
 
-    @mock.patch('icedtea_lib.LogManager.get_bench_logger')
+    @mock.patch('icetea_lib.LogManager.get_bench_logger')
     def test_packetCounter6lowpan(self, loggerpatch):
         loggerpatch.return_value = mock.MagicMock()
         p1 = open('test/data/BeaconRequest2.txt', 'r').read()

@@ -16,9 +16,9 @@ limitations under the License.
 import os
 import unittest
 
-from icedtea_lib.TestSuite.TestcaseFilter import TestcaseFilter
-from icedtea_lib.TestSuite.TestcaseContainer import TestcaseContainer
-from icedtea_lib.IcedTeaManager import TCMetaSchema
+from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter
+from icetea_lib.TestSuite.TestcaseContainer import TestcaseContainer
+from icetea_lib.IceteaManager import TCMetaSchema
 
 class TCFilterTestcase(unittest.TestCase):
 

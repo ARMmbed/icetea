@@ -19,8 +19,8 @@ import threading
 import logging
 
 
-from icedtea_lib.bench import Bench, ReturnCodes
-from icedtea_lib.TestStepError import TestStepFail, TestStepError, InconclusiveError, TestStepTimeout
+from icetea_lib.bench import Bench, ReturnCodes
+from icetea_lib.TestStepError import TestStepFail, TestStepError, InconclusiveError, TestStepTimeout
 from test.tests.test_tcTearDown import Testcase as TearDownTest
 
 
@@ -222,8 +222,8 @@ class TestVerify(unittest.TestCase):
         TestingTestcase().run()
         self.assertEqual(n, threading.active_count())
 
-    @mock.patch('icedtea_lib.bench.resource_provider', create=True)
-    @mock.patch('icedtea_lib.bench.executeCommand', create=True)
+    @mock.patch('icetea_lib.bench.resource_provider', create=True)
+    @mock.patch('icetea_lib.bench.executeCommand', create=True)
     def test_precmds_to_two_duts(self, mock_ec, mock_rp):
         tc = Bench()
         tc._resource_provider = mock.Mock()
@@ -242,8 +242,8 @@ class TestVerify(unittest.TestCase):
                                             mock.call(2, "first2"), mock.call(2, "second2"),
                                             mock.call("*", "somecommand")])
 
-    @mock.patch('icedtea_lib.bench.resource_provider', create=True)
-    @mock.patch('icedtea_lib.bench.executeCommand', create=True)
+    @mock.patch('icetea_lib.bench.resource_provider', create=True)
+    @mock.patch('icetea_lib.bench.executeCommand', create=True)
     def test_postcmds_to_two_duts(self, mock_ec, mock_rp):
         tc = Bench()
         tc._resource_provider = mock.Mock()

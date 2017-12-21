@@ -17,13 +17,13 @@ import mock
 import unittest
 
 
-from icedtea_lib.DeviceConnectors.Dut import Dut
-from icedtea_lib.TestStepError import TestStepError, TestStepTimeout
+from icetea_lib.DeviceConnectors.Dut import Dut
+from icetea_lib.TestStepError import TestStepError, TestStepTimeout
 
 
 class DutTestcase(unittest.TestCase):
 
-    @mock.patch("icedtea_lib.DeviceConnectors.Dut.LogManager")
+    @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager")
     def test_executionready_wait_skip(self, mock_log):
         d = Dut("test_dut")
         with mock.patch.object(d, "response_received") as mock_r:
@@ -42,7 +42,7 @@ class DutTestcase(unittest.TestCase):
             with self.assertRaises(TestStepError):
                 d._wait_for_exec_ready()
 
-    @mock.patch("icedtea_lib.DeviceConnectors.Dut.LogManager")
+    @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager")
     def test_executionready_wait_timeout(self, mock_log):
         d = Dut("test_dut")
         with mock.patch.object(d, "response_received") as mock_r:
@@ -54,7 +54,7 @@ class DutTestcase(unittest.TestCase):
                 with self.assertRaises(TestStepTimeout):
                     d._wait_for_exec_ready()
 
-    @mock.patch("icedtea_lib.DeviceConnectors.Dut.LogManager")
+    @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager")
     def test_initclihuman(self, mock_log):
         d = Dut("test_Dut")
         with mock.patch.object(d, "execute_command") as m_com:

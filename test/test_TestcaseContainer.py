@@ -19,9 +19,9 @@ import unittest
 import argparse
 import mock
 
-from icedtea_lib.TestSuite.TestcaseContainer import TestcaseContainer, TestStatus
-from icedtea_lib.Result import Result
-from icedtea_lib.bench import Bench
+from icetea_lib.TestSuite.TestcaseContainer import TestcaseContainer, TestStatus
+from icetea_lib.Result import Result
+from icetea_lib.bench import Bench
 
 
 def mock_load_tc(*args, **kwargs):
@@ -56,7 +56,7 @@ class MockInstance:
         return Result()
 
     def get_test_name(self):
-        return "IcedTea"
+        return "Icetea"
 
     def skip(self):
         return self.skip_val
@@ -70,7 +70,7 @@ class MockInstance:
 class TCContainerTestcase(unittest.TestCase):
 
     def setUp(self):
-        with open(os.path.join("./icedtea_lib", 'tc_schema.json')) as data_file:
+        with open(os.path.join("./icetea_lib", 'tc_schema.json')) as data_file:
             self.tc_meta_schema = json.load(data_file)
 
         self.args_tc = argparse.Namespace(
@@ -83,7 +83,7 @@ class TCContainerTestcase(unittest.TestCase):
             subtype=None, use_sniffer=False, valgrind=False, valgrind_tool=None, verbose=False, repeat=0, feature=None,
             suitedir="./test/suites", forceflash_once=True, forceflash=True, stop_on_failure=False, ignore_invalid_params=False)
 
-    @mock.patch("icedtea_lib.TestSuite.TestcaseContainer.loadClass")
+    @mock.patch("icetea_lib.TestSuite.TestcaseContainer.loadClass")
     def test_load_testcase_fails(self, mock_loadclass):
         tc = TestcaseContainer.find_testcases("examples.test_cmdline", "./examples", self.tc_meta_schema)[0]
         with self.assertRaises(TypeError):
@@ -100,22 +100,22 @@ class TCContainerTestcase(unittest.TestCase):
         self.assertFalse(tc._check_major_version("1.0.0", ">0.0.2"))
         self.assertFalse(tc._check_major_version("1.0.0", ">=0.0.3"))
 
-    @mock.patch("icedtea_lib.TestSuite.TestcaseContainer.get_fw_version")
+    @mock.patch("icetea_lib.TestSuite.TestcaseContainer.get_fw_version")
     def test_version_checker(self, mock_fwver):
         mock_fwver.return_value = "0.9.0"
         tc = TestcaseContainer.find_testcases("examples.test_cmdline", "examples",
                                               self.tc_meta_schema)[0]
-        self.assertIsNone(tc._check_version(MockInstance("IcedTea", "0.9.0")))
-        res = tc._check_version(MockInstance("IcedTea", "0.2.2"))
+        self.assertIsNone(tc._check_version(MockInstance("Icetea", "0.9.0")))
+        res = tc._check_version(MockInstance("Icetea", "0.2.2"))
         self.assertEqual(res.get_verdict(), "skip")
         mock_fwver.return_value = "0.2.2"
-        self.assertIsNone(tc._check_version(MockInstance("IcedTea", "<0.9.0")))
-        res = tc._check_version(MockInstance("IcedTea", ">0.9.0"))
+        self.assertIsNone(tc._check_version(MockInstance("Icetea", "<0.9.0")))
+        res = tc._check_version(MockInstance("Icetea", ">0.9.0"))
         self.assertEqual(res.get_verdict(), "skip")
         mock_fwver.return_value = "0.9.0"
-        self.assertIsNone(tc._check_version(MockInstance("IcedTea", ">=0.9.0")))
+        self.assertIsNone(tc._check_version(MockInstance("Icetea", ">=0.9.0")))
         mock_fwver.return_value = "0.9.1"
-        self.assertIsNone(tc._check_version(MockInstance("IcedTea", ">=0.9.0")))
+        self.assertIsNone(tc._check_version(MockInstance("Icetea", ">=0.9.0")))
 
     def test_check_skip(self):
         tc = TestcaseContainer.find_testcases("examples.test_cmdline", "./examples", self.tc_meta_schema)[0]
@@ -141,10 +141,10 @@ class TCContainerTestcase(unittest.TestCase):
         inst = lst[0]._create_new_bench_instance("test.testbase.dummy")
         self.assertTrue(isinstance(inst, Bench))
 
-    @mock.patch("icedtea_lib.TestSuite.TestcaseContainer.TestcaseContainer.get_instance")
-    @mock.patch("icedtea_lib.TestSuite.TestcaseContainer.TestcaseContainer._check_version")
-    @mock.patch("icedtea_lib.TestSuite.TestcaseContainer.TestcaseContainer._check_skip")
-    @mock.patch("icedtea_lib.TestSuite.TestcaseContainer.get_tc_arguments")
+    @mock.patch("icetea_lib.TestSuite.TestcaseContainer.TestcaseContainer.get_instance")
+    @mock.patch("icetea_lib.TestSuite.TestcaseContainer.TestcaseContainer._check_version")
+    @mock.patch("icetea_lib.TestSuite.TestcaseContainer.TestcaseContainer._check_skip")
+    @mock.patch("icetea_lib.TestSuite.TestcaseContainer.get_tc_arguments")
     def test_run(self, mock_parser, mock_skip, mock_version, mock_instance):
         tc = TestcaseContainer.find_testcases("examples.test_cmdline", "./examples", self.tc_meta_schema)[0]
         #Initialize mocks

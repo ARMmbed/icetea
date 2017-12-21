@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-This is a sample implementation of a cloud module that can be used with icedtea.
+This is a sample implementation of a cloud module that can be used with Icetea.
 It does nothing but provides an example of a module that could be used to store testcase results,
 campaigns, suites etc.
 
@@ -21,7 +21,7 @@ campaigns, suites etc.
 
 def create(host, port, result_converter=None, testcase_converter=None, args=None):
     """
-    Function which is called by icedtea to create an instance of the cloud client. This function
+    Function which is called by Icetea to create an instance of the cloud client. This function
     must exists.
     This function myust not return None. Either return an instance of Client or raise.
     """

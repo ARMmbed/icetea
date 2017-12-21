@@ -17,9 +17,9 @@ import unittest
 import sys
 import logging
 
-from icedtea_lib.CliResponse import CliResponse
-from icedtea_lib.CliResponseParser import ParserManager
-from icedtea_lib.Plugin.plugins.default_parsers import DefaultParsers
+from icetea_lib.CliResponse import CliResponse
+from icetea_lib.CliResponseParser import ParserManager
+from icetea_lib.Plugin.plugins.default_parsers import DefaultParsers
 
 sys.path.append('.')
 

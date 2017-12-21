@@ -13,8 +13,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench, TestStepFail
-from icedtea_lib.tools.tools import test_case
+from icetea_lib.bench import Bench, TestStepFail
+from icetea_lib.tools.tools import test_case
 
 """
     Example testcase file that implements multiple cases that share a setUp and tearDown function.

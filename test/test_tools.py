@@ -19,7 +19,7 @@ import mock
 import sys
 import os
 import re
-import icedtea_lib.tools.tools as tools
+import icetea_lib.tools.tools as tools
 from pkg_resources import DistributionNotFound
 
 class TestClass():
@@ -75,7 +75,7 @@ class TestTools(unittest.TestCase):
         v = tools.get_fw_version()
         self.assertEqual(v, version)
 
-        with mock.patch("icedtea_lib.tools.tools.require") as mocked_require:
+        with mock.patch("icetea_lib.tools.tools.require") as mocked_require:
             mocked_require.side_effect = [DistributionNotFound]
             v = tools.get_fw_version()
             self.assertEqual(v, version)

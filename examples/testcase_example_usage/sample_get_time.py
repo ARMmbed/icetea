@@ -13,10 +13,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 '''
-IcedTea test case additional function usage example.
+Icetea test case additional function usage example.
 
 function:
     self.get_time(): return time interval between current time and test case start time.
@@ -30,8 +30,8 @@ class Testcase(Bench):
                        title="get_time() functions example usage",
                        status="development",
                        type="smoke",
-                       purpose="show an example usage of IcedTea get_time() functions",
-                       component=["IcedTea"],
+                       purpose="show an example usage of Icetea get_time() functions",
+                       component=["Icetea"],
                        requirements={
                             "duts": {
                                 '*': {

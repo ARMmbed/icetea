@@ -21,10 +21,10 @@ import uuid
 import sys
 
 import jsonmerge
-import icedtea_lib.tools.file.FileUtils as FileUtils
+import icetea_lib.tools.file.FileUtils as FileUtils
 import mock
 
-from icedtea_lib.tools.file.SessionFiles import JsonFile
+from icetea_lib.tools.file.SessionFiles import JsonFile
 
 
 class FileTestCase(unittest.TestCase):
@@ -43,8 +43,8 @@ class FileTestCase(unittest.TestCase):
     '''
         FileUtils tests here
     '''
-    @mock.patch("icedtea_lib.tools.file.FileUtils.os.chdir")
-    @mock.patch("icedtea_lib.tools.file.FileUtils.os.remove")
+    @mock.patch("icetea_lib.tools.file.FileUtils.os.chdir")
+    @mock.patch("icetea_lib.tools.file.FileUtils.os.remove")
     def test_remove_file(self, mock_rm, mock_chdir):
         mock_chdir.side_effect = iter([OSError, 1, 1, 1, 1])
         mock_rm.side_effect = iter([OSError, 1])
@@ -57,8 +57,8 @@ class FileTestCase(unittest.TestCase):
         self.assertTrue(FileUtils.removeFile("testName", path_somewhere))
 
 
-    @mock.patch("icedtea_lib.tools.file.FileUtils.os.chdir")
-    @mock.patch("icedtea_lib.tools.file.FileUtils.os.rename")
+    @mock.patch("icetea_lib.tools.file.FileUtils.os.chdir")
+    @mock.patch("icetea_lib.tools.file.FileUtils.os.rename")
     def test_rename_file(self, mock_rn, mock_chdir):
         mock_chdir.side_effect = iter([OSError, 1, 1, 1, 1])
         mock_rn.side_effect = iter([OSError, 1])
@@ -107,9 +107,9 @@ class FileTestCase(unittest.TestCase):
 
         #ToDo: write malformed data
 
-    @mock.patch("icedtea_lib.tools.file.SessionFiles.JsonFile._write_json")
-    @mock.patch("icedtea_lib.tools.file.SessionFiles.os.path.exists")
-    @mock.patch("icedtea_lib.tools.file.SessionFiles.os.makedirs")
+    @mock.patch("icetea_lib.tools.file.SessionFiles.JsonFile._write_json")
+    @mock.patch("icetea_lib.tools.file.SessionFiles.os.path.exists")
+    @mock.patch("icetea_lib.tools.file.SessionFiles.os.makedirs")
     def test_write_file_errors(self, mock_mkdir, mock_exists, mock_json):
         mock_mkdir.side_effect = iter([OSError])
         mock_exists.side_effect = iter([False, True, True])

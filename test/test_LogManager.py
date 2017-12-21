@@ -16,7 +16,7 @@ limitations under the License.
 import logging
 import unittest
 import os
-from icedtea_lib.LogManager import ContextFilter, traverse_json_obj
+from icetea_lib.LogManager import ContextFilter, traverse_json_obj
 
 
 class ContextFilterTest(unittest.TestCase):

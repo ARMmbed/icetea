@@ -19,8 +19,8 @@ import mock
 import os
 import sys
 
-from icedtea_lib.Plugin.PluginManager import PluginManager, PluginException
-from icedtea_lib.Plugin.plugins.default_plugins import default_plugins
+from icetea_lib.Plugin.PluginManager import PluginManager, PluginException
+from icetea_lib.Plugin.plugins.default_plugins import default_plugins
 
 
 class PMTestcase(unittest.TestCase):
@@ -180,7 +180,7 @@ class PMTestcase(unittest.TestCase):
         sys.modules = modules
         pm.register_tc_plugins.assert_called_once()
 
-    @mock.patch("icedtea_lib.Plugin.PluginManager.importlib")
+    @mock.patch("icetea_lib.Plugin.PluginManager.importlib")
     def test_load_custom_plugin_exception(self, mock_importer):
         mock_bench = mock.MagicMock(spec=[])
         mock_parsermanager = mock.MagicMock()

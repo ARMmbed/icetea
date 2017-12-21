@@ -18,14 +18,14 @@ import json
 import os
 import mock
 
-from icedtea_lib.TestSuite.TestcaseContainer import TestcaseContainer, DummyContainer
-from icedtea_lib.TestSuite.TestcaseList import TestcaseList
+from icetea_lib.TestSuite.TestcaseContainer import TestcaseContainer, DummyContainer
+from icetea_lib.TestSuite.TestcaseList import TestcaseList
 
 
 class TCListTestcase(unittest.TestCase):
 
     def setUp(self):
-        with open(os.path.join("./icedtea_lib", 'tc_schema.json')) as data_file:
+        with open(os.path.join("./icetea_lib", 'tc_schema.json')) as data_file:
             self.tc_meta_schema = json.load(data_file)
 
     def test_append_and_len(self):
@@ -37,7 +37,7 @@ class TCListTestcase(unittest.TestCase):
         tlist.append(tc[0])
         self.assertEqual(len(tlist), 2)
 
-    @mock.patch("icedtea_lib.TestSuite.TestcaseList.TestcaseContainer.find_testcases")
+    @mock.patch("icetea_lib.TestSuite.TestcaseList.TestcaseContainer.find_testcases")
     def test_parse_local_testcases_exceptions(self, mock_finder):
         mock_finder.side_effect = [IndexError, TypeError, ValueError, ImportError, [1], [2]]
         lst = TestcaseList()
@@ -60,7 +60,7 @@ class TCListTestcase(unittest.TestCase):
         self.assertFalse(isinstance(new_list.get_list()[0], DummyContainer))
         self.assertFalse(isinstance(new_list.get_list()[2], DummyContainer))
 
-    @mock.patch("icedtea_lib.TestSuite.TestcaseList.TestcaseContainer.find_testcases")
+    @mock.patch("icetea_lib.TestSuite.TestcaseList.TestcaseContainer.find_testcases")
     def test_import_error_store(self, mock_finder):
         mock_finder.side_effect = [ImportError]
         tclist = TestcaseList()

@@ -16,7 +16,7 @@ limitations under the License.
 import random
 import unittest
 import tempfile
-from icedtea_lib.Randomize.randomize import Randomize
+from icetea_lib.Randomize.randomize import Randomize
 
 
 class RandomizeTestcase(unittest.TestCase):

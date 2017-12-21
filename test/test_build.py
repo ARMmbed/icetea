@@ -21,8 +21,8 @@ import unittest
 import mock
 import requests
 
-from icedtea_lib.build import Build
-from icedtea_lib.build import NotFoundError
+from icetea_lib.build import Build
+from icetea_lib.build import NotFoundError
 
 
 class Build_TestCase(unittest.TestCase):
@@ -68,7 +68,7 @@ class Build_TestCase(unittest.TestCase):
         self.assertEqual(build.get_type(), "http")
         self.assertTrue(build.get_data(), "\r")
 
-    @mock.patch("icedtea_lib.build.build.requests.get",
+    @mock.patch("icetea_lib.build.build.requests.get",
                 side_effect=iter([requests.exceptions.SSLError]))
     def test_build_http_error(self, mocked_get):
         build = Build.init("https://hep.com")

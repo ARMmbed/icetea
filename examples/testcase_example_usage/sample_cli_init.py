@@ -13,20 +13,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench
-from icedtea_lib.Events.EventMatcher import EventMatcher
-from icedtea_lib.Events.Generics import EventTypes
+from icetea_lib.bench import Bench
+from icetea_lib.Events.EventMatcher import EventMatcher
+from icetea_lib.Events.Generics import EventTypes
 
 
 '''
-Test case example for quick starting IcedTea. IcedTea is slow starting now, but it can be 
+Test case example for quick starting Icetea. Icetea is slow starting now, but it can be 
 configured to start quickly.
 
 Proper usage:
     "cli_ready_trigger":
         1. allowed value: string with prefix "regex:" or no prefix.
         2. Put into the Dut requirements under the "application" key.
-    IcedTea wait until a line matching this regex or string appears from the DUT before sending 
+    Icetea wait until a line matching this regex or string appears from the DUT before sending 
     the cli init commands.
 
 Mechanism behind:
@@ -47,7 +47,7 @@ class Testcase(Bench):
                        status="development",
                        type="smoke",
                        purpose="show an example usage of cli_ready_trigger",
-                       component=["IcedTea"],
+                       component=["Icetea"],
                        requirements={
                             "duts": {
                                 '*': {
@@ -63,7 +63,7 @@ class Testcase(Bench):
                        )
 
     def case(self):
-        self.logger.info("cli_ready_trigger will help IcedTea wait until application is ready "
+        self.logger.info("cli_ready_trigger will help Icetea wait until application is ready "
                          "for communication.")
        
         # following examples shows how to create triggers from received data

@@ -7,7 +7,7 @@ Note: This is just a template, so feel free to use/remove the unnecessary things
 ---------------------------------------------------------------
 ## Bug
 
-**IcedTea version**
+**Icetea version**
 (`git rev-parse HEAD`)
 
 **Expected Behavior**

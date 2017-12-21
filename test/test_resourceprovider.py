@@ -19,10 +19,10 @@ limitations under the License.
 import unittest
 import mock
 
-from icedtea_lib.ResourceProvider.ResourceProvider import ResourceProvider
-from icedtea_lib.ResourceProvider.exceptions import ResourceInitError
-from icedtea_lib import LogManager
-from icedtea_lib.ResourceProvider.Allocators.exceptions import AllocationError
+from icetea_lib.ResourceProvider.ResourceProvider import ResourceProvider
+from icetea_lib.ResourceProvider.exceptions import ResourceInitError
+from icetea_lib import LogManager
+from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
 
 
 class MockLogger:
@@ -88,8 +88,8 @@ class MockArgs:
         self.listsuites = False
 
 
-@mock.patch("icedtea_lib.ResourceProvider.ResourceProvider.LogManager", spec=LogManager)
-@mock.patch("icedtea_lib.Plugin.plugins.LocalAllocator.get_resourceprovider_logger")
+@mock.patch("icetea_lib.ResourceProvider.ResourceProvider.LogManager", spec=LogManager)
+@mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.get_resourceprovider_logger")
 class RPTestcase(unittest.TestCase):
 
     def test_init(self, mock_rplogger_get, mock_logman):

@@ -16,8 +16,8 @@ limitations under the License.
 import unittest
 import mock
 
-import icedtea_lib.tools.asserts as asserts
-from icedtea_lib.TestStepError import TestStepFail
+import icetea_lib.tools.asserts as asserts
+from icetea_lib.TestStepError import TestStepFail
 
 
 class MockBench:

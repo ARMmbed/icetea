@@ -4,14 +4,14 @@
   "description": "Example Command Line Application",
   "keywords": [
     "cliapp",
-    "icedtea"
+    "icetea"
   ],
   "author": "Jussi Vatjus-Anttila",
   "repository": {
-    "url": "git@github.com:ARMmbed/icedtea.git",
+    "url": "git@github.com:ARMmbed/icetea.git",
     "type": "git"
   },
-  "homepage": "https://github.com/ARMmbed/icedtea",
+  "homepage": "https://github.com/ARMmbed/icetea",
   "license": "Apache-2.0",
   "extraIncludes": [ ],
   "dependencies": {

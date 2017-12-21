@@ -16,7 +16,7 @@ limitations under the License.
 __author__ = 'jaakuk03'
 
 # Import Bench Class
-from icedtea_lib.bench import Bench
+from icetea_lib.bench import Bench
 
 
 class Testcase(Bench):

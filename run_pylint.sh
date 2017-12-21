@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-pylint ./icedtea_lib ./setup.py ./icedtea.py
+pylint ./icetea_lib ./setup.py ./icetea.py

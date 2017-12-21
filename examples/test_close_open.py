@@ -13,9 +13,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icedtea_lib.bench import Bench
-from icedtea_lib.DeviceConnectors.Dut import DutConnectionError
-from icedtea_lib.TestStepError import TestStepError
+from icetea_lib.bench import Bench
+from icetea_lib.DeviceConnectors.Dut import DutConnectionError
+from icetea_lib.TestStepError import TestStepError
 
 
 class Testcase(Bench):

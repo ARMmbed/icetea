@@ -3,13 +3,13 @@ JsonFile is an extension that provides users with an interface
 for writing and reading json data to and from files.
 
 ## Structure
-This module is built as an extension to IcedTea.
+This module is built as an extension to Icetea.
 It is split into two files:
 
 * a wrapper for the extension in
-[FileApi.py](../icedtea_lib/Extensions/FileApi.py)
+[FileApi.py](../icetea_lib/Extensions/FileApi.py)
 * The logic in
-[SessionFiles.py](../icedtea_lib/Extensions/file/SessionFiles.py)
+[SessionFiles.py](../icetea_lib/Extensions/file/SessionFiles.py)
 
 ## JsonFile class
 JsonFile class is the main functional part of this extension.
@@ -73,5 +73,5 @@ self.testJson = {"test1": "value1", "test2": "value2"}
 self.jsonfile.write_file(self.testJson, self.filePath, self.fileName, 2)
 self.jsonfile.read_file(self.filePath, self.nonExistingFile)
 
-In a IcedTea testcase you have access
+In a Icetea testcase you have access
 to this extension through bench.JsonFile.

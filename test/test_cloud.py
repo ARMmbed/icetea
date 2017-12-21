@@ -15,8 +15,8 @@ limitations under the License.
 
 import unittest
 import mock
-from icedtea_lib.cloud import Cloud, create_result_object
-from icedtea_lib.Result import Result
+from icetea_lib.cloud import Cloud, create_result_object
+from icetea_lib.Result import Result
 
 
 class CloudTestcase(unittest.TestCase):
@@ -80,13 +80,13 @@ class CloudTestcase(unittest.TestCase):
                     "requirements": {
                     },
                     "feature": "unit test",
-                    "component": "IcedTea"
+                    "component": "Icetea"
                     }
 
 
         self.assertEquals(self.cloudclient._convert_to_db_tc_metadata(metadata),
                           {'status': {'value': 'ready'}, 'requirements': {'node': {'count': 1}},
-                           'other_info': {'features': 'unit test', 'components': 'IcedTea',
+                           'other_info': {'features': 'unit test', 'components': 'Icetea',
                                           'title': 'this_is_title'},
                            'tcid': 'tc_name'})
 
@@ -95,7 +95,7 @@ class CloudTestcase(unittest.TestCase):
             "testcase": "tc_name",
             "verdict": "pass",
             "retcode": 0,
-            "fw_name": "IcedTea",
+            "fw_name": "Icetea",
             "fw_version": "0.10.2"
         }
         r = Result(test_res)
@@ -106,7 +106,7 @@ class CloudTestcase(unittest.TestCase):
                  'env': {
                      'framework': {
                          'ver': '0.10.2',
-                         'name': 'IcedTea'
+                         'name': 'Icetea'
                      }
                  },
                  'dut': {
@@ -125,7 +125,7 @@ class CloudTestcase(unittest.TestCase):
             "reason": "ohnou",
             "retcode": 0,
             "duration": 1,
-            "fw_name": "IcedTea",
+            "fw_name": "Icetea",
             "fw_version": "0.10.2"
         }
         r = Result(test_res)
@@ -170,7 +170,7 @@ class CloudTestcase(unittest.TestCase):
                  'env': {
                      'framework': {
                          'ver': '0.10.2',
-                         'name': 'IcedTea'
+                         'name': 'Icetea'
                      }
                  },
                  'sut': {

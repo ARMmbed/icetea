@@ -14,7 +14,7 @@ limitations under the License.
 """
 
 import unittest
-from icedtea_lib.arguments import *
+from icetea_lib.arguments import *
 import sys
 
 def _parse_arguments():

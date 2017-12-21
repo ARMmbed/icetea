@@ -15,8 +15,8 @@ limitations under the License.
 
 __author__ = 'jaakuk01'
 
-from icedtea_lib.bench import Bench
-from icedtea_lib.TestStepError import TestStepFail, TestStepError, TestStepTimeout
+from icetea_lib.bench import Bench
+from icetea_lib.TestStepError import TestStepFail, TestStepError, TestStepTimeout
 
 
 class Testcase(Bench):
@@ -27,7 +27,7 @@ class Testcase(Bench):
                        status="development",
                        type="acceptance",
                        purpose = "dummy",
-                       component=["IcedTea_ut"],
+                       component=["Icetea_ut"],
                        requirements={
                            "duts": {
                                '*': { #requirements for all nodes

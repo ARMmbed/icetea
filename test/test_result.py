@@ -16,8 +16,8 @@ limitations under the License.
 import unittest
 import os
 
-from icedtea_lib.Result import Result
-from icedtea_lib.ResultList import ResultList
+from icetea_lib.Result import Result
+from icetea_lib.ResultList import ResultList
 
 
 class ResultTestcase(unittest.TestCase):

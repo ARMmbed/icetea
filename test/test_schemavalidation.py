@@ -18,10 +18,11 @@ import json
 import os
 from jsonschema import validate, SchemaError, ValidationError
 
+
 class ValidatorTestcase(unittest.TestCase):
 
     def setUp(self):
-        with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "icedtea_lib",
+        with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "icetea_lib",
                                                                'tc_schema.json'))) as data_file:
             self.tc_meta_schema = json.load(data_file)
 

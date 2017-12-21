@@ -22,8 +22,8 @@ import sys
 import os
 import json
 
-from icedtea_lib.IcedTeaManager import IcedTeaManager, ExitCodes
-from icedtea_lib.TestSuite.TestSuite import SuiteException
+from icetea_lib.IceteaManager import IceteaManager, ExitCodes
+from icetea_lib.TestSuite.TestSuite import SuiteException
 
 class MockResults:
     def __init__(self, fails=0, inconcs=0):
@@ -39,7 +39,7 @@ class MockResults:
     def __len__(self):
         return self.fails + self.inconcs
 
-class IcedTeaManagerTestcase(unittest.TestCase):
+class IceteaManagerTestcase(unittest.TestCase):
 
     def setUp(self):
         self.args_noprint = argparse.Namespace(
@@ -82,7 +82,7 @@ class IcedTeaManagerTestcase(unittest.TestCase):
             branch="", platform_name=None, json=False)
 
     def test_list_suites(self):
-        table = IcedTeaManager.list_suites(suitedir="./test/suites")
+        table = IceteaManager.list_suites(suitedir="./test/suites")
         tab = "+------------------------+\n|    Testcase suites     " \
               "|\n+------------------------+\n" \
               "|    dummy_suite.json    |\n|   failing_suite.json   |\n|  malformed_suite.json  " \
@@ -90,9 +90,9 @@ class IcedTeaManagerTestcase(unittest.TestCase):
               "+------------------------+"
         self.assertEqual(table.get_string(), tab)
 
-    @mock.patch("icedtea_lib.IcedTeaManager.TestSuite")
+    @mock.patch("icetea_lib.IceteaManager.TestSuite")
     def test_run(self, mock_suite):
-        ctm = IcedTeaManager()
+        ctm = IceteaManager()
 
         # Testing different return codes
         with mock.patch.object(ctm, "runtestsuite") as mock_method:
@@ -132,9 +132,9 @@ class IcedTeaManagerTestcase(unittest.TestCase):
             retval = ctm.run(args=self.args_tc)
             self.assertEqual(retval, 0)
 
-    @mock.patch("icedtea_lib.IcedTeaManager.TestSuite")
+    @mock.patch("icetea_lib.IceteaManager.TestSuite")
     def test_run_exceptions(self, mock_suite):
-        ctm = IcedTeaManager()
+        ctm = IceteaManager()
         mock_suite.side_effect = [SuiteException]
         self.assertEqual(ctm.run(args=self.args_tc), 3)
         with mock.patch.object(ctm, "list_suites") as mock_method:
@@ -144,63 +144,63 @@ class IcedTeaManagerTestcase(unittest.TestCase):
 
     def test_run_returnCodes(self):
 
-        retcode = subprocess.call("python icedtea.py --clean -s "
+        retcode = subprocess.call("python icetea.py --clean -s "
                                   "--tc test_run_retcodes_fail "
                                   "--tcdir test --type process",
                                   shell=True)
         self.assertEquals(retcode, ExitCodes.EXIT_SUCCESS)
 
-        retcode = subprocess.call("python icedtea.py --clean -s "
+        retcode = subprocess.call("python icetea.py --clean -s "
                                   "--tc test_run_retcodes_success "
                                   "--tcdir test --type process",
                                   shell=True)
         self.assertEquals(retcode, ExitCodes.EXIT_SUCCESS)
 
-        retcode = subprocess.call("python icedtea.py --clean -s "
+        retcode = subprocess.call("python icetea.py --clean -s "
                                   "--tc test_run_retcodes_fail "
                                   "--failure_return_value --tcdir test "
                                   "--type process",
                                   shell=True)
         self.assertEquals(retcode, ExitCodes.EXIT_FAIL)
 
-        retcode = subprocess.call("python icedtea.py --clean -s "
+        retcode = subprocess.call("python icetea.py --clean -s "
                                   "--suite working_suite --suitedir test/suites "
                                   "--tcdir examples",
                                   shell=True)
         self.assertEquals(retcode, ExitCodes.EXIT_SUCCESS)
-        retcode = subprocess.call("python icedtea.py --tc test_run_retcodes_notfound -s "
+        retcode = subprocess.call("python icetea.py --tc test_run_retcodes_notfound -s "
                                   "--tcdir test --type process",
                                   shell=True)
         self.assertEquals(retcode, ExitCodes.EXIT_SUCCESS)
 
         # Run with --clean to clean up
         retcode = subprocess.call(
-            "python icedtea.py --clean ",
+            "python icetea.py --clean ",
             shell=True)
 
     def test_run_multiple_cases_one_file(self):
-        retcode = subprocess.call("python icedtea.py --clean -s "
+        retcode = subprocess.call("python icetea.py --clean -s "
                                   "--tc all "
                                   "--tcdir test/tests/multiple_in_one_file",
                                   shell=True)
         self.assertEquals(retcode, ExitCodes.EXIT_SUCCESS)
 
         retcode = subprocess.call(
-            "python icedtea.py --clean -s "
+            "python icetea.py --clean -s "
             "--tc passing_case --failure_return_value "
             "--tcdir test/tests/multiple_in_one_file",
             shell=True)
         self.assertEquals(retcode, ExitCodes.EXIT_SUCCESS)
 
         retcode = subprocess.call(
-            "python icedtea.py --clean -s "
+            "python icetea.py --clean -s "
             "--tc all --failure_return_value "
             "--tcdir test/tests/multiple_in_one_file",
             shell=True)
         self.assertEquals(retcode, ExitCodes.EXIT_FAIL)
 
         retcode = subprocess.call(
-            "python icedtea.py --clean -s "
+            "python icetea.py --clean -s "
             "--tc fail_case --failure_return_value "
             "--tcdir test/tests/multiple_in_one_file",
             shell=True)
@@ -208,25 +208,25 @@ class IcedTeaManagerTestcase(unittest.TestCase):
 
         # Run with --clean to clean up
         retcode = subprocess.call(
-            "python icedtea.py --clean -s",
+            "python icetea.py --clean -s",
             shell=True)
 
-    @mock.patch("icedtea_lib.IcedTeaManager.shutil")
+    @mock.patch("icetea_lib.IceteaManager.shutil")
     def test_clean(self, mock_shutil):
-        ctm = IcedTeaManager()
+        ctm = IceteaManager()
         self.args_tc.tc = None
         self.args_tc.clean = True
         self.assertEqual(ctm.run(self.args_tc), ExitCodes.EXIT_SUCCESS)
 
-    @mock.patch("icedtea_lib.IcedTeaManager.get_fw_version")
+    @mock.patch("icetea_lib.IceteaManager.get_fw_version")
     def test_version_print(self, mock_fw):
         mock_fw.return_value = "1.0.0"
-        ctm = IcedTeaManager()
+        ctm = IceteaManager()
         self.args_tc.version = True
         self.assertEqual(ctm.run(self.args_tc), ExitCodes.EXIT_SUCCESS)
 
     def test_platform_name_inconc(self):
-        retcode = subprocess.call("python icedtea.py --clean -s "
+        retcode = subprocess.call("python icetea.py --clean -s "
                                   "--tc test_run_retcodes_success "
                                   "--tcdir test --type process --platform_name TEST_PLAT2 "
                                   "--failure_return_value",
@@ -236,11 +236,11 @@ class IcedTeaManagerTestcase(unittest.TestCase):
                                                           "broken.")
         # Run with --clean to clean up
         retcode = subprocess.call(
-            "python icedtea.py --clean ",
+            "python icetea.py --clean ",
             shell=True)
 
     def test_platform_name_success(self):
-        retcode = subprocess.call("python icedtea.py --clean -s "
+        retcode = subprocess.call("python icetea.py --clean -s "
                                   "--tc test_run_retcodes_success "
                                   "--tcdir test --type process --platform_name TEST_PLAT "
                                   "--failure_return_value",
@@ -250,11 +250,11 @@ class IcedTeaManagerTestcase(unittest.TestCase):
                                                            "broken.")
         # Run with --clean to clean up
         retcode = subprocess.call(
-            "python icedtea.py --clean ",
+            "python icetea.py --clean ",
             shell=True)
 
     def test_reportcmdfail(self):
-        retcode = subprocess.call("python icedtea.py --clean -s "
+        retcode = subprocess.call("python icetea.py --clean -s "
                                   "--tc cmdfailtestcase "
                                   "--tcdir test "
                                   "--failure_return_value",
@@ -263,11 +263,11 @@ class IcedTeaManagerTestcase(unittest.TestCase):
                                                            "ReportCmdFail functionality broken?")
         # Run with --clean to clean up
         retcode = subprocess.call(
-            "python icedtea.py --clean ",
+            "python icetea.py --clean ",
             shell=True)
 
     def test_failing_suite_output_regression(self):
-        proc = subprocess.Popen(["python", "icedtea.py", "--clean", "--suite",
+        proc = subprocess.Popen(["python", "icetea.py", "--clean", "--suite",
                                  "failing_suite.json", "--suitedir", "test/suites", "--tcdir",
                                  "test/tests", "-s"], stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -278,7 +278,7 @@ class IcedTeaManagerTestcase(unittest.TestCase):
         expected_output = [{u'status': u'development',
                             u'group': u'no group',
                             u'name': u'json_output_test',
-                            u'comp': [u'IcedTea_ut'],
+                            u'comp': [u'Icetea_ut'],
                             u'feature': u'',
                             u'subtype': u'',
                             u'file':
@@ -290,7 +290,7 @@ class IcedTeaManagerTestcase(unittest.TestCase):
                             u'path': u'json_output_test.json_output_test_case.Testcase',
                             u'type': u'acceptance'}]
 
-        proc = subprocess.Popen(["python", "icedtea.py", "--list", "--tcdir",
+        proc = subprocess.Popen(["python", "icetea.py", "--list", "--tcdir",
                                  "test{}tests{}json_output_test".format(os.path.sep, os.path.sep),
                                  "-s", "--json"],
                                 stdin=subprocess.PIPE,

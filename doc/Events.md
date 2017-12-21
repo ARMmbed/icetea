@@ -1,17 +1,17 @@
 # Event API
-IcedTea offers a simple event system, which is described in
+Icetea offers a simple event system, which is described in
 here. The Event system consists of events, observers and event matchers.
 
 ## Events and Event types
-The Event class is described in [Generics.py.](../icedtea_lib/Events/Generics.py)
+The Event class is described in [Generics.py.](../icetea_lib/Events/Generics.py)
 The Event takes a type and arguments used in the callback
 to the Observers observing that event.
 The *args format is used for these callback arguments.
 
-Currently IcedTea offers only one event type:
+Currently Icetea offers only one event type:
 EventTypes.DUT_LINE_RECEIVED,
 which is also defined in
-[Generics.py.](../icedtea_lib/Events/Generics.py)
+[Generics.py.](../icetea_lib/Events/Generics.py)
 
 ### Usage
 Events can be generated for observers just by instantiating an Event
@@ -22,7 +22,7 @@ observe them.
 
 ## Observers
 The Observer-class is also defined in
-[Generics.py.](../icedtea_lib/Events/Generics.py)
+[Generics.py.](../icetea_lib/Events/Generics.py)
 It consists of a static list of all observers and some functions which
 are used to register new observers and forget previous ones.
 
@@ -34,7 +34,7 @@ to register the Observer to observe an EventType.
 
 ## EventMatcher
 The EventMatcher class is defined in
-[EventMatcher.py.](../icedtea_lib/Events/EventMatcher.py)
+[EventMatcher.py.](../icetea_lib/Events/EventMatcher.py)
 The EventMatcher is an Observer that observes
 for DUT_LINE_RECEIVED events and matches the received line
 contents to regular expressions or string provided to it,
@@ -45,7 +45,7 @@ Reference to Event source can be provided as caller-argument.
 If set to None (default) all Events will be matched.
 
 ### cli_ready_trigger mechanism
-IcedTea has one integrated functionality for EventMatcher,
+Icetea has one integrated functionality for EventMatcher,
 which stops the cli initialization process and
 waits until the cli in the application is ready.
 This can be enabled for each dut by adding
