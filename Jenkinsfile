@@ -19,7 +19,7 @@ timestamps {
             "stream linux": {
                 node('linux') {
                     deleteDir()
-                    dir("mbed-clitest"){
+                    dir("icetea"){
                         stage("Checkout linux source") {
                             echo "hello world!"
                             checkout scm
@@ -37,7 +37,7 @@ timestamps {
             "stream windows": {
                 node('windows') {
                     deleteDir()
-                    dir("mbed-clitest"){
+                    dir("icetea"){
                         stage("Checkout windows source") {
                             echo "hello world!"
                             checkout scm
@@ -56,7 +56,7 @@ timestamps {
                 node('arm-none-eabi-gcc') {
                     deleteDir()
                     try {
-                        dir("mbed-clitest"){
+                        dir("icetea"){
                             def pipeline = null
                             stage ("deploy") {
                                 checkout scm
