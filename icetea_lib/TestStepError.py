@@ -18,6 +18,7 @@ import sys
 
 from icetea_lib.LogManager import get_bench_logger
 
+
 class TestStepError(Exception):
     '''
     TestStepError exception is used in case where something
@@ -38,6 +39,11 @@ class TestStepError(Exception):
         self.logger.error("Line: " + str(line))
 
 
+class InconclusiveError(Exception):
+    def __init__(self, message="InconclusiveError"):
+        super(InconclusiveError, self).__init__(message)
+
+
 class TestStepFail(Exception):
     '''
     TestStepFail exception is used when failure causes because of
@@ -52,6 +58,3 @@ class TestStepTimeout(TestStepFail):
         TestStepFail.__init__(self, message=message)
 
 
-class InconclusiveError(Exception):
-    def __init__(self, message="InconclusiveError"):
-        super(InconclusiveError, self).__init__(message)

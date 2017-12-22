@@ -311,15 +311,13 @@ mbed OS
 https://github.com/ARMmbed/mbed-os/
 
 ## Step-by-step for first runs
-1. Familiarize yourself with Icetea documentation
-    *   https://github.com/ARMmbed/icetea/blob/master/README.md
-    *   https://github.com/ARMmbed/icetea/blob/master/doc/README.md
-    *   https://github.com/ARMmbed/icetea/blob/master/doc/icetea.md
-    *   https://github.com/ARMmbed/icetea/blob/master/doc/cli.md
-    *   https://github.com/ARMmbed/icetea/blob/master/doc/tc_api.md
-2. Install Icetea
+1. Install Icetea
     * Clone repository from github: https://github.com/armmbed/icetea
     * Follow installation instructions: https://github.com/ARMmbed/icetea#installation
+2. Build Icetea documentation:
+    *   Install Sphinx `pip install sphinx`
+    *   Build the documentation `sphinx-build -b html doc-source doc/html`
+    *   HTML docs can now be found from [doc/html/index.html](doc/html/index.html)
 3. Install coverage and mock
     * pip install coverage mock
 4. Run unit tests for Icetea

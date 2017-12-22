@@ -146,8 +146,9 @@ class IceteaManager(object):
         """
         Validates that a valid number of arguments were received and that all arguments were
         recognised.
+
         :return: True or False. False if called with no args or if unknown args were
-            received and ignore_invalid_params argument is False
+        received and ignore_invalid_params argument is False
         """
         parser = get_base_arguments(get_parser())
         parser = get_tc_arguments(parser)
@@ -174,7 +175,7 @@ class IceteaManager(object):
 
     def run(self, args=None):
         """
-            Runs the set of tests within the given path.
+        Runs the set of tests within the given path.
         """
         # Disable "Too many branches" and "Too many return statmenets" warnings
         # pylint: disable=R0912,R0911
@@ -241,6 +242,7 @@ class IceteaManager(object):
     def runtestsuite(self, testsuite):
         """
         Runs a single test suite
+
         :param testsuite: TestSuite
         :return: ResultList
         """

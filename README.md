@@ -113,6 +113,19 @@ arguments[dictionary]   #optional argument list
         timeout=<int>              # timeout, if no retcode receive
 ```
 
+## Documentation
+HTML documentation for Icetea can be built using sphinx. The source
+for the documentation is located in [doc-source](doc-source). To build
+the documentation install sphinx and run:
+
+`sphinx-build -b html doc-source doc/html`
+
+This will build the documentation under [doc/html](doc/html).
+
+Currently similar documentation is available in markdown format in
+[doc](doc). This documentation will be phased out and is not maintained
+as well as the sphinx documentation.
+
 ## Examples
 
 **Note:** Following examples uses [`dummyDut`](test/dut/dummyDut.c)

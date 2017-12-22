@@ -20,7 +20,7 @@ import signal
 import time
 
 
-class Timeout():
+class Timeout(object):
     """Timeout class using ALARM signal."""
     class Timeout(Exception):
         pass
@@ -38,10 +38,13 @@ class Timeout():
     def raise_timeout(self, *args):
         raise Timeout.Timeout()
 
+
 class Timer(Thread):
+
     def Wait(self, timeout):
         self.timeout = timeout
         self.start()
-        self.join( timeout = 5 )
+        self.join(timeout=5)
+
     def run(self):
         time.sleep(self.timeout)
