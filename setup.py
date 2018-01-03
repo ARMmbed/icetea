@@ -50,7 +50,7 @@ setup(name='icetea',
               "icetea=icetea_lib:icedea_main",
           ]
       },
-      dependency_links=["git+https://github.com/ARMmbed/mbed-flasher#egg=mbed-flasher-0.4.5"],
+      dependency_links=["git+https://github.com/ARMmbed/mbed-flasher@v0.5.0#egg=mbed-flasher"],
       install_requires=[
           "prettytable",
           "requests",
