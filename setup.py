@@ -47,7 +47,7 @@ setup(name='icetea',
       test_suite = 'test',
       entry_points={
           "console_scripts": [
-              "icetea=icetea_lib:icedea_main",
+              "icetea=icetea_lib:icetea_main",
           ]
       },
       dependency_links=["git+https://github.com/ARMmbed/mbed-flasher@v0.5.0#egg=mbed-flasher"],
