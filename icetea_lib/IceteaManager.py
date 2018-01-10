@@ -97,7 +97,7 @@ class IceteaManager(object):
                                      no_file=(self.args.list or self.args.listsuites),
                                      truncate=not self.args.disable_log_truncate)
 
-        self.logger = LogManager.get_logger("Icetea")
+        self.logger = LogManager.get_logger("icetea")
         self.pluginmanager = None
         self.resourceprovider = ResourceProvider(self.args)
         self._init_pluginmanager()
@@ -115,7 +115,8 @@ class IceteaManager(object):
         """
         suites = []
         suites.extend(TestSuite.get_suite_files(suitedir))
-        #no suitedir, or no suites -> append cloud.get_campaigns()
+
+        # no suitedir, or no suites -> append cloud.get_campaigns()
 
         if cloud:
             names = cloud.get_campaign_names()
