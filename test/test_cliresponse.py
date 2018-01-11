@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +18,7 @@ limitations under the License.
 import unittest
 from icetea_lib.CliResponse import CliResponse
 
+
 class TestVerify(unittest.TestCase):
 
     def test_resps(self):
@@ -24,7 +27,7 @@ class TestVerify(unittest.TestCase):
             'aapeli',
             'beeveli',
             'oopeli',
-            'huhheli' ]
+            'huhheli']
         self.assertTrue(response.verify_message(['oopeli'], False))
         self.assertTrue(response.verify_message(['oopeli', 'huhheli'], False))
         self.assertFalse(response.verify_message(['huhheli', 'oopeli'], False))
@@ -38,10 +41,10 @@ class TestVerify(unittest.TestCase):
             'aapeli',
             'beeveli',
             'oopeli',
-            'huhheli' ]
-        self.assertTrue(response.verify_trace(['oopeli'],              False))
-        self.assertTrue(response.verify_trace(['oopeli', 'huhheli'],   False))
-        self.assertFalse(response.verify_trace(['huhheli', 'oopeli'],  False))
+            'huhheli']
+        self.assertTrue(response.verify_trace(['oopeli'], False))
+        self.assertTrue(response.verify_trace(['oopeli', 'huhheli'], False))
+        self.assertFalse(response.verify_trace(['huhheli', 'oopeli'], False))
 
         with self.assertRaises(LookupError):
             self.assertTrue(response.verify_trace(['oop eli']))
@@ -53,9 +56,9 @@ class TestVerify(unittest.TestCase):
             'beeveli',
             'oopeli',
             'huhheli']
-        self.assertTrue(response.verifyTrace(['oopeli'], False))
-        self.assertTrue(response.verifyTrace(['oopeli', 'huhheli'], False))
-        self.assertFalse(response.verifyTrace(['huhheli', 'oopeli'], False))
+        self.assertTrue(response.verify_trace(['oopeli'], False))
+        self.assertTrue(response.verify_trace(['oopeli', 'huhheli'], False))
+        self.assertFalse(response.verify_trace(['huhheli', 'oopeli'], False))
 
         with self.assertRaises(LookupError):
-            self.assertTrue(response.verifyTrace(['oop eli']))
+            self.assertTrue(response.verify_trace(['oop eli']))

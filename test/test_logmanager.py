@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring,expression-not-assigned
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,26 +16,35 @@ limitations under the License.
 """
 
 import logging
-import unittest
 import os
+import unittest
+
 from icetea_lib.LogManager import ContextFilter, traverse_json_obj
 
 
 class ContextFilterTest(unittest.TestCase):
+
+    # Helper function
+    @staticmethod
+    def create_log_record(msg):
+        return logging.LogRecord(name="", level=logging.ERROR, pathname="",
+                                 lineno=0, msg=msg, args=None, exc_info=None,
+                                 func=None)
+
     def setUp(self):
-        self.cf = ContextFilter()
+        self.contextfilter = ContextFilter()
 
     def test_filter_base64(self):
         msg = "aaa="
         record = self.create_log_record(msg)
-        self.cf.filter(record)
+        self.contextfilter.filter(record)
         self.assertEqual(msg, record.msg)
 
         msg = []
         [msg.append("a") for _ in range(ContextFilter.MAXIMUM_LENGTH)]
         msg = "".join(msg)
         record = self.create_log_record(msg)
-        self.cf.filter(record)
+        self.contextfilter.filter(record)
         expected = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...[9950 more bytes]"
         self.assertEqual(expected, record.msg)
 
@@ -41,7 +52,7 @@ class ContextFilterTest(unittest.TestCase):
         [msg.append("a") for _ in range(ContextFilter.MAXIMUM_LENGTH * 2)]
         msg = "".join(msg)
         record = self.create_log_record(msg)
-        self.cf.filter(record)
+        self.contextfilter.filter(record)
         expected = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...[19950 more bytes]"
         self.assertEqual(expected, record.msg)
 
@@ -49,14 +60,14 @@ class ContextFilterTest(unittest.TestCase):
         [msg.append("a") for _ in range(ContextFilter.MAXIMUM_LENGTH - 1)]
         msg = "".join(msg)
         record = self.create_log_record(msg)
-        self.cf.filter(record)
+        self.contextfilter.filter(record)
         self.assertEqual(msg, record.msg)
 
         msg = []
         [msg.append("a") for _ in range(ContextFilter.MAXIMUM_LENGTH + 1)]
         msg = "".join(msg)
         record = self.create_log_record(msg)
-        self.cf.filter(record)
+        self.contextfilter.filter(record)
         expected = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...[9951 more bytes]"
         self.assertEqual(expected, record.msg)
 
@@ -66,7 +77,7 @@ class ContextFilterTest(unittest.TestCase):
         msg = "".join(msg)
         record = self.create_log_record(msg)
         expected = " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa...[9951 more bytes]"
-        self.cf.filter(record)
+        self.contextfilter.filter(record)
         self.assertEqual(expected, record.msg)
 
     def test_filter_binary_data(self):
@@ -75,7 +86,7 @@ class ContextFilterTest(unittest.TestCase):
         msg = "".join(msg)
         expected = "{}...[10240974 more bytes]".format(msg[:50])
         record = self.create_log_record(msg)
-        self.cf.filter(record)
+        self.contextfilter.filter(record)
 
         self.assertEqual(expected, record.msg)
 
@@ -90,14 +101,8 @@ class ContextFilterTest(unittest.TestCase):
                    "...[9951 more bytes]"
 
         record = self.create_log_record(msg)
-        self.cf.filter(record)
+        self.contextfilter.filter(record)
         self.assertEqual(expected, record.msg)
-
-    # Helper function
-    def create_log_record(self, msg):
-        return logging.LogRecord(name="", level=logging.ERROR, pathname="",
-                                 lineno=0, msg=msg, args=None, exc_info=None,
-                                 func=None)
 
 
 class TraverseJsonObjTest(unittest.TestCase):

@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +16,18 @@ limitations under the License.
 """
 
 import unittest
+
 from icetea_lib.ResourceProvider.ResourceRequirements import ResourceRequirements
-from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
+
 
 class ResourceRequirementTestcase(unittest.TestCase):
 
     def setUp(self):
         self.simple_testreqs = {
-                "type": "process",
-                "allowed_platforms": [],
-                "nick": None,
-            }
+            "type": "process",
+            "allowed_platforms": [],
+            "nick": None
+        }
         self.simple_testreqs2 = {
             "type": "process",
             "allowed_platforms": ["DEV3"],
@@ -53,6 +56,7 @@ class ResourceRequirementTestcase(unittest.TestCase):
     def test_set(self):
         dutreq = ResourceRequirements(self.simple_testreqs)
         dutreq.set("test_key", "test_val")
+        # pylint: disable=protected-access
         self.assertEqual(dutreq._requirements["test_key"], "test_val")
         # Test override
         dutreq.set("test_key", "test_val2")

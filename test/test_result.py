@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,16 +28,16 @@ class ResultTestcase(unittest.TestCase):
     def test_append(self):
         # Test append for single Result
         rlist = ResultList()
-        r1 = Result()
-        rlist.append(r1)
-        self.assertListEqual(rlist.data, [r1])
+        result1 = Result()
+        rlist.append(result1)
+        self.assertListEqual(rlist.data, [result1])
 
         # Test append for ResultList
-        r2 = Result()
+        result2 = Result()
         rlist2 = ResultList()
-        rlist2.append(r2)
+        rlist2.append(result2)
         rlist.append(rlist2)
-        self.assertListEqual(rlist.data, [r1, r2])
+        self.assertListEqual(rlist.data, [result1, result2])
 
         # Test append TypeError
         with self.assertRaises(TypeError):
@@ -44,35 +46,35 @@ class ResultTestcase(unittest.TestCase):
     # RESULT TESTCASES
 
     def test_init(self):
-        di = {"retcode": 0}
-        res = Result(kwargs=di)
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
         self.assertEqual(res.get_verdict(), "pass")
 
-        di = {"retcode": 1}
-        res = Result(kwargs=di)
+        dictionary = {"retcode": 1}
+        res = Result(kwargs=dictionary)
         self.assertEqual(res.get_verdict(), "fail")
 
-    def test_setVerdict(self):
-        r = Result()
-        r.set_verdict("pass", 0, 10)
-        self.assertEqual(r.get_verdict(), "pass")
-        self.assertEqual(r.retcode, 0)
-        self.assertEqual(r.get_duration(), '0:00:10')
-        self.assertEqual(r.get_duration(True), '10')
+    def test_set_verdict(self):
+        result = Result()
+        result.set_verdict("pass", 0, 10)
+        self.assertEqual(result.get_verdict(), "pass")
+        self.assertEqual(result.retcode, 0)
+        self.assertEqual(result.get_duration(), '0:00:10')
+        self.assertEqual(result.get_duration(True), '10')
 
         with self.assertRaises(ValueError):
-            r.set_verdict("wat")
+            result.set_verdict("wat")
 
     def test_haslogs(self):
-        r = Result()
-        r.logpath = os.path.join(os.path.dirname(__file__), "test_logpath")
-        files = r.has_logs()
+        result = Result()
+        result.logpath = os.path.join(os.path.dirname(__file__), "test_logpath")
+        files = result.has_logs()
         self.assertTrue(files)
         self.assertEqual(len(files), 2)
 
-        r = Result()
-        r.logpath = None
-        files = r.has_logs()
+        result = Result()
+        result.logpath = None
+        files = result.has_logs()
         self.assertListEqual(files, [])
 
 

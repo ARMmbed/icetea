@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +32,7 @@ class TestVerify(unittest.TestCase):
         plugin = DefaultParsers()
         parsers = plugin.get_parsers()
         self.parsermanager = ParserManager(logging.getLogger())
-        for parser in parsers.keys():
+        for parser in parsers:
             self.parsermanager.add_parser(parser, parsers[parser])
 
     def _create_line_response_parser(self, command, path):
@@ -43,5 +45,5 @@ class TestVerify(unittest.TestCase):
         return resp
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     unittest.main()

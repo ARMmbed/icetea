@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,7 +16,7 @@ limitations under the License.
 """
 
 import unittest
-from icetea_lib.Searcher import verifyMessage
+from icetea_lib.Searcher import verify_message
 from icetea_lib.Searcher import Invert
 
 class TestVerify(unittest.TestCase):
@@ -25,30 +27,30 @@ class TestVerify(unittest.TestCase):
             'oopeli',
             'huhheli',
             'strange bird']
-        self.assertTrue(verifyMessage(lines, ['oopeli', 'huhheli']))
-        self.assertFalse(verifyMessage(lines, ['oopeli', 'huhhelis']))
-        self.assertFalse(verifyMessage(lines, ['oopeli', 'huhhe li']))
-        self.assertFalse(verifyMessage(lines, [False]))
-        self.assertTrue(verifyMessage(lines, ['strange bird']))
+        self.assertTrue(verify_message(lines, ['oopeli', 'huhheli']))
+        self.assertFalse(verify_message(lines, ['oopeli', 'huhhelis']))
+        self.assertFalse(verify_message(lines, ['oopeli', 'huhhe li']))
+        self.assertFalse(verify_message(lines, [False]))
+        self.assertTrue(verify_message(lines, ['strange bird']))
 
     def test_invert(self):
         lines = [
             'aapeli',
             'beeveli',
             'oopeli',
-            'huhheli' ]
-        self.assertTrue(verifyMessage(lines, ['oopeli', Invert('uups')]))
-        self.assertFalse(verifyMessage(lines, ['oopeli', Invert('huhheli')]))
-        self.assertFalse(verifyMessage(lines, ['oopeli', Invert('huhheli')]))
+            'huhheli']
+        self.assertTrue(verify_message(lines, ['oopeli', Invert('uups')]))
+        self.assertFalse(verify_message(lines, ['oopeli', Invert('huhheli')]))
+        self.assertFalse(verify_message(lines, ['oopeli', Invert('huhheli')]))
 
     def test_regex(self):
         lines = [
             'aapeli',
             'beeveli',
             'oopeli',
-            'huhheli' ]
-        self.assertTrue(verifyMessage(lines, ['^aa', '^be', '^oopeli']))
-        self.assertFalse(verifyMessage(lines, ['^aa', '^opeli']))
+            'huhheli']
+        self.assertTrue(verify_message(lines, ['^aa', '^be', '^oopeli']))
+        self.assertFalse(verify_message(lines, ['^aa', '^opeli']))
 
     def test_string(self):
         lines = [
@@ -56,9 +58,9 @@ class TestVerify(unittest.TestCase):
             'beeveli',
             'oopeli',
             'huhheli']
-        self.assertTrue(verifyMessage(lines, "aapeli"))
-        self.assertTrue(verifyMessage(lines, "oop"))
-        self.assertFalse(verifyMessage(lines, "ai"))
+        self.assertTrue(verify_message(lines, "aapeli"))
+        self.assertTrue(verify_message(lines, "oop"))
+        self.assertFalse(verify_message(lines, "ai"))
 
     def test_set(self):
         lines = [
@@ -66,11 +68,11 @@ class TestVerify(unittest.TestCase):
             'beeveli',
             'oopeli',
             'huhheli']
-        self.assertTrue(verifyMessage(lines, {"aapeli"}))
-        self.assertTrue(verifyMessage(lines, {"oop"}))
-        self.assertFalse(verifyMessage(lines, {"ai"}))
-        self.assertFalse(verifyMessage(lines, {1}))
+        self.assertTrue(verify_message(lines, {"aapeli"}))
+        self.assertTrue(verify_message(lines, {"oop"}))
+        self.assertFalse(verify_message(lines, {"ai"}))
+        self.assertFalse(verify_message(lines, {1}))
 
     def test_false_type(self):
         with self.assertRaises(TypeError):
-            verifyMessage([], 1)
+            verify_message([], 1)

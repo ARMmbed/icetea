@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +15,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import unittest
-from icetea_lib.arguments import *
+import os
 import sys
+import unittest
+
+from icetea_lib.arguments import get_parser, get_tc_arguments, get_base_arguments
+
 
 def _parse_arguments():
-    parser = get_base_arguments( get_parser() )
-    parser = get_tc_arguments( parser )
+    parser = get_base_arguments(get_parser())
+    parser = get_tc_arguments(parser)
     args, unknown = parser.parse_known_args()
     return args, unknown
 
@@ -28,10 +33,13 @@ class MyTestCase(unittest.TestCase):
 
     def test_args_from_file(self):
         sys.argv = ["filename.py", "--tc", "test_case_1", "--tcdir", "test_directory",
-                    "--cfg_file", os.path.abspath(os.path.join(os.path.dirname(
-                __file__), "data/conf_file.txt")), "--suitedir", "shouldoverwrite"]
-        parser = get_parser()
-        args, unknown = _parse_arguments()
+                    "--cfg_file",
+                    os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                 "data/conf_file.txt")),
+                    "--suitedir",
+                    "shouldoverwrite"]
+        parser = get_parser()  # pylint: disable=unused-variable
+        args, unknown = _parse_arguments()  # pylint: disable=unused-variable
         for arg in ["tc", "tcdir", "cfg_file", "baudrate", "suitedir"]:
             self.assertTrue(hasattr(args, arg))
         self.assertEqual(args.tc, "test_case_1")
@@ -39,22 +47,24 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(args.baudrate, 9600)
         self.assertEqual(args.suitedir, "shouldoverwrite")
 
-    def test_args_from_file_with_other_file(self):
-        sys.argv = ["filename.py", "--cfg_file", os.path.abspath(os.path.join(os.path.dirname(
-                __file__), "data/conf_file_2.txt"))]
-        parser = get_parser()
-        args, unknown = _parse_arguments()
+    def test_args_from_file_with_other_file(self):  # pylint: disable=invalid-name
+        sys.argv = ["filename.py", "--cfg_file",
+                    os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                 "data/conf_file_2.txt"))]
+        parser = get_parser()  # pylint: disable=unused-variable
+        args, unknown = _parse_arguments()  # pylint: disable=unused-variable
         for arg in ["tcdir", "baudrate", "suitedir"]:
             self.assertTrue(hasattr(args, arg))
         self.assertEqual(args.tcdir, "shouldoverwrite")
         self.assertEqual(args.baudrate, 9600)
         self.assertEqual(args.suitedir, "shouldoverwrite")
 
-    def test_args_from_file_with_other_file_infinite_recursion(self):
-        sys.argv = ["filename.py", "--cfg_file", os.path.abspath(os.path.join(os.path.dirname(
-                __file__), "data/conf_file_3.txt"))]
-        parser = get_parser()
-        args, unknown = _parse_arguments()
+    def test_args_from_file_with_file_infinite_recursion(self):  # pylint: disable=invalid-name
+        sys.argv = ["filename.py", "--cfg_file",
+                    os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                                 "data/conf_file_3.txt"))]
+        parser = get_parser()  # pylint: disable=unused-variable
+        args, unknown = _parse_arguments()  # pylint: disable=unused-variable
         for arg in ["tcdir", "baudrate", "suitedir"]:
             self.assertTrue(hasattr(args, arg))
         self.assertEqual(args.tcdir, "shouldoverwrite")

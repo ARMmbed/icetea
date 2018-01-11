@@ -49,7 +49,7 @@ from icetea_lib.DeviceConnectors.Dut import DutConnectionError
 from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
 import icetea_lib.LogManager as LogManager
 from icetea_lib.Plugin.PluginManager import PluginManager, PluginException
-from icetea_lib.Searcher import verifyMessage
+from icetea_lib.Searcher import verify_message
 from icetea_lib.TestStepError import TestStepError, TestStepFail, TestStepTimeout
 from icetea_lib.TestStepError import InconclusiveError
 from icetea_lib.tools.tools import loadClass
@@ -693,7 +693,7 @@ class Bench(object):
 
         status = True
         try:
-            status = verifyMessage(self.duts[k-1].traces, expected_traces)
+            status = verify_message(self.duts[k-1].traces, expected_traces)
         except TypeError as inst:
             status = False
             if break_in_fail:
@@ -721,12 +721,6 @@ class Bench(object):
         """
         # TODO: This is a weird way to implement the desired functionality. TBD
         return range(1+i, self.resource_configuration.count_duts()+i+1)
-
-    def __getNetworkLogFilename(self):  # pylint: disable=invalid-name,no-self-use
-        # TODO: Remove this function
-        self.logger.warning("__getNetworkLogFilename has been deprecated, please use "
-                            "get_nw_log_filename instead.")
-        return self.get_nw_log_filename()
 
     def get_nw_log_filename(self): #pylint: disable=no-self-use
         """
@@ -891,16 +885,6 @@ class Bench(object):
                 time.sleep(10)
                 seconds = seconds - 10
             time.sleep(seconds)
-
-
-    # TODO: Should this API be removed from our public version?
-    def waitForStableNetwork(self, delay=10):  # pylint: disable=invalid-name
-        """
-        Deprecated.
-        """
-        self.logger.warning("waitForStableNetwork has been deprecated. Please use "
-                            "wait_for_stable_network instead.")
-        self.wait_for_stable_network(delay)
 
     def wait_for_stable_network(self, delay=10):
         """

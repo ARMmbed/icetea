@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring,redundant-unittest-assert
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +22,7 @@ import icetea_lib.tools.asserts as asserts
 from icetea_lib.TestStepError import TestStepFail
 
 
-class MockBench:
+class MockBench(object):
     def __init__(self):
         pass
 
@@ -30,12 +32,13 @@ class MockBench:
     def logger(self):
         pass
 
+
 class AssertTestcase(unittest.TestCase):
 
     def setUp(self):
         self.asserts = asserts
 
-    def test_assertBooleans(self):
+    def test_assert_booleans(self):
         with self.assertRaises(TestStepFail):
             self.asserts.assertTrue(False, "False was not True!")
         with self.assertRaises(TestStepFail):
@@ -55,7 +58,7 @@ class AssertTestcase(unittest.TestCase):
         except TestStepFail:
             self.assertTrue(False, "TestStepFail was raised! ")
 
-    def test_assertNones(self):
+    def test_assert_nones(self):
         with self.assertRaises(TestStepFail):
             self.asserts.assertNone(1)
         with self.assertRaises(TestStepFail):
@@ -67,7 +70,7 @@ class AssertTestcase(unittest.TestCase):
         except TestStepFail:
             self.assertTrue(False, "TestStepFail was raised!")
 
-    def test_assertEquals(self):
+    def test_assert_equals(self):
         with self.assertRaises(TestStepFail):
             self.asserts.assertEqual(1, 2)
         with self.assertRaises(TestStepFail):
@@ -79,7 +82,7 @@ class AssertTestcase(unittest.TestCase):
         except TestStepFail:
             self.assertTrue(False, "TestStepFail was raised!")
 
-    def test_assertjsonContains(self):
+    def test_assert_json_contains(self):
         with self.assertRaises(TestStepFail):
             self.asserts.assertJsonContains('{"test": "key"}', "test2")
 
@@ -94,14 +97,14 @@ class AssertTestcase(unittest.TestCase):
         except TestStepFail:
             self.assertTrue(False, 'Key test was not contained in {"test": "key"}?')
 
-    def test_assertDutTraceContains(self):
+    def test_assert_dut_trace_contains(self):
         mock_bench = mock.MagicMock()
         mock_bench.verify_trace = mock.MagicMock(side_effect=[True, False])
         self.asserts.assertDutTraceContains(1, "message_found", mock_bench)
         with self.assertRaises(TestStepFail):
             self.asserts.assertDutTraceContains(1, "message_not_found", mock_bench)
 
-    def test_assertDutTraceDoesNotContain(self):
+    def test_assert_dut_trace_does_not_contain(self):  # pylint: disable=invalid-name
         mock_bench = mock.MagicMock()
         mock_bench.verify_trace = mock.MagicMock(side_effect=[True, False])
         with self.assertRaises(TestStepFail):

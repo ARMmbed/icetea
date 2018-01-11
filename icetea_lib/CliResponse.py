@@ -20,7 +20,7 @@ CliResponse module. Contains CliResponse class, which is the object returned by 
 import logging
 
 import icetea_lib.LogManager as LogManager
-from icetea_lib.Searcher import verifyMessage
+from icetea_lib.Searcher import verify_message
 from icetea_lib.TestStepError import TestStepFail
 
 
@@ -82,11 +82,11 @@ class CliResponse(object):
         re-raises exceptions caught or if message was not found
         :return: True or False
         :raises: LookupError if message was not found and breakInFail was True. Other Exceptions
-        might also be raised through searcher.VerifyMessage.
+        might also be raised through searcher.verify_message.
         """
         ok = True
         try:
-            ok = verifyMessage(self.lines, expected_response)
+            ok = verify_message(self.lines, expected_response)
         except (TypeError, LookupError) as inst:
             ok = False
             if break_in_fail:
@@ -94,21 +94,6 @@ class CliResponse(object):
         if ok is False and break_in_fail:
             raise LookupError("Unexpected message found")
         return ok
-
-    def verifyMessage(self, expected_response, breakInFail=True):
-        """
-        Deprecated. Use verify_message instead.
-        """
-        self.logger.warning("verifyMessage has been deprecated, please use verify_trace instead.")
-        return self.verify_message(expected_response, breakInFail)
-
-    # verify that there is expected traces
-    def verifyTrace(self, expected_traces, breakInFail=True):
-        """
-        Deprecated, use verify_trace instead.
-        """
-        self.logger.warning("verifyTrace has been deprecated, please use verify_trace instead.")
-        return self.verify_trace(expected_traces, break_in_fail=breakInFail)
 
     def verify_trace(self, expected_traces, break_in_fail=True):
         """
@@ -119,11 +104,11 @@ class CliResponse(object):
         not found
         :return: True or False
         :raises: LookupError if message was not found and breakInFail was True. Other Exceptions
-        might also be raised through searcher.VerifyMessage.
+        might also be raised through searcher.verify_message.
         """
         ok = True
         try:
-            ok = verifyMessage(self.traces, expected_traces)
+            ok = verify_message(self.traces, expected_traces)
         except (TypeError, LookupError) as inst:
             ok = False
             if break_in_fail:
@@ -162,14 +147,6 @@ class CliResponse(object):
                 raise TestStepFail(msg)
         return (was, expected, error)
 
-    def verifyResponseDuration(self, expected=None, zero=0, threshold_percent=0, breakInFail=True):
-        """
-        Deprecated, use verify_response_duration instead.
-        """
-        self.logger.warning("verifyResponseDuration has been deprecated, please use "
-                            "verify_response_duration instead.")
-        return self.verify_response_duration(expected, zero, threshold_percent, breakInFail)
-
     def verify_response_time(self, expected_below):
         """
         Verify that response time (time span between request-response) is reasonable
@@ -180,11 +157,3 @@ class CliResponse(object):
         if self.timedelta > expected_below:
             raise ValueError("Response time is more (%f) than expected (%f)!"
                              % (self.timedelta, expected_below))
-
-    def verifyResponseTime(self, expected_below):
-        """
-        Deprecated, use verify_response_time instead.
-        """
-        self.logger.warning("verifyResponseTime has been deprecated, please use "
-                            "verify_response_time instead.")
-        return self.verify_response_time(expected_below)

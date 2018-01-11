@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,11 +15,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import unittest
-from icetea_lib.AllocationContext import AllocationContext, AllocationContextList
 import logging
+import unittest
+
 import mock
 
+from icetea_lib.AllocationContext import AllocationContext, AllocationContextList
 from icetea_lib.DeviceConnectors.Dut import DutConnectionError
 from icetea_lib.ResourceProvider.exceptions import ResourceInitError
 
@@ -67,48 +70,48 @@ class AllocContextListTestcase(unittest.TestCase):
         self.assertEqual(con_list[0].resource_id, "id2")
 
         with self.assertRaises(IndexError):
-            er = con_list[2]
+            er = con_list[2]  # pylint: disable=unused-variable,invalid-name
         with self.assertRaises(IndexError):
-            er = con_list[-1]
+            er = con_list[-1]  # pylint: disable=invalid-name
         with self.assertRaises(IndexError):
             con_list[-1] = "test"
         with self.assertRaises(IndexError):
             con_list[3] = "test"
 
         with self.assertRaises(TypeError):
-            er = con_list["test"]
+            er = con_list["test"]  # pylint: disable=unused-variable,invalid-name
         with self.assertRaises(TypeError):
             con_list["test"] = "test"
 
     def test_open_dut_connections(self):
         con_list = AllocationContextList(self.nulllogger)
         # Setup mocked duts
-        d1 = mock.MagicMock()
-        d1.start_dut_thread = mock.MagicMock()
-        d1.start_dut_thread.return_value = "ok"
-        d1.open_dut = mock.MagicMock()
-        d1.open_dut.return_value = "ok"
-        d1.close_dut = mock.MagicMock()
-        d1.close_connection = mock.MagicMock()
-        d2 = mock.MagicMock()
-        d2.start_dut_thread = mock.MagicMock()
-        d2.start_dut_thread.side_effect = [DutConnectionError]
-        d2.open_dut = mock.MagicMock()
-        d2.open_dut.return_value = "ok"
-        d2.close_dut = mock.MagicMock()
-        d2.close_connection = mock.MagicMock()
+        dut1 = mock.MagicMock()
+        dut1.start_dut_thread = mock.MagicMock()
+        dut1.start_dut_thread.return_value = "ok"
+        dut1.open_dut = mock.MagicMock()
+        dut1.open_dut.return_value = "ok"
+        dut1.close_dut = mock.MagicMock()
+        dut1.close_connection = mock.MagicMock()
+        dut2 = mock.MagicMock()
+        dut2.start_dut_thread = mock.MagicMock()
+        dut2.start_dut_thread.side_effect = [DutConnectionError]
+        dut2.open_dut = mock.MagicMock()
+        dut2.open_dut.return_value = "ok"
+        dut2.close_dut = mock.MagicMock()
+        dut2.close_connection = mock.MagicMock()
 
-        con_list.duts = [d1]
+        con_list.duts = [dut1]
         con_list.open_dut_connections()
-        d1.start_dut_thread.assert_called()
-        d1.open_dut.assert_called()
+        dut1.start_dut_thread.assert_called()
+        dut1.open_dut.assert_called()
 
-        con_list.duts.append(d2)
+        con_list.duts.append(dut2)
         with self.assertRaises(DutConnectionError):
             con_list.open_dut_connections()
-        d2.start_dut_thread.assert_called()
-        d2.close_dut.assert_called()
-        d2.close_connection.assert_called()
+        dut2.start_dut_thread.assert_called()
+        dut2.close_dut.assert_called()
+        dut2.close_connection.assert_called()
 
     @mock.patch("icetea_lib.AllocationContext.os.path.isfile")
     @mock.patch("icetea_lib.AllocationContext.AllocationContextList.get_build")

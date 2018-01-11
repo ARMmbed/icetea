@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,19 +15,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import unittest
-import subprocess
 import argparse
-import mock
-import re
-import sys
-import os
 import json
+import os
+import re
+import subprocess
+import unittest
 
+import mock
 from icetea_lib.IceteaManager import IceteaManager, ExitCodes
 from icetea_lib.TestSuite.TestSuite import SuiteException
 
-class MockResults:
+
+class MockResults(object):
     def __init__(self, fails=0, inconcs=0):
         self.fails = fails
         self.inconcs = inconcs
@@ -39,44 +41,73 @@ class MockResults:
     def __len__(self):
         return self.fails + self.inconcs
 
+
 class IceteaManagerTestcase(unittest.TestCase):
 
     def setUp(self):
         self.args_noprint = argparse.Namespace(
-            available=False, version=False, bin=None, binary=False, channel=None,
-            clean=True, cloud=False, component=False, device='*', gdb=None,
-            gdbs=None, gdbs_port=2345, group=False, iface=None, kill_putty=False, list=True,
-            listsuites=False, log='./log', my_duts=None, nobuf=None, pause_when_external_dut=False,
-            putty=False, reset=False, silent=True, skip_case=False, skip_rampdown=False, skip_rampup=False,
-            status=False, suite=False, tc='all', tc_cfg=None, tcdir="test", testtype=False, type=None,
-            subtype=None, use_sniffer=False, valgrind=False, valgrind_tool=None, verbose=False,
+            available=False, version=False, bin=None,
+            binary=False, channel=None,
+            clean=True, cloud=False, component=False,
+            device='*', gdb=None,
+            gdbs=None, gdbs_port=2345, group=False,
+            iface=None, kill_putty=False, list=True,
+            listsuites=False, log='./log', my_duts=None,
+            nobuf=None, pause_when_external_dut=False,
+            putty=False, reset=False, silent=True, skip_case=False,
+            skip_rampdown=False, skip_rampup=False,
+            status=False, suite=False, tc='all', tc_cfg=None,
+            tcdir="test", testtype=False, type=None,
+            subtype=None, use_sniffer=False, valgrind=False,
+            valgrind_tool=None, verbose=False,
             repeat=0, platform_name=None, json=False)
         self.args_tc_no_exist = argparse.Namespace(
-            available=False, version=False, bin=None, binary=False, channel=None,
-            clean=True, cloud=False, component=False, device='*', gdb=None,
-            gdbs=None, gdbs_port=2345, group=False, iface=None, kill_putty=False, list=True,
-            listsuites=False, log='./log', my_duts=None, nobuf=None, pause_when_external_dut=False,
-            putty=False, reset=False, silent=True, skip_case=False, skip_rampdown=False, skip_rampup=False,
-            status=False, suite=False, tc='does_not_exist', tc_cfg=None, tcdir="test", testtype=False, type=None,
-            subtype=None, use_sniffer=False, valgrind=False, valgrind_tool=None, verbose=False,
+            available=False, version=False, bin=None,
+            binary=False, channel=None,
+            clean=True, cloud=False, component=False,
+            device='*', gdb=None,
+            gdbs=None, gdbs_port=2345, group=False,
+            iface=None, kill_putty=False, list=True,
+            listsuites=False, log='./log', my_duts=None,
+            nobuf=None, pause_when_external_dut=False,
+            putty=False, reset=False, silent=True,
+            skip_case=False, skip_rampdown=False, skip_rampup=False,
+            status=False, suite=False, tc='does_not_exist',
+            tc_cfg=None, tcdir="test", testtype=False, type=None,
+            subtype=None, use_sniffer=False, valgrind=False,
+            valgrind_tool=None, verbose=False,
             repeat=0, platform_name=None, json=False)
         self.args_suite = argparse.Namespace(
-            available=False, version=False, bin=None, binary=False, channel=None,
-            clean=True, cloud=False, component=False, device='*', gdb=None,
-            gdbs=None, gdbs_port=2345, group=False, iface=None, kill_putty=False, list=False,
-            listsuites=False, log='./log', my_duts=None, nobuf=None, pause_when_external_dut=False,
-            putty=False, reset=False, silent=True, skip_case=False, skip_rampdown=False, skip_rampup=False,
-            status=False, suite="dummy_suite.json", tc=None, tc_cfg=None, tcdir="examples", testtype=False, type=None,
-            subtype=None, use_sniffer=False, valgrind=False, valgrind_tool=None, verbose=False, repeat=2,
+            available=False, version=False, bin=None,
+            binary=False, channel=None,
+            clean=True, cloud=False, component=False,
+            device='*', gdb=None,
+            gdbs=None, gdbs_port=2345, group=False,
+            iface=None, kill_putty=False, list=False,
+            listsuites=False, log='./log', my_duts=None,
+            nobuf=None, pause_when_external_dut=False,
+            putty=False, reset=False, silent=True, skip_case=False,
+            skip_rampdown=False, skip_rampup=False,
+            status=False, suite="dummy_suite.json", tc=None,
+            tc_cfg=None, tcdir="examples", testtype=False, type=None,
+            subtype=None, use_sniffer=False, valgrind=False,
+            valgrind_tool=None, verbose=False, repeat=2,
             suitedir="./test/suites", platform_name=None, json=False)
         self.args_tc = argparse.Namespace(
-            available=False, version=False, bin=None, binary=False, channel=None,
-            clean=True, cloud=False, component=False, device='*', gdb=None,
-            gdbs=None, gdbs_port=2345, group=False, iface=None, kill_putty=False, list=False,
-            listsuites=False, log='./log', my_duts=None, nobuf=None, pause_when_external_dut=False,
-            putty=False, reset=False, silent=True, skip_case=False, skip_rampdown=False, skip_rampup=False,
-            status=False, suite=None, tc="test_cmdline", tc_cfg=None, tcdir="examples", testtype=False, type="process",
-            subtype=None, use_sniffer=False, valgrind=False, valgrind_tool=None, verbose=False, repeat=2,
+            available=False, version=False, bin=None,
+            binary=False, channel=None,
+            clean=True, cloud=False, component=False,
+            device='*', gdb=None,
+            gdbs=None, gdbs_port=2345, group=False,
+            iface=None, kill_putty=False, list=False,
+            listsuites=False, log='./log', my_duts=None,
+            nobuf=None, pause_when_external_dut=False,
+            putty=False, reset=False, silent=True, skip_case=False,
+            skip_rampdown=False, skip_rampup=False,
+            status=False, suite=None, tc="test_cmdline",
+            tc_cfg=None, tcdir="examples", testtype=False, type="process",
+            subtype=None, use_sniffer=False, valgrind=False,
+            valgrind_tool=None, verbose=False, repeat=2,
             suitedir="./test/suites", forceflash_once=False, forceflash=False,
             ignore_invalid_params=True, failure_return_value=False, stop_on_failure=False,
             branch="", platform_name=None, json=False)
@@ -125,7 +156,7 @@ class IceteaManagerTestcase(unittest.TestCase):
         self.assertEqual(retval, 0)
 
         # Test cleanlogs branch
-        with mock.patch.object(ctm, "_cleanlogs") as mock_clean:
+        with mock.patch.object(ctm, "_cleanlogs") as mock_clean:  # pylint: disable=unused-variable
             self.args_tc.tc = None
             self.args_tc.suite = None
             self.args_tc.clean = True
@@ -142,7 +173,7 @@ class IceteaManagerTestcase(unittest.TestCase):
             self.args_tc.listsuites = True
             self.assertEqual(ctm.run(args=self.args_tc), 2)
 
-    def test_run_returnCodes(self):
+    def test_run_returncodes(self):
 
         retcode = subprocess.call("python icetea.py --clean -s "
                                   "--tc test_run_retcodes_fail "
@@ -174,11 +205,11 @@ class IceteaManagerTestcase(unittest.TestCase):
         self.assertEquals(retcode, ExitCodes.EXIT_SUCCESS)
 
         # Run with --clean to clean up
-        retcode = subprocess.call(
+        retcode = subprocess.call(  # pylint: disable=unused-variable
             "python icetea.py --clean ",
             shell=True)
 
-    def test_run_multiple_cases_one_file(self):
+    def test_run_many_cases_one_file(self):
         retcode = subprocess.call("python icetea.py --clean -s "
                                   "--tc all "
                                   "--tcdir test/tests/multiple_in_one_file",
@@ -212,7 +243,7 @@ class IceteaManagerTestcase(unittest.TestCase):
             shell=True)
 
     @mock.patch("icetea_lib.IceteaManager.shutil")
-    def test_clean(self, mock_shutil):
+    def test_clean(self, mock_shutil):  # pylint: disable=unused-argument
         ctm = IceteaManager()
         self.args_tc.tc = None
         self.args_tc.clean = True
@@ -266,12 +297,12 @@ class IceteaManagerTestcase(unittest.TestCase):
             "python icetea.py --clean ",
             shell=True)
 
-    def test_failing_suite_output_regression(self):
+    def test_fail_suite_out_regression(self):
         proc = subprocess.Popen(["python", "icetea.py", "--clean", "--suite",
                                  "failing_suite.json", "--suitedir", "test/suites", "--tcdir",
                                  "test/tests", "-s"], stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, err = proc.communicate()
+        output, _ = proc.communicate()
         self.assertTrue(re.search("This is a failing test case", output))
 
     def test_list_json_output(self):
@@ -282,10 +313,13 @@ class IceteaManagerTestcase(unittest.TestCase):
                             u'feature': u'',
                             u'subtype': u'',
                             u'file':
-                                os.path.abspath(os.path.join(__file__,
-                                                             "..")) + '{}tests{}'
-                                                                      'json_output_test{}'
-                                                                      'json_output_test_case.py'.format(os.path.sep, os.path.sep, os.path.sep),
+                                os.path.abspath(os.path.join(
+                                    __file__, "..")) + '{}tests'
+                                                       '{}json_output_test'
+                                                       '{}json_'
+                                                       'output_test_case.py'.format(os.path.sep,
+                                                                                    os.path.sep,
+                                                                                    os.path.sep),
                             u'fail': u'',
                             u'path': u'json_output_test.json_output_test_case.Testcase',
                             u'type': u'acceptance'}]
@@ -295,7 +329,7 @@ class IceteaManagerTestcase(unittest.TestCase):
                                  "-s", "--json"],
                                 stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        output, err = proc.communicate()
+        output, _ = proc.communicate()
         output = output.rstrip("\n")
         self.assertDictEqual(expected_output[0], json.loads(output)[0])
 

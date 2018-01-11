@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,20 +23,20 @@ from icetea_lib.DeviceConnectors.DutInformation import DutInformationList, DutIn
 class DutInfoTestcase(unittest.TestCase):
 
     def setUp(self):
-        self.d1 = DutInformation("plat1", "12345", "1", "vendor")
-        self.d2 = DutInformation("plat1", "23456", "2", "vendor")
-        self.d3 = DutInformation("plat2", "34567", "3", "vendor")
-        ar = [self.d1, self.d2, self.d3]
-        self.testlist = DutInformationList(ar)
+        self.dut1 = DutInformation("plat1", "12345", "1", "vendor")
+        self.dut2 = DutInformation("plat1", "23456", "2", "vendor")
+        self.dut3 = DutInformation("plat2", "34567", "3", "vendor")
+        array_of_duts = [self.dut1, self.dut2, self.dut3]
+        self.testlist = DutInformationList(array_of_duts)
         self.emptylist = DutInformationList()
 
     def test_constuction(self):
         lst = DutInformationList()
-        lst.append(self.d1)
+        lst.append(self.dut1)
         self.assertEqual(len(lst), 1)
 
-        lst.append(self.d2)
-        lst.append(self.d3)
+        lst.append(self.dut2)
+        lst.append(self.dut3)
         self.assertEqual(len(lst), 3)
 
     def test_dutmodel_gets(self):

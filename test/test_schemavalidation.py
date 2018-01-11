@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring,invalid-name
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,17 +15,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import unittest
 import json
 import os
-from jsonschema import validate, SchemaError, ValidationError
+import unittest
+
+from jsonschema import validate, ValidationError
 
 
 class ValidatorTestcase(unittest.TestCase):
 
     def setUp(self):
-        with open(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "icetea_lib",
-                                                               'tc_schema.json'))) as data_file:
+        with open(os.path.abspath(os.path.join(os.path.dirname(__file__),
+                                               "..", "icetea_lib",
+                                               'tc_schema.json'))) as data_file:
             self.tc_meta_schema = json.load(data_file)
 
     def test_validation_successful(self):
@@ -56,15 +60,11 @@ class ValidatorTestcase(unittest.TestCase):
                 "external": {
                     "ExtApp": "ExtAppName"
                     }
-                }
+               }
         validate(meta, self.tc_meta_schema)
 
     def test_validation_successful_with_extra_fields_and_missing_fields(self):
-        meta = {
-                "extra_field": {
-                    "This field does not exist in the schema": "data"
-                    }
-                }
+        meta = {"extra_field": {"This field does not exist in the schema": "data"}}
 
         validate(meta, self.tc_meta_schema)
 
@@ -97,8 +97,8 @@ class ValidatorTestcase(unittest.TestCase):
                     },
                 "external": {
                     "ExtApp": "ExtAppName"
-                    }
                 }
+               }
         with self.assertRaises(ValidationError):
             validate(meta, self.tc_meta_schema)
 

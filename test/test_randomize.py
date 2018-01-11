@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring,unnecessary-lambda
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +55,7 @@ class RandomizeTestcase(unittest.TestCase):
         with self.assertRaises(TypeError):
             Randomize.random_list_elem([6])
 
-    def test_random_string_list_chars_not_str(self):
+    def test_random_str_lst_chars_no_str(self):  # pylint: disable=invalid-name
         with self.assertRaises(TypeError):
             Randomize.random_string(2, 1, chars=["a", "abc", 1])
 
@@ -63,37 +65,37 @@ class RandomizeTestcase(unittest.TestCase):
         self.assertTrue(6 + i == i.value + 6)
 
     def test_random_string_add(self):
-        s = Randomize.random_string(5)
-        v = s.value
-        self.assertEqual(s + ' hello', v + ' hello')
-        self.assertEqual('hello ' + s, 'hello ' + v)
+        rand_str = Randomize.random_string(5)
+        value = rand_str.value
+        self.assertEqual(rand_str + ' hello', value + ' hello')
+        self.assertEqual('hello ' + rand_str, 'hello ' + value)
 
     def test_random_string_array_add(self):
-        a = Randomize.random_string_array(5, 3)
-        v = a.value
-        self.assertEqual(a + ['world'], v + ['world'])
-        self.assertEqual(['world'] + a, ['world'] + v)
+        rand_str = Randomize.random_string_array(5, 3)
+        value = rand_str.value
+        self.assertEqual(rand_str + ['world'], value + ['world'])
+        self.assertEqual(['world'] + rand_str, ['world'] + value)
 
     def test_random_integer_iadd(self):
-        i = Randomize.random_integer(6)
-        v = i.value
+        rand_integer = Randomize.random_integer(6)
+        value = rand_integer.value
 
-        i += 6
-        v += 6
+        rand_integer += 6
+        value += 6
 
-        self.assertEqual(i, v)
+        self.assertEqual(rand_integer, value)
 
     def test_random_integer_repr(self):
-        i = Randomize.random_integer(6)
-        self.assertEqual("%s" % i, str(i.value))
+        rand_integer = Randomize.random_integer(6)
+        self.assertEqual("%s" % rand_integer, str(rand_integer.value))
 
     def test_random_string_repr(self):
-        s = Randomize.random_string(5)
-        self.assertEqual("%s" % s, str(s.value))
+        rand_str = Randomize.random_string(5)
+        self.assertEqual("%s" % rand_str, str(rand_str.value))
 
     def test_random_string_array_repr(self):
-        a = Randomize.random_string_array(5, 3)
-        self.assertEqual("%s" % a, str(a.value))
+        rand_str_ar = Randomize.random_string_array(5, 3)
+        self.assertEqual("%s" % rand_str_ar, str(rand_str_ar.value))
 
     def test_random_string_iter(self):
         for elem in Randomize.random_string(7, 3):
@@ -104,14 +106,14 @@ class RandomizeTestcase(unittest.TestCase):
             self.assertTrue(isinstance(elem, str))
 
     def test_random_string_get_item(self):
-        s = Randomize.random_string(6)
-        v = s.value
-        self.assertEqual(s[0], v[0])
+        rand_str = Randomize.random_string(6)
+        value = rand_str.value
+        self.assertEqual(rand_str[0], value[0])
 
-    def test_random_string_array_get_item(self):
-        a = Randomize.random_string_array(6, 3)
-        v = a.value
-        self.assertEqual(a[0], v[0])
+    def test_random_string_array_get_item(self):  # pylint: disable=invalid-name
+        rand_str_ar = Randomize.random_string_array(6, 3)
+        value = rand_str_ar.value
+        self.assertEqual(rand_str_ar[0], value[0])
 
     def test_random_string_str(self):
         s_str = Randomize.random_string(6)
@@ -122,30 +124,30 @@ class RandomizeTestcase(unittest.TestCase):
 
         def user_func(seed):
             random.seed(seed)
-            return random.randint(5,15), random.randint(15,25)
+            return random.randint(5, 15), random.randint(15, 25)
 
-        r1, r2 = user_func(seed)
-        r3, r4 = user_func(seed)
+        rep1, rep2 = user_func(seed)
+        rep3, rep4 = user_func(seed)
 
-        self.assertEqual(r1, r3)
-        self.assertEqual(r2, r4)
+        self.assertEqual(rep1, rep3)
+        self.assertEqual(rep2, rep4)
 
     def test_store_load(self):
         s_int = Randomize.random_integer(8, 4)
         s_str = Randomize.random_string(8, 4, lambda x: random.choice(x), x='e34r')
         s_str_a = Randomize.random_string_array(10, 6, 7, 4)
 
-        f = tempfile.NamedTemporaryFile(delete=False)
-        s_int.store(f.name)
-        self.assertEqual(s_int.value, s_int.load(f.name).value)
-        f.close()
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        s_int.store(temp_file.name)
+        self.assertEqual(s_int.value, s_int.load(temp_file.name).value)
+        temp_file.close()
 
-        f = tempfile.NamedTemporaryFile(delete=False)
-        s_str.store(f.name)
-        self.assertEqual(s_str.value, s_str.load(f.name).value)
-        f.close()
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        s_str.store(temp_file.name)
+        self.assertEqual(s_str.value, s_str.load(temp_file.name).value)
+        temp_file.close()
 
-        f = tempfile.NamedTemporaryFile(delete=False)
-        s_str_a.store(f.name)
-        self.assertEqual(s_str_a.value, s_str_a.load(f.name).value)
-        f.close()
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
+        s_str_a.store(temp_file.name)
+        self.assertEqual(s_str_a.value, s_str_a.load(temp_file.name).value)
+        temp_file.close()

@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring,unused-variable
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +17,16 @@ limitations under the License.
 
 import unittest
 from random import randint
-from time import sleep
-import mock
 from threading import Event as EventFlag
+from time import sleep
+
+import mock
 
 from icetea_lib.Events.EventMatcher import EventMatcher
 from icetea_lib.Events.Generics import EventTypes, Event, Observer
 
 
-class MockLineProvider(object):
+class MockLineProvider(object):  # pylint: disable=too-few-public-methods
     def __init__(self):
         self.counter = 0
 
@@ -31,72 +34,73 @@ class MockLineProvider(object):
         if self.counter == 2:
             self.counter = 0
             return "found"
-        else:
-            sleep(randint(0, timeout))
-            self.counter += 1
-            return "nothing"
+        sleep(randint(0, timeout))
+        self.counter += 1
+        return "nothing"
 
 
 class EventTestcase(unittest.TestCase):
 
     def test_resolve_match_data(self):
-        o = mock.MagicMock()
-        cb = mock.MagicMock()
-        ef = EventFlag()
-        em = EventMatcher(EventTypes.DUT_LINE_RECEIVED, "test", o, flag=ef, callback=cb)
-        ev = Event(EventTypes.DUT_LINE_RECEIVED, o, "test")
-        cb.assert_called_once_with(o, "test")
-        self.assertTrue(ef.isSet())
-        ef.clear()
-        cb.reset_mock()
+        test_object = mock.MagicMock()
+        callback = mock.MagicMock()
+        event_flag = EventFlag()
+        event_matcher = EventMatcher(EventTypes.DUT_LINE_RECEIVED, "test", test_object,
+                                     flag=event_flag, callback=callback)
+        event = Event(EventTypes.DUT_LINE_RECEIVED, test_object, "test")
+        callback.assert_called_once_with(test_object, "test")
+        self.assertTrue(event_flag.isSet())
+        event_flag.clear()
+        callback.reset_mock()
         # Recreate matcher because it forgets itself once it has matched once.
-        em = EventMatcher(EventTypes.DUT_LINE_RECEIVED, "regex:test*", o, flag=ef, callback=cb)
-        ev = Event(EventTypes.DUT_LINE_RECEIVED, o, "nothing")
-        self.assertFalse(ef.isSet())
-        ev = Event(EventTypes.DUT_LINE_RECEIVED, o, "test1")
-        cb.assert_called_once_with(o, "test1")
-        self.assertTrue(ef.isSet())
-        ef.clear()
-        cb.reset_mock()
-        em = EventMatcher(EventTypes.DUT_LINE_RECEIVED, "regex:test:[0-9]", o, flag=ef, callback=cb)
-        ev = Event(EventTypes.DUT_LINE_RECEIVED, o, "test")
-        self.assertFalse(ef.isSet())
-        ev = Event(EventTypes.DUT_LINE_RECEIVED, o, "test:1")
-        cb.assert_called_once_with(o, "test:1")
-        self.assertTrue(ef.isSet())
+        event_matcher = EventMatcher(EventTypes.DUT_LINE_RECEIVED, "regex:test*", test_object,
+                                     flag=event_flag, callback=callback)
+        event = Event(EventTypes.DUT_LINE_RECEIVED, test_object, "nothing")
+        self.assertFalse(event_flag.isSet())
+        event = Event(EventTypes.DUT_LINE_RECEIVED, test_object, "test1")
+        callback.assert_called_once_with(test_object, "test1")
+        self.assertTrue(event_flag.isSet())
+        event_flag.clear()
+        callback.reset_mock()
+        event_matcher = EventMatcher(EventTypes.DUT_LINE_RECEIVED, "regex:test:[0-9]", test_object,
+                                     flag=event_flag, callback=callback)
+        event = Event(EventTypes.DUT_LINE_RECEIVED, test_object, "test")
+        self.assertFalse(event_flag.isSet())
+        event = Event(EventTypes.DUT_LINE_RECEIVED, test_object, "test:1")
+        callback.assert_called_once_with(test_object, "test:1")
+        self.assertTrue(event_flag.isSet())
 
-    def test_resolve_match_data_no_caller(self):
-        o = mock.MagicMock()
-        cb = mock.MagicMock()
-        ef = EventFlag()
-        em = EventMatcher(EventTypes.DUT_LINE_RECEIVED, "test", caller=None, flag=ef, callback=cb)
-        ev = Event(EventTypes.DUT_LINE_RECEIVED, o, "test")
-        cb.assert_called_once_with(o, "test")
-        self.assertTrue(ef.isSet())
+    def test_resolve_data_no_caller(self):
+        test_object = mock.MagicMock()
+        callback = mock.MagicMock()
+        event_flag = EventFlag()
+        eventmatcher = EventMatcher(EventTypes.DUT_LINE_RECEIVED, "test", caller=None,
+                                    flag=event_flag, callback=callback)
+        event = Event(EventTypes.DUT_LINE_RECEIVED, test_object, "test")
+        callback.assert_called_once_with(test_object, "test")
+        self.assertTrue(event_flag.isSet())
 
-    def test_resolve_match_data_decodefail(self):
-        o = mock.MagicMock()
-        cb = mock.MagicMock()
-        ef = EventFlag()
-        em = EventMatcher(EventTypes.DUT_LINE_RECEIVED, repr("\x00\x00\x00\x00\x00\x00\x01\xc8"),
-                          o, flag=ef, callback=cb)
-        ev = Event(EventTypes.DUT_LINE_RECEIVED, o, "\x00\x00\x00\x00\x00\x00\x01\xc8")
-        cb.assert_called_once_with(o, "\x00\x00\x00\x00\x00\x00\x01\xc8")
-        self.assertTrue(ef.isSet())
-        ef.clear()
+    def test_resolve_data_decodefail(self):
+        test_object = mock.MagicMock()
+        callback = mock.MagicMock()
+        event_flag = EventFlag()
+        event_matcher = EventMatcher(EventTypes.DUT_LINE_RECEIVED,
+                                     repr("\x00\x00\x00\x00\x00\x00\x01\xc8"), test_object,
+                                     flag=event_flag, callback=callback)
+        event = Event(EventTypes.DUT_LINE_RECEIVED, test_object, "\x00\x00\x00\x00\x00\x00\x01\xc8")
+        callback.assert_called_once_with(test_object, "\x00\x00\x00\x00\x00\x00\x01\xc8")
+        self.assertTrue(event_flag.isSet())
+        event_flag.clear()
 
-
-    def test_observer(self):
+    def test_observer(self):  # pylint: disable=no-self-use
         obs = Observer()
-        cb = mock.MagicMock()
-        obs.observe(EventTypes.DUT_LINE_RECEIVED, cb)
-        cb.assert_not_called()
-        e = Event(2, "data")
-        cb.assert_not_called()
-        e = Event(EventTypes.DUT_LINE_RECEIVED, "data")
-        cb.assert_called_once_with("data")
-
-
+        callback = mock.MagicMock()
+        obs.observe(EventTypes.DUT_LINE_RECEIVED, callback)
+        callback.assert_not_called()
+        event = Event(2, "data")
+        callback.assert_not_called()
+        event = Event(EventTypes.DUT_LINE_RECEIVED, "data")
+        callback.assert_called_once_with("data")
 
 
 if __name__ == '__main__':

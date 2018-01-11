@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# pylint: disable=missing-docstring
+
 """
 mbed SDK
 Copyright (c) 2011-2015 ARM Limited
@@ -25,13 +27,12 @@ from icetea_lib.build import Build
 from icetea_lib.build import NotFoundError
 
 
-class Build_TestCase(unittest.TestCase):
+class BuildTestCase(unittest.TestCase):
     """ Basic true asserts to see that testing is executed
     """
 
     def setUp(self):
         logging.disable(logging.CRITICAL)
-        pass
 
     def tearDown(self):
         pass
@@ -70,7 +71,7 @@ class Build_TestCase(unittest.TestCase):
 
     @mock.patch("icetea_lib.build.build.requests.get",
                 side_effect=iter([requests.exceptions.SSLError]))
-    def test_build_http_error(self, mocked_get):
+    def test_build_http_error(self, mocked_get):  # pylint: disable=unused-argument
         build = Build.init("https://hep.com")
         self.assertEqual(build.get_type(), "http")
         with self.assertRaises(NotFoundError):
@@ -97,4 +98,4 @@ class Build_TestCase(unittest.TestCase):
             build = Build.init(",")
         with self.assertRaises(NotImplementedError):
             build = Build(ref="", type="unknown")
-            build._load()
+            build._load()  # pylint: disable=protected-access

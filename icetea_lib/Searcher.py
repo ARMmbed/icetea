@@ -20,14 +20,16 @@ try:
 except NameError:
     basestring = str
 
+
 class Invert(object):
-    def __init__(self, str):
-        self.str = str
+    def __init__(self, string_obj):
+        self.str = string_obj
+
     def __str__(self):
         return self.str
 
 
-def FindNext(lines, find_str, startIndex):
+def find_next(lines, find_str, start_index):
     mode = None
     if isinstance(find_str, basestring):
         mode = 'normal'
@@ -37,7 +39,7 @@ def FindNext(lines, find_str, startIndex):
         message = str(find_str)
     else:
         raise TypeError("Unsupported message type")
-    for i in range(startIndex, len(lines)):
+    for i in range(start_index, len(lines)):
         if re.search(message, lines[i]):
             return mode == 'normal', i, lines[i]
         elif message in lines[i]:
@@ -47,26 +49,26 @@ def FindNext(lines, find_str, startIndex):
     raise LookupError("Not found")
 
 
-def verifyMessage(lines, expectedResponse):
+def verify_message(lines, expected_response):
     """
     Looks for expectedResponse in lines
 
     :param lines: a list of strings to look through
-    :param expectedResponse: list or str to look for in lines.
+    :param expected_response: list or str to look for in lines.
     :return: True or False.
     :raises: TypeError if expectedResponse was not list or str.
             LookUpError through FindNext function.
     """
     position = 0
-    if isinstance(expectedResponse, basestring):
-        expectedResponse = [expectedResponse]
-    if isinstance(expectedResponse, set):
-        expectedResponse = list(expectedResponse)
-    if not isinstance(expectedResponse, list):
-        raise TypeError("VerifyMessage: expectedResponse must be list, set or string")
-    for message in expectedResponse:
+    if isinstance(expected_response, basestring):
+        expected_response = [expected_response]
+    if isinstance(expected_response, set):
+        expected_response = list(expected_response)
+    if not isinstance(expected_response, list):
+        raise TypeError("verify_message: expectedResponse must be list, set or string")
+    for message in expected_response:
         try:
-            ok, position, match = FindNext(lines, message, position)
+            ok, position, match = find_next(lines, message, position)
             if not ok:
                 return False
             position = position + 1
