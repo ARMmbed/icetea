@@ -140,7 +140,7 @@ for Icetea. The parsers that are registered to Bench are
 called every time a line is received from a DUT and they should return a
 dictionary of desired information from the matched line. Examples
 can be found from
-[default parsers](../icetea_lib/Plugin/plugins/default_parsers.py)
+`default parsers <../icetea_lib/Plugin/plugins/default_parsers.py>`_
 
 Implementing a data parser
 --------------------------
@@ -243,7 +243,7 @@ that are searched through when selecting the allocator to use based on
 the --allocator cli parameter.
 
 The actual allocator class needs to inherit the
-`BaseAllocator <../icetea_lib/ResourceProvider/Allocators/BaseAllocator.py>`_
+`BaseAllocator <../../icetea_lib/ResourceProvider/Allocators/BaseAllocator.py>`_
 class and implement at least the allocate-function defined there.
 
 ********

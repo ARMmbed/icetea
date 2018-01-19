@@ -1,3 +1,5 @@
+# pylint: disable=redefined-builtin
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,10 +20,13 @@ import re
 try:
     basestring
 except NameError:
-    basestring = str
+    basestring = str  # pylint: disable=invalid-name
 
 
-class Invert(object):
+class Invert(object):  # pylint: disable=too-few-public-methods
+    """
+    Class Invert
+    """
     def __init__(self, string_obj):
         self.str = string_obj
 
@@ -30,6 +35,14 @@ class Invert(object):
 
 
 def find_next(lines, find_str, start_index):
+    """
+    Find the next instance of find_str from lines starting from start_index.
+
+    :param lines: Lines to look through
+    :param find_str: String or Invert to look for
+    :param start_index: Index to start from
+    :return: (boolean, index, line)
+    """
     mode = None
     if isinstance(find_str, basestring):
         mode = 'normal'
@@ -45,19 +58,19 @@ def find_next(lines, find_str, start_index):
         elif message in lines[i]:
             return mode == 'normal', i, lines[i]
     if mode == 'invert':
-        return True, i, None
+        return True, len(lines), None
     raise LookupError("Not found")
 
 
 def verify_message(lines, expected_response):
     """
-    Looks for expectedResponse in lines
+    Looks for expectedResponse in lines.
 
     :param lines: a list of strings to look through
     :param expected_response: list or str to look for in lines.
     :return: True or False.
     :raises: TypeError if expectedResponse was not list or str.
-            LookUpError through FindNext function.
+    LookUpError through FindNext function.
     """
     position = 0
     if isinstance(expected_response, basestring):
@@ -68,8 +81,8 @@ def verify_message(lines, expected_response):
         raise TypeError("verify_message: expectedResponse must be list, set or string")
     for message in expected_response:
         try:
-            ok, position, match = find_next(lines, message, position)
-            if not ok:
+            found, position, _ = find_next(lines, message, position)
+            if not found:
                 return False
             position = position + 1
         except TypeError:

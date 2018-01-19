@@ -23,6 +23,7 @@ import uuid
 def get_parser():
     """
     Get a new ArgumentParser.
+
     :return: ArgumentParser
     """
     parser = argparse.ArgumentParser(description='Test Framework for Command line interface')
@@ -31,7 +32,8 @@ def get_parser():
 
 def get_base_arguments(parser):
     """
-    Append base arguments icetea run arguments to parser
+    Append base arguments icetea run arguments to parser.
+
     :param parser: argument parser
     :return: ArgumentParser
     """
@@ -62,63 +64,62 @@ def get_base_arguments(parser):
     # Filters
     filter_group = parser.add_argument_group("Filter arguments", "Arguments used for filtering "
                                                                  "tc:s")
-    filter_group.add_argument('--status',
-                        default=False,
-                        help='Run all testcases with status <status>')
+    filter_group.add_argument('--status', default=False,
+                              help='Run all testcases with status <status>')
     filter_group.add_argument('--group',
-                        default=False,
-                        help='Run all testcases that have all items in <group/subgroup> or '
-                             '<group,group2> in their group path.')
+                              default=False,
+                              help='Run all testcases that have all items '
+                                   'in <group/subgroup> or <group,group2> in their group path.')
     filter_group.add_argument('--testtype',
-                        default=False,
-                        help='Run all testcases with type <testtype>')
+                              default=False,
+                              help='Run all testcases with type <testtype>')
     filter_group.add_argument('--subtype',
-                        default=False,
-                        help="Run all testcases with subtype <subtype")
+                              default=False,
+                              help="Run all testcases with subtype <subtype")
     filter_group.add_argument('--component',
-                        default=False,
-                        help='Run All Testcases with component <component>')
+                              default=False,
+                              help='Run All Testcases with component <component>')
     filter_group.add_argument('--feature',
-                        default=False,
-                        help='Run All Testcases with feature <feature>')
+                              default=False,
+                              help='Run All Testcases with feature <feature>')
 
     # JobId is BUILD_TAG (from Jenkins job), or generated UUID or command line argument value
     info_group = parser.add_argument_group("Run information", "Information of run, such as job "
                                                               "id and git or build information.")
     info_group.add_argument('--jobId',
-                        default=os.environ.get('BUILD_TAG', str(uuid.uuid1())),
-                        help='Job Unique ID')
+                            default=os.environ.get('BUILD_TAG', str(uuid.uuid1())),
+                            help='Job Unique ID')
     info_group.add_argument('--gitUrl',
-                        default=os.environ.get('ghprbAuthorRepoGitUrl', None),
-                        help='Set application used git url for results')
+                            default=os.environ.get('ghprbAuthorRepoGitUrl', None),
+                            help='Set application used git url for results')
     info_group.add_argument('--branch',
-                        default=os.environ.get('GIT_BRANCH', 'master'),
-                        help='Set used build branch for results')
+                            default=os.environ.get('GIT_BRANCH', 'master'),
+                            help='Set used build branch for results')
     info_group.add_argument('--commitId',
-                        default=os.environ.get('ghprbActualCommit', None),
-                        help='Set used commit ID for results')
+                            default=os.environ.get('ghprbActualCommit', None),
+                            help='Set used commit ID for results')
     info_group.add_argument('--buildDate',
-                        default=None,
-                        help='Set build date')
+                            default=None,
+                            help='Set build date')
     info_group.add_argument('--toolchain',
-                        default=None,
-                        help='Set toolchain for results')
+                            default=None,
+                            help='Set toolchain for results')
     info_group.add_argument('--buildUrl',
-                        default=os.environ.get('BUILD_URL', None),
-                        help='Set build url for results')
+                            default=os.environ.get('BUILD_URL', None),
+                            help='Set build url for results')
     info_group.add_argument('--campaign',
-                        default=os.environ.get('JOB_NAME', None),
-                        help='Set campaign name for results')
+                            default=os.environ.get('JOB_NAME', None),
+                            help='Set campaign name for results')
 
     # Directories and paths
     directories = parser.add_argument_group("Paths", "Directory and file paths for various "
                                                      "Icetea features.")
     directories.add_argument('--tcdir',
-                        help='Search for testcases in directory <path>',
-                        default='./testcases')
+                             help='Search for testcases in directory <path>',
+                             default='./testcases')
     directories.add_argument('--suitedir',
-                        help='Search for suites in directory <path>',
-                        default='./testcases/suites')
+                             help='Search for suites in directory <path>',
+                             default='./testcases/suites')
     directories.add_argument("--cfg_file",
                              type=open,
                              default=None,
@@ -132,8 +133,8 @@ def get_base_arguments(parser):
                              default=os.path.abspath(
                                  os.path.join(thisfilepath,
                                               "Plugin/plugins/plugins_to_load")),
-                             help="location of file called plugins_to_load, where custom plugins are "
-                                  "imported.")
+                             help="location of file called plugins_to_load, "
+                                  "where custom plugins are imported from.")
 
     # Allocator group
     alloc_group = parser.add_mutually_exclusive_group(required=False)
@@ -195,16 +196,15 @@ def get_base_arguments(parser):
                         default="opentmi_client",
                         help='name of module that is to be used to send results to a cloud '
                              'service.')
-    parser.add_argument("--json", action="store_true", default=False, help="Output results of "
-                                                                              "--list as "
-                                                                              "json instead "
-                                                                              "of a table.")
+    parser.add_argument("--json", action="store_true", default=False,
+                        help="Output results of --list as json instead of a table.")
     return parser
 
 
 def get_tc_arguments(parser):
     """
-    Append test case arguments to parser
+    Append test case arguments to parser.
+
     :param parser: ArgumentParser
     :return: ArgumentParser
     """
@@ -386,8 +386,8 @@ def get_tc_arguments(parser):
 
     return parser
 
-#pylint: disable=too-few-public-methods
-class Abspathify(argparse.Action):
+
+class Abspathify(argparse.Action):  #pylint: disable=too-few-public-methods
     """
     Action to convert paths to absolute paths.
     """
@@ -395,7 +395,7 @@ class Abspathify(argparse.Action):
         setattr(args, self.dest, os.path.abspath(values))
 
 
-class LoadFromFile(argparse.Action):
+class LoadFromFile(argparse.Action):  #pylint: disable=too-few-public-methods
     """
     Action to load more arguments into parser from a file.
     """

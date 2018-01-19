@@ -49,8 +49,9 @@ class ResourceProvider(object):
     def resolve_configuration(self, conf, resource_configuration):
         """
         Resolve the configuration from given JSON encoded configuration data.
+
         :param conf: JSON encoded configuration
-        :return:
+        :param resource_configuration: ResourceConfig object
         """
         if not self.logger:
             self.logger = LogManager.get_resourceprovider_logger("ResourceProvider", "RSP")
@@ -60,8 +61,10 @@ class ResourceProvider(object):
     def allocate_duts(self, resource_configuration):
         """
         Initialize DUT's.
+
         :param resource_configuration: ResourceConfig
         :return: List of DUT objects
+        :raises: ResourceInitError
         """
         cnt_hrdwr = resource_configuration.count_hardware()
         if not self.allocator:
@@ -84,6 +87,7 @@ class ResourceProvider(object):
     def cleanup(self):
         """
         Clean up allocator at the end of the run.
+
         :return: Nothing
         """
         self.logger.debug("Cleaning up ResourceProvider.")
@@ -94,7 +98,9 @@ class ResourceProvider(object):
     def __get_allocator(self):
         """
         Internal method for determining which allocator is needed for this run.
+
         :return: BaseAllocator
+        :raises: ResourceInitError
         """
         allocator_name = self.args.allocator
         allocator = self._pluginmanager.get_allocator(allocator_name)
@@ -106,6 +112,7 @@ class ResourceProvider(object):
     def get_my_duts(self):
         """
         Get my duts.
+
         :return: list of duts
         """
         # TODO: Is this function still used somewhere? There are no usages in this project at least.

@@ -27,7 +27,7 @@ from six import iteritems
 
 import icetea_lib.LogManager as LogManager
 from icetea_lib.bench import ReturnCodes
-from icetea_lib.tools.tools import get_fw_version, import_module, loadClass
+from icetea_lib.tools.tools import get_fw_version, import_module, load_class
 from icetea_lib.arguments import get_parser, get_tc_arguments, get_base_arguments
 from icetea_lib.Result import Result
 
@@ -38,6 +38,7 @@ class TestStatus:
     READY = 2
     RUNNING = 1
     FINISHED = 0
+
 
 class TestcaseContainer(object):
     def __init__(self, logger=None):
@@ -137,6 +138,7 @@ class TestcaseContainer(object):
     def get(self, field):
         """
         Gets value of property/configuration field.
+
         :param field: Name of configuration property to get
         :return: Value of configuration property field. None if not found.
         """
@@ -166,7 +168,8 @@ class TestcaseContainer(object):
         """
         Merges testcase configuration with dictionary conf_to_merge.
 
-        :param conf_to_merge: Dictionary of configuration to merge with testcase default configuration
+        :param conf_to_merge: Dictionary of configuration to
+        merge with testcase default configuration
         :return: Nothing
         """
         self._final_configuration = merge(self._final_configuration, conf_to_merge)
@@ -179,8 +182,7 @@ class TestcaseContainer(object):
 
     def set_final_config(self):
         """
-        Sets configuration for testcase instance from self._final_configuration field
-        :return:
+        Sets configuration for testcase instance from self._final_configuration field.
         """
         if self._instance:
             self._instance.set_config(self._final_configuration)
@@ -188,6 +190,7 @@ class TestcaseContainer(object):
     def validate_tc_instance(self):
         """
         Validates this testcase instance metadata and fetches the tc configuration.
+
         :return Nothing
         :raises SyntaxError
         """
@@ -313,7 +316,7 @@ class TestcaseContainer(object):
         for test_class_name, test_class in iteritems(module.__dict__):
             if not isclass(test_class):
                 continue
-            if getattr(test_class, "IS_TEST", False) == True or test_class_name == "Testcase":
+            if getattr(test_class, "IS_TEST", False) is True or test_class_name == "Testcase":
                 inst = test_class()
                 if inst.get_test_name() == self.tcname:
                     return inst
@@ -321,22 +324,23 @@ class TestcaseContainer(object):
                     continue
 
     def _load_testcase(self, modulename, verbose=False):
-        '''
+        """
         :param modulename: testcase to be loaded
         :param verbose: print exceptions when loading class
         :return: testcase instance
         :raises TypeError exception when modulename is not string
         :raises ImportError exception when cannot load testcase
-        '''
+        """
         if not isinstance(modulename, str):
             raise TypeError("Error, runTest: modulename not a string.")
         try:
-            module = loadClass(modulename, verbose)
+            module = load_class(modulename, verbose)
         except ValueError as e:
             raise ImportError("Error, load_testcase: loadClass raised ValueError: {}".format(e))
 
         if module is None:
-            raise ImportError("Error, runTest: loadClass returned NoneType for modulename: %s"%modulename)
+            raise ImportError("Error, runTest: "
+                              "loadClass returned NoneType for modulename: %s" % modulename)
 
         return module()
 
@@ -345,7 +349,8 @@ class TestcaseContainer(object):
         if tc_instance.skip():
             info = tc_instance.skip_info()
             if info.get('only_type') or info.get('platforms'):
-                # only_type cannot be properly checked here, se we proceed and check the final configuration in Bench.
+                # only_type cannot be properly checked here, se we proceed
+                # and check the final configuration in Bench.
                 return False
             else:
                 self.logger.info("TC '%s' will be skipped because of '%s'" % (
@@ -369,9 +374,11 @@ class TestcaseContainer(object):
             return True
 
     def _check_version(self, tc_instance):
-        if tc_instance.config.get("compatible") and tc_instance.config['compatible']['framework']['name']:
+        if tc_instance.config.get(
+                "compatible") and tc_instance.config['compatible']['framework']['name']:
             framework = tc_instance.config['compatible']['framework']
-            # Check if version requirement is available and that the testcase is meant for this framework
+            # Check if version requirement is available
+            # and that the testcase is meant for this framework
             if framework['version'] and framework['name'] == "Icetea":
                 ver_str = framework['version']
                 fw_version = get_fw_version()
@@ -385,7 +392,8 @@ class TestcaseContainer(object):
                     # Unable to convert fw_version to integer, let's just proceed.
                     return None
                 if ver_str[0].isdigit():
-                    return self._wrong_version(tc_instance, ver_str) if fw_version != ver_str else None
+                    return self._wrong_version(
+                        tc_instance, ver_str) if fw_version != ver_str else None
 
                 # Handle case where the version is a version number without comparison operators
                 if not semver.match(fw_version, ver_str):
@@ -424,7 +432,8 @@ class DummyContainer(TestcaseContainer):
         super(DummyContainer, self).__init__(logger)
 
     @staticmethod
-    def find_testcases(modulename, moduleroot, tc_meta_schema, path=None, suiteconfig=None, logger=None):
+    def find_testcases(modulename, moduleroot, tc_meta_schema, path=None, suiteconfig=None,
+                       logger=None):
         """
         Static method find_testcases. Returns a DummyContainer with attributes collected from
         function params.
@@ -457,6 +466,7 @@ class DummyContainer(TestcaseContainer):
     def set_result_verdict(self, reason):
         """
         Sets the inconclusive verdict for this DummyContainer with reason reason.
+
         :param reason: String reason for why this dummy exists.
         :return: Nothing
         """

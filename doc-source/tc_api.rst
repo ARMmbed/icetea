@@ -69,10 +69,7 @@ what a test case should do and what is required.
 +--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------+
 | specification_href | Link to specification                                                                                                                                       | "http://....."                                                                                                             |
 +--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------+
-| component          | Component under test
-                                                                                  | "Icetea"
-
-                                                                                                                                                                                           |
+| component          | Component under test                                                                                                                                        | "Icetea"                                                                                                                   |
 +--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------+
 | feature            | List of features under test                                                                                                                                 | []                                                                                                                         |
 +--------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------+
@@ -139,9 +136,7 @@ This can normally be omitted.
 +--------------+----------------------------------------------------+---------------------------------------------------------------+
 | "hw"         | More information on this later                     | {"value": True}                                               |
 +--------------+----------------------------------------------------+---------------------------------------------------------------+
-| "framework"  | Name and version of framework this testcase is for | {"name": "Icetea",
-"version": "1
-.0.0"}                       |
+| "framework"  | Name and version of framework this testcase is for | {"name": "Icetea", "version": "1.0.0"}                        |
 +--------------+----------------------------------------------------+---------------------------------------------------------------+
 
 Requirements
@@ -443,7 +438,8 @@ implemented in the same file.
 It works by replacing the case-function of a Testcase object
 with the function that the decorator is added to.
 Example use of this can be found in
-`multiple_tests_cases.py <../examples/multiple_test_cases_by_file_example/multiple_tests_cases.py>`_.
+`multiple_tests_cases.py <../../examples/multiple_test_cases_by_file_example/multiple_tests_cases
+.py>`_.
 Take note that the base class cannot be named "Testcase".
 It will cause errors in the execution.
 
@@ -451,4 +447,5 @@ It will cause errors in the execution.
 Full code example with comments
 *******************************
 
-Full code example and template for a testcase is available in `sample.py <../examples/sample.py>`_
+Full code example and template for a testcase is available in `sample.py <../../examples/sample
+.py>`_

@@ -11,11 +11,10 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-"""
 
-"""
 CliResponse module. Contains CliResponse class, which is the object returned by the command API.
 """
+
 
 import logging
 
@@ -65,23 +64,16 @@ class CliResponse(object):
         """
         return self.retcode != 0
 
-    def __index__(self, i):
-        # TODO: What is this function supposed to do? How is it used?
-        # TODO: __index__ is not supposed to take arguments.
-        if self.parsed:
-            return self.parsed[i]
-        return None
-
     # verify that response message is expected
     def verify_message(self, expected_response, break_in_fail=True):
         """
-        Verifies that expectedResponse is found in self.lines
+        Verifies that expected_response is found in self.lines.
 
         :param expected_response: response or responses to look for. Must be list or str.
         :param break_in_fail: If set to True,
         re-raises exceptions caught or if message was not found
         :return: True or False
-        :raises: LookupError if message was not found and breakInFail was True. Other Exceptions
+        :raises: LookupError if message was not found and break_in_fail was True. Other exceptions
         might also be raised through searcher.verify_message.
         """
         ok = True
@@ -119,7 +111,8 @@ class CliResponse(object):
 
     def set_response_time(self, seconds):
         """
-        Set response time in seconds
+        Set response time in seconds.
+
         :param seconds: integer
         :return: Nothing
         """
@@ -127,14 +120,15 @@ class CliResponse(object):
 
     def verify_response_duration(self, expected=None, zero=0, threshold_percent=0,
                                  break_in_fail=True):
-        '''
-        verify that response duration is in bounds
+        """
+        Verify that response duration is in bounds.
+
         :param expected: seconds what is expected duration
         :param zero: seconds if one to normalize duration before calculating error rate
         :param threshold_percent: allowed error in percents
         :param break_in_fail: boolean, True if raise TestStepFail when out of bounds
-        :return:
-        '''
+        :return: (duration, expected duration, error)
+        """
         was = self.timedelta - zero
         error = abs(was/expected)*100.0 - 100.0 if expected > 0 else 0
         msg = "should: %.3f, was: %.3f, error: %.3f %%" % (expected, was, error)
@@ -145,11 +139,12 @@ class CliResponse(object):
             self.logger.debug(msg)
             if break_in_fail:
                 raise TestStepFail(msg)
-        return (was, expected, error)
+        return was, expected, error
 
     def verify_response_time(self, expected_below):
         """
-        Verify that response time (time span between request-response) is reasonable
+        Verify that response time (time span between request-response) is reasonable.
+
         :param expected_below: integer
         :return: Nothing
         :raises: ValueError if timedelta > expected time

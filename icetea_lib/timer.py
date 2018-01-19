@@ -20,9 +20,14 @@ import signal
 import time
 
 
-class Timeout(object):
-    """Timeout class using ALARM signal."""
+class Timeout(object):  # pylint: disable=too-few-public-methods
+    """
+    Timeout class using ALARM signal.
+    """
     class Timeout(Exception):
+        """
+        Internal Timeout exception
+        """
         pass
 
     def __init__(self, sec):
@@ -35,16 +40,37 @@ class Timeout(object):
     def __exit__(self, *args):
         signal.alarm(0)    # disable alarm
 
-    def raise_timeout(self, *args):
+    def raise_timeout(self, *args):  # pylint: disable=unused-argument,no-self-use
+        """
+        Raise a Timeout exception
+        :param args: Not used
+        :return: Nothing
+        :raises: Timeout
+        """
         raise Timeout.Timeout()
 
 
 class Timer(Thread):
+    """
+    Timer class, simple timer that sleeps for timeout seconds.
+    """
+    def __init__(self):
+        super(Timer, self).__init__()
+        self.timeout = None
 
-    def Wait(self, timeout):
+    def wait(self, timeout):
+        """
+        Starts the Timer for timeout seconds, then gives 5 second grace period to join the thread.
+        :param timeout: Duration for timer.
+        :return: Nothing
+        """
         self.timeout = timeout
         self.start()
         self.join(timeout=5)
 
     def run(self):
+        """
+        Just sleep for self.timeout seconds.
+        :return:
+        """
         time.sleep(self.timeout)

@@ -120,22 +120,22 @@ def init_process_dut(contextlist, conf, index, args):
         dut.index = index
         dut.command = binary
         if args.valgrind:
-            dut.useValgrind(args.valgrind_tool,
-                            not args.valgrind_text,
-                            args.valgrind_console,
-                            args.valgrind_track_origins,
-                            args.valgrind_extra_params)
+            dut.use_valgrind(args.valgrind_tool,
+                             not args.valgrind_text,
+                             args.valgrind_console,
+                             args.valgrind_track_origins,
+                             args.valgrind_extra_params)
         if args.gdb == index:
-            dut.useGdb()
+            dut.use_gdb()
             contextlist.logger.info("GDB is activated for node %i" % index)
         if args.gdbs == index:
-            dut.useGdbs(True, args.gdbs_port)
+            dut.use_gdbs(True, args.gdbs_port)
             contextlist.logger.info("GDBserver is activated for node %i" % index)
         if args.vgdb == index:
-            dut.useVgdb()
+            dut.use_vgdb()
             contextlist.logger.info("VGDB is activated for node %i" % index)
         if args.nobuf:
-            dut.noStdbuf()
+            dut.no_std_buf()
 
         if init_cli_cmds is not None:
             dut.set_init_cli_cmds(init_cli_cmds)

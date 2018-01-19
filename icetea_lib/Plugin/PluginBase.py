@@ -41,6 +41,7 @@ class RunPluginBase(object):
     def get_allocators(self):
         """
         Get a dictionary with names and class references to BaseAllocator objects.
+
         :return: Dictionary
         """
         return None
@@ -58,6 +59,7 @@ class PluginBase(object):
         """
         Return dictionary with attribute names as strings as keys and attribute values (classes,
         functions, values) as values.
+
         :return: Dictionary
         """
         return None
@@ -65,6 +67,7 @@ class PluginBase(object):
     def get_parsers(self):
         """
         Return dictionary with parser names as keys and parser functions as values.
+
         :return: Dictonary
         """
         return None
@@ -72,6 +75,7 @@ class PluginBase(object):
     def get_external_services(self):
         """
         Get dictionary with external service names as keys and classes as values.
+
         :return: Dictionary
         """
         return None
@@ -79,6 +83,7 @@ class PluginBase(object):
     def init(self, bench=None):
         """
         Initialization function that test case plugins can implement.
+
         :param bench: test bench object (Bench).
         :return: Nothing
         """
@@ -88,7 +93,8 @@ class PluginBase(object):
     @staticmethod
     def find_one(line, lookup):
         """
-        regexp search with one value to return
+        regexp search with one value to return.
+
         :param line: Line
         :param lookup: regexp
         :return: Match group or False
@@ -103,7 +109,8 @@ class PluginBase(object):
     @staticmethod
     def find_multiple(line, lookup):
         """
-        regexp search with one value to return
+        regexp search with one value to return.
+
         :param line: Line
         :param lookup: regexp
         :return: List of match groups or False

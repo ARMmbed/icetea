@@ -1,3 +1,5 @@
+# pylint: disable=too-many-instance-attributes
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,19 +24,26 @@ import select
 from threading import Thread, Lock
 from collections import deque
 from icetea_lib.TestStepError import TestStepError
-from icetea_lib.tools.tools import strip_escape, is_pid_running, unixPlatform, is_python3
+from icetea_lib.tools.tools import strip_escape, is_pid_running, UNIXPLATFORM, IS_PYTHON3
 import icetea_lib.LogManager as LogManager
 
 
-class StreamDescriptor(object):
+class StreamDescriptor(object):  # pylint: disable=too-few-public-methods
+    """
+    StreamDescriptor class, container for stream components.
+    """
     def __init__(self, stream, callback):
         self.stream = stream
         self.buf = ""
-        self.rq = deque()
+        self.read_queue = deque()  # pylint: disable=invalid-name
         self.has_error = False
         self.callback = callback
 
+
 class NonBlockingStreamReader(object):
+    """
+    Implementation for a non-blocking stream reader.
+    """
     _instance = None
     _streams = None
     _stream_mtx = None
@@ -54,74 +63,92 @@ class NonBlockingStreamReader(object):
         self._descriptor = StreamDescriptor(stream, callback)
 
     def start(self):
+        """
+        Start the reader, acquires the global lock before appending the descriptor on the stream.
+        Releases the lock afterwards.
+        :return: Nothing
+        """
         NonBlockingStreamReader._stream_mtx.acquire()
         NonBlockingStreamReader._streams.append(self._descriptor)
         NonBlockingStreamReader._stream_mtx.release()
 
     @staticmethod
-    def _get_sd(fd):
-        for sd in NonBlockingStreamReader._streams:
-            if fd == sd.stream.fileno():
-                return sd
+    def _get_sd(file_descr):
+        """
+        Get streamdescriptor matching file_descr fileno.
+
+        :param file_descr: file object
+        :return: StreamDescriptor or None
+        """
+        for stream_descr in NonBlockingStreamReader._streams:
+            if file_descr == stream_descr.stream.fileno():
+                return stream_descr
         return None
 
     @staticmethod
-    def _read_fd(fd):
-        """ Read incoming data from file handle.
-            Then find the matching StreamDescriptor by fd value."""
+    def _read_fd(file_descr):
+        """
+        Read incoming data from file handle.
+        Then find the matching StreamDescriptor by file_descr value.
+
+        :param file_descr: file object
+        """
         try:
-            line = os.read(fd, 1024*1024)
+            line = os.read(file_descr, 1024 * 1024)
         except OSError:
-            sd = NonBlockingStreamReader._get_sd(fd)
-            if sd is not None:
-                sd.has_error = True
-                if sd.callback is not None:
-                    sd.callback()
+            stream_desc = NonBlockingStreamReader._get_sd(file_descr)
+            if stream_desc is not None:
+                stream_desc.has_error = True
+                if stream_desc.callback is not None:
+                    stream_desc.callback()
             return
 
-        if len(line):
-            sd = NonBlockingStreamReader._get_sd(fd)
-            if sd is None:
+        if line:
+            stream_desc = NonBlockingStreamReader._get_sd(file_descr)
+            if stream_desc is None:
                 return # Process closing
 
-            if is_python3:
+            if IS_PYTHON3:
                 try:
                     # @TODO: further develop for not ascii/unicode binary content
                     line = line.decode("ascii")
                 except UnicodeDecodeError:
                     line = repr(line)
-            sd.buf += line
+            stream_desc.buf += line
             # Break lines
-            s = sd.buf.split(os.linesep)
-            for line in s[:-1]:
-                sd.rq.appendleft(strip_escape(line.strip()))
-                if sd.callback is not None:
-                    sd.callback()
+            split = stream_desc.buf.split(os.linesep)
+            for line in split[:-1]:
+                stream_desc.read_queue.appendleft(strip_escape(line.strip()))
+                if stream_desc.callback is not None:
+                    stream_desc.callback()
             # Store the remainded, its either '' if last char was '\n'
             # or remaining buffer before line end
-            sd.buf = s[-1]
+            stream_desc.buf = split[-1]
 
     @staticmethod
     def _read_select_poll(poll):
-        """ Read PIPEs using select.poll() method
-            Available on Linux and some Unixes"""
+        """
+        Read PIPEs using select.poll() method
+        Available on Linux and some Unixes
+        """
         npipes = len(NonBlockingStreamReader._streams)
-        for sd in NonBlockingStreamReader._streams:
-            if not sd.has_error:
-                poll.register(sd.stream, select.POLLIN | select.POLLERR | select.POLLHUP | select.POLLNVAL)
+        for stream_descr in NonBlockingStreamReader._streams:
+            if not stream_descr.has_error:
+                poll.register(stream_descr.stream,
+                              select.POLLIN | select.POLLERR | select.POLLHUP | select.POLLNVAL)
 
         while NonBlockingStreamReader._run_flag:
-            for (fd,event) in poll.poll(500):
+            for (file_descr, event) in poll.poll(500):
                 if event == select.POLLIN:
-                    NonBlockingStreamReader._read_fd(fd)
+                    NonBlockingStreamReader._read_fd(file_descr)
                 else:
                     # Dut died, signal the processing thread so it notices that no lines coming in
-                    sd = NonBlockingStreamReader._get_sd(fd)
-                    if sd is None:
+                    stream_descr = NonBlockingStreamReader._get_sd(file_descr)
+                    if stream_descr is None:
                         return # PIPE closed but DUT already disappeared
-                    sd.has_error = True
-                    if sd.callback is not None:
-                        sd.callback()
+                    stream_descr.has_error = True
+                    if stream_descr.callback is not None:
+                        stream_descr.callback()
                         return # Force poll object to reregister only alive descriptors
 
             # Check if new pipes added, don't need mutext just for reading the size
@@ -130,18 +157,21 @@ class NonBlockingStreamReader(object):
                 return
 
     @staticmethod
-    def _read_select_kqueue(kq):
-        """ Read PIPES using BSD Kqueue"""
+    def _read_select_kqueue(k_queue):
+        """
+        Read PIPES using BSD Kqueue
+        """
         npipes = len(NonBlockingStreamReader._streams)
         # Create list of kevent objects
-        kevents = [ select.kevent(s.stream.fileno(),  # pylint: disable=no-member
-                           filter=select.KQ_FILTER_READ, # we are interested in reads   # pylint: disable=no-member
-                           flags=select.KQ_EV_ADD | select.KQ_EV_ENABLE)  # pylint: disable=no-member
-                        for s in NonBlockingStreamReader._streams ]
+        # pylint: disable=no-member
+        kevents = [select.kevent(s.stream.fileno(),
+                                 filter=select.KQ_FILTER_READ,
+                                 flags=select.KQ_EV_ADD | select.KQ_EV_ENABLE)
+                   for s in NonBlockingStreamReader._streams]
         while NonBlockingStreamReader._run_flag:
-            events = kq.control(kevents, npipes, 0.5) # Wake up twice in second
+            events = k_queue.control(kevents, npipes, 0.5)  # Wake up twice in second
             for event in events:
-                if (event.filter == select.KQ_FILTER_READ):  # pylint: disable=no-member
+                if event.filter == select.KQ_FILTER_READ:  # pylint: disable=no-member
                     NonBlockingStreamReader._read_fd(event.ident)
             # Check if new pipes added.
             if npipes != len(NonBlockingStreamReader._streams):
@@ -149,9 +179,12 @@ class NonBlockingStreamReader(object):
 
     @staticmethod
     def run():
+        """
+        Run loop
+        """
         while NonBlockingStreamReader._run_flag:
             # Wait for streams to appear
-            if 0 == len(NonBlockingStreamReader._streams):
+            if not NonBlockingStreamReader._streams:
                 time.sleep(0.2)
                 continue
             # Try to get correct select/poll method for this OS
@@ -166,43 +199,55 @@ class NonBlockingStreamReader(object):
                 continue
             # Try is select.kqueue is supported (BSD/OS X)
             try:
-                kq = select.kqueue()
+                k_queue = select.kqueue()  # pylint: disable=no-member
             except AttributeError:
                 pass
             else:
-                NonBlockingStreamReader._read_select_kqueue(kq)
-                kq.close()
+                NonBlockingStreamReader._read_select_kqueue(k_queue)
+                k_queue.close()
                 continue
             # Not workable polling method found
             raise RuntimeError('This OS is not supporting select.poll() or select.kqueue()')
 
     def stop(self):
-        #print('stopping NonBlockingStreamReader..')
-        #print('acquire..')
+        """
+        Stop the reader
+        """
+        # print('stopping NonBlockingStreamReader..')
+        # print('acquire..')
         NonBlockingStreamReader._stream_mtx.acquire()
-        #print('acquire..ok')
+        # print('acquire..ok')
         NonBlockingStreamReader._streams.remove(self._descriptor)
-        if len(NonBlockingStreamReader._streams) == 0:
+        if not NonBlockingStreamReader._streams:
             NonBlockingStreamReader._run_flag = False
-        #print('release..')
+        # print('release..')
         NonBlockingStreamReader._stream_mtx.release()
-        #print('release..ok')
-        if NonBlockingStreamReader._run_flag == False:
-            #print('join..')
+        # print('release..ok')
+        if NonBlockingStreamReader._run_flag is False:
+            # print('join..')
             NonBlockingStreamReader._rt.join()
-            #print('join..ok')
+            # print('join..ok')
             del NonBlockingStreamReader._rt
             NonBlockingStreamReader._rt = None
-            #print('stopping NonBlockingStreamReader..ok')
+            # print('stopping NonBlockingStreamReader..ok')
 
     def has_error(self):
+        """
+        :return: Boolean, True if _descriptor.has_error is True. False otherwise
+        """
         return self._descriptor.has_error
 
     def readline(self):
+        """
+        Readline implementation.
+
+        :return: popped line from descriptor queue. None if nothing found
+        :raises: RuntimeError if errors happened while reading PIPE
+        """
         if self.has_error():
             raise RuntimeError("Errors reading PIPE")
         try:
-            return self._descriptor.rq.pop()
+            return self._descriptor.read_queue.pop()
         except IndexError:
             # No lines in queue
             pass
@@ -210,81 +255,138 @@ class NonBlockingStreamReader(object):
 
 
 class GenericProcess(object):
-
+    """
+    Generic process implementation for use with Dut.
+    """
     # Contstruct GenericProcess instance
     def __init__(self, name, cmd=None, path=None, logger=None):
         self.name = name
         self.proc = None
         self.logger = logger
         self.cmd = None
+        self.cmd_arr = None
         self.path = None
         self.gdb = False
         self.gdbs = False
         self.vgdb = False
-        self.gdbsPort = None
+        self.gdbs_port = None
         self.nobuf = False
         self.valgrind = None
-        self.__printIO = True
-        self.__valgrindLogBaseName = None
-        self.readThread = None
-        self.__ignoreReturnCode = False
-        self.defaultReturnCode = 0
+        self.valgrind_xml = None
+        self.valgrind_console = None
+        self.valgrind_track_origins = None
+        self.valgrind_extra_params = None
+        self.__print_io = True
+        self.__valgrind_log_basename = None
+        self.read_thread = None
+        self.__ignore_return_code = False
+        self.default_retcode = 0
 
         if not self.logger:
             self.logger = LogManager.get_bench_logger(name, 'GP', False)
         self.cmd = cmd
         self.path = path
 
-    def enableIOPrints(self):
-        self.__printIO = True
+    def enable_io_prints(self):
+        """
+        Enable IO prints
+        """
+        self.__print_io = True
 
-    def disableIOPrints(self):
-        self.__printIO = False
+    def disable_io_prints(self):
+        """
+        Disable IO prints
+        """
+        self.__print_io = False
 
     @property
-    def ignoreReturnCode(self):
-        return self.__ignoreReturnCode
+    def ignore_return_code(self):
+        """
+        Return value of __ignoreReturnCode
+        """
+        return self.__ignore_return_code
 
-    @ignoreReturnCode.setter
-    def ignoreReturnCode(self, value):
-        self.__ignoreReturnCode = value
+    @ignore_return_code.setter
+    def ignore_return_code(self, value):
+        """
+        Set __ignoreReturnCode
+        """
+        self.__ignore_return_code = value
 
     # use gdb for process
-    def useGdb(self, gdb=True):
+    def use_gdb(self, gdb=True):
+        """
+        Set gdb use for process.
+
+        :param gdb: Boolean, defaults to True.
+        """
         self.gdb = gdb
 
-    def useGdbs(self, gdbs=True, port=2345):
+    def use_gdbs(self, gdbs=True, port=2345):
+        """
+        Set gdbs use for process.
+
+        :param gdbs: Boolean, default is True
+        :param port: Port number for gdbserver
+        """
         self.gdbs = gdbs
-        self.gdbsPort = port
+        self.gdbs_port = port
 
     # use vgdb for process
-    def useVgdb(self, vgdb=True):
+    def use_vgdb(self, vgdb=True):
+        """
+        Set vgdb for process.
+
+        :param vgdb: Boolean, defaults to True
+        """
         self.vgdb = vgdb
 
-    def noStdbuf(self, nobuf=True):
+    def no_std_buf(self, nobuf=True):
+        """
+        Set buffering of stdio.
+
+        :param nobuf: Defaults to True (no buffering)
+        """
         self.nobuf = nobuf
 
-    def useValgrind(self, tool, xml, console, trackOrigins, valgrind_extra_params):
+    # pylint: disable=too-many-arguments
+    def use_valgrind(self, tool, xml, console, track_origins, valgrind_extra_params):
+        """
+        Use Valgrind.
+
+        :param tool: Tool name, must be memcheck, callgrind or massif
+        :param xml: Boolean output xml
+        :param console: Dump output to console, Boolean
+        :param track_origins: Boolean, set --track-origins=yes
+        :param valgrind_extra_params:  Extra parameters
+        :return: Nothing
+        :raises: AttributeError if invalid tool set.
+        """
         self.valgrind = tool
-        self.valgrindXml = xml
-        self.valgrindConsole = console
-        self.valgrindTrackOrigins = trackOrigins
-        self.valgrindExtraParams = valgrind_extra_params
+        self.valgrind_xml = xml
+        self.valgrind_console = console
+        self.valgrind_track_origins = track_origins
+        self.valgrind_extra_params = valgrind_extra_params
         if not tool in ['memcheck', 'callgrind', 'massif']:
             raise AttributeError("Invalid valgrind tool: %s" % tool)
 
-    def __getValgrindParameters(self):
+    def __get_valgrind_params(self):
+        """
+        Get Valgrind command as list.
+
+        :return: list
+        """
         valgrind = []
         if self.valgrind:
             valgrind.extend(['valgrind'])
             if self.valgrind == 'memcheck':
                 valgrind.extend(['--tool=memcheck', '--leak-check=full'])
-                if self.valgrindTrackOrigins:
+                if self.valgrind_track_origins:
                     valgrind.extend(['--track-origins=yes'])
-                if self.valgrindConsole:
+                if self.valgrind_console:
                     # just dump the default output, which is text dumped to console
                     valgrind.extend([])
-                elif self.valgrindXml:
+                elif self.valgrind_xml:
                     valgrind.extend([
                         '--xml=yes',
                         '--xml-file=' + LogManager.get_testcase_logfilename(
@@ -301,11 +403,11 @@ class GenericProcess(object):
                     '--tool=callgrind',
                     '--dump-instr=yes',
                     '--simulate-cache=yes',
-                    '--collect-jumps=yes' ])
-                if self.valgrindConsole:
+                    '--collect-jumps=yes'])
+                if self.valgrind_console:
                     # just dump the default output, which is text dumped to console
                     valgrind.extend([])
-                elif self.valgrindXml:
+                elif self.valgrind_xml:
                     valgrind.extend([
                         '--xml=yes',
                         '--xml-file=' + LogManager.get_testcase_logfilename(
@@ -322,13 +424,23 @@ class GenericProcess(object):
                     '--massif-out-file=' + LogManager.get_testcase_logfilename(
                         self.name + '_valgrind_massif.data')
                     ])
-            # this allows one to specify misc params to valgrind, eg. "--threshold=0.4" to get some more data from massif
-            if self.valgrindExtraParams != '':
-                valgrind.extend(self.valgrindExtraParams.split())
+            # this allows one to specify misc params to valgrind,
+            # eg. "--threshold=0.4" to get some more data from massif
+            if self.valgrind_extra_params != '':
+                valgrind.extend(self.valgrind_extra_params.split())
 
         return valgrind
 
     def start_process(self, cmd=None, path="", processing_callback=None):
+        """
+        Start the process.
+
+        :param cmd: Command to run
+        :param path: cwd
+        :param processing_callback: Callback for processing lines
+        :return: Nothing
+        :raises: NameError if Connection fails
+        """
         self.cmd = self.cmd if not cmd else cmd
         self.path = self.path if not path else path
         if self.path:
@@ -345,13 +457,13 @@ class GenericProcess(object):
             self.cmd_arr.extend(['gdb', '-ex=run', '--args'])
         elif self.gdbs:
             # add gdbserver parameters, run program immediately
-            self.cmd_arr.extend(['gdbserver', 'localhost:'+ str(self.gdbsPort)])
+            self.cmd_arr.extend(['gdbserver', 'localhost:' + str(self.gdbs_port)])
         elif self.vgdb:
             # add valgrind vgdb parameters, run program but wait for remote gdb connection
             self.cmd_arr.extend(['valgrind', '--vgdb=yes', '--vgdb-error=0'])
 
         if self.valgrind:
-            self.cmd_arr.extend(self.__getValgrindParameters())
+            self.cmd_arr.extend(self.__get_valgrind_params())
 
         self.cmd_arr.extend(self.cmd)
         prefn = None
@@ -361,29 +473,37 @@ class GenericProcess(object):
         self.logger.debug("Instantiating process "
                           "%s at %s with command %s"
                           % (self.name, self.path, " ".join(self.cmd_arr)),
-                          extra={"type" : "   "})
+                          extra={"type": "   "})
         self.proc = subprocess.Popen(self.cmd_arr, cwd=self.path, stdout=subprocess.PIPE,
                                      stdin=subprocess.PIPE, preexec_fn=prefn)
 
-        if unixPlatform:
+        if UNIXPLATFORM:
             import fcntl
-            fd = self.proc.stdout.fileno()
-            fl = fcntl.fcntl(fd, fcntl.F_GETFL)
-            fcntl.fcntl(fd, fcntl.F_SETFL, fl|os.O_NONBLOCK)
+            file_descr = self.proc.stdout.fileno()
+            fcntl_var = fcntl.fcntl(file_descr, fcntl.F_GETFL)
+            fcntl.fcntl(file_descr, fcntl.F_SETFL, fcntl_var | os.O_NONBLOCK)
 
         if self.proc.pid:
             # Start stream reader thread
-            self.readThread = NonBlockingStreamReader(self.proc.stdout, processing_callback)
-            self.readThread.start()
-            self.logger.info("Process '%s' running with pid: %i" % (' '.join(self.cmd_arr), (self.proc.pid)), extra={'type': '<->'})
+            self.read_thread = NonBlockingStreamReader(self.proc.stdout, processing_callback)
+            self.read_thread.start()
+            self.logger.info("Process '%s' running with pid: %i" % (' '.join(self.cmd_arr),
+                                                                    self.proc.pid),
+                             extra={'type': '<->'})
         else:
             self.logger.warning("Process start fails", extra={'type': '<->'})
             raise NameError('Connection Fails')
 
     def stop_process(self):
-        if self.readThread is not None:
+        """
+        Stop the process.
+
+        :raises: EnvironmentError if stopping fails due to unknown environment
+        TestStepError if process stops with non-default returncode and return code is not ignored.
+        """
+        if self.read_thread is not None:
             self.logger.info("stop_process::readThread.stop()-in")
-            self.readThread.stop()
+            self.read_thread.stop()
             self.logger.info("stop_process::readThread.stop()-out")
         returncode = None
         if self.proc:
@@ -393,50 +513,73 @@ class GenericProcess(object):
                     os.killpg(self.proc.pid, signal.SIGTERM)
                 except AttributeError:
                     self.logger.info("os.killpg::AttributeError")
-                    # Failed most likely because in windows, so use taskkill to kill whole process tree of proc
+                    # Failed most likely because in windows,
+                    # so use taskkill to kill whole process tree of proc
                     if platform.system() == "Windows":
                         subprocess.call(['taskkill', '/F', '/T', '/PID', str(self.proc.pid)])
                     else:
                         self.logger.info("os.killpg::unknown env")
-                        raise EnvironmentError("Unknown platform, don't know how to terminate process")
-                self.proc.communicate() # Wait for pipes to clear and process to stop.
+                        raise EnvironmentError("Unknown platform, "
+                                               "don't know how to terminate process")
+                self.proc.communicate()  # Wait for pipes to clear and process to stop.
                 returncode = self.proc.wait()
             except OSError:
                 self.logger.info("os.killpg::OSError")
-                pass # Ignore
             del self.proc
 
         if returncode is not None:
             self.logger.info("stop_process::returncode is not None:")
             self.logger.info("Process stopped with returncode %s" % returncode)
-            if returncode != self.defaultReturnCode and not self.__ignoreReturnCode:
+            if returncode != self.default_retcode and not self.__ignore_return_code:
                 raise TestStepError("Process stopped with returncode %d" % returncode)
         self.logger.info("stop_process-out")
 
     def stop(self):
+        """
+        Stop the process
+        See stop_process for more information
+        """
         self.stop_process()
 
-    def readline(self, timeout=1):
-        data = None
+    def readline(self, timeout=1):  # pylint: disable=unused-argument
+        """
+        Readline implementation.
 
-        if self.readThread:
+        :param timeout: Timeout, not used
+        :return: Line read or None
+        """
+        data = None
+        if self.read_thread:
             # Ignore the timeout value, return imediately if no lines in queue
-            data = self.readThread.readline()
-            if data and self.__printIO:
+            data = self.read_thread.readline()
+            if data and self.__print_io:
                 self.logger.info(data, extra={'type': '<--'})
         return data
 
     def writeline(self, data, crlf="\r\n"):
-        if self.readThread:
-            if self.readThread.has_error():
+        """
+        Writeline implementation.
+
+        :param data: Data to write
+        :param crlf: Line end characters, defailt is \r\n
+        :return: Nothing
+        :raises: RuntimeError if errors happen while writing to PIPE or process stops.
+        """
+        if self.read_thread:
+            if self.read_thread.has_error():
                 raise RuntimeError("Error writing PIPE")
         # Check if process still alive
         if self.proc.poll() is not None:
             raise RuntimeError("Process stopped")
-        if self.__printIO:
+        if self.__print_io:
             self.logger.info(data, extra={'type': '-->'})
-        self.proc.stdin.write( bytearray(data + crlf, 'ascii') )
+        self.proc.stdin.write(bytearray(data + crlf, 'ascii'))
         self.proc.stdin.flush()
 
     def is_alive(self):
+        """
+        Is process alive.
+
+        :return: Boolean, True is process is still running.
+        """
         return is_pid_running(self.proc.pid) if self.proc else False

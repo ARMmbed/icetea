@@ -11,6 +11,8 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+ResultList module, contains the ResultList class, which is an object to store Result objects.
 """
 
 from collections import Iterator
@@ -19,11 +21,6 @@ from icetea_lib.Reports.ReportJunit import ReportJunit
 from icetea_lib.Reports.ReportHtml import ReportHtml
 from icetea_lib.Reports.ReportConsole import ReportConsole
 from icetea_lib.Result import Result
-
-
-"""
-ResultList module, contains the ResultList class, which is an object to store Result objects.
-"""
 
 
 class ResultList(Iterator):
@@ -55,7 +52,9 @@ class ResultList(Iterator):
         # self._save_html_report({"NOTE": "TESTS EXECUTION IS ONGOING.."}, reload=5)
 
     def save(self, heads):
-        """ Create reports in different formats
+        """
+        Create reports in different formats.
+
         :param heads: html table extra values in title rows
         """
         # Junit
@@ -67,7 +66,8 @@ class ResultList(Iterator):
 
     def _save_junit(self):
         """
-        Save Junit report
+        Save Junit report.
+
         :return: Nothing
         """
         report = ReportJunit(self)
@@ -79,7 +79,8 @@ class ResultList(Iterator):
 
     def _save_html_report(self, heads=None, refresh=None):
         """
-        Save html report
+        Save html report.
+
         :param heads: headers as dict
         :param refresh: Boolean, if True will add a reload-tag to the report
         :return: Nothing
@@ -95,28 +96,32 @@ class ResultList(Iterator):
 
     def _print_console_summary(self):
         """
-        Print the console report
+        Print the console report.
+
         :return: Nothing
         """
         ReportConsole(self).generate()
 
     def success_count(self):
         """
-        Amount of passed test cases in this list
+        Amount of passed test cases in this list.
+
         :return: integer
         """
         return len([i for i, result in enumerate(self.data) if result.success])
 
     def failure_count(self):
         """
-        Amount of failed test cases in this list
+        Amount of failed test cases in this list.
+
         :return: integer
         """
         return len([i for i, result in enumerate(self.data) if result.failure])
 
     def inconclusive_count(self):
         """
-        Amount of inconclusive test cases in this list
+        Amount of inconclusive test cases in this list.
+
         :return: integer
         """
         inconc_count = len([i for i, result in enumerate(self.data) if result.inconclusive])
@@ -126,14 +131,16 @@ class ResultList(Iterator):
 
     def skip_count(self):
         """
-        Amount of skipped test cases in this list
+        Amount of skipped test cases in this list.
+
         :return: integer
         """
         return len([i for i, result in enumerate(self.data) if result.skip])
 
     def total_duration(self):
         """
-        Sum of the durations of the tests in this list
+        Sum of the durations of the tests in this list.
+
         :return: integer
         """
         durations = [result.duration for result in self.data]
@@ -141,7 +148,8 @@ class ResultList(Iterator):
 
     def pass_rate(self, include_skips=False, include_inconclusive=False):
         """
-        Calculate pass rate for tests in this list
+        Calculate pass rate for tests in this list.
+
         :param include_skips: Boolean, if True skipped tc:s will be included. Default is False
         :param include_inconclusive: Boolean, if True inconclusive tc:s will be included.
         Default is False.
@@ -168,6 +176,7 @@ class ResultList(Iterator):
     def get_summary(self):
         """
         Get a summary of this ResultLists contents as dictionary.
+
         :return: dictionary
         """
         return {
@@ -181,14 +190,16 @@ class ResultList(Iterator):
 
     def count(self):
         """
-        Return length of this list (amount of Results)
+        Return length of this list (amount of Results).
+
         :return: integer
         """
         return len(self)
 
     def __len__(self):
         """
-        Return length of this list (amount of Results)
+        Return length of this list (amount of Results).
+
         :return: integer
         """
         return len(self.data)
@@ -196,6 +207,7 @@ class ResultList(Iterator):
     def __next__(self):
         """
         Get next Result from this list.
+
         :return: Result
         """
         return self.next()
@@ -203,6 +215,7 @@ class ResultList(Iterator):
     def next(self):
         """
         Implementation of next method from Iterator.
+
         :return: Result
         :raises: StopIteration if IndexError occurs.
         """

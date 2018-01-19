@@ -121,8 +121,9 @@ class IceteaManagerTestcase(unittest.TestCase):
               "+------------------------+"
         self.assertEqual(table.get_string(), tab)
 
+    @mock.patch("icetea_lib.IceteaManager._cleanlogs")
     @mock.patch("icetea_lib.IceteaManager.TestSuite")
-    def test_run(self, mock_suite):
+    def test_run(self, mock_suite, mock_clean):
         ctm = IceteaManager()
 
         # Testing different return codes
@@ -154,14 +155,6 @@ class IceteaManagerTestcase(unittest.TestCase):
         ctm.list_suites.return_value = "Test-list-item"
         retval = ctm.run(args=self.args_tc)
         self.assertEqual(retval, 0)
-
-        # Test cleanlogs branch
-        with mock.patch.object(ctm, "_cleanlogs") as mock_clean:  # pylint: disable=unused-variable
-            self.args_tc.tc = None
-            self.args_tc.suite = None
-            self.args_tc.clean = True
-            retval = ctm.run(args=self.args_tc)
-            self.assertEqual(retval, 0)
 
     @mock.patch("icetea_lib.IceteaManager.TestSuite")
     def test_run_exceptions(self, mock_suite):

@@ -18,9 +18,9 @@ from icetea_lib.tools.tools import combine_urls, test_case, flush_queue, get_abs
 from icetea_lib.tools.tools import generate_object_graphs_by_class, num, is_pid_running
 from icetea_lib.tools.tools import get_fw_name, get_fw_version, get_number
 from icetea_lib.tools.tools import recursive_dictionary_get, get_pkg_version
-from icetea_lib.tools.tools import sha1OfFile, strip_escape, loadClass, verifyModule
+from icetea_lib.tools.tools import sha1_of_file, strip_escape, load_class
 from icetea_lib.tools.tools import remove_empty_from_dict, Singleton
-from icetea_lib.tools.tools import unixPlatform, is_python3, set_or_delete, split_by_n
+from icetea_lib.tools.tools import UNIXPLATFORM, IS_PYTHON3, set_or_delete, split_by_n
 
 import file
 import file.SessionFiles

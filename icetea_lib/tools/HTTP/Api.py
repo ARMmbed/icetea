@@ -32,7 +32,6 @@ from six import binary_type, string_types
 from icetea_lib.tools.tools import combine_urls
 
 
-
 # Schema to make sure header fields are overwritten
 schema = {
     "properties": {
@@ -41,10 +40,11 @@ schema = {
 }
 
 
-def initLogger():
-    '''
-    Initializes a basic logger for use with the API. Can be replaced when constructing the HttpApi object or afterwards with setter
-    '''
+def init_default_logger():
+    """
+    Initializes a basic logger for use with the API. Can be replaced when constructing
+    the HttpApi object or afterwards with setter
+    """
     logger = logging.getLogger("HttpApi")
     logger.setLevel(logging.INFO)
     # Skip attaching StreamHandler if one is already attached to logger
@@ -58,61 +58,68 @@ def initLogger():
     return logger
 
 
-
 class HttpApi(object):
     def __init__(self, host, defaultHeaders=None, cert=None, logger=None):
-        self.logger = initLogger() if logger is None else logger
+        self.logger = init_default_logger() if logger is None else logger
         self.defaultHeaders = {} if defaultHeaders is None else defaultHeaders
         self.host = host
         self.cert = cert
         self.logger.info("HttpApi initialized")
 
-    def setLogger(self, logger):
-        '''Sets a custom logger that is to be used with the HttpApi class.
+    def set_logger(self, logger):
+        """
+        Sets a custom logger that is to be used with the HttpApi class.
 
         :param logger: custom logger to use to log HttpApi log messages
         :return: Nothing
-        '''
+        """
         self.logger = logger
 
     def set_header(self, key, value):
-        '''Sets a new value for a header field in defaultHeader. Replaces old value if the key already exists
+        """
+        Sets a new value for a header field in defaultHeader.
+        Replaces old value if the key already exists.
+
         :param key: HTTP header key name
         :param value:HTTP header key value
         :return: Nothing, modifies defaultHeaders in place
-        '''
+        """
         self.defaultHeaders[key] = value
 
-    def setCert(self, cert):
-        '''Setter for certificate field. Valid values are either a string containing path to certificate .pem file
+    def set_cert(self, cert):
+        """
+        Setter for certificate field. Valid values are either a string containing path to certificate .pem file
         or Tuple, ('cert', 'key') pair.
 
         :param cert: Valid values are either a string containing path to certificate .pem file
-                    or Tuple, ('cert', 'key') pair.
+        or Tuple, ('cert', 'key') pair.
         :return: Nothing, modifies field in place
-        '''
-
+        """
         self.cert = cert
 
-    def setHost(self, host):
-        '''Setter for host parameter
+    def set_host(self, host):
+        """
+        Setter for host parameter
 
         :param host: address of HTTP service
         :return: Nothing, modifies field in place
-        '''
-
+        """
         self.host = host
 
     def get(self, path, headers=None, params=None, **kwargs):
-        '''Sends a GET request to host/path
+        """
+        Sends a GET request to host/path.
+
         :param path: String, Resource path on server
         :param params: Dictionary of parameters to be added to URL
-        :param headers: Dictionary of HTTP headers to be sent with the request, overwrites default headers if there is overlap
+        :param headers: Dictionary of HTTP headers to be sent with the request,
+        overwrites default headers if there is overlap
         :param kwargs: Other arguments used in the requests.request call
-            valid parameters in kwargs are the optional parameters of Requests.Request http://docs.python-requests.org/en/master/api/
+        valid parameters in kwargs are the optional parameters of Requests.Request
+        http://docs.python-requests.org/en/master/api/
         :return: requests.Response
         :raises: RequestException
-        '''
+        """
 
         if headers is not None:
             merger = jsonmerge.Merger(schema)
@@ -128,7 +135,11 @@ class HttpApi(object):
 
         url = combine_urls(self.host, path)
 
-        self.logger.debug("Trying to send HTTP GET to {0}{1}".format(url, "?"+urllib.urlencode(params, doseq=True) if params else ''))
+        self.logger.debug(
+            "Trying to send HTTP GET to {0}{1}".format(url,
+                                                       "?" + urllib.urlencode(
+                                                           params,
+                                                           doseq=True) if params else ''))
         try:
             resp = requests.get(url, params, **kwargs)
             self._log_response(resp)
@@ -138,16 +149,20 @@ class HttpApi(object):
         return resp
 
     def post(self, path, data=None, json=None, headers=None, **kwargs):
-        '''Sends a POST request to host/path
+        """
+        Sends a POST request to host/path.
+
         :param path: String, resource path on server
         :param data: Dictionary, bytes or file-like object to send in the body of the request
         :param json: JSON formatted data to send in the body of the request
-        :param headers: Dictionary of HTTP headers to be sent with the request, overwrites default headers if there is overlap
+        :param headers: Dictionary of HTTP headers to be sent with the request,
+        overwrites default headers if there is overlap
         :param kwargs: Other arguments used in the requests.request call
-            valid parameters in kwargs are the optional parameters of Requests.Request http://docs.python-requests.org/en/master/api/
+        valid parameters in kwargs are the optional parameters of Requests.Request
+        http://docs.python-requests.org/en/master/api/
         :return: requests.Response
         :raises: RequestException
-        '''
+        """
 
         if headers is not None:
             merger = jsonmerge.Merger(schema)
@@ -170,15 +185,19 @@ class HttpApi(object):
         return resp
 
     def put(self, path, data=None, headers=None, **kwargs):
-        '''Sends a PUT request to host/path
+        """
+        Sends a PUT request to host/path.
+
         :param path: String, resource path on server
         :param data: Dictionary, bytes or file-like object to send in the body of the request
-        :param headers: Dictionary of HTTP headers to be sent with the request, overwrites default headers if there is overlap
+        :param headers: Dictionary of HTTP headers to be sent with the request,
+        overwrites default headers if there is overlap
         :param kwargs: Other arguments used in the requests.request call
-            valid parameters in kwargs are the optional parameters of Requests.Request http://docs.python-requests.org/en/master/api/
+        valid parameters in kwargs are the optional parameters of Requests.
+        Request http://docs.python-requests.org/en/master/api/
         :return: requests.Response
         :raises: RequestException
-        '''
+        """
 
         if headers is not None:
             merger = jsonmerge.Merger(schema)
@@ -197,18 +216,21 @@ class HttpApi(object):
         except RequestException as es:
             self._log_exception(es)
             raise
-
         return resp
 
     def delete(self, path, headers=None, **kwargs):
-        '''Sends a DELETE request to host/path
+        """
+        Sends a DELETE request to host/path.
+
         :param path: String, resource path on server
-        :param headers: Dictionary of HTTP headers to be sent with the request, overwrites default headers if there is overlap
+        :param headers: Dictionary of HTTP headers to be sent with the request,
+        overwrites default headers if there is overlap
         :param kwargs: Other arguments used in the requests.request call
-            valid parameters in kwargs are the optional parameters of Requests.Request http://docs.python-requests.org/en/master/api/
+        valid parameters in kwargs are the optional parameters of Requests.Request
+        http://docs.python-requests.org/en/master/api/
         :return: requests.Response
         :raises: RequestException
-        '''
+        """
 
         if headers is not None:
             merger = jsonmerge.Merger(schema)
@@ -231,15 +253,19 @@ class HttpApi(object):
         return resp
 
     def patch(self, path, data=None, headers=None, **kwargs):
-        '''Sends a PATCH request to host/path
+        """
+        Sends a PATCH request to host/path.
+
         :param path: String, resource path on server
         :param data: Data as a dictionary, bytes, or file-like object to send in the body of the request.
-        :param headers: Dictionary of HTTP headers to be sent with the request, overwrites default headers if there is overlap
+        :param headers: Dictionary of HTTP headers to be sent with the request,
+        overwrites default headers if there is overlap
         :param kwargs: Other arguments used in the requests.request call
-            valid parameters in kwargs are the optional parameters of Requests.Request http://docs.python-requests.org/en/master/api/
+        valid parameters in kwargs are the optional parameters of Requests.Request
+        http://docs.python-requests.org/en/master/api/
         :return: requests.Response
         :raises: RequestException
-        '''
+        """
 
         if headers is not None:
             merger = jsonmerge.Merger(schema)

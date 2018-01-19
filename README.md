@@ -109,7 +109,7 @@ dut[string]             #dut nick name, or '*' to execute command in all duts
 cmd[string]             #command to be executed
 arguments[dictionary]   #optional argument list
         wait = <boolean>           # whether retcode is expected before continue next command. True (default) or False
-        expectedRetcode = <int>    # expected return code (default=0)
+        expected_retcode = <int>    # expected return code (default=0)
         timeout=<int>              # timeout, if no retcode receive
 ```
 

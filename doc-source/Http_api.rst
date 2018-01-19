@@ -22,7 +22,7 @@ The API is built into two parts:
 the Bench class with a link to the HttpApi class
 [here](../icetea_lib/Plugin/plugins/HttpApi.py).
 * the interface logic in
-[Api.py](../icetea_lib/tools/HTTP/Api.py)
+`Api.py <../../icetea_lib/tools/HTTP/Api.py>`_
 
 All logic is contained in Api.py.
 
@@ -93,6 +93,6 @@ Short example of get() in test case::
     response = api.get("/")
 
 A very simple example use case can be found in
-[examples](../examples/sample_http.py)
+`examples <../../examples/sample_http.py>`_
 
 

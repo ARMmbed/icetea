@@ -13,57 +13,56 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import time
-import pyshark
-from threading import Thread
-from threading import Lock
-import sys
 import re
 from datetime import datetime
-from icetea_lib.TestStepError import TestStepError
+from threading import Lock, Thread
+
+import pyshark
 import icetea_lib.LogManager as LogManager
+from icetea_lib.TestStepError import TestStepError
 
 
-class NwPacket:
+class NwPacket(object):
 
     @staticmethod
-    def verify(packet, expectedValues):
+    def verify(packet, expected_values):
         lines = packet.packetStr.splitlines()
-        field_values = dict() # field keys assumed to be unique accross layers
-        for layer_key, layer_value in expectedValues.items():
+        field_values = dict()  # field keys assumed to be unique accross layers
+        for layer_key, layer_value in expected_values.items():
             # support for legacy JSON interface
-            if re.match("^.+\..+", layer_key):
+            if re.match(r"^.+\..+", layer_key):
                 layer_key, field_key = layer_key.split('.')
-                layer_value = { field_key : layer_value }
+                layer_value = {field_key: layer_value}
             layer_found = False
             for line in lines:
-                if layer_found == False:
-                    m = re.search("^Layer "+layer_key+":", line)
-                    if m == None:
+                if not layer_found:
+                    match = re.search(r"^Layer "+layer_key+":", line)
+                    if not match:
                         continue
                     layer_found = True
                 for field_key, field_value in layer_value.items():
-                    if field_key in field_values and field_values[field_key] == True:
+                    if field_key in field_values and field_values[field_key]:
                         continue
                     else:
                         field_values[field_key] = False
                     # Whole row match (key starts with '*')
                     if field_key.startswith("*"):
-                        m = re.search("(\t)" + field_value, line)
-                        if m != None:
+                        match = re.search(r"(\t)" + field_value, line)
+                        if match:
                             field_values[field_key] = True
                         continue
-                    m = re.search("(\t|(, )|= )"+field_key+":[\s]{0,}([^,]*)[,]{0,1}", line)
-                    if m == None:
+                    match = re.search(r"(\t|(, )|= )" + field_key + r":[\s]{0,}([^,]*)[,]{0,1}",
+                                      line)
+                    if not match:
                         continue
-                    if re.search(field_value, m.group(3)):
+                    if re.search(field_value, match.group(3)):
                         field_values[field_key] = True
                     else:
                         continue
-            if layer_found == False:
+            if not layer_found:
                 return False
             for field_key, field_value in field_values.items():
-                if field_value == False:
+                if field_value is False:
                     return False
         return True
 
@@ -71,14 +70,15 @@ class NwPacket:
         self.__marks = []
         self.timestamp = datetime.now()
         self.packetStr = str(packet)
+        self.packet = packet
         self.appendMark(mark)
 
-    def isMark(self, mark ):
+    def isMark(self, mark):
         return mark in self.__marks
 
-    def appendMark(self, mark ):
+    def appendMark(self, mark):
         if mark:
-            self.__marks.append( mark )
+            self.__marks.append(mark)
 
     def __str__(self):
         return str(self.packet)
@@ -86,7 +86,8 @@ class NwPacket:
     def getMarks(self):
         return ','.join(self.__marks)
 
-class NwPacketManager:
+
+class NwPacketManager(object):
 
     def __init__(self):
         self.__packets = []
@@ -97,24 +98,24 @@ class NwPacketManager:
 
     def setMarkForHead(self, mark):
         if self.hasPackets():
-            #set mark
-            self.__packets[-1].appendMark( mark )
+            # set mark
+            self.__packets[-1].appendMark(mark)
             return
 
         self.__lock.acquire()
-        self.__marks.append( mark )
+        self.__marks.append(mark)
         self.__lock.release()
 
-    def push(self, packet, mark = None):
+    def push(self, packet, mark=None):
         packet = NwPacket(packet)
 
         self.__lock.acquire()
-        while len(self.__marks)>0:
-                packet.appendMark( self.__marks.pop() )
+        while len(self.__marks) > 0:
+            packet.appendMark(self.__marks.pop())
         self.__lock.release()
 
-        self.__packets.append( packet  )
-        #print("Got packet, count now: %i" % len(self))
+        self.__packets.append(packet)
+        # print("Got packet, count now: %i" % len(self))
 
     def count(self):
         return len(self.__packets)
@@ -123,7 +124,7 @@ class NwPacketManager:
         return self.__packets
 
     def lastPacketIndex(self):
-        return len(self.__packets)-1
+        return len(self.__packets) - 1
 
     def hasPackets(self):
         return len(self.__packets) > 0
@@ -143,9 +144,9 @@ class NwPacketManager:
         if not self.hasPackets():
             raise ValueError("Not packets available")
 
-        startIndex = self.findIndexByMark(startMarker)
-        endIndex = self.lastPacketIndex() if endMarker == None else self.findIndexByMark(endMarker)
-        for n in range(startIndex, endIndex):
+        start_index = self.findIndexByMark(startMarker)
+        end_index = self.lastPacketIndex() if endMarker is None else self.findIndexByMark(endMarker)
+        for n in range(start_index, end_index):
             print(self[n])
 
     # verify packet(s) that it contains valid contents
@@ -153,18 +154,20 @@ class NwPacketManager:
     #   verifyPackets( [{"WPAN": {"Command Identifier": "Beacon Request"}}] )
     #     OR  verifyPackets( [{"WPAN.Command Identifier": "Beacon Request"}] )
     # raise TestStepError exception if packet(s) not contains expected content
-    def verifyPackets(self, expectedPackets, startMarker='start', endMarker=None ):
+    def verifyPackets(self, expectedPackets, startMarker='start', endMarker=None):
 
         if not self.hasPackets():
             raise ValueError("Not packets available")
 
-        startIndex = self.findIndexByMark(startMarker)
-        endIndex = self.lastPacketIndex() if endMarker == None else self.findIndexByMark(endMarker)
+        start_index = self.findIndexByMark(startMarker)
+        end_index = self.lastPacketIndex() if endMarker is None else self.findIndexByMark(endMarker)
 
-        ok, expectedThatNotFound, packet = self.__verifyPackets(expectedPackets, startIndex, endIndex)
-        if not ok:
+        is_ok, expected_that_not_found, packet = self.__verify_packets(expectedPackets,
+                                                                       start_index,
+                                                                       end_index)
+        if not is_ok:
             # @todo print why packet didn't match to expected
-            raise TestStepError("Packet not found: " + str(expectedThatNotFound))
+            raise TestStepError("Packet not found: " + str(expected_that_not_found))
 
         self.logger.debug("verifyPackets success")
 
@@ -176,10 +179,10 @@ class NwPacketManager:
         if not self.hasPackets():
             raise ValueError("Not packets available")
 
-        startIndex = self.findIndexByMark(startMarker)
-        endIndex = self.lastPacketIndex() if endMarker == None else self.findIndexByMark(endMarker)
+        start_index = self.findIndexByMark(startMarker)
+        end_index = self.lastPacketIndex() if endMarker is None else self.findIndexByMark(endMarker)
 
-        count = self.__countPackets(expectedPacket, startIndex, endIndex)
+        count = self.__count_packets(expectedPacket, start_index, end_index)
         return count
 
     def findIndexByMark(self, mark):
@@ -192,38 +195,39 @@ class NwPacketManager:
 
     def FindNext(self, expectedPacket, begIndex, toIndex):
         for index in range(begIndex, toIndex+1):
-            ok = NwPacket.verify( self.__packets[index], expectedPacket )
-            if ok:
+            is_ok = NwPacket.verify(self.__packets[index], expectedPacket)
+            if is_ok:
                 return True, index, self.__packets[index]
         raise LookupError("Not found")
 
-    def __verifyPackets(self, expectedPackets, startIndex, endIndex):
+    def __verify_packets(self, expectedPackets, startIndex, endIndex):
         position = startIndex
         for expectedContent in expectedPackets:
             try:
-                ok, position, match = self.FindNext(expectedContent, position, endIndex)
-                if ok == False:
+                is_ok, position, match = self.FindNext(expectedContent, position, endIndex)
+                if not is_ok:
                     return False, expectedContent, match
                 position = position + 1
             except LookupError as msg:
-                #Not found
-                #print("Not Found: %s" % msg)
+                # Not found
+                # print("Not Found: %s" % msg)
                 return False, expectedContent, None
         return True, None, None
 
-    def __countPackets(self, expectedContent, startIndex, endIndex):
+    def __count_packets(self, expectedContent, startIndex, endIndex):
         position = startIndex
         count = 0
-        ok = True
+        is_ok = True
         try:
-            while ok == True:
-                ok, position, match = self.FindNext(expectedContent, position, endIndex)
-                if ok == True:
+            while is_ok:
+                is_ok, position, match = self.FindNext(expectedContent, position, endIndex)
+                if is_ok:
                     count = count + 1
                 position = position + 1
-        except LookupError as msg:
+        except LookupError:
             return count
         return count
+
 
 class Wireshark(NwPacketManager):
 
@@ -236,12 +240,14 @@ class Wireshark(NwPacketManager):
     def __init__(self):
         NwPacketManager.__init__(self)
         self.logger = LogManager.get_bench_logger("bench", "WS")
+        self.__captureThreadLive = None
+        self.__captureThreadFile = None
 
     def setMark(self, mark):
         self.setMarkForHead(mark)
 
     # Start live network capturing to a file
-    def startCapture(self, iface, file, tshark_arguments = None):
+    def startCapture(self, iface, file, tshark_arguments=None):
         self.__iface = iface
         if file:
             # first capture data to a file
@@ -250,7 +256,7 @@ class Wireshark(NwPacketManager):
             if isinstance(tshark_arguments, dict):
                 for key in tshark_arguments.keys():
                     kwargs[key] = tshark_arguments[key]
-            self.__captureThreadFile = Thread(target=self.__sniffToFile, kwargs=kwargs)
+            self.__captureThreadFile = Thread(target=self.__sniff_to_file, kwargs=kwargs)
             self.__captureThreadFile.setName("NW file capture")
             self.__captureThreadFile.start()
 
@@ -258,8 +264,8 @@ class Wireshark(NwPacketManager):
         kwargs = dict(iface=self.__iface)
         if isinstance(tshark_arguments, dict):
             for key in tshark_arguments.keys():
-                    kwargs[key] = tshark_arguments[key]
-        self.__captureThreadLive = Thread(target=self.__liveCapture, kwargs=kwargs)
+                kwargs[key] = tshark_arguments[key]
+        self.__captureThreadLive = Thread(target=self.__live_capture, kwargs=kwargs)
         self.__captureThreadLive.setName("NW live capture")
         self.__captureThreadLive.start()
 
@@ -267,7 +273,7 @@ class Wireshark(NwPacketManager):
     def loadCapture(self, file):
         self.logger.debug('Loading capture file: %s', file)
         capture = pyshark.FileCapture(input_file=file)
-        if capture == None:
+        if capture is None:
             raise ValueError('Loading capture file FAILED.')
         for packet in capture:
             self.push(packet)
@@ -277,26 +283,27 @@ class Wireshark(NwPacketManager):
     def stopCapture(self):
         if self.fileLoggingCapture:
             self.fileLoggingCapture.close()
-            self.__captureThreadFile.join( timeout = 5 )
+            self.__captureThreadFile.join(timeout=5)
         self.liveLoggingCapture.close()
-        self.__captureThreadLive.join( timeout = 5 )
+        self.__captureThreadLive.join(timeout=5)
         return self.count()
 
     # Get captured packets
     def getCaptures(self):
         return self.getPackets()
 
-    #Once pyshark supports it, add preference overriding arguments
-    def __liveCapture(self, iface, decode_as=None):
-        self.logger.debug("Sniffing if: '%s' -> live" % (iface))
-        self.liveLoggingCapture = pyshark.LiveCapture( interface=iface, decode_as=decode_as)
+    # Once pyshark supports it, add preference overriding arguments
+    def __live_capture(self, iface, decode_as=None):
+        self.logger.debug("Sniffing if: '%s' -> live" % iface)
+        self.liveLoggingCapture = pyshark.LiveCapture(interface=iface, decode_as=decode_as)
         for packet in self.liveLoggingCapture.sniff_continuously():
             self.push(packet)
         self.logger.debug("live sniffing ends")
 
-    #Once pyshark supports it, add preference overriding arguments
-    def __sniffToFile(self, iface, file, decode_as=None):
+    # Once pyshark supports it, add preference overriding arguments
+    def __sniff_to_file(self, iface, file, decode_as=None):
         self.logger.debug("Sniffing if: '%s' -> file: %s" % (iface, file))
-        self.fileLoggingCapture = pyshark.LiveCapture(interface=iface, output_file=file, decode_as=decode_as)
-        ret = self.fileLoggingCapture.sniff()
+        self.fileLoggingCapture = pyshark.LiveCapture(interface=iface, output_file=file,
+                                                      decode_as=decode_as)
+        ret = self.fileLoggingCapture.sniff()  # pylint: disable=unused-variable
         self.logger.debug("file sniffing ends")

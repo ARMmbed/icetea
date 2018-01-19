@@ -46,7 +46,7 @@ class BaseAllocator(object):
 
         :param dut_configuration_list: List of dut configuration dictionaries each
         containing a DUT configuration, which has the following generic form:
-            {"type": "process", "nick": None }
+        {"type": "process", "nick": None }
         :param args: Extra arguments that can be passed to allocate to further
         configure the allocation.
         :raises AllocationError: If not all dut's we're allocated, raises AllocationError
@@ -57,6 +57,7 @@ class BaseAllocator(object):
         """
         Release the allocated resource with the given context.
         This method has to be implemented by the subclass.
+
         :param allocation_context: The context of the allocated resource.
         :return:
         """

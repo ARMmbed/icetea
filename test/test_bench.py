@@ -222,44 +222,44 @@ class TestVerify(unittest.TestCase):
         self.assertEqual(n, threading.active_count())
 
     @mock.patch('icetea_lib.bench.resource_provider', create=True)
-    @mock.patch('icetea_lib.bench.executeCommand', create=True)
+    @mock.patch('icetea_lib.bench.execute_command', create=True)
     def test_precmds_to_two_duts(self, mock_ec, mock_rp):
         tc = Bench()
         tc._resource_provider = mock.Mock()
-        tc.executeCommand = mock.MagicMock()
+        tc.execute_command = mock.MagicMock()
         mock_resconf = mock.Mock()
         mock_resconf.get_dut_configuration = mock.MagicMock(return_value=[{"pre_cmds": ["first", "second"]}, {"pre_cmds": ["first2", "second2"]}])
         tc.resource_configuration = mock_resconf
         # Call using mangled name of __send_pre_commands method
         tc._Bench__send_pre_commands()
-        tc.executeCommand.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"), mock.call(2, "first2"), mock.call(2, "second2")])
+        tc.execute_command.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"), mock.call(2, "first2"), mock.call(2, "second2")])
 
-        tc.executeCommand.reset_mock()
+        tc.execute_command.reset_mock()
         # Test again with argument cmds
         tc._Bench__send_pre_commands("somecommand")
-        tc.executeCommand.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"),
+        tc.execute_command.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"),
                                             mock.call(2, "first2"), mock.call(2, "second2"),
                                             mock.call("*", "somecommand")])
 
     @mock.patch('icetea_lib.bench.resource_provider', create=True)
-    @mock.patch('icetea_lib.bench.executeCommand', create=True)
+    @mock.patch('icetea_lib.bench.execute_command', create=True)
     def test_postcmds_to_two_duts(self, mock_ec, mock_rp):
         tc = Bench()
         tc._resource_provider = mock.Mock()
-        tc.executeCommand = mock.MagicMock()
+        tc.execute_command = mock.MagicMock()
         mock_resconf = mock.Mock()
         mock_resconf.get_dut_configuration = mock.MagicMock(
             return_value=[{"post_cmds": ["first", "second"]}, {"post_cmds": ["first2", "second2"]}])
         tc.resource_configuration = mock_resconf
         # Call using mangled name of __send_pre_commands method
         tc._Bench__send_post_commands()
-        tc.executeCommand.assert_has_calls(
+        tc.execute_command.assert_has_calls(
             [mock.call(1, "first"), mock.call(1, "second"), mock.call(2, "first2"), mock.call(2, "second2")])
 
-        tc.executeCommand.reset_mock()
+        tc.execute_command.reset_mock()
         # Test again with argument cmds
         tc._Bench__send_post_commands("somecommand")
-        tc.executeCommand.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"),
+        tc.execute_command.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"),
                                             mock.call(2, "first2"), mock.call(2, "second2"),
                                             mock.call("*", "somecommand")])
 

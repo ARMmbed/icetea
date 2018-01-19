@@ -11,6 +11,9 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+LogManager module contains all logging related methods,
+classes and helpers used by Icetea.
 """
 
 import os
@@ -26,11 +29,6 @@ try:
 except ImportError:
     coloredlogs = None
     COLORS = False
-
-"""
-LogManager module contains all logging related methods, 
-classes and helpers used by Icetea.
-"""
 
 # Heavy use of global statement in this module for good reasons. Disable global-statement warning.
 # pylint: disable=global-statement
@@ -107,6 +105,7 @@ def remove_handlers(logger):
     # required as a workaround
     """
     remove handlers from logger.
+
     :param logger: Logger whose handlers to remove
     :return:
     """
@@ -116,25 +115,30 @@ def remove_handlers(logger):
                 if isinstance(handler, logging.FileHandler):
                     handler.close()
                 logger.removeHandler(handler)
-            except:
+            except:  # pylint: disable=bare-except
                 import traceback
                 traceback.print_exc()
                 break
 
 
 def get_base_dir():
-    """ Return the directory where logs for this run will be stored  """
+    """
+    Return the directory where logs for this run will be stored
+    """
     return LOGPATHDIR
 
 
 def get_testcase_log_dir():
-    """ Return the directory where current testcase's logs will be stored """
+    """
+    Return the directory where current testcase's logs will be stored
+    """
     return LOGTCDIR
 
 
 def get_testcase_logfilename(logname, prepend_tc_name=False):
-    """ Return filename for a logfile, filename will contain the actual path +
-    filename
+    """
+    Return filename for a logfile, filename will contain the actual path + filename.
+
     :param logname: Name of the log including the extension, should describe
     what it contains (eg. "device_serial_port.log")
     :param prepend_tc_name: Boolean, if True, prepends the filename with the
@@ -150,8 +154,8 @@ def get_testcase_logfilename(logname, prepend_tc_name=False):
 
 
 def get_base_logfilename(logname):
-    """ Return filename for a logfile, filename will contain the actual path +
-    filename
+    """ Return filename for a logfile, filename will contain the actual path + filename
+
     :param logname: Name of the log including the extension, should describe
     what it contains (eg. "device_serial_port.log")
     """
@@ -162,7 +166,9 @@ def get_base_logfilename(logname):
 
 
 def get_logger(name):
-    """ Return a logger instance for given name """
+    """
+    Return a logger instance for given name
+    """
     return logging.getLogger(name)
 
 
@@ -170,7 +176,8 @@ def get_file_logger(name, formatter=None):
     """
     Return a file logger that will log into a file located in the testcase log
     directory. Anything logged with a file logger won't be visible in the
-    console or any other logger
+    console or any other logger.
+
     :param name, Name of the logger, eg. the module name
     """
     if name is None or name == "":
@@ -191,11 +198,12 @@ def get_file_logger(name, formatter=None):
 
 def get_resourceprovider_logger(name=None, short_name=" ", log_to_file=True):
     """
+    Get logger for ResourceProvider and related classes.
 
-    :param name:
-    :param short_name:
-    :param log_to_file:
-    :return:
+    :param name: Name of the logger
+    :param short_name: Shorthand name
+    :param log_to_file: If True enable logging to file.
+    :return: logging.Logger
     """
 
     global LOGGERS
@@ -238,10 +246,12 @@ def get_resourceprovider_logger(name=None, short_name=" ", log_to_file=True):
 
 
 def get_bench_logger(name=None, short_name="  ", log_to_file=True):
-    """ Return a logger instance for given name. The logger will be a child
+    """
+    Return a logger instance for given name. The logger will be a child
     of the bench logger, so anything that is logged to it, will be also logged
     to bench logger. If a logger with the given name doesn't already exist,
     create it using the given parameters.
+
     :param name: Name of the logger
     :param short_name: A short name (preferably 3 characters) describing the logger
     :param log_to_file: Boolean, if True the logger will also log to a file "name.log"
@@ -282,7 +292,8 @@ def get_bench_logger(name=None, short_name="  ", log_to_file=True):
 
 def get_dummy_logger():
     """
-    Get dummy logger
+    Get dummy logger.
+
     :return: logger with NullHandler
     """
     logger = logging.getLogger("dummy")
@@ -291,15 +302,19 @@ def get_dummy_logger():
 
 
 def get_logfiles():
-    """Return a list of logfiles with relative paths from the log
-    root directory"""
+    """
+    Return a list of logfiles with relative paths from the log
+    root directory
+    """
     logfiles = [f for f in LOGFILES]
     logfiles.extend(GLOBAL_LOGFILES)
     return logfiles
 
 
 def set_level(name, level):
-    """ Set level for given logger
+    """
+    Set level for given logger.
+
     :param name: Name of logger to set the level for
     :param level: The new level, see possible levels from python logging library
     """
@@ -309,17 +324,20 @@ def set_level(name, level):
     logging.getLogger(loggername).setLevel(level)
 
 
+# pylint: disable=too-many-arguments
 def init_base_logging(directory="./log", verbose=False, silent=False, color=False, no_file=False,
                       truncate=True):
-    """ Initialize the Icetea logging by creating a directory to store logs
-    for this run and initialize the console logger for Icetea itself
+    """
+    Initialize the Icetea logging by creating a directory to store logs
+    for this run and initialize the console logger for Icetea itself.
+
     :param directory: Directory where to store the resulting logs
     :param verbose: Log level debug
     :param silent: Log level warning
     :param no_file: Log to file
     :param color: Log coloring
     :param truncate: Log truncating
-    :return:
+    :return: Nothing
     """
     global LOGPATHDIR
     global STANDALONE_LOGGING
@@ -371,10 +389,12 @@ def init_base_logging(directory="./log", verbose=False, silent=False, color=Fals
 
 def init_testcase_logging(name, verbose=True, silent=False, color=False,
                           truncate=True):
-    """ Initialize testcase logging and default loggers. First removes any
+    """
+    Initialize testcase logging and default loggers. First removes any
     existing testcase loggers, creates a new directory for testcase logs under
     the root logging directory, initializes the default bench logger and
     removes any child loggers it may have.
+
     :param name: Name of the testcase
     :param verbose: Log level debug
     :param silent: Log level warning
@@ -446,7 +466,9 @@ def init_testcase_logging(name, verbose=True, silent=False, color=False,
 
 
 def finish_testcase_logging():
-    """ Finalize testcase logging by removing loggers """
+    """
+    Finalize testcase logging by removing loggers
+    """
     del LOGFILES[:]
     if LOGGERS:
         # From local list of loggers, retrieve one(first one)
@@ -470,13 +492,15 @@ def finish_testcase_logging():
 
 
 def _get_filehandler_with_formatter(logname, formatter=None):
-    """ Return a logging FileHandler for given logname using a given
-    logging formatter
+    """
+    Return a logging FileHandler for given logname using a given
+    logging formatter.
+
     :param logname: Name of the file where logs will be stored, ".log"
     extension will be added
     :param formatter: An instance of logging.Formatter or None if the default
     should be used
-    :return:
+    :return: FileHandler
     """
     handler = logging.FileHandler(logname)
     if formatter is not None:
@@ -531,6 +555,7 @@ def traverse_json_obj(obj, path=None, callback=None):
     """
     Recursively loop through object and perform the function defined
     in callback for every element. Only JSON data types are supported.
+
     :param obj: object to traverse
     :param path: current path
     :param callback: callback executed on every element

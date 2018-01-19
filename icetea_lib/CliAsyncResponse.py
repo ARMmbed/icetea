@@ -11,16 +11,16 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+CliAsyncResponse module, contains CliAsyncResponse class,
+which is a proxy for a future CliResponse.
+
 """
 
 import icetea_lib.LogManager as LogManager
 
-"""
-CliAsyncResponse module, contains CliAsyncResponse class,
-which is a proxy for a future CliResponse.
-"""
 
-class CliAsyncResponse(object):
+class CliAsyncResponse(object):  # pylint: disable=too-few-public-methods
     """Proxy class to a future CliResponse, a response to an async comand.
        If any function of Cliresponse is called on an instance of this class
        the system will wait and block for the response to become ready.
@@ -32,30 +32,39 @@ class CliAsyncResponse(object):
         self.dut = dut
 
     def set_response(self, response):
-        """Set the response, this function should not be called directly,
+        """
+        Set the response, this function should not be called directly,
         the DUT will do it when a response is available.
         """
         if self.response is None:
             self.response = response
 
     def __wait_for_response(self):
-        """ Explicitelly wait and block for the response"""
+        """
+        Explicitelly wait and block for the response
+        """
         if self.response is None:
             # The response will be filled - anyway - by the DUT,
             # there is no need to set it twice.
-            self.dut._wait_for_exec_ready()
+            self.dut._wait_for_exec_ready()  # pylint: disable=protected-access
 
     def __getattr__(self, name):
-        """forward calls and attribute lookup to the inner response once it is available"""
+        """
+        Forward calls and attribute lookup to the inner response once it is available
+        """
         self.__wait_for_response()
         return getattr(self.response, name)
 
     def __str__(self):
-        """return the string representation of the response once it is available"""
+        """
+        Return the string representation of the response once it is available
+        """
         self.__wait_for_response()
         return self.response.__str__()
 
     def __getitem__(self, item):
-        """index operator forwarded to the response once it is available"""
+        """
+        Index operator forwarded to the response once it is available
+        """
         self.__wait_for_response()
         return self.response.__getitem__(item)

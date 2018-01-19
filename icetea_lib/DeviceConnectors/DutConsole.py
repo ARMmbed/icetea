@@ -66,7 +66,7 @@ class DutConsole(DutProcess):
                        self.config["port"]
             self.path = self.config["cwd"]
 
-        self.ignoreReturnCode = True
+        self.ignore_return_code = True
         self.comport = self.cmd
 
     def init_cli(self):
@@ -77,6 +77,7 @@ class DutConsole(DutProcess):
     def prepareConnectionClose(self): #pylint: disable=C0103
         """
         Deprecated version of prepare_connection_close. Still present for backwards compatibility
+
         :return: Nothing
         """
         self.logger.warning("prepareConnectionClose deprecated, use prepare_connection_close")

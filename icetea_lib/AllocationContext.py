@@ -72,6 +72,7 @@ class AllocationContext(object):
     def get_alloc_data(self):
         """
         Get allocation data dictionary
+
         :return: Allocation data (dictionary)
         """
         return self._alloc_data
@@ -80,6 +81,7 @@ class AllocationContext(object):
     def alloc_id(self):
         """
         Getter for alloc_id
+
         :return: alloc_id
         """
         return self._alloc_id
@@ -88,6 +90,7 @@ class AllocationContext(object):
     def resource_id(self):
         """
         Getter for resource_id
+
         :return: resource_id
         """
         return self._resource_id
@@ -106,6 +109,7 @@ class AllocationContext(object):
         """
         __setitem__ implementation for AllocationContext.
         Replaces item in list space key with value.
+
         :param key: Name of context data item to replace/add
         :param value: Value to replace context data item with
         :return: Nothing
@@ -133,6 +137,7 @@ class AllocationContextList(object):
     def __len__(self):
         """
         len implementation for AllocationContextList
+
         :return: len(self._allocation_contexts)
         """
         return len(self._allocation_contexts)
@@ -140,6 +145,7 @@ class AllocationContextList(object):
     def __iter__(self):
         """
         Implementation of __iter__ to allow for item in list loops
+
         :return: iterator to self._allocation_contexts
         """
         return iter(self._allocation_contexts)
@@ -166,6 +172,7 @@ class AllocationContextList(object):
         """
         __setitem__ implementation for AllocationContextList.
         Replaces item in list space key with value.
+
         :param key: Index of list item to replace
         :param value: Value to replace list item with
         :return: Nothing
@@ -181,25 +188,45 @@ class AllocationContextList(object):
         self._allocation_contexts[key] = value
 
     def set_dut_init_function(self, dut_type, fnctn):
+        """
+        Setter for dut initialization function
+
+        :param dut_type: Dut type
+        :param fnctn: callable
+        :return: Nothing
+        """
         self._dut_initialization_functions[dut_type] = fnctn
 
     def get_dut_init_function(self, dut_type):
+        """
+        Get dut initialization function
+
+        :param dut_type: Dut type.
+        :return: callable
+        """
         return self._dut_initialization_functions.get(dut_type)
 
     def set_resconf(self, resconf):
         """
-        Set resource configuration
+        Set resource configuration.
+
         :param resconf: ResourceConfig object
         :return: Nothing
         """
         self._resource_configuration = resconf
 
     def get_resconf(self):
+        """
+        Get resource configuration for this AllocationContextList.
+
+        :return: ResourceConfig
+        """
         return self._resource_configuration
 
     def set_logger(self, logger):
         """
-        Set logger
+        Set logger.
+
         :param logger: logging.logger
         :return: Nothing
         """
@@ -207,14 +234,16 @@ class AllocationContextList(object):
 
     def get_duts(self):
         """
-        Get list of duts
+        Get list of duts.
+
         :return: list of Dut objects
         """
         return self.duts
 
     def get_dutinformations(self):
         """
-        Get DutInformation objects of current duts
+        Get DutInformation objects of current duts.
+
         :return: list of DutInformation objects
         """
         return self.dutinformations
@@ -244,6 +273,7 @@ class AllocationContextList(object):
         def thread_wrapper(*thread_args, **thread_kwargs):
             """
             Run initialization function for dut
+
             :param thread_args: arguments to pass to the function
             :param thread_kwargs: keyword arguments, (func: callable, abort_queue: Queue)
             :return: Result of func(*thread_args)
@@ -324,7 +354,7 @@ class AllocationContextList(object):
         Opens connections to Duts. Starts Dut read threads.
 
         :return: Nothing
-        :raises: DutConnectionError if problems were encountered while opening dut connection.
+        :raises DutConnectionError: if problems were encountered while opening dut connection.
         """
         for dut in self.duts:
             try:
@@ -347,7 +377,7 @@ class AllocationContextList(object):
         :param execution_type: Should be 'hardware'
         :param build_id: Build id, usually file name
         :param force: Forceflash flag
-        :return:
+        :return: Boolean
         """
         binary_file_name = AllocationContextList.get_build(build_id)
         if binary_file_name:

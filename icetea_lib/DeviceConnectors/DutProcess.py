@@ -30,7 +30,7 @@ class DutProcess(Dut, GenericProcess):
     def __init__(self, type='process', name='process', config=None, params=None):
         Dut.__init__(self, name=name, params=params)
         GenericProcess.__init__(self, self.name, logger=self.logger)
-        self.disableIOPrints() #because those are printed in Dut object
+        self.disable_io_prints()  # because those are printed in Dut object
         self.proc = False
         self.type = type
         self.config = config if config else {}
@@ -40,6 +40,11 @@ class DutProcess(Dut, GenericProcess):
         self.command = None
 
     def open_connection(self):
+        """
+        Open connection by starting the process.
+
+        :raises: DutConnectionError
+        """
         self.logger.debug("Open CLI Process '%s'",
                           (self.comport), extra={'type': '<->'})
         self.cmd = self.comport if isinstance(self.comport, list) else [self.comport]
@@ -62,9 +67,10 @@ class DutProcess(Dut, GenericProcess):
         except Exception as error:
             raise DutConnectionError("Couldn't start DUT target process {}".format(error))
 
-    def prepareConnectionClose(self): #pylint: disable=C0103
+    def prepareConnectionClose(self):  # pylint: disable=C0103
         """
-        Deprecated version of prepare_connection_close. Still present for backwards compatibility
+        Deprecated version of prepare_connection_close. Still present for backwards compatibility.
+
         :return: Nothing
         """
         self.logger.warning("prepareConnectionClose deprecated, use prepare_connection_close")
@@ -73,6 +79,7 @@ class DutProcess(Dut, GenericProcess):
     def prepare_connection_close(self):
         """
         exit the process if it is alive.
+
         :return: Nothing
         """
         if self.is_alive():
@@ -84,7 +91,8 @@ class DutProcess(Dut, GenericProcess):
 
     def close_connection(self):
         """
-        Stop the process
+        Stop the process.
+
         :return: Nothing
         """
         self.logger.debug("Close CLI Process '%s'" % self.cmd, extra={'type': '<->'})
@@ -92,7 +100,8 @@ class DutProcess(Dut, GenericProcess):
 
     def writeline(self, data, crlf="\n"):  # pylint: disable=arguments-differ
         """
-        Write data to process
+        Write data to process.
+
         :param data: data to write
         :param crlf: line end character
         :return: Nothing
@@ -101,7 +110,8 @@ class DutProcess(Dut, GenericProcess):
 
     def readline(self, timeout=1):
         """
-        Read a line from the process
+        Read a line from the process.
+
         :param timeout: Timeout
         :return: read line
         """
@@ -116,6 +126,7 @@ class DutProcess(Dut, GenericProcess):
     def print_info(self):
         """
         Print information of this dut.
+
         :return: Nothing.
         """
         info_string = "DutProcess {}, \n".format(self.name)
@@ -131,6 +142,7 @@ class DutProcess(Dut, GenericProcess):
     def get_info(self):
         """
         Get DutInformation object of this dut.
+
         :return: DutInformation
         """
         return self.dutinformation
@@ -138,6 +150,7 @@ class DutProcess(Dut, GenericProcess):
     def get_config(self):
         """
         Get configuration of this dut.
+
         :return: dictionary
         """
         return self.config

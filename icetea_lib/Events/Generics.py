@@ -15,22 +15,22 @@ limitations under the License.
 This module contains generic event mechanism classes.
 """
 
-"""
-Enum for event types
-"""
-class EventTypes:
+
+class EventTypes(object):
+    """
+    Enum for event types
+    """
     DUT_LINE_RECEIVED = 1
 
-'''
-Usage:
-1. Inherit in the class you want to listen for events
-2. Make sure Observer's initializer gets called!
-3. Use .observe(event_name, callback_function) to register
-   events that u want to observe. event_name is just a string-
-   identifier for a certain event
-'''
-class Observer:
-    """Observer
+
+class Observer(object):
+    """
+    Usage:
+    1. Inherit in the class you want to listen for events
+    2. Make sure Observer's initializer gets called!
+    3. Use .observe(event_name, callback_function) to register
+       events that u want to observe. event_name is just a string-
+       identifier for a certain event
     """
     _observers = []
 
@@ -39,25 +39,38 @@ class Observer:
         self.reinit()
 
     def reinit(self):
+        """
+        Forget old subscriptions and restart observer.
+        :return: Nothing
+        """
         self.forget()
         self._observers.append(self)
 
     def observe(self, event, callback_fn):
+        """
+        Observe function. Sets callback function for received event
+        :param event: Event type
+        :param callback_fn: Callable
+        :return: Nothing
+        """
         self._observed_events[event] = callback_fn
 
     def forget(self):
+        """
+        Reset _observed events. Remove self from observers.
+        :return: Nothing
+        """
         self._observed_events = {}
         if self in self._observers:
             self._observers.remove(self)
 
 
-'''
-Usage:
-1. Call from anywhere in your code
-The apropriate observers will get notified once the event fires
-'''
 class Event:
-    """Event emitter
+    """
+    Event emitter
+    Usage:
+    1. Call from anywhere in your code
+    The apropriate observers will get notified once the event fires
     """
     def __init__(self, event, *callback_args):
         for observer in Observer._observers:

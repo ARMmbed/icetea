@@ -20,7 +20,6 @@ class TestcaseFilter(object):
     """
     TestcaseFilter class. Provides the handling for different filtering arguments.
     Provides a match function to match testcases with filter.
-
     """
     def __init__(self):
         self._filter = {'list': False, 'name': False, 'status': False,
@@ -113,9 +112,11 @@ class TestcaseFilter(object):
     def match(self, testcase, tc_index):
         """
         Match function. Matches testcase information with this filter.
+
         :param testcase: TestcaseContainer instance
         :param tc_index: Index of testcase in list
-        :return: True if all filter fields were successfully matched to information. False otherwise.
+        :return: True if all filter fields were successfully matched to information.
+        False otherwise.
         """
         list_ok = False
         testcase = testcase.get_infodict()

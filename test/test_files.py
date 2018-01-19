@@ -50,10 +50,10 @@ class FileTestCase(unittest.TestCase):
         path_nowhere = os.path.join("testPath", "to", "nowhere")
         path_somewhere = os.path.join("testPath", "to", "somewhere")
         with self.assertRaises(OSError):
-            FileUtils.removeFile("testName", path_nowhere)
+            FileUtils.remove_file("testName", path_nowhere)
         with self.assertRaises(OSError):
-            FileUtils.removeFile("testName", path_nowhere)
-        self.assertTrue(FileUtils.removeFile("testName", path_somewhere))
+            FileUtils.remove_file("testName", path_nowhere)
+        self.assertTrue(FileUtils.remove_file("testName", path_somewhere))
 
     @mock.patch("icetea_lib.tools.file.FileUtils.os.chdir")
     @mock.patch("icetea_lib.tools.file.FileUtils.os.rename")
@@ -63,10 +63,10 @@ class FileTestCase(unittest.TestCase):
         path_nowhere = os.path.join("testPath", "to", "nowhere")
         path_somewhere = os.path.join("testPath", "to", "somewhere")
         with self.assertRaises(OSError):
-            FileUtils.renameFile("testName", "new_testName", path_nowhere)
+            FileUtils.rename_file("testName", "new_testName", path_nowhere)
         with self.assertRaises(OSError):
-            FileUtils.renameFile("testName", "new_testName", path_nowhere)
-        self.assertTrue(FileUtils.renameFile("testName", "new_testName", path_somewhere))
+            FileUtils.rename_file("testName", "new_testName", path_nowhere)
+        self.assertTrue(FileUtils.rename_file("testName", "new_testName", path_somewhere))
 
     '''
         JsonFile tests start here
@@ -194,19 +194,19 @@ class FileTestCase(unittest.TestCase):
     def tearDown(self):
         # Do tearDown stuff.
         if os.path.exists(os.path.join(self.file_path, "malformed_" + self.file_name + ".json")):
-            FileUtils.removeFile("malformed_" + self.file_name + ".json",
-                                 self.file_path + os.path.sep)
+            FileUtils.remove_file("malformed_" + self.file_name + ".json",
+                                  self.file_path + os.path.sep)
 
         if os.path.exists(os.path.join(self.file_path, "empty_" + self.file_name + ".json")):
-            FileUtils.removeFile("empty_" + self.file_name + ".json", self.file_path + os.path.sep)
+            FileUtils.remove_file("empty_" + self.file_name + ".json", self.file_path + os.path.sep)
 
         if os.path.exists(self.file_path + os.path.sep + self.file_name + ".json"):
-            FileUtils.removeFile(self.file_name + ".json", self.file_path + os.path.sep)
+            FileUtils.remove_file(self.file_name + ".json", self.file_path + os.path.sep)
             os.removedirs(self.file_path + os.path.sep)
         if os.path.exists(self.file_path2):
             os.chmod(self.file_path2, 0o777)
             if os.path.exists(self.file_path2 + self.file_name + ".json"):
-                FileUtils.removeFile(self.file_name + ".json", self.file_path2)
+                FileUtils.remove_file(self.file_name + ".json", self.file_path2)
             os.removedirs(self.file_path2)
 
 

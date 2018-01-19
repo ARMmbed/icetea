@@ -22,6 +22,7 @@ DESCRIPTION = "Icetea - test framework"
 OWNER_NAMES = 'Jussi Vatjus-Anttila'
 OWNER_EMAILS = 'jussi.vatjus-anttila@arm.com'
 
+
 # Utility function to cat in a file (used for the README)
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
@@ -44,10 +45,10 @@ setup(name='icetea',
       extras_require={
           "colors": ["coloredlogs"]
       },
-      test_suite = 'test',
+      test_suite='test',
       entry_points={
           "console_scripts": [
-              "icetea=icetea_lib:icetea_main",
+              "icetea=icetea_lib:icetea_main"
           ]
       },
       dependency_links=["git+https://github.com/ARMmbed/mbed-flasher@v0.5.0#egg=mbed-flasher"],

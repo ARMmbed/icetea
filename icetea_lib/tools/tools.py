@@ -28,16 +28,23 @@ except ImportError:
 
 from sys import version_info
 
-unixPlatform = _platform == "linux" or _platform == "linux2" or _platform == "darwin"
-is_python3 = version_info[0] == 3
-
+UNIXPLATFORM = _platform == "linux" or _platform == "linux2" or _platform == "darwin"
+IS_PYTHON3 = version_info[0] == 3
 
 
 def get_fw_name():
+    """
+    :return: Framework name as str
+    """
     return "Icetea"
 
 
 def get_fw_version():
+    """
+    Try to get version of the framework. First try pkg_resources.require, if that fails
+    read from setup.py
+    :return: Version as str
+    """
     version = 'unknown'
     try:
         pkg = require(get_fw_name())[0]
@@ -52,7 +59,7 @@ def get_fw_version():
                     if m:
                         version = m.group(1)
                         break
-        except Exception as e:
+        except Exception:
             pass
     else:
         version = pkg.version
@@ -60,7 +67,12 @@ def get_fw_version():
 
 
 # calculate sha1 for a file
-def sha1OfFile(filepath):
+def sha1_of_file(filepath):
+    """
+    Get sha1 of file
+    :param filepath: File to hash
+    :return: sha1 hash of file or None
+    """
     import hashlib
     try:
         with open(filepath, 'rb') as f:
@@ -71,7 +83,7 @@ def sha1OfFile(filepath):
 
 # Check if number is integer or not
 def check_int(s):
-    if isinstance(s, str) == False:
+    if not isinstance(s, str):
         return False
     if s[0] in ('-', '+'):
         return s[1:].isdigit()
@@ -134,7 +146,7 @@ def strip_escape(string=''):
     return string
 
 
-def loadClass(full_class_string, verbose=False, silent=False):
+def load_class(full_class_string, verbose=False, silent=False):
     """
     dynamically load a class from a string
     """
@@ -158,9 +170,11 @@ def loadClass(full_class_string, verbose=False, silent=False):
     except Exception as e:
         raise e
 
+
 def import_module(modulename):
     """
     Static method for importing module modulename. Can handle relative imports as well.
+
     :param modulename: Name of module to import. Can be relative
     :return: imported module instance.
     """
@@ -180,35 +194,41 @@ def import_module(modulename):
     return module
 
 
-def flush_queue(q):
+def flush_queue(queue):
+    """
+    Flush the queue.
+
+    :param queue: queue to flush
+    :return: Nothing
+    """
     while True:
         try:
-            q.get(block=False)
+            queue.get(block=False)
         except Empty:
             break
 
 
-def get_abs_path(relativePath):
-    absPath = os.path.sep.join(os.path.abspath(sys.modules[__name__].__file__).split(os.path.sep)[
+def get_abs_path(relative_path):
+    """
+    Get absolute path for relative path.
+
+    :param relative_path: Relative path
+    :return: absolute path
+    """
+    abs_path = os.path.sep.join(os.path.abspath(sys.modules[__name__].__file__).split(os.path.sep)[
                                :-1])
-    absPath = os.path.abspath(absPath + os.path.sep + relativePath)
-    return absPath
-
-
-def verifyModule(src, dst):
-    if not os.path.exists(dst):
-        # if not, create symlink for it
-        try:
-            os.symlink(src, dst)
-        except Exception:
-            raise EnvironmentError(dst+" library missing!")
+    abs_path = os.path.abspath(abs_path + os.path.sep + relative_path)
+    return abs_path
 
 
 def get_pkg_version(pkg_name, parse=False):
-    """verify and get installed python package version
+    """
+    verify and get installed python package version.
+
     :param pkg_name:    python package name
     :param parse: parse version number with pkg_resourc.parse_version -function
-    :return: None if pkg is not installed, otherwise version as a string or parsed version when parse=True
+    :return: None if pkg is not installed,
+    otherwise version as a string or parsed version when parse=True
     """
     import pkg_resources  # part of setuptools
     try:
@@ -277,7 +297,8 @@ def combine_urls(path1, path2):
 
 def recursive_dictionary_get(keys, dict):
     """
-    Gets contents of requirement key recursively so users can search for specific keys inside nested requirement dicts.
+    Gets contents of requirement key recursively so users can search
+    for specific keys inside nested requirement dicts.
 
     :param key: key or dot separated string of keys to look for.
     :param dict: Dictionary to search from
@@ -297,18 +318,17 @@ def recursive_dictionary_get(keys, dict):
 def test_case(testcasebase, **kwargs):
     """
     Decorator which allow definition of test cases as simple functions.
-    It takes two parameters:
-        * testcasebase: this is the base class that will be used to create
-        the test case. It is exected that this base class implement __init__,
-        setUp and tearDown
-        * kwargs: Dictionary of arguments that will be passed as initialization
-        parameters of the test case
-    """
 
+    :param testcasebase: this is the base class that will be used to create
+    the test case. It is exected that this base class implement __init__,
+    setUp and tearDown
+    :param kwargs: Dictionary of arguments that will be passed as initialization
+    parameters of the test case
+    """
     def wrap(case_function):
         kwargs['name'] = name = kwargs.get('name', case_function.__name__)
         class_name = "class_" + name
-        func_globals = case_function.__globals__ if is_python3 else case_function.func_globals
+        func_globals = case_function.__globals__ if IS_PYTHON3 else case_function.func_globals
         func_globals[class_name] = type(
             class_name,
             (testcasebase,object), {
@@ -323,8 +343,17 @@ def test_case(testcasebase, **kwargs):
 
 
 def remove_empty_from_dict(d):
+    """
+    Remove empty items from dictionary d
+
+    :param d:
+    :return:
+    """
     if type(d) is dict:
-        return dict((k, remove_empty_from_dict(v)) for k, v in d.iteritems() if v and remove_empty_from_dict(v))
+        return dict(
+            (k,
+             remove_empty_from_dict(
+                 v)) for k, v in d.iteritems() if v and remove_empty_from_dict(v))
     elif type(d) is list:
         return [remove_empty_from_dict(v) for v in d if v and remove_empty_from_dict(v)]
     else:
@@ -346,38 +375,43 @@ def hex_escape_str(original_str):
             new.append(char)
             continue
 
-        if is_python3:
+        if IS_PYTHON3:
             new.append(char.encode("unicode_escape").decode("ascii"))
         else:
             new.append(repr(char).replace("'", ""))
     return "".join(new)
 
 
-def set_or_delete(dict, key, value):
+def set_or_delete(dictionary, key, value):
     """
     Set value as value of dict key key. If value is None, delete key key from dict.
-    :param dict: Dictionary to work on.
+
+    :param dictionary: Dictionary to work on.
     :param key: Key to set or delete. If deleting and key does not exist in dict, nothing is done.
     :param value: Value to set. If value is None, delete key.
     :return: Nothing, modifies dict in place.
     """
     if value:
-        dict[key] = value
+        dictionary[key] = value
     else:
-        if dict.get(key):
-            del dict[key]
+        if dictionary.get(key):
+            del dictionary[key]
+
 
 def split_by_n(seq, n):
-    """A generator to divide a sequence into chunks of n units."""
+    """
+    A generator to divide a sequence into chunks of n units.
+    """
     while seq:
         yield seq[:n]
         seq = seq[n:]
 
 
 class Singleton(type):
-    '''
-    Singleton metaclass implementation: http://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
-    '''
+    """
+    Singleton metaclass implementation:
+    http://stackoverflow.com/questions/6760685/creating-a-singleton-in-python
+    """
 
     _instances = {}
 

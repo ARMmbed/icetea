@@ -26,10 +26,10 @@ function:
 DUT public API:
     Please see tc_api.md section [DUT public API] for more details.
 
-    1. openConnection(): Open the communication channel to DUT (eg. serial port).
+    1. open_connection(): Open the communication channel to DUT (eg. serial port).
                          By default testcase automatically calls this during rampup.
 
-    2. closeConnection(): Close the communication channel to DUT (eg. serial port)
+    2. close_connection(): Close the communication channel to DUT (eg. serial port)
 
     3. comport: returns serial port name or path (eg. COM0 or /dev/ttyACM0), If DUT has serial communication channel.
                  Please Note: only local hardware has comport!

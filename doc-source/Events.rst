@@ -9,7 +9,7 @@ here. The Event system consists of events, observers and event matchers.
 Events and Event types
 **********************
 
-The Event class is described in `Generics.py. <../icetea_lib/Events/Generics.py>`_
+The Event class is described in `Generics.py. <../../icetea_lib/Events/Generics.py>`_
 The Event takes a type and arguments used in the callback
 to the Observers observing that event.
 The *args format is used for these callback arguments.
@@ -17,7 +17,7 @@ The *args format is used for these callback arguments.
 Currently Icetea offers only one event type:
 EventTypes.DUT_LINE_RECEIVED,
 which is also defined in
-[Generics.py.](../icetea_lib/Events/Generics.py)
+`Generics.py. <../../icetea_lib/Events/Generics.py>`_
 
 
 Usage
@@ -34,7 +34,7 @@ Observers
 *********
 
 The Observer-class is also defined in
-`Generics.py. <../icetea_lib/Events/Generics.py>`_
+`Generics.py. <../../icetea_lib/Events/Generics.py>`_
 It consists of a static list of all observers and some functions which
 are used to register new observers and forget previous ones.
 
@@ -51,7 +51,7 @@ EventMatcher
 ************
 
 The EventMatcher class is defined in
-`EventMatcher.py. <../icetea_lib/Events/EventMatcher.py>`_
+`EventMatcher.py. <../../icetea_lib/Events/EventMatcher.py>`_
 The EventMatcher is an Observer that observes
 for DUT_LINE_RECEIVED events and matches the received line
 contents to regular expressions or string provided to it,

@@ -54,9 +54,10 @@ class DutInformationList(object):
 
     def get_uniq_string_dutmodels(self):
         """
-        Gets a string of dut models in this TC
+        Gets a string of dut models in this TC.
+
         :return: String of dut models separated with commas.
-            String "unknown platform" if no dut information is available
+        String "unknown platform" if no dut information is available
         """
         models = self.get_uniq_list_dutmodels()
         if not models:
@@ -65,7 +66,8 @@ class DutInformationList(object):
 
     def get_uniq_list_dutmodels(self):
         """
-        Gets a list of dut models in this TC
+        Gets a list of dut models in this TC.
+
         :return: List of dut models in this TC. Empty list if information is not available.
         """
         models = []
@@ -78,7 +80,8 @@ class DutInformationList(object):
 
     def get_resource_ids(self):
         """
-        Get resource ids as a list
+        Get resource ids as a list.
+
         :return: List of resource id:s or "unknown"
         """
         resids = []
@@ -90,7 +93,8 @@ class DutInformationList(object):
 
     def append(self, dutinfo):
         """
-        Append a DutInformation object to the list
+        Append a DutInformation object to the list.
+
         :param dutinfo: object to append
         :return: Nothing
         """
@@ -98,7 +102,8 @@ class DutInformationList(object):
 
     def __len__(self):
         """
-        overrides len operation for DutInformationList
+        overrides len operation for DutInformationList.
+
         :return: Length of internal dutinformation list as int
         """
         return len(self.dutinformations)

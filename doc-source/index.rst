@@ -25,7 +25,7 @@ Welcome to Icetea's documentation!
    :maxdepth: 2
    :caption: Module documentation:
 
-   Autogen
+   icetea_lib
 
 
 Indices and tables

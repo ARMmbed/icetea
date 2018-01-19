@@ -19,6 +19,7 @@ from prettytable import PrettyTable
 from icetea_lib.Reports.ReportBase import ReportBase
 from icetea_lib.tools.tools import hex_escape_str
 
+
 class ReportConsole(ReportBase):
     """
     ReportConsole class, implements generating and printing reports to the console using print
@@ -32,6 +33,7 @@ class ReportConsole(ReportBase):
         Generates and prints the console report, which consists of a table of test cases ran as
         well as a summary table with passrate, number of test cases and statistics on
         passed/failed/inconclusive/skipped cases.
+
         :param args: arguments, not used
         :param kwargs: keyword arguments, not used
         :return: Nothing

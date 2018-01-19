@@ -43,4 +43,4 @@ all the required keys for the suite. These keys are:
 Example suite file
 ******************
 
-An example suite file can be found in `dummy_suite.json <./../examples/dummy_suite.json>`_
+An example suite file can be found in `dummy_suite.json <../../examples/dummy_suite.json>`_

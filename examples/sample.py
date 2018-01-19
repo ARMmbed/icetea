@@ -204,8 +204,8 @@ class Testcase(Bench):
 
     def case(self):
         # Send command 'ifup' for all duts
-        responses = self.executeCommand('*', "ifup")
+        responses = self.execute_command('*', "ifup")
 
     def teardown(self):
         # shut down interfaces from nodes
-        self.executeCommand('*', 'ifdown')
+        self.execute_command('*', 'ifdown')

@@ -37,11 +37,20 @@ class LockFile:
             try:
                 os.remove(self._lock_filename)
             except OSError:
-                # Hmm, someone deleted our lock while we had it locked? Nothing we can do, so just continue
+                # Hmm, someone deleted our lock while we had it locked?
+                # Nothing we can do, so just continue
                 pass
 
 
-def removeFile(filename, path=None):
+def remove_file(filename, path=None):
+    """
+    Remove file filename from path.
+
+    :param filename: Name of file to remove
+    :param path: Path where file is located
+    :return: True if successfull
+    :raises OSError if chdir or remove fails.
+    """
     cwd = os.getcwd()
     try:
         if path:
@@ -57,7 +66,16 @@ def removeFile(filename, path=None):
         raise
 
 
-def renameFile(old, new, path=None):
+def rename_file(old, new, path=None):
+    """
+    Rename a file.
+
+    :param old: Old file name
+    :param new: New file name
+    :param path: Path to file
+    :return: True if successfull
+    :raises: OSError if chdir or rename fails.
+    """
     cwd = os.getcwd()
     try:
         if path:

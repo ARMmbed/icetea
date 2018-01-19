@@ -13,14 +13,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import logging
+
 
 class ParserManager(object):
+    """
+    ParserManager class. This is a manager for all parsers and this is the entry point for test
+    cases to handle response parsing. PluginManager appends all parsers to this class and tests
+    call the parse-method to parse received responses.
+    """
+
     def __init__(self, logger=None):
         self.parsers = {}
         self.logger = logger
         if self.logger is None:
-            # TODO: Add basic stream logger
-            pass
+            self.logger = logging.getLogger("ParserManager")
+            self.logger.addHandler(logging.StreamHandler().setLevel(logging.WARNING))
+            self.logger.setLevel(logging.WARNING)
 
     def has_parser(self, parser):
         """
@@ -42,7 +51,7 @@ class ParserManager(object):
         self.parsers[parser_name] = parser_func
 
     # parse response
-    def parse(self, *args, **kwargs):
+    def parse(self, *args, **kwargs):  # pylint: disable=unused-argument
         """
         Parse response.
 

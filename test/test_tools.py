@@ -30,7 +30,7 @@ class TestTools(unittest.TestCase):
     def test_loadClass_Success(self):
         sys.path.append(os.path.dirname(__file__))
         #Test that loadClass can import a class that is initializable
-        module = tools.loadClass("test_tools.TestClass", verbose=False, silent=True)
+        module = tools.load_class("test_tools.TestClass", verbose=False, silent=True)
         self.assertIsNotNone(module)
         moduleInstance = module()
         self.assertTrue( moduleInstance.test )
@@ -38,12 +38,12 @@ class TestTools(unittest.TestCase):
 
     def test_loadClass_Fail(self):
         with self.assertRaises(Exception):
-            tools.loadClass( 'testbase.level1.Testcase', verbose=False, silent=True)
+            tools.load_class('testbase.level1.Testcase', verbose=False, silent=True)
 
-        self.assertIsNone(tools.loadClass( '', verbose=False, silent=True))
-        self.assertIsNone(tools.loadClass( 5 , verbose=False, silent=True))
-        self.assertIsNone(tools.loadClass( [], verbose=False, silent=True))
-        self.assertIsNone(tools.loadClass( {}, verbose=False, silent=True))
+        self.assertIsNone(tools.load_class('', verbose=False, silent=True))
+        self.assertIsNone(tools.load_class(5, verbose=False, silent=True))
+        self.assertIsNone(tools.load_class([], verbose=False, silent=True))
+        self.assertIsNone(tools.load_class({}, verbose=False, silent=True))
 
     def test_combine_urls(self):
         self.assertEquals(tools.combine_urls("/path/one/", "path2"), "/path/one/path2")

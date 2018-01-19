@@ -72,6 +72,7 @@ class ReportJunit(ReportBase):
         """
         Implementation for generate method from ReportBase. Generates the xml and saves the
         report in Junit xml format.
+
         :param args: 1 argument, filename is used.
         :param kwargs: Not used
         :return: Nothing
@@ -87,6 +88,7 @@ class ReportJunit(ReportBase):
     def __str__(self):
         """
         Generates the xml string for Junit report.
+
         :return: Report as xml string.
         """
         return ReportJunit.__generate(self.results)
@@ -94,6 +96,7 @@ class ReportJunit(ReportBase):
     def to_string(self):
         """
         Generates the xml string for Junit report.
+
         :return: Report as xml string.
         """
         return str(self)
@@ -103,6 +106,7 @@ class ReportJunit(ReportBase):
     def __generate(results):
         """
         Static method which generates the Junit xml string from results
+
         :param results: Results as ResultList object.
         :return: Junit xml format string.
         """
@@ -115,7 +119,7 @@ class ReportJunit(ReportBase):
         skips = 0
 
         for result in results:
-            #Loop through all results and count the ones that were not later retried.
+            # Loop through all results and count the ones that were not later retried.
             if result.passed() is False:
                 if result.retries_left > 0:
                     # This will appear in the list again, move on

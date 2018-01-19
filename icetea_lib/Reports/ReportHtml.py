@@ -36,6 +36,7 @@ class ReportHtml(ReportBase):
         """
         Implementation for the generate method defined in ReportBase.
         Generates a html report and saves it.
+
         :param args: 1 argument, which is the filename
         :param kwargs: 3 keyword arguments with keys 'title', 'heads' and 'refresh'
         :return: Nothing.
@@ -51,6 +52,7 @@ class ReportHtml(ReportBase):
     def _create(self, title, heads, refresh=None, path_start=None):
         """
         Internal create method, uses yattag to generate a html document with result data.
+
         :param title: Title of report
         :param heads: Headers for report
         :param refresh: If set to True, adds a HTTP-EQUIV="refresh" to the report
@@ -168,6 +170,7 @@ class ReportHtml(ReportBase):
     def save(htmldoc, filename):
         """
         Static method which saves htmldoc with filename filename.
+
         :param htmldoc: yattag Document
         :param filename: file name/path
         :return: Nothing

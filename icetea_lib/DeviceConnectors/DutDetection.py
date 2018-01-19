@@ -44,6 +44,7 @@ class DutDetection(object):
         """
         Static is_port_usable method. Tries to create instance of Serial object. to confirm that
         the port is usable.
+
         :param port_name: Name of port
         :return: True or False
         """
@@ -58,6 +59,7 @@ class DutDetection(object):
     def get_available_devices(self):
         """
         Gets available devices using mbedls and self.available_edbg_ports.
+
         :return: List of connected devices as dictionaries.
         """
         connected_devices = self.mbeds.list_mbeds() if self.mbeds else []
@@ -80,6 +82,7 @@ class DutDetection(object):
     def available_edbg_ports(self):
         """
         Finds available EDBG COM ports.
+
         :return: list of available ports
         """
         ports_available = sorted(list(list_ports.comports()))

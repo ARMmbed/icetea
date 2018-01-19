@@ -32,7 +32,8 @@ class ReportBase(object):
 
     def get_latest_filename(self, extension, basename="../latest."):
         """
-        Generate filename with 'latest.' prefix
+        Generate filename with 'latest.' prefix.
+
         :param extension: Extension for file
         :param basename: Base file name
         :return: path to latest.basename.extension.
@@ -41,7 +42,8 @@ class ReportBase(object):
 
     def get_current_filename(self, extension, basename="result."):
         """
-        Generate filename for a report
+        Generate filename for a report.
+
         :param extension: Extension for file name
         :param basename: Base file name
         :return: path to basename.extension
@@ -57,6 +59,7 @@ class ReportBase(object):
     def duration_to_string(self, seconds):
         """
         Converts time in seconds to a timedelta and represents it as string.
+
         :param seconds: Time in seconds
         :return: str(datetime.timedelta)
         """

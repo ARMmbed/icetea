@@ -1,12 +1,12 @@
-########
+######
 Icetea
-########
+######
 
 `icetea` is the entry-point for test execution.
 
-*************
+************
 Installation
-*************
+************
 
 You can install `Icetea` with all required python dependencies
 easily with this command:
@@ -27,30 +27,30 @@ installed by `Icetea` installation.
 
 * Python (2.7<)
 * pip (python package manager)
- * download: https://bootstrap.pypa.io/get-pip.py
- * python get-pip.py
+    * download: https://bootstrap.pypa.io/get-pip.py
+    * python get-pip.py
 * pip modules
- * pyserial version > 2.5(`pip install pyserial>2.5`
-   or https://pypi.python.org/pypi/pyserial)
- * jsonmerge (`pip install jsonmerge`)
- * pyshark (`pip install pyshark`)
- * yattag (`pip install yattag`)
- * prettytable (`pip install prettytable`)
- * requests (`pip install requests`)
- * coverage (`pip install coverage`), for unit tests.
- * mock  (`pip install mock`), for unit tests.
- * psutil (`pip install psutil`)
- * coloredlogs (`pip install coloredlogs`), optional
- * semver (`pip install semver`)
- * six (`pip install six`)
- * mbed-ls (`pip install mbed-ls`)
- * netifaces (`pip install netifaces`), for unit tests
+    * pyserial version > 2.5(`pip install pyserial>2.5`
+      or https://pypi.python.org/pypi/pyserial)
+    * jsonmerge (`pip install jsonmerge`)
+    * pyshark (`pip install pyshark`)
+    * yattag (`pip install yattag`)
+    * prettytable (`pip install prettytable`)
+    * requests (`pip install requests`)
+    * coverage (`pip install coverage`), for unit tests.
+    * mock  (`pip install mock`), for unit tests.
+    * psutil (`pip install psutil`)
+    * coloredlogs (`pip install coloredlogs`), optional
+    * semver (`pip install semver`)
+    * six (`pip install six`)
+    * mbed-ls (`pip install mbed-ls`)
+    * netifaces (`pip install netifaces`), for unit tests
 * Mbed-flasher (available in github at
   https://github.com/ARMmbed/mbed-flasher)
 
-*************
+****************
 Folder structure
-*************
+****************
 
 |  /icetea> tree
 |  ├───doc         // these documents
@@ -85,9 +85,9 @@ Example
 | /my-testcases> icetea --tcdir folder2 --tc test22
 | ...
 
-*******
+***********
 Development
-*******
+***********
 
 Install `Icetea` in development mode:
 
@@ -104,7 +104,7 @@ as well as from a configuration file. The file must be a text file,
 which is formatted with one or more parameters per line,
 and it can be given to Icetea with command line
 parameter --cfg_file. Example configuration file is available in
-[examples.](../examples/example_cli_config_file)
+`examples. <../../examples/example_cli_config_file>`_
 
 **Note**: If you put --cfg_file argument inside a file used as
 --cfg_file, don't try to load the same file.
@@ -142,10 +142,8 @@ argument if they match, but the check might not be foolproof.
 --env_cfg                 Use user specific environment configuration file                                                                                  Valid file name or path
 --repeat                  Run test cases N times                                                                                                            Integer                                                                                           1
 --stop_on_failure         Stop run on first failed test case
---failure_return_value    Set Icetea to return a failing code to caller if one or more tests fail
-during the run. Otherwise return value will always be 0
---ignore_invalid_params   Ignore parameters MIcetea cannot parse instead of stopping the run (for
-backwards compatibility)
+--failure_return_value    Set Icetea to return a failing code to caller if one or more tests fail during the run. Otherwise return value will always be 0
+--ignore_invalid_params   Ignore parameters MIcetea cannot parse instead of stopping the run (for backwards compatibility)
 --parallel_flash          Enable parallel flashing of devices
 --disable_log_truncate    Disable long log lines truncating. Over 10000 characters long lines are truncated by default.
 --cfg_file                Read command line parameters from file                                                                                            Any valid path to a configuration file
@@ -199,7 +197,8 @@ Icetea creates the following kinds of results after execution:
 junit
 =====
   * common xml format suitable for use with Jenkins
-    [test_results_analyzer](https://github.com/jenkinsci/test-results-analyzer-plugin) -plugin (for example)
+    `test_results_analyzer <https://github.com/jenkinsci/test-results-analyzer-plugin>`_ -plugin
+    (for example)
   * location: `log/<timestamp>/result.junit.xml`
   * format is::
 
@@ -207,7 +206,7 @@ junit
     <testcase classname="<test-name>.<platform>" name="<toolchain>" time="12.626"></testcase>
     </testsuite>
 
-| **NOTE**
+**NOTE**
 The JUnit file is generated slightly differently
 from the other reports due to CI.
 If the run used the Icetea retry mechanism to retry failed or
@@ -215,7 +214,7 @@ inconclusive test cases, only the final attempt is displayed
 in the JUnit report. The failed tries are displayed in the other
 reports as normal. This functionality can be configured using the
 retryReason parameter in the suite.
-See [suite api](suite_api.md) for more info.
+See `suite api <suite_api.html>`_ for more info.
 
 HTML result summary
 ===================
@@ -224,12 +223,12 @@ HTML result summary
   * location: `log/<timestamp>/result.html`
   * features collapsible test case containers with links to
     relevant logs
-      * **Note**: Some of the logs are only visible under
+  * **Note**: Some of the logs are only visible under
         the first test case, since they are common for all test cases
         run during the execution.
 
 Console results
-===================
+===============
 Console results look like this::
 
   +--------------+---------+-------------+-------------+-----------+-----------+
@@ -247,12 +246,12 @@ Console results look like this::
   |    Duration   | 0:00:10.950142 |
   +---------------+----------------+
 
-************************
+***********************
 Bash command completion
-************************
+***********************
 
 Initial support for bash command completion is
-provided in file `bash_completion/icetea`
+provided in file `<../../bash_completion/icetea>`_
 
 You can include this file from your `.bashrc` or `.bash_profile`
 files like this::

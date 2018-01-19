@@ -24,8 +24,10 @@ from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter
 
 
 class SuiteException(Exception):
-    """ Raised when something goes wrong with suite creation
-    or other operations performed here. """
+    """
+    Raised when something goes wrong with suite creation
+    or other operations performed here.
+    """
     pass
 
 
@@ -57,7 +59,8 @@ class TestSuite(object):
 
     def get_tcnames(self):
         """
-        Return list of names of all test cases in this Suite
+        Return list of names of all test cases in this Suite.
+
         :return: list
         """
         return [tc.get_name() for tc in self._testcases]
@@ -111,6 +114,7 @@ class TestSuite(object):
         """
         Internal runner for handling a single test case run in the suite.
         Repeats and iterations are handled outside this function.
+
         :param test: TestcaseContainer to be run
         :param retries: Amount of retries desired
         :param repeat: Current repeat index
@@ -189,7 +193,8 @@ class TestSuite(object):
 
     def _upload_result(self, result):
         """
-        Upload result to cloud
+        Upload result to cloud.
+
         :param result: Result object
         :return: Nothing
         """
@@ -216,6 +221,7 @@ class TestSuite(object):
     def list_testcases(self):
         """
         List all test cases in this Suite in a neat table.
+
         :return: PrettyTable
         """
         testcases = []
@@ -279,6 +285,7 @@ class TestSuite(object):
     def update_testcases(self):
         """
         Update test cases of this Suite from cloud.
+
         :return: Nothing
         """
         if not self.cloud_module:
@@ -297,7 +304,8 @@ class TestSuite(object):
     @staticmethod
     def get_suite_files(path):
         """
-        Static method for finding all suite files in path
+        Static method for finding all suite files in path.
+
         :param path: Search path
         :return: List of json files.
         """
@@ -318,12 +326,13 @@ class TestSuite(object):
         """
         Parses testcase metadata from suite file or from testcase list in args.
         Sets TestSuite status to 'parsed' to indicate that it has not yet been prepared.
-        :return: Nothing
+
+        :raises: SuiteException
         """
         suite = None
         if self.args.suite:
             if os.path.exists(os.path.abspath(self.args.suite)):
-                #If suite can be found using just the suite argument, we use that.
+                # If suite can be found using just the suite argument, we use that.
                 suitedir, filename = os.path.split(os.path.abspath(self.args.suite))
             elif os.path.exists(self.args.suitedir):
                 suitedir = self.args.suitedir
@@ -377,7 +386,8 @@ class TestSuite(object):
     def _prepare_suite(self):
         """
         Prepares parsed testcases for running.
-        :return: Nothing
+
+        :raises: SyntaxError, SuiteException
         """
         for i, testcase in enumerate(self._testcases):
             try:
@@ -397,9 +407,10 @@ class TestSuite(object):
     def _get_suite_tcs(self, tcdir, testcases):
         """
         Generate a TestcaseList from a Suite.
+
         :param tcdir: Test case directory
         :param testcases: Names of testcases.
-        :return: TestcaseList
+        :return: TestcaseList or None
         """
         if not os.path.isdir(tcdir):
             self.logger.error("Test case directory does not exist!")
@@ -431,6 +442,7 @@ class TestSuite(object):
     def _prepare_testcase(self, testcase):
         """
         Run some preparatory commands on a test case to prep it for running.
+
         :param testcase: TestcaseContainer
         :return: Nothing
         """
@@ -443,10 +455,11 @@ class TestSuite(object):
 
     def _load_suite_file(self, name, suitedir):
         """
-        Load a suite file from json to dict
+        Load a suite file from json to dict.
+
         :param name: Name of suite
         :param suitedir: Path to suite
-        :return: Dictionary
+        :return: Dictionary or None
         """
         self.logger.info("Loading suite from file")
         if not isinstance(name, str):
@@ -482,7 +495,8 @@ class TestSuite(object):
     def _load_suite_list(self):
         """
         Generate a TestcaseList from command line filters.
-        :return: TestcaseList
+
+        :return: TestcaseList or False
         """
         self.logger.info("Generating suite from command line.")
         args = self.args

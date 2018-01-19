@@ -40,7 +40,7 @@ class Testcase(Bench):
 
     def case(self):
         d = MagicMock()
-        d.executeCommand = MagicMock(side_effect=[TestStepTimeout])
+        d.execute_command = MagicMock(side_effect=[TestStepTimeout])
         self.duts.append(d)
-        self.command(1, "test", reportCmdFail=False)
+        self.command(1, "test", report_cmd_fail=False)
 

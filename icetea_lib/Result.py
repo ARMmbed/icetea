@@ -11,9 +11,10 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+Result module, contains the Result class which is used for storing the results and metadata of a
+single test case for reporting purposes.
 """
-
-
 
 import os
 import datetime
@@ -27,13 +28,8 @@ except ImportError:
     import getpass
     pwd = None
 
-"""
-Result module, contains the Result class which is used for storing the results and metadata of a
-single test case for reporting purposes.
-"""
 
-
-class Result(object):
+class Result(object):  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """
     Result object, used for storing all relevant information from the test case
     for reporting and storage purposes.
@@ -85,7 +81,8 @@ class Result(object):
 
     def set_tc_git_info(self, git_info):
         """
-        Set test case git information
+        Set test case git information.
+
         :param git_info: git information as dictionary. Keys: url, branch and commitId
         :return: Nothing
         """
@@ -97,7 +94,8 @@ class Result(object):
     @property
     def tcbranch(self):
         """
-        get test case git branch
+        get test case git branch.
+
         :return: branch
         """
         return self.tc_git_info.get('branch')
@@ -110,7 +108,8 @@ class Result(object):
     @property
     def tc_commit_id(self):
         """
-        get test case commit id
+        get test case commit id.
+
         :return: commit id
         """
         return self.tc_git_info.get('commitId')
@@ -123,7 +122,8 @@ class Result(object):
     @property
     def tc_git_url(self):
         """
-        get test case git url
+        get test case git url.
+
         :return: git url
         """
         return self.tc_git_info.get('url', self.tc_git_info.get('scm_link'))
@@ -139,6 +139,7 @@ class Result(object):
     def build(self):
         """
         get build name.
+
         :return: build name. None if not found
         """
         # pylint: disable=len-as-condition
@@ -156,7 +157,8 @@ class Result(object):
     @property
     def build_date(self):
         """
-        get build date
+        get build date.
+
         :return: build date. None if not found
         """
         # pylint: disable=len-as-condition
@@ -174,7 +176,8 @@ class Result(object):
     @property
     def build_sha1(self):
         """
-        get sha1 hash of build
+        get sha1 hash of build.
+
         :return: build sha1 or None if not found
         """
         # pylint: disable=len-as-condition
@@ -191,7 +194,8 @@ class Result(object):
     @property
     def build_url(self):
         """
-        get build url
+        get build url.
+
         :return: build url or None if not found
         """
         # pylint: disable=len-as-condition
@@ -208,7 +212,8 @@ class Result(object):
     @property
     def build_git_url(self):
         """
-        get build git url
+        get build git url.
+
         :return: build git url or None if not found
         """
         # pylint: disable=len-as-condition
@@ -225,7 +230,8 @@ class Result(object):
     @property
     def build_data(self):
         """
-        get build data
+        get build data.
+
         :return: build data or None if not found
         """
         # pylint: disable=len-as-condition
@@ -236,7 +242,8 @@ class Result(object):
     @property
     def build_branch(self):
         """
-        get build branch
+        get build branch.
+
         :return: build branch or None if not found
         """
         # pylint: disable=len-as-condition
@@ -253,7 +260,8 @@ class Result(object):
     @property
     def buildcommit(self):
         """
-        get build commit id
+        get build commit id.
+
         :return: build commit id or None if not found
         """
         # pylint: disable=len-as-condition
@@ -272,7 +280,8 @@ class Result(object):
     @property
     def fw_name(self):
         """
-        get test framework name
+        get test framework name.
+
         :return: framework name or None if not found
         """
         return self.framework_info.get("name")
@@ -284,7 +293,8 @@ class Result(object):
     @property
     def fw_version(self):
         """
-        get framework version
+        get framework version.
+
         :return: framework version or None if not found
         """
         return self.framework_info.get("version")
@@ -296,7 +306,8 @@ class Result(object):
     @property
     def skip(self):
         """
-        Determine if test was skipped
+        Determine if test was skipped.
+
         :return: True if test was skipped, else False
         """
         return self.skipped()
@@ -304,7 +315,8 @@ class Result(object):
     @property
     def success(self):
         """
-        Determine if test was passed
+        Determine if test was passed.
+
         :return: True if test was passed, else False
         """
         return self.passed()
@@ -312,7 +324,8 @@ class Result(object):
     @property
     def failure(self):
         """
-        Determine if test failed
+        Determine if test failed.
+
         :return: True if test failed, else False
         """
         return self.failed()
@@ -320,14 +333,16 @@ class Result(object):
     @property
     def inconclusive(self):
         """
-        Determine if test was inconclusive
+        Determine if test was inconclusive.
+
         :return: True if test was inconclusive, else False
         """
         return self.was_inconclusive()
 
     def get_verdict(self):
         """
-        Get test verdict
+        Get test verdict.
+
         :return: verdict
         """
         return self.__verdict
@@ -335,7 +350,8 @@ class Result(object):
     # Set final verdict
     def set_verdict(self, verdict, retcode=-1, duration=-1):
         """
-        Set the final verdict for this Result
+        Set the final verdict for this Result.
+
         :param verdict: Verdict, must be from ['pass', 'fail', 'unknown', 'skip', 'inconclusive']'
         :param retcode: integer return code
         :param duration: test duration
@@ -354,7 +370,8 @@ class Result(object):
 
     def set_tc_metadata(self, tc_metadata):
         """
-        Set test case metadata
+        Set test case metadata.
+
         :param tc_metadata: dictionary
         :return: Nothing
         """
@@ -362,56 +379,64 @@ class Result(object):
 
     def get_tc_name(self):
         """
-        Get name from tc metadata
+        Get name from tc metadata.
+
         :return: Name from tc metadata
         """
         return self.tc_metadata['name']
 
     def get_toolchain(self):
         """
-        get toolchain
+        get toolchain.
+
         :return: toolchain
         """
         return self.toolchain
 
     def passed(self):
         """
-        Determine if test passed
+        Determine if test passed.
+
         :return: True if test was passed, else False
         """
         return self.get_verdict() == 'pass'
 
     def skipped(self):
         """
-        Determine if test was skipped
+        Determine if test was skipped.
+
         :return: True if test was skipped, else False
         """
         return self.get_verdict() == 'skip'
 
     def was_inconclusive(self):
         """
-        Determine if test was inconclusive
+        Determine if test was inconclusive.
+
         :return: True if test was inconclusive, else False
         """
         return self.get_verdict() == 'inconclusive'
 
     def failed(self):
         """
-        Determine if test failed
+        Determine if test failed.
+
         :return: True if test failed, else False
         """
         return self.get_verdict() == 'fail'
 
     def get_fail_reason(self):
         """
-        Get fail reason
+        Get fail reason.
+
         :return: failure reason
         """
         return self.fail_reason
 
     def set_dutinformation(self, info):
         """
-        Create a new DutInformationList with initial data info
+        Create a new DutInformationList with initial data info.
+
         :param info: list of DutInformation objects
         :return: Nothing
         """
@@ -419,7 +444,8 @@ class Result(object):
 
     def add_dutinformation(self, info):
         """
-        Append the information of a new dut to the dutinformation list
+        Append the information of a new dut to the dutinformation list.
+
         :param info: DutInformation object
         :return: Nothing
         """
@@ -428,13 +454,16 @@ class Result(object):
     @property
     def dut_resource_id(self):
         """
-        Get dut resource id:s
+        Get dut resource id:s.
+
         :return: list of resource id:s or unknown if none were found.
         """
         return self.dutinformation.get_resource_ids()
 
     def get_dut_models(self):
-        """Gets a string of dut models in this TC
+        """
+        Gets a string of dut models in this TC.
+
         :return: String of dut models separated with commas.
         unknown platform if no dut information is available
         """
@@ -443,14 +472,16 @@ class Result(object):
     @property
     def dut_models(self):
         """
-        Gets a list of dut models in this TC
+        Gets a list of dut models in this TC.
+
         :return: List of dut models in this TC. Empty list if information is not available.
         """
         return self.dutinformation.get_uniq_list_dutmodels()
 
     def get_duration(self, seconds=False):
         """
-        Get test case duration
+        Get test case duration.
+
         :param seconds: if set to True, return tc duration in seconds, otherwise as str(
         datetime.timedelta)
         :return: str(datetime.timedelta) or duration as string in seconds
@@ -463,7 +494,8 @@ class Result(object):
     # get testcase metadata
     def get_tc_object(self):
         """
-        get tc metadata
+        get tc metadata.
+
         :return: tc metadata dictionary
         """
         return self.tc_metadata
@@ -471,6 +503,7 @@ class Result(object):
     def has_logs(self):
         """
         Check if log files are available and return file names if they exist.
+
         :return: list
         """
         found_files = []
@@ -487,7 +520,8 @@ class Result(object):
     @staticmethod
     def __get_username():
         """
-        Get current os username
+        Get current os username.
+
         :return: os username.
         """
         if pwd:

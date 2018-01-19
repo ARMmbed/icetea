@@ -26,11 +26,15 @@ class TestStepError(Exception):
     '''
     def __init__(self, message="TestStepError"):
         super(TestStepError, self).__init__(message)
+        self.logger = None
 
     # print detailed info
-    def detailedInfo(self):
-        _, _, tb = sys.exc_info()
-        filename, linenumber, functionname, line = traceback.extract_tb(tb)[-2]
+    def detailed_info(self):
+        """
+        Print detailed exception information from traceback
+        """
+        _, _, trace = sys.exc_info()
+        filename, linenumber, functionname, line = traceback.extract_tb(trace)[-2]
         self.logger = get_bench_logger()
         self.logger.error("Exception details: ")
         self.logger.error("TC Name: " + str(filename))
@@ -40,8 +44,11 @@ class TestStepError(Exception):
 
 
 class InconclusiveError(Exception):
-    def __init__(self, message="InconclusiveError"):
-        super(InconclusiveError, self).__init__(message)
+    """
+    Inconclusive error exception, used for showing errors such as
+    broken environments and missing requirements.
+    """
+    pass
 
 
 class TestStepFail(Exception):
@@ -49,12 +56,11 @@ class TestStepFail(Exception):
     TestStepFail exception is used when failure causes because of
     device/software under test, and probably not related to test environment
     '''
-    def __init__(self, message="TestStepFail"):
-        super(TestStepFail, self).__init__(message)
+    pass
 
 
 class TestStepTimeout(TestStepFail):
-    def __init__(self, message="TestStepTimeout"):
-        TestStepFail.__init__(self, message=message)
-
-
+    """
+    TestStepTimeout, failure for  showing timeouts.
+    """
+    pass

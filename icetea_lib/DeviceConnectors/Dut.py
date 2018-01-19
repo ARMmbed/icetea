@@ -106,6 +106,7 @@ class Dut(object):
     def platform(self):
         """
         Getter for dut platform.
+
         :return: Platform as string or None
         """
         if self.dutinformation:
@@ -121,6 +122,7 @@ class Dut(object):
     def index(self):
         """
         Getter for dut index.
+
         :return: Index as integer or None
         """
         if self.dutinformation:
@@ -136,6 +138,7 @@ class Dut(object):
     def resource_id(self):
         """
         Getter for dut resource id.
+
         :return: Resource id as string or None
         """
         if self.dutinformation:
@@ -150,7 +153,8 @@ class Dut(object):
     @property
     def vendor(self):
         """
-        Getter for dut vendor
+        Getter for dut vendor.
+
         :return: Vendor as string. If not found, will be empty string.
         """
         if self.dutinformation:
@@ -165,6 +169,7 @@ class Dut(object):
     def build(self):
         """
         Getter for build information.
+
         :return: Build object or None
         """
         if self.dutinformation:
@@ -177,32 +182,22 @@ class Dut(object):
 
     # Minimum requirements from Dut Implementation
     def open_connection(self):
-        """open connection to DUT.
-        connection information is stored in variable self.comport
         """
-        raise NotImplementedError("openConnection is not implemented")
-
-    def openConnection(self): # pylint: disable=invalid-name
+        Open connection to DUT.
+        Connection information is stored in variable self.comport
         """
-        Deprecated. Use open_connection instead
-        """
-        self.logger.warning("openConnection has been deprecated. Use open_connection instead.")
-        return self.open_connection()
+        raise NotImplementedError("open_connection is not implemented")
 
     def close_connection(self):
-        """close connection to DUT
         """
-        raise NotImplementedError("closeConnection is not implemented")
-
-    def closeConnection(self): # pylint: disable=invalid-name
+        Close connection to DUT
         """
-        Deprecated, use close_connection instead.
-        """
-        self.logger.warning("closeConnection has been deprecated, use close_connection instead.")
-        return self.close_connection()
+        raise NotImplementedError("close_connection is not implemented")
 
     def writeline(self, data):
-        """write single string line to DUT
+        """
+        write single string line to DUT
+
         :param data: string to be write to DUT, not contains line feeds,
         instead writeline implementation should add line feeds when needed.
         """
@@ -210,6 +205,7 @@ class Dut(object):
 
     def readline(self, timeout=1):
         """read single string line from DUT.
+
         :param timeout: readline timeout in seconds.
         :return string from DUT.
         """
@@ -218,36 +214,25 @@ class Dut(object):
     def print_info(self):
         '''
         Log information relevant to this DUT.
+
         :return: Nothing
         '''
         raise NotImplementedError("printInfo has not been implemented")
 
-    def printInfo(self): # pylint: disable=invalid-name
-        """
-        Deprecated, use print_info instead.
-        """
-        self.logger.warning("printInfo has been deprecated. Use print_info instead.")
-        self.print_info()
-
     def get_info(self):
         """
         Creates a DutInformation object that contains information on this DUT.
+
         :return: DutInformation object
         """
         raise NotImplementedError("getInfo has not been implemented")
-
-    def getInfo(self):  # pylint: disable=invalid-name
-        """
-        Deprecated, use get_info instead.
-        """
-        self.logger.warning("getInfo has been deprecated. Use get_info instead.")
-        return self.get_info()
 
     # Minimum requirements from Dut Implementation - END
 
     def set_log_level(self, level):
         """
         Set the level of logging for this dut. NOTE: AFFECTS FILES AS WELL
+
         :param level: Level to set (integer or constant from logging)
         :return: Nothing
         """
@@ -256,6 +241,7 @@ class Dut(object):
     def set_dut_name(self, name):
         """
         Set dut name
+
         :param name: name to set
         :return: Nothing
         """
@@ -265,6 +251,7 @@ class Dut(object):
     def _flash_needed(self, **kwargs):
         """
         Check if flashing of dut is required.
+
         :return: Boolean. True if flashing is needed, else False
         """
         raise NotImplementedError("flashing needed check not implemented!")
@@ -272,6 +259,7 @@ class Dut(object):
     def get_dut_name(self):
         """
         Get dut dname
+
         :return: dut name
         """
         return self.dut_name
@@ -279,6 +267,7 @@ class Dut(object):
     def set_init_cli_cmds(self, cmds):
         """
         set cli initialization commands
+
         :param cmds: list of commands as either strings or lists of strings
         :return: Nothing
         """
@@ -296,6 +285,7 @@ class Dut(object):
         """
         Default init commands are set --retcode true, echo off, set --vt100 off, set dut <dut name>
         and set testcase <tc name>
+
         :return: List of default cli initialization commands.
         """
         init_cli_cmds = []
@@ -312,6 +302,7 @@ class Dut(object):
         """
         Default commands to restore cli to human readable state are echo on, set --vt100 on,
         set --retcode false.
+
         :return: List of default commands to restore cli to human readable format
         """
         post_cli_cmds = []
@@ -322,7 +313,8 @@ class Dut(object):
 
     def init_cli(self):
         """
-        Init cli for script
+        Init cli for script.
+        '
         :return: Nothing
         """
         if self.init_cli_cmds is None:
@@ -342,6 +334,7 @@ class Dut(object):
     def init_wait_register(self):
         """
         Initialize EventMatcher to wait for certain cli_ready_trigger to arrive from this Dut.
+
         :return: None
         """
         app = self.config.get("application")
@@ -360,6 +353,7 @@ class Dut(object):
     def wait_init(self):
         """
         Block until init_done flag is set or until init_wait_timeout happens.
+
         :return: value of init_done
         """
         return self.init_done.wait(timeout=self.init_wait_timeout)
@@ -367,6 +361,7 @@ class Dut(object):
     def init_cli_human(self):
         """
         Send post_cli_cmds to dut
+
         :return: Nothing
         """
         if self.post_cli_cmds is None:
@@ -388,6 +383,7 @@ class Dut(object):
     def set_time_function(self, function):
         """
         Set time function to be used.
+
         :param function: callable function
         :return: Nothing
         :raises: ValueError if function is not types.FunctionType.
@@ -400,6 +396,7 @@ class Dut(object):
     def open_dut(self, port=None):
         """
         Open connection to dut.
+
         :param port: com port to use.
         :return:
         """
@@ -418,7 +415,8 @@ class Dut(object):
 
     def _wait_for_exec_ready(self):
         """
-        Wait for response
+        Wait for response.
+
         :return: CliResponse object coming in
         :raises: TestStepTimeout, TestStepError
         """
@@ -455,6 +453,7 @@ class Dut(object):
     def execute_command(self, req, **kwargs):
         """
         Execute command and return CliResponse
+
         :param req: String, command to be executed in DUT, or CliRequest, command class which
         contains all configurations like timeout.
         :param kwargs: Configurations (wait, timeout) which will be used when string mode is in use.
@@ -494,20 +493,20 @@ class Dut(object):
         self.query_timeout = self.get_time() + req.timeout if req.wait else 0
         self.query = req
 
-        msg = "Async CMD {}, timeout={}, time={}" if req.async else "CMD {}, timeout={}, time={}"
+        msg = "Async CMD {}, timeout={}, time={}" if req.asynchronous else "CMD {}, timeout={}, time={}"
         msg = msg.format(req.cmd, int(self.query_timeout), int(self.get_time()))
         self.logger.debug(msg, extra={'type': '<->'})
 
         Dut.process_dut(self)
 
-        if req.async is True:
-            self.query_async_expected = req.expectedRetcode
+        if req.asynchronous is True:
+            self.query_async_expected = req.expected_retcode
             async_response = CliAsyncResponse(self)
             self.query_async_response = async_response
             return async_response
 
         if req.wait is False:
-            self.query_async_expected = req.expectedRetcode
+            self.query_async_expected = req.expected_retcode
             # if an async response was waiting, just discard the result
             # since the new command has already been sent...
             # This is not ideal but when a command has its flags "Wait == False"
@@ -522,7 +521,8 @@ class Dut(object):
 
     def close_dut(self, use_prepare=True):
         """
-        Close connection to dut
+        Close connection to dut.
+
         :param use_prepare: Boolean, default is True. Call prepare_connection_close before
         closing connection.
         :return: Nothing
@@ -557,6 +557,7 @@ class Dut(object):
     def reset(self, method=None):  # pylint: disable=unused-argument
         """
         Reset the dut. Some duts implement different reset methods (hard/soft)
+
         :param method: String (hard or soft) or None
         :return: Nothing
         :raises: DutConnectionError if reset fails or connection is not restored.
@@ -566,13 +567,16 @@ class Dut(object):
     def prepare_connection_close(self):
         """
         Run commands or other required things to prepare to close dut connection.
+
         :return: Nothing
         """
         pass
 
     @staticmethod
     def process_dut(dut):
-        """Signal worker thread that specified Dut needs processing"""
+        """
+        Signal worker thread that specified Dut needs processing
+        """
         if dut.finished():
             return
         Dut._signalled_duts.appendleft(dut)
@@ -583,6 +587,7 @@ class Dut(object):
     def run():
         """
         Main thread runner for all Duts.
+
         :return: Nothing
         """
         Dut._logger.debug("Start DUT communication", extra={'type': '<->'})
@@ -646,6 +651,7 @@ class Dut(object):
     def __read_response(self):
         """
         Internal response reader.
+
         :return: CliResponse or None
         """
         try:
@@ -677,10 +683,10 @@ class Dut(object):
     def check_retcode(self, line):
         """
         Look for retcode on line line and return return code if found.
+
         :param line: Line to search from
         :return: integer return code or -1 if "cmd tasklet init" is found. None if retcode or cmd
-        tasklet
-        init not found.
+        tasklet init not found.
         """
         retcode = None
         match = re.search(r"retcode\: ([-\d]{1,})", line)
@@ -696,6 +702,7 @@ class Dut(object):
     def finished(self):
         """
         Getter for stopped
+
         :return: Boolean
         """
         return self.stopped
@@ -703,6 +710,7 @@ class Dut(object):
     def start_dut_thread(self):  # pylint: disable=no-self-use
         """
         Start Dut thread.
+
         :return: Nothing
         """
         if Dut._th is None:

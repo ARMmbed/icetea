@@ -96,11 +96,11 @@ class Testcase(Bench):
         self.command("*", "echo hello")
 
         # send know command "echo hello" and retcode expected to be 0 --> success() is True
-        response = self.command(1, "echo hello", expectedRetcode=0)
+        response = self.command(1, "echo hello", expected_retcode=0)
         self.assertTrue(response.success())
 
         # send unknown command "hello" and the retcode for unknown command is -5 --> fail() is True
-        response = self.command(1, "hello", expectedRetcode=-5)
+        response = self.command(1, "hello", expected_retcode=-5)
         self.assertTrue(response.fail())
 
         # get response and verify traces

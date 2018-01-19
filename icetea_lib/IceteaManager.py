@@ -11,6 +11,11 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+IceteaManager module. Contains IceteaManager class and some helpers.
+IceteaManager is the handler of the entire run. It determines return codes
+for the caller and handles processing of arguments as well as triggers the run with the
+correct parameters etc.
 """
 
 # Ignore "Use % formatting in logging functions and pass the % parameters as arguments"
@@ -35,16 +40,27 @@ from icetea_lib.cloud import Cloud
 from icetea_lib.Plugin.PluginManager import PluginManager
 
 
-"""
-    IceteaManager module. Contains IceteaManager class and some helpers.
-    IceteaManager is the handler of the entire run. It determines return codes
-    for the caller and handles processing of arguments as well as triggers the run with the
-    correct parameters etc.
-"""
-
-
 def _clean_onerror(func, path, excinfo):
+    """
+    Error handler for cleaner
+    """
     print("%s encountered error when processing %s: %s" % (func, path, excinfo))
+
+
+def _cleanlogs(silent=False, log_location="log"):
+    """
+    Cleans up Mbed-test default log directory.
+
+    :param silent: Defaults to False
+    :param log_location: Location of log files, defaults to "log"
+    :return: Nothing
+    """
+    try:
+        print("cleaning up Icetea log directory.")
+        shutil.rmtree(log_location, ignore_errors=silent,
+                      onerror=None if silent else _clean_onerror)
+    except OSError as error:
+        print(error)
 
 
 class ExitCodes:
@@ -59,7 +75,7 @@ class ExitCodes:
 
 class TCMetaSchema(object):
     """
-        Singleton metadata schema object.
+    Singleton metadata schema object.
     """
     __metaclass__ = Singleton
 
@@ -68,13 +84,18 @@ class TCMetaSchema(object):
             self._tc_meta_schema = json.load(data_file)
 
     def get_meta_schema(self):
+        """
+        Getter for tc meta schema.
+
+        :return: tc_meta_schema
+        """
         return self._tc_meta_schema
 
 
 class IceteaManager(object):
     """
-        IceteaManager class. This is the master of the entire run. The primary entry point into
-        execution is the run method.
+    IceteaManager class. This is the master of the entire run. The primary entry point into
+    execution is the run method.
     """
     def __init__(self):
         """
@@ -85,12 +106,12 @@ class IceteaManager(object):
         sys.path.append(self.libpath)
         libpath2 = os.sep.join(self.libpath.split(os.sep)[:-1])
         sys.path.append(libpath2)
-        #Initialize TCMetaSchema with correct libpath
+        # Initialize TCMetaSchema with correct libpath
         TCMetaSchema(self.libpath)
         self.args, self.unknown = IceteaManager._parse_arguments()
         # If called with --clean, clean up logs.
         if self.args.clean:
-            self._cleanlogs(silent=self.args.silent)
+            _cleanlogs(silent=self.args.silent, log_location=self.args.log)
 
         LogManager.init_base_logging(self.args.log, verbose=self.args.verbose,
                                      silent=self.args.silent, color=self.args.color,
@@ -124,13 +145,13 @@ class IceteaManager(object):
                 suites.append("------------------------------------")
                 suites.append("FROM CLOUD:")
                 suites.extend(names)
-        if not len(suites):
+        if not suites:
             return None
 
         from prettytable import PrettyTable
         table = PrettyTable(["Testcase suites"])
-        for s in suites:
-            table.add_row([s])
+        for suite in suites:
+            table.add_row([suite])
         return table
 
     @staticmethod
@@ -148,13 +169,12 @@ class IceteaManager(object):
         Validates that a valid number of arguments were received and that all arguments were
         recognised.
 
-        :return: True or False. False if called with no args or if unknown args were
-        received and ignore_invalid_params argument is False
+        :return: True or False.
         """
         parser = get_base_arguments(get_parser())
         parser = get_tc_arguments(parser)
         # Disable "Do not use len(SEQ) as condition value"
-        #pylint: disable=C1801
+        # pylint: disable=C1801
         if len(sys.argv) < 2:
             self.logger.error("Icetea called with no arguments! ")
             parser.print_help()
@@ -168,6 +188,9 @@ class IceteaManager(object):
         return True
 
     def _init_pluginmanager(self):
+        """
+        Initialize PluginManager and load run wide plugins.
+        """
         self.pluginmanager = PluginManager(logger=self.logger)
         self.logger.debug("Registering execution wide plugins:")
         self.pluginmanager.load_default_run_plugins()
@@ -268,6 +291,7 @@ class IceteaManager(object):
     def _cleanup_resourceprovider(self):
         """
         Calls cleanup for ResourceProvider of this run.
+
         :return: Nothing
         """
         #Disable too broad exception warning
@@ -279,23 +303,10 @@ class IceteaManager(object):
         except Exception as error:
             self.logger.error("Cleanup failed! %s", error)
 
-    def _cleanlogs(self, silent=False):
-        """
-        Cleans up Mbed-test default log directory.
-        :param silent: Defaults to False
-        :return: Nothing
-        """
-        #TODO: FIX THIS FUNCTION FOR OTHER LOG PATHS!
-        try:
-            print("cleaning up Icetea log directory.")
-            shutil.rmtree('log', ignore_errors=silent,
-                          onerror=None if silent else _clean_onerror)
-        except OSError as error:
-            print(error)
-
     def _init_cloud(self, cloud_arg):
         """
         Initializes Cloud module if cloud_arg is set.
+
         :param cloud_arg: taken from args.cloud
         :return: cloud module object instance
         """

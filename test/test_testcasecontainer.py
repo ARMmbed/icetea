@@ -92,7 +92,7 @@ class TCContainerTestcase(unittest.TestCase):
             suitedir="./test/suites", forceflash_once=True, forceflash=True,
             stop_on_failure=False, ignore_invalid_params=False)
 
-    @mock.patch("icetea_lib.TestSuite.TestcaseContainer.loadClass")
+    @mock.patch("icetea_lib.TestSuite.TestcaseContainer.load_class")
     def test_load_testcase_fails(self, mock_loadclass):
         testcase = TestcaseContainer.find_testcases("examples.test_cmdline", "./examples",
                                                     self.tc_meta_schema)[0]
@@ -208,6 +208,7 @@ class TCContainerTestcase(unittest.TestCase):
         instance.run.return_value = 1012
         parser.parse_known_args.return_value = (mock.MagicMock(), [])
         testcase.run()
+
 
 if __name__ == '__main__':
     unittest.main()

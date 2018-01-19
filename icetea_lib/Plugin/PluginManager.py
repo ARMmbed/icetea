@@ -106,6 +106,7 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
     def get_allocator(self, allocator_name):
         """
         Get a registered allocator based on allocator_name.
+
         :param allocator_name: Name of allocator to get
         :return: BaseAllocator
         """
@@ -115,7 +116,8 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
 
     def load_default_tc_plugins(self):
         """
-        Load default test case level plugins from icetea_lib.Plugin.plugins.default_plugins
+        Load default test case level plugins from icetea_lib.Plugin.plugins.default_plugins.
+
         :return: Nothing
         """
         for plugin_name, plugin_class in default_plugins.items():
@@ -128,7 +130,8 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
 
     def load_custom_tc_plugins(self, plugin_path=None):
         """
-        Load custom test case level plugins from plugin_path
+        Load custom test case level plugins from plugin_path.
+
         :param plugin_path: Path to file, which contains the imports and mapping for plugins.
         :return: None if plugin_path is None or False or something equivalent to those.
         """
@@ -155,7 +158,8 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
 
     def load_default_run_plugins(self):
         """
-        Load default run level plugins from icetea_lib.Plugin.plugins.default_plugins
+        Load default run level plugins from icetea_lib.Plugin.plugins.default_plugins.
+
         :return: Nothing
         """
         for plugin_name, plugin_class in default_plugins.items():
@@ -168,7 +172,8 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
 
     def load_custom_run_plugins(self, plugin_path=None):
         """
-        Load custom run level plugins from plugin_path
+        Load custom run level plugins from plugin_path.
+
         :param plugin_path: Path to file, which contains the imports and mapping for plugins.
         :return: None if plugin_path is None or False or something equivalent to those.
         """
@@ -196,6 +201,7 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
     def start_external_service(self, service_name, conf=None):
         """
         Start external service service_name with configuration conf.
+
         :param service_name: Name of service to start
         :param conf:
         :return: nothing
@@ -215,7 +221,8 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
 
     def stop_external_services(self):
         """
-        Stop all external services
+        Stop all external services.
+
         :return: Nothing
         """
         for service in self._started_services:
@@ -230,6 +237,7 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
     def _register_bench_extension(self, plugin_name, plugin_instance):
         """
         Register a bench extension.
+
         :param plugin_name: Plugin name
         :param plugin_instance: PluginBase
         :return: Nothing
@@ -242,7 +250,8 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
 
     def _register_dataparser(self, plugin_name, plugin_instance):
         """
-        Register a parser
+        Register a parser.
+
         :param plugin_name: Parser name
         :param plugin_instance: PluginBase
         :return: Nothing
@@ -255,7 +264,8 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
 
     def _register_external_service(self, plugin_name, plugin_instance):
         """
-        Register an external service
+        Register an external service.
+
         :param plugin_name: Service name
         :param plugin_instance: PluginBase
         :return:
@@ -268,7 +278,8 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
 
     def _register_allocator(self, plugin_name, plugin_instance):
         """
-        Register an allocator
+        Register an allocator.
+
         :param plugin_name: Allocator name
         :param plugin_instance: RunPluginBase
         :return:

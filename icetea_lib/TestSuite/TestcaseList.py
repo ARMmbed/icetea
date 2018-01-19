@@ -51,7 +51,8 @@ class TestcaseList(object):
 
     def get_names(self):
         """
-        Gets names of test cases in this TestcaseList
+        Gets names of test cases in this TestcaseList.
+
         :return: list
         """
         lst = []
@@ -82,6 +83,7 @@ class TestcaseList(object):
     def import_from_path(self, path="./testcases"):
         """
         Import test cases from path to this TestcaseList
+
         :param path: Path to import from
         :return: Nothing
         """
@@ -91,6 +93,7 @@ class TestcaseList(object):
     def get(self, index):
         """
         dict-like getter based on index.
+
         :param index: Index of test case
         :return: TestcaseContainer or None if index is outside len
         """
@@ -98,7 +101,8 @@ class TestcaseList(object):
 
     def append(self, val):
         """
-        Append val to internal list of test cases
+        Append val to internal list of test cases.
+
         :param val: test case to append
         :return: Nothing
         """
@@ -106,7 +110,7 @@ class TestcaseList(object):
 
     def _get_local_testcases(self, tcpath):
         """
-        crawl given path for .py files
+        Crawl given path for .py files
         """
         i = 0
         returnlist = []
@@ -138,7 +142,7 @@ class TestcaseList(object):
 
     def _parse_local_testcases(self, tc_list, verbose):
         """
-        parse list produced by get_local_testcases()
+        Parse list produced by get_local_testcases()
         """
         return_list = []
         if not isinstance(tc_list, list):
@@ -150,7 +154,7 @@ class TestcaseList(object):
         for testcase in tc_list:
             i += 1
             try:
-                #modulename, moduleroot, filepath
+                # modulename, moduleroot, filepath
                 parsedcases = TestcaseContainer.find_testcases(modulename=testcase[0],
                                                                moduleroot=testcase[1],
                                                                path=testcase[2],

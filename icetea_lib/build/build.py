@@ -20,15 +20,19 @@ Jussi Vatjus-Anttila <jussi.vatjus-anttila@arm.com>
 import re
 import os
 import requests
-from icetea_lib.tools.tools import sha1OfFile
+from icetea_lib.tools.tools import sha1_of_file
+
 
 class NotFoundError(Exception):
-    """Not Found Error
+    """
+    Not Found Error
     """
     pass
 
+
 class Build(object):
-    """Class Build
+    """
+    Class Build
     """
     def __init__(self, **kwargs):
         """
@@ -45,7 +49,6 @@ class Build(object):
         self.build_url = None
         self.giturl = None
         self.commit_id = None
-
 
     @staticmethod
     def init(ref):
@@ -74,8 +77,9 @@ class Build(object):
         raise NotImplementedError("Cannot detect reference type: %s" % ref)
 
     def get_data(self):
-        """function get_data
-        returns Buffer
+        """
+        function get_data
+        :return: Buffer
         """
         return self._load()
 
@@ -87,21 +91,24 @@ class Build(object):
 
     def get_url(self):
         """
-        Get reference url
+        Get reference url.
+
         :return: reference type - file,id,url
         """
         return self._ref
 
     def get_file(self):
         """
-        Load data into a file and return file path
+        Load data into a file and return file path.
+
         :return: path to file as string
         """
         raise NotImplementedError()
 
 
     def _load(self):
-        """Load test case
+        """
+        Load test case
         """
         raise NotImplementedError()
 
@@ -115,19 +122,23 @@ class Build(object):
 
 
 class BuildFile(Build):
-    """ Build as a File
+    """
+    Build as a File
     """
 
     def __init__(self, ref):
-        """Constructor
+        """
+        Constructor
         """
         super(BuildFile, self).__init__(ref=ref, type='file')
-        sha = sha1OfFile(ref)
+        sha = sha1_of_file(ref)
         self.sha1 = sha if sha else ""
 
     def is_exists(self):
-        """check if file exists
-        :return:
+        """
+        Check if file exists.
+
+        :return: Boolean
         """
         return os.path.isfile(self._ref)
 
@@ -135,15 +146,19 @@ class BuildFile(Build):
         return self._ref if self.is_exists() else None
 
     def _load(self):
-        """function load
-        returns
+        """
+        Function load.
+
+        :return: file contents
+        :raises: NotFoundError if file not found
         """
         if self.is_exists():
             return open(self._ref, "rb").read()
         raise NotFoundError("File %s not found" % self._ref)
 
 class BuildHttp(Build):
-    """ Build as a Http link
+    """
+    Build as a Http link
     """
 
     def __init__(self, ref):
@@ -153,8 +168,10 @@ class BuildHttp(Build):
         self.timeout = None
 
     def _load(self):
-        """function load
-        returns
+        """
+        Function load.
+        :return: Response content
+        :raises: NotFoundError
         """
         try:
             get = requests.get(self._ref,
@@ -163,34 +180,36 @@ class BuildHttp(Build):
                                timeout=self.timeout)
         except requests.exceptions.RequestException as err:
             raise NotFoundError(err)
-
         return get.content
 
     def is_exists(self):
-        """check if file exists
-           :return:
+        """
+        Check if file exists
+        :return: Boolean
         """
         try:
             return self._load() is not None
-        except(NotFoundError):
+        except NotFoundError:
             return False
 
     def get_file(self):
         """
-        Load data into a file and return file path
+        Load data into a file and return file path.
+
         :return: path to file as string
         """
         content = self._load()
         if not content:
             return None
         filename = "temporary_file.bin"
-        with open(filename, "wb") as file:
-               file.write(content)
+        with open(filename, "wb") as file_name:
+           file_name.write(content)
         return filename
 
 
 class BuildDatabase(Build):
-    """ Build as a Database ID
+    """
+    Build as a Database ID
     """
 
     def __init__(self, ref):

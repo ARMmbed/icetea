@@ -21,6 +21,7 @@ from jsonmerge import merge
 from icetea_lib.tools.tools import recursive_dictionary_get as recursive_search
 from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
 
+
 class ResourceRequirements(object):
     """
     ResourceRequirements class. Contains methods for getting and setting requirement values as
@@ -32,6 +33,7 @@ class ResourceRequirements(object):
     def set(self, key, value):
         """
         Sets the value for a specific requirement.
+
         :param key: Name of requirement to be set
         :param value: Value to set for requirement key
         :return: Nothing, modifies requirement
@@ -46,6 +48,7 @@ class ResourceRequirements(object):
         """
         Gets contents of requirement key.
         Switches to recursive search if dots ('.') are found in the key.
+
         :param key: key or dot separated string of keys to look for.
         :return: contents of requirement key/results of search or None.
         """
@@ -63,7 +66,7 @@ class ResourceRequirements(object):
         specific keys inside nested requirement dicts.
 
         :param key: key or dot separated string of keys to look for.
-        :param dict: Optional dictionary to use in the search.
+        :param dic: Optional dictionary to use in the search.
         If not provided, self._requirements is used.
         :return: results of search or None
         """
@@ -71,7 +74,8 @@ class ResourceRequirements(object):
 
     def get_requirements(self):
         """
-        Return requirements as dict
+        Return requirements as dict.
+
         :return: Dictionary
         """
         return self._requirements

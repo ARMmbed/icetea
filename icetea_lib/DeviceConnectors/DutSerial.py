@@ -41,6 +41,7 @@ try:
 except ImportError:
     Flash = None
 
+
 class SerialParams(object):
     """
     SerialParams object for storing serial connection parameters.
@@ -53,10 +54,11 @@ class SerialParams(object):
 
     def get_params(self):
         """
-        Get parameters as a tuple
-        :return: (timeout, xonxoff, rtscts, baudrate)
+        Get parameters as a tuple.
+
+        :return: timeout, xonxoff, rtscts, baudrate
         """
-        return (self.timeout, self.xonxoff, self.rtscts, self.baudrate)
+        return self.timeout, self.xonxoff, self.rtscts, self.baudrate
 
 
 class ChunkModeParams(object):
@@ -71,10 +73,11 @@ class ChunkModeParams(object):
 
     def get_params(self):
         """
-        Get parameters as a tuple
-        :return: (enabled, size, chunk_delay, start_delay)
+        Get parameters.
+
+        :return: enabled, size, chunk_delay, start_delay
         """
-        return (self.enabled, self.size, self.chunk_delay, self.start_delay)
+        return self.enabled, self.size, self.chunk_delay, self.start_delay
 
 
 class DutSerial(Dut):
@@ -172,25 +175,10 @@ class DutSerial(Dut):
 
     @property
     def serial_baudrate(self):
-        """
-        :return: Baudrate
-        """
-        return self.serialparams.baudrate
+        return self.serial_baudrate
 
     @serial_baudrate.setter
     def serial_baudrate(self, value):
-        self.serialparams.baudrate = value
-
-    @property
-    def serialBaudrate(self): #pylint: disable=C0103
-        """
-        Backwards compatibility.
-        :return: Baudrate
-        """
-        return self.serial_baudrate
-
-    @serialBaudrate.setter
-    def serialBaudrate(self, value): #pylint: disable=C0103
         self.serial_baudrate = value
 
     @property
@@ -226,12 +214,12 @@ class DutSerial(Dut):
     def serial_rtscts(self, value):
         self.serialparams.rtscts = value
 
-
     """Methods"""
 
     def get_resource_id(self):
         """
-        Get resource id (target id) from config dictionary
+        Get resource id (target id) from config dictionary.
+
         :return: target_id or None if not found
         """
         return self.config.get('allocated').get('target_id')
@@ -292,7 +280,8 @@ class DutSerial(Dut):
 
     def get_info(self):
         """
-        Get DutInformation object from this Dut
+        Get DutInformation object from this Dut.
+
         :return: DutInformation object
         """
         return self.dutinformation
@@ -300,17 +289,18 @@ class DutSerial(Dut):
     # open serial port connection
     def open_connection(self):
         """
-        Open serial port connection
+        Open serial port connection.
+
         :return: Nothing
         :raises: DutConnectionError if serial port was already open or a SerialException occurs.
-            ValueError if EnhancedSerial __init__ or value setters raise ValueError
+        ValueError if EnhancedSerial __init__ or value setters raise ValueError
         """
         if self.readthread is not None:
             raise DutConnectionError("Trying to open serial port which was already open")
 
         self.logger.info("Open Connection for '%s' using '%s' baudrate: %d" % (self.dut_name,
                                                                                self.comport,
-                                                                               self.serialBaudrate),
+                                                                               self.serial_baudrate),
                          extra={'type': '<->'})
         if self.serial_xonxoff:
             self.logger.debug("Use software flow control for dut: %s" % self.dut_name)
@@ -318,7 +308,7 @@ class DutSerial(Dut):
             self.logger.debug("Use hardware flow control for dut: %s" % self.dut_name)
         try:
             self.port = EnhancedSerial(self.comport)
-            self.port.baudrate = self.serialBaudrate
+            self.port.baudrate = self.serial_baudrate
             self.port.timeout = self.serial_timeout
             self.port.xonxoff = self.serial_xonxoff
             self.port.rtscts = self.serial_rtscts
@@ -344,9 +334,10 @@ class DutSerial(Dut):
         self.readthread = Thread(name=self.name, target=self.run)
         self.readthread.start()
 
-    def prepareConnectionClose(self): #pylint: disable=C0103
+    def prepareConnectionClose(self):  # pylint: disable=C0103
         """
-        Deprecated version of prepare_connection_close. Still present for backwards compatibility
+        Deprecated version of prepare_connection_close. Still present for backwards compatibility.
+
         :return: Nothing
         """
         self.logger.warning("prepareConnectionClose deprecated, use prepare_connection_close")
@@ -355,6 +346,7 @@ class DutSerial(Dut):
     def prepare_connection_close(self):
         """
         Sends post-cli-cmds and stops the read thread.
+
         :return: Nothing
         """
         try:
@@ -364,9 +356,10 @@ class DutSerial(Dut):
         self.stop()
 
     # close serial port connection
-    def close_connection(self): #pylint: disable=C0103
+    def close_connection(self):  # pylint: disable=C0103
         """
-        Closes serial port connection
+        Closes serial port connection.
+
         :return: Nothing
         """
         if self.port:
@@ -378,16 +371,18 @@ class DutSerial(Dut):
 
     def reset(self, method=None):
         """
-        Resets the serial device. Internally calls __send_break()
+        Resets the serial device. Internally calls __send_break().
+
         :param method: Not used for DutSerial
         :return: Nothing
         """
         self.logger.info('Reset serial device %s' % self.name)
         self.__send_break()
 
-    def __sendBreak(self): #pylint: disable=C0103
+    def __sendBreak(self):  # pylint: disable=C0103
         """
-        Deprecated, present for backwards compatibility
+        Deprecated, present for backwards compatibility.
+
         :return: result of EnhancedSerial safe_sendBreak()
         """
         self.logger.warning("__send_Break deprecated, use __send_break")
@@ -395,7 +390,8 @@ class DutSerial(Dut):
 
     def __send_break(self):
         """
-        Sends break to device
+        Sends break to device.
+
         :return: result of EnhancedSerial safe_sendBreak()
         """
         if self.port:
@@ -411,7 +407,8 @@ class DutSerial(Dut):
     # transfer data to the serial port
     def writeline(self, data):
         """
-        Writes data to serial port
+        Writes data to serial port.
+
         :param data: Data to write
         :return: Nothing
         :raises: IOError if SerialException occurs.
@@ -432,7 +429,8 @@ class DutSerial(Dut):
     # read line from serial port
     def _readline(self, timeout=1):
         """
-        Read line from serial port
+        Read line from serial port.
+
         :param timeout: timeout, default is 1
         :return: stripped line
         """
@@ -441,7 +439,8 @@ class DutSerial(Dut):
 
     def run(self):
         """
-        Read lines while keep_reading is True. Calls process_dut for each received line
+        Read lines while keep_reading is True. Calls process_dut for each received line.
+
         :return: Nothing
         """
         self.keep_reading = True
@@ -453,7 +452,8 @@ class DutSerial(Dut):
 
     def stop(self):
         """
-        Stops and joins readthread
+        Stops and joins readthread.
+
         :return: Nothing
         """
         self.keep_reading = False
@@ -463,7 +463,8 @@ class DutSerial(Dut):
 
     def readline(self, timeout=1):
         """
-        Pops from input_queue
+        Pops from input_queue.
+
         :param timeout: Not used
         :return: first item in input_queue or None
         """
@@ -476,7 +477,6 @@ class DutSerial(Dut):
     def print_info(self):
         """
         Prints Dut information nicely formatted into a table.
-        :return:
         """
         table = PrettyTable()
         start_string = "DutSerial {} \n".format(self.name)
@@ -510,7 +510,8 @@ class DutSerial(Dut):
 
     def get_config(self):
         """
-        Gets configuration dictionary
+        Gets configuration dictionary.
+
         :return: configuration as a dictionary
         """
         return self.config

@@ -46,7 +46,8 @@ class Testcase(Bench):
         # Close connection, wait a second and reopen connection
         self.get_dut(1).close_connection()
 
-        # We could use the serial port at this point for communicating with the DUT in another manner (eg. terminal)
+        # We could use the serial port at this point for
+        # communicating with the DUT in another manner (eg. terminal)
         print("DUT serial port is %s" % self.get_dut(1).comport)
 
         self.delay(1)
@@ -58,8 +59,9 @@ class Testcase(Bench):
         # Check that exception is raised if we try to reopen connection
         try:
             self.get_dut(1).open_connection()
-            # We should never get here, since previous line should raise DutConnectionError exception
-            raise TestStepError("Calling openConnection twice didn't raise error as expected!")
+            # We should never get here,
+            # since previous line should raise DutConnectionError exception
+            raise TestStepError("Calling open_connection twice didn't raise error as expected!")
         except DutConnectionError:
             pass
 

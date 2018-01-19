@@ -1,3 +1,5 @@
+# pylint: disable=too-many-lines,too-many-arguments,too-many-statements,too-many-branches
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,7 +54,7 @@ from icetea_lib.Plugin.PluginManager import PluginManager, PluginException
 from icetea_lib.Searcher import verify_message
 from icetea_lib.TestStepError import TestStepError, TestStepFail, TestStepTimeout
 from icetea_lib.TestStepError import InconclusiveError
-from icetea_lib.tools.tools import loadClass
+from icetea_lib.tools.tools import load_class
 
 
 class ReturnCodes(object): #pylint: disable=no-init,too-few-public-methods
@@ -89,18 +91,19 @@ class NodeEndPoint(object): #pylint: disable=too-few-public-methods
         self.bench = bench
         self.endpoint_id = endpoint_id
 
-    def command(self, cmd, expectedRetcode=0): #pylint: disable=invalid-name
+    def command(self, cmd, expected_retcode=0):
         # expectedRetcode kwd argument is used in many test cases, we cannot rename it.
         """
         Shortcut for sending a command to this node specifically.
+
         :param cmd: Command to send
-        :param expectedRetcode: Expected return code as int, default is 0
+        :param expected_retcode: Expected return code as int, default is 0
         :return: CliResponse
         """
-        return self.bench.command(self.endpoint_id, cmd, expectedRetcode=expectedRetcode)
+        return self.bench.command(self.endpoint_id, cmd, expected_retcode=expected_retcode)
 
 
-class Bench(object):
+class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """
     Bench class. Bench is the core of the test case execution. It triggers the execution of the
     test case, allocation of resources, setting up the environment, tearing down the test case
@@ -122,11 +125,13 @@ class Bench(object):
 
     @staticmethod
     def _validate_dut_configs(dut_configuration_list, logger):
-        ''' Validate dut configurations
+        """
+        Validate dut configurations
+
         :param dut_configuration_list: dictionary with dut configurations
         :param logger: logger to be used
         :raises EnvironmentError if something is wrong
-        '''
+        """
 
         # for now we validate only binaries - if it exists or not.
         for conf in dut_configuration_list:
@@ -223,24 +228,19 @@ class Bench(object):
         self.command = self.execute_command
         self.__parse_arguments()
 
-    def getConfig(self):  # pylint: disable=invalid-name
-        self.logger.warning("getConfig has been deprecated, please use get_config instead.")
-        return self.get_config()
 
     def get_config(self):
         """
         Get configuration of this test case
+
         :return: dictionary
         """
         return self.config
 
-    def setConfig(self, config):
-        self.logger.warning("setConfig has been deprecated, please use set_config instead.")
-        self.set_config(config)
-
     def set_config(self, config):
         """
         Set the configuration for this test case
+
         :param config: dictionary
         :return: Nothing
         """
@@ -249,6 +249,7 @@ class Bench(object):
     def get_tc_abspath(self, tc_file=None):
         """
         Get path to test case
+
         :param tc_file: name of the file. If None, tcdir used instead.
         :return: absolute path.
         """
@@ -258,7 +259,8 @@ class Bench(object):
 
     def get_node_endpoint(self, endpoint_id):
         """
-        get NodeEndPoint object for dut endpoint_id
+        Get NodeEndPoint object for dut endpoint_id
+
         :param endpoint_id: nickname of dut
         :return: NodeEndPoint
         """
@@ -269,6 +271,7 @@ class Bench(object):
     def get_time(self):
         """
         Get time from start of test case.
+
         :return: time delta from start of test case.
         """
         return time.time() - self._starttime
@@ -277,13 +280,14 @@ class Bench(object):
         """
         Handle initialization of Parsers, ResourceProvider and logging. Read environment and
         execution configuration files.
+
         :return: True if everything went smoothly. False if environment configuration read failed.
         """
         # Initialize log instances
         self.__init_logs()
         self._parser_manager = ParserManager(self.logger)
         self._pluginmanager = PluginManager(responseparser=self._parser_manager, bench=self,
-                                           logger=self.logger)
+                                            logger=self.logger)
         # Read cli given environment configuration file
         env_cfg = self.__read_env_configs()
         if not env_cfg:
@@ -305,6 +309,7 @@ class Bench(object):
     def __parse_arguments(self):
         """
         Parse command line arguments
+
         :return: Nothing
         """
         parser = get_tc_arguments(get_base_arguments(get_parser()))
@@ -313,6 +318,7 @@ class Bench(object):
     def set_args(self, args):
         """
         Set args
+
         :param args: args
         :return: Nothing
         """
@@ -321,6 +327,7 @@ class Bench(object):
     def __remove_handlers(self, logger): #pylint: disable=no-self-use
         """
         Remove handlers from logger.
+
         :param logger: logger whose handlers to remove
         :return: Nothing
         """
@@ -336,6 +343,7 @@ class Bench(object):
     def __init_logs(self):
         """
         Initialize logging.
+
         :return: Nothing
         """
         LogManager.init_testcase_logging(self.get_test_name(), self.args.verbose,
@@ -347,6 +355,7 @@ class Bench(object):
     def __read_env_configs(self):
         """
         Read environment configuration json file
+
         :return: False if read fails, True otherwise.
         """
         data = None
@@ -370,6 +379,7 @@ class Bench(object):
     def __read_exec_configs(self):
         """
         Read execution configuration file
+
         :return: Nothing.
         :raises TestStepError if file cannot be read or merged into config, or if platform_name
         is not in allowed_platforms.
@@ -418,16 +428,18 @@ class Bench(object):
     def __ext_class_loader(self, name, class_type="ExtApps"): #pylint: disable=no-self-use
         """
         Load a module from icetea_lib.class_type.name
+
         :param name: name of module
         :param class_type: Name of module in which the loaded module is under icetea_lib
         :return: class object or None.
         """
         name = "icetea_lib."+class_type+"." + name
-        return loadClass(name)
+        return load_class(name)
 
     def __load_plugins(self):
         """
         Initialize PluginManager and Load bench related plugins
+
         :return: Nothing
         """
         self._pluginmanager = PluginManager(responseparser=self._parser_manager, bench=self,
@@ -440,6 +452,7 @@ class Bench(object):
     def __start_external_services(self):
         """
         Start ExtApps required by test case.
+
         :return:
         """
         try:
@@ -478,17 +491,20 @@ class Bench(object):
                     self.logger.warning("No command defined for app %s", app["name"])
                 appname = app['name'] if 'name' in app else 'generic'
                 newapp = GenericProcess(name=appname, path=conf_path, cmd=conf_cmd)
-                newapp.ignoreReturnCode = True
+                newapp.ignore_return_code = True
                 self.__externalServices.append(newapp)
                 newapp.start_process()
 
-    # Stop all external services
     def __stop_external_services(self):
+        """
+        Stop all external services started from plugins.
+        """
         self._pluginmanager.stop_external_services()
 
     def skip(self):
         """
         Get skip value
+
         :return: Boolean or None
         """
         try:
@@ -499,6 +515,7 @@ class Bench(object):
     def skip_info(self):
         """
         Get the entire skip dictionary
+
         :return: dictionary or None
         """
         try:
@@ -510,6 +527,7 @@ class Bench(object):
     def skip_reason(self):
         """
         Get skip reason
+
         :return: string
         """
         try:
@@ -520,6 +538,7 @@ class Bench(object):
     def status(self):
         """
         Get TC implementation status
+
         :return: string or None
         """
         try:
@@ -530,6 +549,7 @@ class Bench(object):
     def type(self):
         """
         Get test case type.
+
         :return: string or None
         """
         try:
@@ -540,6 +560,7 @@ class Bench(object):
     def subtype(self):
         """
         Get test case subtype
+
         :return: string or None
         """
         try:
@@ -547,13 +568,10 @@ class Bench(object):
         except KeyError:
             return None
 
-    def getTestName(self):  # pylint: disable=invalid-name
-        self.logger.warning("getTestName has been deprecated, please use get_test_name instead.")
-        return self.get_test_name()
-
     def get_test_name(self):
         """
         Get test bench name
+
         :return: string
         """
         try:
@@ -561,14 +579,10 @@ class Bench(object):
         except KeyError:
             return "unknown"
 
-    def getFeaturesUnderTest(self):  # pylint: disable=invalid-name
-        self.logger.warning("getFeaturesUnderTest has been deprecated, please use "
-                            "get_features_under_test instead.")
-        return self.get_features_under_test()
-
     def get_features_under_test(self):
         """
         Get features tested by this test case
+
         :return: list
         """
         try:
@@ -579,14 +593,10 @@ class Bench(object):
         except KeyError:
             return []
 
-    def getTestComponent(self):  # pylint: disable=invalid-name
-        self.logger.warning("getTestComponent has been deprecated, please use get_test_component "
-                            "instead.")
-        return self.get_test_component()
-
     def get_test_component(self):
         """
         Get test component
+
         :return: string
         """
         try:
@@ -594,13 +604,10 @@ class Bench(object):
         except KeyError:
             return ''
 
-    def getMetadata(self):  # pylint: disable=invalid-name
-        self.logger.warning("getMetadata has been deprecated, please use get_metadata instead.")
-        return self.get_metadata()
-
     def get_metadata(self):
         """
         Get test case configuration/metadata
+
         :return: dictionary
         """
         return self.get_config()
@@ -608,17 +615,15 @@ class Bench(object):
     def get_resource_configuration(self):
         """
         Get resource configuration
+
         :return: ResourceConfig
         """
         return self.resource_configuration
 
-    def getResult(self, tc_file=None):  # pylint: disable=invalid-name
-        self.logger.warning("getResult has been deprecated, please use get_result instead.")
-        return self.get_result(tc_file)
-
     def get_result(self, tc_file=None):
         """
         Generate a Result object from this test case.
+
         :param tc_file: Location of test case file
         :return: Result
         """
@@ -650,24 +655,10 @@ class Bench(object):
 
         return result
 
-    def verifyTrace(self, k, expected_traces, breakInFail=True): #pylint: disable=invalid-name
-        """
-        Exists for backwards compatibility with test cases.
-        """
-        self.logger.warning("verifyTrace has been deprecated. Use verify_trace instead.")
-        return self.verify_trace(k, expected_traces, breakInFail)
-
-    def verifyTraceSkipFail(self, k, expected_traces): #pylint: disable=invalid-name
-        """
-        Exists for backwards compatibility with test cases.
-        """
-        self.logger.warning("verifyTraceSkipFail has been deprecated. Use verify_trace_skip_fail "
-                            "instead.")
-        return self.verify_trace(k, expected_traces, False)
-
     def verify_trace_skip_fail(self, k, expected_traces):
         """
         Shortcut to set break_in_fail to False in verify_trace
+
         :param k: nick or index of dut.
         :param expected_traces: Expected traces as a list or string
         :return: boolean
@@ -677,6 +668,7 @@ class Bench(object):
     def verify_trace(self, k, expected_traces, break_in_fail=True):
         """
         Verify that traces expected_traces are found in dut traces.
+
         :param k: index or nick of dut whose traces are to be used.
         :param expected_traces: list of expected traces or string
         :param break_in_fail: Boolean, if True raise LookupError if search fails
@@ -702,13 +694,10 @@ class Bench(object):
             raise LookupError("{} not found in traces.".format(expected_traces))
         return status
 
-    def getDutCount(self):  # pylint: disable=invalid-name
-        self.logger.warning("getDutCount has been deprecated, please use get_dut_count instead.")
-        return self.get_dut_count()
-
     def get_dut_count(self):
         """
         Get dut count
+
         :return: integer
         """
         return len(self.duts)
@@ -716,6 +705,7 @@ class Bench(object):
     def get_dut_range(self, i=0):
         """
         get range of length dut_count with offset i.
+
         :param i: Offset
         :return: range
         """
@@ -725,6 +715,7 @@ class Bench(object):
     def get_nw_log_filename(self): #pylint: disable=no-self-use
         """
         Get nw data log file name.
+
         :return: string
         """
         return LogManager.get_testcase_logfilename("network.nw.pcap")
@@ -732,6 +723,7 @@ class Bench(object):
     def reset_dut(self, dut_index='*'):
         """
         Reset dut k.
+
         :param dut_index: index of dut to reset. Default is *, which causes all duts to be reset.
         :return: Nothing
         """
@@ -766,6 +758,7 @@ class Bench(object):
     def __init_duts(self):
         """
         Internal function to initialize duts
+
         :return: Nothing
         :raises: DutConnectionError if correct amount of duts were not initialized or if reset
         failed or if cli initialization wait loop timed out.
@@ -829,6 +822,7 @@ class Bench(object):
     def __get_nw_interface(self):
         """
         Get the capture pipe or sniffer interface.
+
         :return:
         """
         return self.__env['sniffer']['iface']
@@ -836,6 +830,7 @@ class Bench(object):
     def __required_sniffer(self):
         """
         Check if sniffer was requested for this run.
+
         :return: Boolean
         """
         required = self.args.use_sniffer
@@ -845,6 +840,7 @@ class Bench(object):
     def __start_sniffer(self):
         """
         Start network sniffer capturing pcap to a file.
+
         :return: Nothing
         """
         from icetea_lib.wireshark import Wireshark
@@ -863,6 +859,7 @@ class Bench(object):
     def __stop_sniffer(self):
         """
         Stop the network sniffer.
+
         :return: Nothing
         """
         if self.__sniffing:
@@ -873,6 +870,7 @@ class Bench(object):
     def delay(self, seconds):
         """
         Sleep command
+
         :param seconds: Amount of seconds to sleep.
         :return: Nothing
         """
@@ -889,6 +887,7 @@ class Bench(object):
     def wait_for_stable_network(self, delay=10):
         """
         Wait for network to stabilize by sleeping for delay seconds
+
         :param delay: seconds to sleep.
         :return: Nothing
         """
@@ -897,6 +896,7 @@ class Bench(object):
     def get_node_index_by_address(self, address, address_type):
         """
         Get node index by address
+
         :param address: addres whose index to get
         :param address_type: address type
         :return: Integer or None
@@ -907,18 +907,20 @@ class Bench(object):
                 return i
         return None
 
-    def pause(self): #pylint: disable=no-self-use
+    def pause(self):  # pylint: disable=no-self-use
         """
         Pause test execution and continue after ENTER has been pressed.
+
         :return: Nothing
         """
         print("Press [ENTER] to continue")
         sys.stdin.readline().strip()
 
     # input data from user
-    def input_from_user(self, title=None): #pylint: disable=no-self-use
+    def input_from_user(self, title=None):  # pylint: disable=no-self-use
         """
         Input data from user.
+
         :param title: Title as string
         :return: stripped data from stdin.
         """
@@ -933,6 +935,7 @@ class Bench(object):
     def open_node_terminal(self, k='*', wait=True):
         """
         Open Putty (/or kitty if exists)
+
         :param k: number 1.<max duts> or '*' to open putty to all devices
         :param wait: wait while putty is closed before continue testing
         :return: Nothing
@@ -945,7 +948,7 @@ class Bench(object):
         if not self.is_my_dut(k):
             return
 
-        params = '-serial '+self.duts[k-1].comport + ' -sercfg '+str(self.duts[k-1].serialBaudrate)
+        params = '-serial '+self.duts[k-1].comport + ' -sercfg '+str(self.duts[k-1].serial_baudrate)
 
         putty_exe = self.__env['extApps']['puttyExe']
         if os.path.exists(self.__env['extApps']['kittyExe']):
@@ -976,12 +979,10 @@ class Bench(object):
         else:
             self.logger.warning('putty not exists in path: %s', putty_exe)
 
-    def killProcess(self):  # pylint: disable=invalid-name
-        self.logger.warning("killProcess has been deprecated, please use kill_process instead.")
-
     def kill_process(self, apps_to_kill): #pylint: disable=no-self-use
         """
         Run taskkill /F /im <app> for apps in apps_to_kill
+
         :param apps_to_kill: list of apps to kill
         :return: Nothing
         """
@@ -991,6 +992,7 @@ class Bench(object):
     def __set_failure(self, retcode, reason):
         """
         Set internal state to reflect failure of test
+
         :param retcode: return code
         :param reason: failure reason as string
         :return: Nothing
@@ -1013,6 +1015,7 @@ class Bench(object):
     def _check_skip(self):
         """
         Check if tc should be skipped
+
         :return: Boolean
         """
         if not self.skip():
@@ -1046,9 +1049,10 @@ class Bench(object):
         return False
 
     # run Test Bench and Test Case
-    def run(self):
+    def run(self):  # pylint: disable=too-many-return-statements,too-many-branches
         """
         Main run loop for test case.
+
         :return: return code from Bench ReturnCodes.
         """
         # TODO: Refactor properly to get rid of too-many-return-statements and too-many-branches
@@ -1153,7 +1157,7 @@ class Bench(object):
                     self.__set_failure(ReturnCodes.RETCODE_FAIL_SETUP_TC, str(err))
                     self.__teardown_bench()
                     if not self.args.silent:
-                        err.detailedInfo()
+                        err.detailed_info()
                     return self.__prepare_exit()
                 except InconclusiveError as err:
                     self.logger.error("Testcase setUp raised InconclusiveError.")
@@ -1189,7 +1193,7 @@ class Bench(object):
                 self.logger.error(err, exc_info=True if not self.args.silent else False)
                 self.__set_failure(ReturnCodes.RETCODE_FAIL_TC_EXCEPTION, str(err))
                 if not self.args.silent:
-                    err.detailedInfo()
+                    err.detailed_info()
             except InconclusiveError as err:
                 self.logger.error("Testcase setUp raised InconclusiveError.")
                 self.logger.error(err, exc_info=True if not self.args.silent else False)
@@ -1253,7 +1257,7 @@ class Bench(object):
                     self.__teardown_bench()
                     self.__set_failure(ReturnCodes.RETCODE_FAIL_TEARDOWN_TC, str(err))
                     if not self.args.silent:
-                        err.detailedInfo()
+                        err.detailed_info()
                     return self.__prepare_exit()
                 except InconclusiveError as err:
                     self.logger.error("Testcase setUp raised InconclusiveError.")
@@ -1290,6 +1294,7 @@ class Bench(object):
     def get_platforms(self):
         """
         Get list of dut platforms
+
         :return: list
         """
         plat_list = []
@@ -1300,6 +1305,7 @@ class Bench(object):
     def get_serialnumbers(self):
         """
         Get list of dut serial numbers
+
         :return: list
         """
         serial_number_list = []
@@ -1313,6 +1319,7 @@ class Bench(object):
         load plugins, create empty Result object for this test case, initialize duts,
         collect metainformation from initialized duts, start sniffer, start test case timer,
         start external services and finally send pre-commands to duts.
+
         :return: Nothing
         """
 
@@ -1333,8 +1340,7 @@ class Bench(object):
             # Initialize duts and collect information to result object.
             self.__init_duts()
             self._result.set_dutinformation(self._dutinformations)
-            for platform, serialnumber in zip(self.get_platforms(), self.get_serialnumbers()):
-                # TODO: Why is platform even zipped here?
+            for _, serialnumber in zip(self.get_platforms(), self.get_serialnumbers()):
                 self._result.dut_vendor.append('')
                 self._result.dut_resource_id.append(serialnumber)
             self._result.dut_count = self.resource_configuration.count_duts()
@@ -1363,6 +1369,7 @@ class Bench(object):
     def __send_pre_commands(self, cmds=""):
         """
         Send pre-commands to duts.
+
         :param cmds: Commands to send as string
         :return: Nothing
         """
@@ -1371,17 +1378,18 @@ class Bench(object):
             pre = conf.get("pre_cmds")
             if pre:
                 for cmd in pre:
-                    self.executeCommand(k+1, cmd)
+                    self.execute_command(k+1, cmd)
         if cmds and cmds:
             if cmds.startswith('file:'):
                 # @todo
                 raise NotImplementedError('"--pre-cmds" -option with file not supported')
             else:
-                self.executeCommand('*', cmds)
+                self.execute_command('*', cmds)
 
     def __send_post_commands(self, cmds=""):
         """
         Send post commands to duts
+
         :param cmds: Commands to send as string.
         :return:
         """
@@ -1389,13 +1397,14 @@ class Bench(object):
             post = conf.get("post_cmds")
             if post:
                 for cmd in post:
-                    self.executeCommand(k+1, cmd)
+                    self.execute_command(k+1, cmd)
         if cmds and cmds:
-            self.executeCommand('*', cmds)
+            self.execute_command('*', cmds)
 
-    def __teardown_bench(self):
+    def __teardown_bench(self):  # pylint: disable=too-many-branches
         """
         Tear down the Bench object.
+
         :return: Nothing
         """
         # TODO: Refactor to have less branches
@@ -1480,6 +1489,7 @@ class Bench(object):
     def __wait_for_exec_ext_dut_cmd(self, k, command):
         """
         Wait for Enter to be pressed when dut has executed command.
+
         :param k: Dut to command
         :param command: command to send
         :return: Nothing
@@ -1496,6 +1506,7 @@ class Bench(object):
     def get_dut_versions(self):
         """
         Get nname results and set them to duts.
+
         :return: Nothing
         """
         resps = self.command('*', "nname")
@@ -1505,6 +1516,7 @@ class Bench(object):
     def get_dut_nick(self, dut_index):
         """
         Get nick of dut index k
+
         :param dut_index: index of dut
         :return: string
         """
@@ -1518,6 +1530,7 @@ class Bench(object):
     def get_dut_index(self, nick):
         """
         Get index of dut with nickname nick
+
         :param nick: string
         :return: integer > 1
         """
@@ -1530,6 +1543,7 @@ class Bench(object):
     def get_dut(self, k):
         """
         Get dut object
+
         :param k: index or nickname of dut.
         :return: Dut
         """
@@ -1543,26 +1557,9 @@ class Bench(object):
 
         return self.duts[dut_index-1]
 
-    def executeCommand(self, k, cmd,  # pylint: disable=invalid-name
-                       wait=True,
-                       expectedRetcode=0,  # pylint: disable=invalid-name
-                       timeout=50,
-                       async=False,  # pylint: disable=assign-to-new-keyword
-                       reportCmdFail=True):  # pylint: disable=invalid-name
-        """
-        Deprecated, present for backwards copmatibility. Use execute_command instead.
-        """
-        self.logger.warning("executeCommand has been deprecated. Please use execute_command.")
-        return self.execute_command(k, cmd, wait=wait, expected_retcode=expectedRetcode,
-                                    timeout=timeout, asynchronous=async,
-                                    report_cmd_fail=reportCmdFail)
-
     def execute_command(self, k, cmd,  # pylint: disable=invalid-name
                         wait=True,
-                        expectedRetcode="",
                         timeout=50,
-                        async="",  # pylint: disable=assign-to-new-keyword
-                        reportCmdFail=None,
                         expected_retcode=0,
                         asynchronous=False,
                         report_cmd_fail=True):
@@ -1576,10 +1573,7 @@ class Bench(object):
         :param k: Index where command is sent, '*' -send command for all duts.
         :param cmd: Command to be sent to DUT.
         :param wait: For special cases when retcode is not wanted to wait.
-        :param expectedRetcode: Deprecated parameter, use expected_retcode instead.
         :param timeout: Command timeout in seconds.
-        :param async: Deprecated parameter, use asynchronous instead.
-        :param reportCmdFail: Deprecated parameter, use report_cmd_fail instead.
         :param expected_retcode: Expecting this retcode, default: 0, can be None when it is ignored.
         :param asynchronous: Send command, but wait for response in parallel.
         When sending next command previous response will be wait. When using async mode,
@@ -1587,21 +1581,6 @@ class Bench(object):
         :param report_cmd_fail: If True (default), exception is thrown on command execution error.
         :return: CliResponse object
         """
-        if async != "":
-            self.logger.warning("Deprecated usage of async keyword argument in execute_command. "
-                                "Use asynchronous instead.")
-            asynchronous = async
-
-        if expectedRetcode != "":
-            self.logger.warning("Deprecated usage of expectedRetcode keyword argument in "
-                                "execute_command. Use expected_retcode instead.")
-            expected_retcode = expectedRetcode
-
-        if reportCmdFail is not None:
-            self.logger.warning("Deprecated usage of reportCmdFail keyword argument in "
-                                "execute_command. Use report_cmd_fail instead.")
-            report_cmd_fail = reportCmdFail
-
         ret = None
         if not report_cmd_fail:
             expected_retcode = None
@@ -1652,6 +1631,7 @@ class Bench(object):
                           report_cmd_fail=True):
         """
         Send command to all duts.
+
         :return: list of CliResponses
         """
         resps = []
@@ -1686,8 +1666,8 @@ class Bench(object):
             #construct command object to be execute
             timestamp = time.time()
             req = CliRequest(cmd, timestamp=timestamp, wait=wait,
-                             expectedRetcode=expected_retcode, timeout=timeout, async=asynchronous,
-                             dutIndex=k)
+                             expected_retcode=expected_retcode, timeout=timeout,
+                             asynchronous=asynchronous, dut_index=k)
             #execute command
             try:
                 req.response = self.duts[k-1].execute_command(req)
@@ -1708,16 +1688,16 @@ class Bench(object):
                     # print only first failure
                     if self.__preliminary_verdict is None:
                         #init first preliminary when calling first time
-                        self.__preliminary_verdict = req.response.retcode == req.expectedRetcode
+                        self.__preliminary_verdict = req.response.retcode == req.expected_retcode
                         if self.__preliminary_verdict is False:
                             self.logger.warning("command fails - set preliminaryVerdict as FAIL")
-                    elif req.response.retcode != req.expectedRetcode:
+                    elif req.response.retcode != req.expected_retcode:
                         if self.__preliminary_verdict is True:
                             #if any command fails, it mean that TC fails
                             self.__preliminary_verdict = False
                             self.logger.warning("command fails - set preliminaryVerdict as FAIL")
                     # Raise expection if command fails
-                    if req.response.retcode != req.expectedRetcode:
+                    if req.response.retcode != req.expected_retcode:
                         self.command_fail(req)
                 # Parse response
                 parsed = self._parser_manager.parse(cmd.split(' ')[0].strip(), req.response)
@@ -1735,6 +1715,7 @@ class Bench(object):
     def __prepare_exit(self):
         """
         Prepare for exiting run.
+
         :return: ReturnCode
         """
         if self.__retcode is None:
@@ -1753,13 +1734,10 @@ class Bench(object):
                                 self.__failreason)
         return self.__retcode
 
-    def commandFail(self, req, fail_reason=None):
-        self.logger.warning("commandFail has been deprecated, please use command_fail instead.")
-        self.command_fail(req, fail_reason)
-
     def command_fail(self, req, fail_reason=None):
         """
         Command has failed.
+
         :raises: TestStepTimeout if dut timed out. TestStepFail in other cases. NameError if
         fail_reason was given.
         """

@@ -40,7 +40,8 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
     @property
     def _hardware_count(self):
         """
-        Amount of hardware resources
+        Amount of hardware resources.
+
         :return: integer
         """
         return self._counts.get("hardware")
@@ -52,7 +53,8 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
     @property
     def _process_count(self):
         """
-        Amount of process resources
+        Amount of process resources.
+
         :return: integer
         """
         return self._counts.get("process")
@@ -64,7 +66,8 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
     @property
     def _dut_count(self):
         """
-        Total amount of resources
+        Total amount of resources.
+
         :return: integer
         """
         return self._counts.get("total")
@@ -107,8 +110,9 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
     def _resolve_requirements(self, requirements):
         """
         Internal method for resolving requirements into resource configurations.
+
         :param requirements: Resource requirements from test case configuration as dictionary.
-        :return: Nothing, results available in attribute _dut_requirements after execution
+        :return: Empty list if dut_count cannot be resolved, or nothing
         """
         try:
             dut_count = requirements["duts"]["*"]["count"]
@@ -153,10 +157,10 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
             self._solve_location(req, len(dut_requirements), idx)
         self._dut_requirements = dut_requirements
 
-
     def _solve_location(self, req, dut_req_len, idx):
         """
         Helper function for resolving the location for a resource.
+
         :param req: Requirements dictionary
         :param dut_req_len: Amount of required resources
         :param idx: index, integer
@@ -188,7 +192,8 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def __replace_base_variables(text, req_len, idx):
         """
-        Replace i and n in text with index+1 and req_len
+        Replace i and n in text with index+1 and req_len.
+
         :param text: base text to modify
         :param req_len: amount of required resources
         :param idx: index of resource we are working on
@@ -202,11 +207,12 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
     def __replace_coord_variables(text, x_and_y, req_len, idx):
         """
         Replace x and y with their coordinates and replace pi with value of pi.
+
         :param text: text: base text to modify
         :param x_and_y: location x and y
         :param req_len: amount of required resources
         :param idx: index of resource we are working on
-        :return:
+        :return: str
         """
         return ResourceConfig.__replace_base_variables(text, req_len, idx) \
             .replace("{xy}", str(x_and_y)) \
@@ -216,6 +222,7 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
     def __generate_indexed_requirements(dut_count, basekeys, requirements):
         """
         Generate indexed requirements from general requirements.
+
         :param dut_count: Amount of duts
         :param basekeys: base keys as dict
         :param requirements: requirements
@@ -242,7 +249,8 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
 
     def _resolve_hardware_count(self):
         """
-        Calculate amount of hardware resources
+        Calculate amount of hardware resources.
+
         :return: Nothing, adds results to self._hardware_count
         """
         length = len([d for d in self._dut_requirements if d.get("type") == "hardware"])
@@ -256,7 +264,8 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
 
     def _resolve_process_count(self):
         """
-        Calculate amount of process resources
+        Calculate amount of process resources.
+
         :return: Nothing, adds results to self._process_count
         """
         length = len([d for d in self._dut_requirements if d.get("type") == "process"])
@@ -270,10 +279,11 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
 
     def _resolve_dut_count(self):
         """
-        Calculates total amount of resources required and their types
-        :returns: Nothing, modifies _dut_count, _hardware_count and
+        Calculates total amount of resources required and their types.
+
+        :return: Nothing, modifies _dut_count, _hardware_count and
         _process_count
-        :raises ValueError if total count does not match counts of types separately.
+        :raises: ValueError if total count does not match counts of types separately.
         """
         self._dut_count = len(self._dut_requirements)
         self._resolve_process_count()
@@ -284,6 +294,7 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
     def get_dut_configuration(self, ident=None):
         """
         Getter for dut configuration for dut ident.
+
         :param ident: Identification for dut. If set to None, all requirements are returned.
         :return: Requirements dictionary for dut ident if ident is not None,
         else dictionary with all requirements.
@@ -293,6 +304,7 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
     def set_dut_configuration(self, ident, config):
         """
         Set requirements for dut ident.
+
         :param ident: Identity of dut.
         :param config: If ResourceRequirements object, add object as requirements for resource
         ident. If dictionary, create new ResourceRequirements object from dictionary.
