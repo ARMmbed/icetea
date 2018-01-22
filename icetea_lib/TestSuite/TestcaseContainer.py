@@ -144,6 +144,13 @@ class TestcaseContainer(object):
         """
         return self.get_instance().config.get(field)
 
+    def get_instance_config(self):
+        """
+        Get configuration currently set into the test instance.
+        :return: dict
+        """
+        return self.get_instance().config
+
     def get_final_config(self):
         return self._final_configuration
 
@@ -195,7 +202,7 @@ class TestcaseContainer(object):
         :raises SyntaxError
         """
         if not self.validate_testcase_metadata(self.get_instance()):
-            raise SyntaxError("Invalid TC '%s' metadata" % self.tcname)
+            raise SyntaxError("Invalid TC metadata")
         self._final_configuration = self.get_instance().get_config()
 
     def validate_testcase_metadata(self, tc):

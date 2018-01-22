@@ -228,6 +228,8 @@ class TestSuite(object):
         try:
             if self.args.json:
                 self._create_json_objects(testcases)
+                if self.args.export:
+                    self._create_suite_file(testcases, self.args.export)
                 return json.dumps(testcases)
             else:
                 self._create_rows_for_table(testcases)
@@ -243,23 +245,20 @@ class TestSuite(object):
             self.logger.error("Error, print_list_testcases: error during iteration.")
             return
 
+    def _create_suite_file(self, testcases, suite_name):  # pylint: disable=no-self-use
+        base_json = dict()
+        base_json["default"] = {}
+        base_json["testcases"] = []
+        for testcase in testcases:
+            base_json["testcases"].append({"name": testcase["name"]})
+        with open(suite_name, "w") as filehandle:
+            filehandle.write(json.dumps(base_json))
+
     def _create_json_objects(self, testcases):
         for testcase in self._testcases:
-            info = testcase.get_infodict()
-            grp = info.get('group')
-            if grp:
-                group = os.sep.join(info.get('group').split(os.sep)[1:])
-                if not group:
-                    group = "no group"
-            else:
-                group = "no group"
-            case = {}
-            for key in info.keys():
-                if key == "group":
-                    case["group"] = group
-                else:
-                    case[key] = info[key]
-            testcases.append(case)
+            info = testcase.get_instance_config()
+            testcases.append(info)
+
         return testcases
 
     def _create_rows_for_table(self, rows):
@@ -396,6 +395,7 @@ class TestSuite(object):
                 raise SuiteException("Test case preparation failed for "
                                      "test case {}: {}".format(i, err))
             except SyntaxError:
+                pass
                 if self.args.list:
                     pass
                 else:

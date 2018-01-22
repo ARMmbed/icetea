@@ -198,6 +198,8 @@ def get_base_arguments(parser):
                              'service.')
     parser.add_argument("--json", action="store_true", default=False,
                         help="Output results of --list as json instead of a table.")
+    parser.add_argument("--export", default=None, metavar="SUITE_FILE_NAME",
+                        help="Export list into suite template file.")
     return parser
 
 

@@ -231,7 +231,7 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(ts._results[0].get_verdict(), "pass")
         self.assertTrue(self.args_tc.forceflash)
 
-        #Failing result, no retry
+        # Failing result, no retry
         ts._testcases = []
         ts._testcases.append(cont1)
         ts._results = []
@@ -240,7 +240,7 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(len(ts._results), 1)
         self.assertEqual(ts._results[0].get_verdict(), "fail")
 
-        #skipped result
+        # skipped result
         ts._testcases = []
         ts._testcases.append(cont1)
         ts._results = []

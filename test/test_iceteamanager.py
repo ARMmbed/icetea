@@ -112,6 +112,10 @@ class IceteaManagerTestcase(unittest.TestCase):
             ignore_invalid_params=True, failure_return_value=False, stop_on_failure=False,
             branch="", platform_name=None, json=False)
 
+    def tearDown(self):
+        if os.path.exists("test_suite.json"):
+            os.remove("test_suite.json")
+
     def test_list_suites(self):
         table = IceteaManager.list_suites(suitedir="./test/suites")
         tab = "+------------------------+\n|    Testcase suites     " \
@@ -299,32 +303,54 @@ class IceteaManagerTestcase(unittest.TestCase):
         self.assertTrue(re.search("This is a failing test case", output))
 
     def test_list_json_output(self):
-        expected_output = [{u'status': u'development',
-                            u'group': u'no group',
-                            u'name': u'json_output_test',
-                            u'comp': [u'Icetea_ut'],
-                            u'feature': u'',
-                            u'subtype': u'',
-                            u'file':
-                                os.path.abspath(os.path.join(
-                                    __file__, "..")) + '{}tests'
-                                                       '{}json_output_test'
-                                                       '{}json_'
-                                                       'output_test_case.py'.format(os.path.sep,
-                                                                                    os.path.sep,
-                                                                                    os.path.sep),
-                            u'fail': u'',
-                            u'path': u'json_output_test.json_output_test_case.Testcase',
-                            u'type': u'acceptance'}]
+        self.maxDiff = None
+        expected_output = [
+            {u"status": u"development",
+             u"requirements": {
+                 u"duts": {
+                     u"*": {
+                         u"application": {u"bin": None}}
+                 },
+                 u"external": {
+                     u"apps": []}
+             },
+             u"name": u"json_output_test",
+             u"title": u"Test list output as json",
+             u"component": [u"Icetea_ut"],
+             u"compatible": {
+                 u"framework": {
+                     u"version": u">=1.0.0",
+                     u"name": u"Icetea"},
+                 u"hw": {u"value": True},
+                 u"automation": {u"value": True}
+             },
+             u"purpose": u"dummy",
+             u"type": u"acceptance",
+             u"sub_type": None}]
 
         proc = subprocess.Popen(["python", "icetea.py", "--list", "--tcdir",
                                  "test{}tests{}json_output_test".format(os.path.sep, os.path.sep),
                                  "-s", "--json"],
                                 stdin=subprocess.PIPE,
-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+
         output, _ = proc.communicate()
         output = output.rstrip("\n")
         self.assertDictEqual(expected_output[0], json.loads(output)[0])
+
+    def test_list_export_to_suite(self):
+        expected_call = json.dumps({"default": {}, "testcases": [{"name": "json_output_test"}]})
+        proc = subprocess.Popen(["python", "icetea.py", "--list", "--tcdir",
+                                 "test{}tests{}json_output_test".format(os.path.sep, os.path.sep),
+                                 "-s", "--json", "--export", "test_suite.json"],
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE)
+        output, _ = proc.communicate()
+        with open("test_suite.json", "r") as file_handle:
+            read_data = file_handle.read()
+        self.assertEqual(expected_call, read_data)
 
 
 if __name__ == '__main__':

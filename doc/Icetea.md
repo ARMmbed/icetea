@@ -109,7 +109,8 @@ Supported cli parameters are described below:
 | -h | Show help message and exit |  |  |  |
 | --listsuites | List all suites found in location set to suitedir (see --suitedir) | | |  |
 | --list | List all test cases found in test case search path (see --tcdir) | | |  |
-| --json | Print test case list as json instead of a table. | | False |  |
+| --json | Print test case list as json instead of a table. Json contains all tc metadata. | | False |  |
+| --export | Export listed test cases into a suite file.  | File path | None |  |
 | --tc | Filter test cases by test case name. | Test case name as string. If you want to provide several test cases, separate them with a comma. |  |  |
 | --suite | Name of suite to run |  |  |  |
 | --version | Print Icetea version and exit|  |  |  |
