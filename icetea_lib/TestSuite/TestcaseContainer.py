@@ -96,32 +96,12 @@ class TestcaseContainer(object):
                 continue
             # if a class as the constant flag IS_TEST set to true or is named Testcase,
             # fulfill test description and add it to the list
-            if getattr(test_class, "IS_TEST", False) == True or test_class_name == "Testcase":
-                tc = TestcaseContainer(logger=logger)
+            if getattr(test_class, "IS_TEST", False) or test_class_name == "Testcase":
+                testcase = TestcaseContainer(logger=logger)
                 test_case = test_class()
-                tc._modulename = modulename
-                tc.tcname = test_case.get_test_name()
-                tc.status = TestStatus.PENDING
-                tc._instance = test_case
-                tc._final_configuration = {}
-                tc._moduleroot = moduleroot
-                tc._meta_schema = tc_meta_schema
-                tc._result = None
-                tc._filepath = path
-                tc._suiteconfig = suiteconfig if suiteconfig else {}
-                tc._infodict = {
-                    'name': tc.tcname,
-                    'path': modulename + "." + test_class_name,
-                    'status': test_case.status() if test_case.status() else '',
-                    'type': test_case.type() if test_case.type() else '',
-                    'subtype': test_case.subtype() if test_case.subtype() else '',
-                    'group': moduleroot,
-                    'file': tc._filepath,  # path to the file which hold this test
-                    'comp': test_case.get_test_component() if test_case.get_test_component() else ["None"],
-                    'feature': test_case.get_features_under_test() if test_case.get_features_under_test() else '',
-                    'fail': ''
-                }
-                tclist.append(tc)
+                testcase.generate_members(modulename, test_case, moduleroot, path,
+                                          tc_meta_schema, test_class_name, suiteconfig)
+                tclist.append(testcase)
         return tclist
 
     def __copy__(self):
@@ -131,6 +111,57 @@ class TestcaseContainer(object):
             if self.tcname == tc.tcname:
                 return tc
         return None
+
+    def generate_members(self, modulename, tc_instance, moduleroot, path, meta_schema,
+                         test_class_name, suiteconfig=None):
+        """
+        Setter and generator for internal variables.
+
+        :param modulename: Name of the module
+        :param tc_instance: Bench instance
+        :param moduleroot: Root folder of the module
+        :param path:  Path to module file
+        :param meta_schema: Schema used for Validation
+        :param test_class_name: Name of the class
+        :param suiteconfig: Optional configuration dictionary from suite
+        :return: Nothing, modifies objects content in place
+        """
+        self._modulename = modulename
+        self.tcname = tc_instance.get_test_name()
+        self.status = TestStatus.PENDING
+        self._instance = tc_instance
+        self._final_configuration = {}
+        self._moduleroot = moduleroot
+        self._meta_schema = meta_schema
+        self._result = None
+        self._filepath = path
+        self._suiteconfig = suiteconfig if suiteconfig else {}
+
+        if tc_instance.get_test_component():
+            comp = tc_instance.get_test_component()
+        else:
+            comp = ["None"]
+        if tc_instance.get_features_under_test():
+            feat = tc_instance.get_features_under_test()
+        else:
+            feat = ''
+        if tc_instance.get_allowed_platforms():
+            platforms = tc_instance.get_allowed_platforms()
+        else:
+            platforms = ''
+        self._infodict = {
+            'name': self.tcname,
+            'path': modulename + "." + test_class_name,
+            'status': tc_instance.status() if tc_instance.status() else '',
+            'type': tc_instance.type() if tc_instance.type() else '',
+            'subtype': tc_instance.subtype() if tc_instance.subtype() else '',
+            'group': moduleroot,
+            'file': self._filepath,  # path to the file which hold this test
+            'comp': comp,
+            'feature': feat,
+            'allowed_platforms': platforms,
+            'fail': ''
+        }
 
     def get_infodict(self):
         return self._infodict

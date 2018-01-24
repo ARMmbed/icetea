@@ -236,7 +236,7 @@ class TestSuite(object):
                 from prettytable import PrettyTable
                 table = PrettyTable(
                     ["Index", "Name", "Status", "Type", "Subtype", "Group", "Component",
-                     "Feature"])
+                     "Feature", "Allowed platforms"])
                 table.align["Index"] = "l"
                 for row in testcases:
                     table.add_row(row)
@@ -276,7 +276,8 @@ class TestSuite(object):
                     group = "no group"
                 rows.append([index, info.get('name'), info.get('status'),
                              info.get('type'), info.get('subtype'),
-                             group, info.get('comp'), info.get('feature')])
+                             group, info.get('comp'), info.get('feature'),
+                             info.get("allowed_platforms")])
             except KeyError:
                 self.logger.error("Error, printListTestcases: Testcase list item with "
                                   "index %d missing attributes.", index)
@@ -506,6 +507,7 @@ class TestSuite(object):
             filt = TestcaseFilter().tc(testcase)
             filt.status(args.status).group(args.group).testtype(args.testtype)
             filt.subtype(args.subtype).component(args.component).feature(args.feature)
+            filt.platform(args.platform_filter)
         except (TypeError, IndexError):
             self.logger.exception("Filter creation failed.")
             return False

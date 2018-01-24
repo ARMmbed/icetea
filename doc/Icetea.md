@@ -121,6 +121,7 @@ Supported cli parameters are described below:
 | --subtype | Filter test cases by test subtype | See [test case api description](tc_api.md) |  |  |
 | --component | Filter test cases by test component-under-test  |  |  |  |
 | --feature | Filter test cases by test feature|  |  |  |
+| --platform_filter | Filter test cases by allowed platforms|  |  |  |
 | --jobId | job unique id|  |  |  |
 | --gitUrl | Set application used git url for results |  |  |  |
 | --branch | Set used build branch for results |  |  |  |

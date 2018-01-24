@@ -26,7 +26,7 @@ class Testcase(Bench):
                        title = "unittest exception in testcase",
                        status="development",
                        type="acceptance",
-                       purpose = "dummy",
+                       purpose="dummy",
                        requirements={
                            "duts": {
                                '*': {

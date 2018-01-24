@@ -20,12 +20,15 @@ from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter
 from icetea_lib.TestSuite.TestcaseContainer import TestcaseContainer
 from icetea_lib.IceteaManager import TCMetaSchema
 
+
 class TCFilterTestcase(unittest.TestCase):
 
     def test_create_filter_simple(self):
         filt = TestcaseFilter().tc("test_cmdline")
-        self.assertDictEqual(filt._filter, {'status': False, 'group': False, 'name': 'test_cmdline', 'comp': False,
-                                          'list': False, 'subtype': False, 'type': False, 'feature': False})
+        self.assertDictEqual(filt._filter, {'status': False, 'group': False,
+                                            'name': 'test_cmdline', 'comp': False,
+                                            'platform': False, 'list': False, 'subtype': False,
+                                            'type': False, 'feature': False})
 
         with self.assertRaises(TypeError):
             TestcaseFilter().tc(0)
@@ -36,13 +39,25 @@ class TCFilterTestcase(unittest.TestCase):
         with self.assertRaises(TypeError):
             TestcaseFilter().tc(True)
 
+        self.assertDictEqual(TestcaseFilter().tc(1)._filter, {'status': False,
+                                                              'group': False,
+                                                              'name': False,
+                                                              'comp': False,
+                                                              'platform': False,
+                                                              'list': [0],
+                                                              'subtype': False,
+                                                              'type': False,
+                                                              'feature': False})
 
-        self.assertDictEqual(TestcaseFilter().tc(1)._filter, {'status': False, 'group': False, 'name': False,
-                                                                        'comp': False, 'list': [0], 'subtype': False,
-                                                                        'type': False, 'feature': False})
-        self.assertDictEqual(TestcaseFilter().tc([1, 4])._filter, {'status': False, 'group': False, 'name': False,
-                                                               'comp': False, 'list': [0, 3],
-                                                               'subtype': False, 'type': False, 'feature': False})
+        self.assertDictEqual(TestcaseFilter().tc([1, 4])._filter, {'status': False,
+                                                                   'group': False,
+                                                                   'name': False,
+                                                                   'comp': False,
+                                                                   'platform': False,
+                                                                   'list': [0, 3],
+                                                                   'subtype': False,
+                                                                   'type': False,
+                                                                   'feature': False})
 
     def test_create_filter_complex(self):
         filt = TestcaseFilter()
@@ -54,10 +69,12 @@ class TCFilterTestcase(unittest.TestCase):
         filt.testtype("test_type")
         filt.subtype("test_subtype")
         filt.feature("test_feature")
+        filt.platform("test_platform")
 
         self.assertDictEqual(filt._filter, {"status": "test_status", "group": "test_group", "name": "test_test",
                                             "type": "test_type", "subtype": "test_subtype",
-                                            "comp": "test_comp", 'list': False, 'feature': "test_feature"})
+                                            "comp": "test_comp", 'list': False, 'feature': "test_feature",
+                                            "platform": "test_platform"})
 
         with self.assertRaises(TypeError):
             filt.component(2)

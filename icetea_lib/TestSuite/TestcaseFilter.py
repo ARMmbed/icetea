@@ -24,7 +24,7 @@ class TestcaseFilter(object):
     def __init__(self):
         self._filter = {'list': False, 'name': False, 'status': False,
                         'group': False, 'type': False, 'subtype': False,
-                        'comp': False, 'feature': False}
+                        'comp': False, 'feature': False, 'platform': False}
 
     def tc(self, value):
         # tc can be:
@@ -89,22 +89,67 @@ class TestcaseFilter(object):
         return self
 
     def status(self, status):
+        """
+        Add status filter.
+
+        :param status: filter value
+        :return: TestcaseFilter
+        """
         return self._add_filter_key("status", status)
 
     def group(self, group):
+        """
+        Add group filter.
+
+        :param group: Filter value
+        :return: TestcaseFilter
+        """
         return self._add_filter_key("group", group)
 
     def testtype(self, testtype):
+        """
+        Add type filter.
+
+        :param testtype: Filter value
+        :return: TestcaseFilter
+        """
         return self._add_filter_key("type", testtype)
 
     def subtype(self, subtype):
+        """
+        Add subtype filter.
+
+        :param subtype: Filter value
+        :return: TestcaseFilter
+        """
         return self._add_filter_key("subtype", subtype)
 
     def component(self, component):
+        """
+        Add component filter.
+
+        :param component: Filter value
+        :return: TestcaseFilter
+        """
         return self._add_filter_key("comp", component)
 
     def feature(self, feature):
+        """
+        Add feature filter.
+
+        :param feature: Filter value
+        :return: TestcaseFilter
+        """
         return self._add_filter_key("feature", feature)
+
+    def platform(self, platform):
+        """
+        Add platform filter.
+
+        :param platform: Filter value
+        :return: TestcaseFilter
+        """
+        return self._add_filter_key("platform", platform)
 
     def get_filter(self):
         return self._filter
@@ -158,6 +203,19 @@ class TestcaseFilter(object):
         else:
             group_ok = True
 
+        platform_ok = True
+        if 'platform' in self._filter.keys() and self._filter['platform']:
+            platforms = self._filter['platform']
+            platforms = platforms if isinstance(platforms, list) else [platforms]
+            tcplatforms = testcase['allowed_platforms']
+            if tcplatforms:
+                for member in platforms:
+                    if member not in tcplatforms:
+                        platform_ok = False
+                    else:
+                        platform_ok = True
+                        break
+
         rest_ok = True
         keys = ['status', 'type', 'subtype', 'comp', 'name', 'feature']
         for key in keys:
@@ -187,7 +245,7 @@ class TestcaseFilter(object):
                         rest_ok = False
                         break
 
-        return list_ok and group_ok and rest_ok
+        return list_ok and group_ok and rest_ok and platform_ok
 
     def _add_filter_key(self, key, value):
         if not key or not value:

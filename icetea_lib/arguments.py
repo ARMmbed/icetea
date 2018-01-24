@@ -78,10 +78,13 @@ def get_base_arguments(parser):
                               help="Run all testcases with subtype <subtype")
     filter_group.add_argument('--component',
                               default=False,
-                              help='Run All Testcases with component <component>')
+                              help='Run all testcases with component <component>')
     filter_group.add_argument('--feature',
                               default=False,
-                              help='Run All Testcases with feature <feature>')
+                              help='Run all testcases with feature <feature>')
+    filter_group.add_argument("--platform_filter",
+                              default=False,
+                              help="Run all testcases that allow platform <platform_filter>")
 
     # JobId is BUILD_TAG (from Jenkins job), or generated UUID or command line argument value
     info_group = parser.add_argument_group("Run information", "Information of run, such as job "

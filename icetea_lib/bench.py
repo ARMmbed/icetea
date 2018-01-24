@@ -246,6 +246,12 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         """
         self.config = config
 
+    def get_allowed_platforms(self):
+        try:
+            return self.config["requirements"]["duts"]["*"]["allowed_platforms"]
+        except KeyError:
+            return []
+
     def get_tc_abspath(self, tc_file=None):
         """
         Get path to test case
