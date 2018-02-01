@@ -175,11 +175,11 @@ class DutSerial(Dut):
 
     @property
     def serial_baudrate(self):
-        return self.serial_baudrate
+        return self.serialparams.baudrate
 
     @serial_baudrate.setter
     def serial_baudrate(self, value):
-        self.serial_baudrate = value
+        self.serialparams.baudrate = value
 
     @property
     def serial_timeout(self):
