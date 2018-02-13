@@ -51,7 +51,7 @@ setup(name='icetea',
               "icetea=icetea_lib:icetea_main"
           ]
       },
-      dependency_links=["git+https://github.com/ARMmbed/mbed-flasher@v0.6.2#egg=mbed-flasher"],
+      dependency_links=["git+https://github.com/ARMmbed/mbed-flasher@v0.6.3#egg=mbed-flasher"],
       install_requires=[
           "prettytable",
           "requests",
@@ -60,7 +60,7 @@ setup(name='icetea',
           "jsonmerge",
           "pyshark",
           "psutil",
-          "mbed-ls>=1.3.6",
+          "mbed-ls==1.3.6",
           "semver",
           "mbed-flasher",
           "six"
