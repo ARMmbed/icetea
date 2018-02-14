@@ -211,7 +211,7 @@ class TestSuiteTestcase(unittest.TestCase):
 
     @mock.patch("icetea_lib.TestSuite.TestSuite.TestSuite._create_tc_list")
     def test_run(self, mock_tclist):
-        ts = TestSuite(args=self.args_tc)
+        testsuite = TestSuite(args=self.args_tc)
         cont1 = mock.MagicMock()
         pass_result = Result()
         pass_result.set_verdict('pass', 0, 10)
@@ -219,73 +219,73 @@ class TestSuiteTestcase(unittest.TestCase):
         fail_result.set_verdict('fail', 1000, 10)
         skipped_result = Result()
         skipped_result.set_verdict('skip', 0, 1)
-        ts._default_configs["retryCount"] = 1
+        testsuite._default_configs["retryCount"] = 1
         cont1.run.side_effect = [pass_result, fail_result, skipped_result, KeyboardInterrupt, fail_result, pass_result]
         # Passing result
-        ts._testcases = []
-        ts._testcases.append(cont1)
-        ts._results = []
-        ts.run()
-        self.assertEqual(ts.status, TestStatus.FINISHED)
-        self.assertEqual(len(ts._results), 1)
-        self.assertEqual(ts._results[0].get_verdict(), "pass")
+        testsuite._testcases = []
+        testsuite._testcases.append(cont1)
+        testsuite._results = []
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 1)
+        self.assertEqual(testsuite._results[0].get_verdict(), "pass")
         self.assertTrue(self.args_tc.forceflash)
 
         # Failing result, no retry
-        ts._testcases = []
-        ts._testcases.append(cont1)
-        ts._results = []
-        ts.run()
-        self.assertEqual(ts.status, TestStatus.FINISHED)
-        self.assertEqual(len(ts._results), 1)
-        self.assertEqual(ts._results[0].get_verdict(), "fail")
+        testsuite._testcases = []
+        testsuite._testcases.append(cont1)
+        testsuite._results = []
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 1)
+        self.assertEqual(testsuite._results[0].get_verdict(), "fail")
 
         # skipped result
-        ts._testcases = []
-        ts._testcases.append(cont1)
-        ts._results = []
-        ts.run()
-        self.assertEqual(ts.status, TestStatus.FINISHED)
-        self.assertEqual(len(ts._results), 1)
-        self.assertEqual(ts._results[0].get_verdict(), "skip")
+        testsuite._testcases = []
+        testsuite._testcases.append(cont1)
+        testsuite._results = []
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 1)
+        self.assertEqual(testsuite._results[0].get_verdict(), "skip")
 
         # Interrupt
-        ts._testcases = []
-        ts._testcases.append(cont1)
-        ts._results = []
-        ts.run()
-        self.assertEqual(ts.status, TestStatus.FINISHED)
-        self.assertEqual(len(ts._results), 0)
+        testsuite._testcases = []
+        testsuite._testcases.append(cont1)
+        testsuite._results = []
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 0)
 
         # Failing result, retried
-        ts._testcases = []
-        ts._testcases.append(cont1)
-        ts._results = []
-        ts._default_configs["retryReason"] = "includeFailures"
-        ts.run()
-        self.assertEqual(ts.status, TestStatus.FINISHED)
-        self.assertEqual(len(ts._results), 2)
-        self.assertEqual(ts._results[0].get_verdict(), "fail")
-        self.assertEqual(ts._results[1].get_verdict(), "pass")
+        testsuite._testcases = []
+        testsuite._testcases.append(cont1)
+        testsuite._results = []
+        testsuite._default_configs["retryReason"] = "includeFailures"
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 2)
+        self.assertEqual(testsuite._results[0].get_verdict(), "fail")
+        self.assertEqual(testsuite._results[1].get_verdict(), "pass")
 
         self.args_tc.repeat = 2
-        ts._testcases = []
-        ts._testcases.append(cont1)
-        ts._results = []
+        testsuite._testcases = []
+        testsuite._testcases.append(cont1)
+        testsuite._results = []
         cont1.run.side_effect = [pass_result, pass_result, pass_result, pass_result]
-        ts.run()
-        self.assertEqual(ts.status, TestStatus.FINISHED)
-        self.assertEqual(len(ts._results), 2)
-        self.assertEqual(ts._results[0].get_verdict(), "pass")
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 2)
+        self.assertEqual(testsuite._results[0].get_verdict(), "pass")
         self.assertFalse(self.args_tc.forceflash)
 
         # Failing result, stop_on_failure
         self.args_tc.stop_on_failure = True
         self.args_tc.repeat = 1
-        ts._default_configs["retryCount"] = 0
-        ts._testcases = []
-        ts._testcases.append(cont1)
-        ts._results = []
+        testsuite._default_configs["retryCount"] = 0
+        testsuite._testcases = []
+        testsuite._testcases.append(cont1)
+        testsuite._results = []
         cont1.run.side_effect = [pass_result]
         cont2 = mock.MagicMock()
         cont2.run = mock.MagicMock()
@@ -293,12 +293,29 @@ class TestSuiteTestcase(unittest.TestCase):
         cont3 = mock.MagicMock()
         cont3.run = mock.MagicMock()
         cont3.run.side_effect = [pass_result]
-        ts._testcases.append(cont2)
-        ts.run()
-        self.assertEqual(ts.status, TestStatus.FINISHED)
-        self.assertEqual(len(ts._results), 2)
-        self.assertEqual(ts._results[0].get_verdict(), "pass")
-        self.assertEqual(ts._results[1].get_verdict(), "fail")
+        testsuite._testcases.append(cont2)
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 2)
+        self.assertEqual(testsuite._results[0].get_verdict(), "pass")
+        self.assertEqual(testsuite._results[1].get_verdict(), "fail")
+
+        # Skipped result, stop_on_failure
+        self.args_tc.stop_on_failure = True
+        self.args_tc.repeat = 0
+        testsuite._testcases = []
+        testsuite._testcases.append(cont1)
+        testsuite._results = []
+        cont1.run.side_effect = [skipped_result]
+        cont2 = mock.MagicMock()
+        cont2.run = mock.MagicMock()
+        cont2.run.side_effect = [pass_result]
+        testsuite._testcases.append(cont2)
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 2)
+        self.assertEqual(testsuite._results[0].get_verdict(), "skip")
+        self.assertEqual(testsuite._results[1].get_verdict(), "pass")
 
     def test_result_metainfo_generation(self):
         pass_result = Result()

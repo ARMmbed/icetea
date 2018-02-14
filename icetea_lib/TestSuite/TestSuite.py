@@ -104,7 +104,8 @@ class TestSuite(object):
                                                                             retryreason)
                     if result:
                         self._upload_result(result)
-                if result and result.get_verdict() != 'pass' and self.args.stop_on_failure:
+                if result and result.get_verdict() not in ['pass',
+                                                           'skip'] and self.args.stop_on_failure:
                     break
         self.status = TestStatus.FINISHED
         i += 1
@@ -140,7 +141,7 @@ class TestSuite(object):
                 # Note that a fail *during* a testcase run will still be reported.
                 self._results.append(result)
                 self._build_result_metainfo(result)
-                if self.args.stop_on_failure and result.get_verdict() != 'pass':
+                if self.args.stop_on_failure and result.get_verdict() not in ['pass', 'skip']:
                     # Stopping run on failure,
                     self.logger.info("Test case %s failed or was inconclusive, "
                                      "stopping run.\n", test.get_name())
