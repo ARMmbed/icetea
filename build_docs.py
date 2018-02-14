@@ -7,7 +7,7 @@ from subprocess import check_call, CalledProcessError
 
 def build_docs(location="doc-source", target=None, library="icetea_lib"):
     """
-    Build documentation for Mbed-clitest. Start by autogenerating module documentation
+    Build documentation for Icetea. Start by autogenerating module documentation
     and finish by building html.
 
     :param location: Documentation source
