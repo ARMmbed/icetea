@@ -96,12 +96,17 @@ class TestSuite(object):
                         self.logger.debug("Forceflash_once set: Forceflash is %s",
                                           self.args.forceflash)
                         i += 1
-                    result, retries, repeat, iteration = self._run_testcase(test, retries,
-                                                                            repeat,
-                                                                            repeats,
-                                                                            iteration,
-                                                                            iterations,
-                                                                            retryreason)
+                    try:
+                        result, retries, repeat, iteration = self._run_testcase(test, retries,
+                                                                                repeat,
+                                                                                repeats,
+                                                                                iteration,
+                                                                                iterations,
+                                                                                retryreason)
+                    except KeyboardInterrupt:
+                        self.logger.error("Test run aborted.")
+                        self.status = TestStatus.FINISHED
+                        return self._results
                     if result:
                         self._upload_result(result)
                 if result and result.get_verdict() not in ['pass',
@@ -135,7 +140,7 @@ class TestSuite(object):
                 self.logger.info("User aborted test run")
                 iteration = iterations
                 repeat = repeats + 1
-                break
+                raise
             if result is not None:
                 # Test had required attributes and ran succesfully or was skipped.
                 # Note that a fail *during* a testcase run will still be reported.

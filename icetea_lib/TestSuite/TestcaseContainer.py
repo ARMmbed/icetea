@@ -323,9 +323,9 @@ class TestcaseContainer(object):
             print("Press CTRL + C again if you want to abort test run")
             try:
                 time.sleep(5)
-            except KeyboardInterrupt as e:
+            except KeyboardInterrupt:
                 self.status = TestStatus.FINISHED
-                raise e
+                raise
 
         c = b - a
         duration = c.total_seconds()

@@ -250,12 +250,16 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(testsuite._results[0].get_verdict(), "skip")
 
         # Interrupt
+        cont2 = mock.MagicMock()
+        cont2.run = mock.MagicMock()
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
+        testsuite._testcases.append(cont2)
         testsuite._results = []
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 0)
+        cont2.run.assert_not_called()
 
         # Failing result, retried
         testsuite._testcases = []
