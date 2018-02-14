@@ -231,19 +231,19 @@ class LocalAllocator(BaseAllocator):
                 raise AllocationError("No available devices to allocate from")
             platforms = None if 'allowed_platforms' not in dut_configuration else dut_configuration[
                 'allowed_platforms']
-            platform_name = None if 'platform_name' not in dut_configuration else dut_configuration[
-                "platform_name"]
-            if platform_name is None and platforms:
-                platform_name = platforms[0]
-            if platform_name and platforms:
-                if platform_name not in platforms:
+            platform_names = None if 'platform_name' not in dut_configuration else [dut_configuration[
+                "platform_name"]]
+            if platform_names is None and platforms:
+                platform_names = platforms
+            if platform_names and platforms:
+                if platform_names[0] not in platforms:
                     raise AllocationError("Platform name not in allowed platforms.")
             # Enumerate through all available devices
             for dev in self._available_devices:
-                if platform_name and dev["platform_name"] != platform_name:
+                if platform_names and not dev["platform_name"] in platform_names:
                     self.logger.debug("Skipping device %s because of mismatching platform. "
-                                      "Required %s but device was %s", dev['target_id'],
-                                      platform_name, dev['platform_name'])
+                                      "Required one of %s but device was %s", dev['target_id'],
+                                      platform_names, dev['platform_name'])
                     continue
                 if dev['state'] == 'allocated':
                     self.logger.debug("Skipping device %s because it was "
