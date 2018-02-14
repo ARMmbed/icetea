@@ -36,12 +36,17 @@ a good idea.
 Linux:
 * python-dev and python-lxml
 `sudo apt-get install python-dev python-lxml`
+* For documentation install sphinx:
+`apt-get install python-sphinx`
 
 OS X:
 * [XCode developer tools](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/)
 * lxml as described
 [here](http://lxml.de/installation.html#installation):
 `STATIC_DEPS=true sudo pip install lxml`
+* For documentation install sphinx:
+`sudo port install py27-sphinx`, `sudo port select --set python python27`,
+`sudo port select --set sphinx py27-sphinx`
 
 Windows:
 * python-lxml installation is problematic on Windows since
@@ -50,6 +55,8 @@ from pre-built binaries.
     * Download binary for you system from the internet.
     * Navigate to the directory where you downloaded the
     binary and install it with `pip install <insert_file_name>`
+* For documentation install sphinx with pip:
+`pip install sphinx`
 
 ### Optional dependencies
 
@@ -115,12 +122,14 @@ arguments[dictionary]   #optional argument list
 
 ## Documentation
 HTML documentation for Icetea can be built using sphinx. The source
-for the documentation is located in [doc-source](doc-source). To build
-the documentation install sphinx and run:
+for the documentation is located in [doc-source](doc-source).
+For installation of sphinx see [installation](#installation).
 
-`sphinx-build -b html doc-source doc/html`
+A build script for the documentation is included in build_docs.py.
+It's a simple python scripts that also generates autodoc api documentation.
+Run the script with:
 
-This will build the documentation under [doc/html](doc/html).
+`python build_docs.py`
 
 Currently similar documentation is available in markdown format in
 [doc](doc). This documentation will be phased out and is not maintained
