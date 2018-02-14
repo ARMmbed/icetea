@@ -1,0 +1,14 @@
+{
+    "execution": {"skip": {"value":  false}},
+    "requirements": {
+      "duts": {
+        "*": {
+          "count": 1,
+          "type": "process",
+          "application":{
+              "bin": "tools/sample.exe"
+          }
+        }
+      }
+    }
+}

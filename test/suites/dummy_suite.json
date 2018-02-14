@@ -1,0 +1,97 @@
+{
+    "suiteTimeout": 10,
+    "__comment": "total timeout in second for this suite. Functionality for this could be implemented later with separate JIRA task",
+    
+    "default": {
+        "__comment": "default configurations for below TC's",
+        "requirements": {
+            "duts": {
+               "__comment": "same as requirements.duts in bench",
+
+               "application": { "bin": "./../CliNode" }
+        }}
+    },
+    "testcases": [
+    {
+        "name": "dummy" ,
+        "__comment0": "dummy1",
+        "__comment1": "TC name to be run bench, same as bench.config['name']",
+
+        "config": {
+            "timeout": 20,
+            "__comment2": "TC specific timeout. Functionality for this could be implemented later with separate JIRA task",
+
+            "iteration": 2,
+            "__comment3": "how many times this should be executed, 1=default value",
+
+            "retryCount": 0,
+            "__comment4": "how many times TC will be rerun when it fails"
+        }
+    },
+    {
+        "name": "dummy",
+        "__comment0": "dummy2",
+        "config": {
+            "timeout":40,
+            "iteration": 1,
+            "retryCount":3
+        }
+    },
+        {
+            "name": "sample_process_multidut_testcase",
+            "__comment0": "example",
+            "config": {
+                "requirements": {
+                    "duts": {
+                        "*": {
+                            "count": 10,
+                            "application": {
+                                "bin": "test/dut/dummyDut"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "sample_process_multidut_testcase",
+            "__comment0": "example",
+            "config": {
+                "requirements": {
+                    "duts": {
+                        "*": {
+                            "count": 10,
+                            "application": {
+                                "bin": "test/dut/dummyDut2"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "name": "dummy",
+            "__comment0": "example",
+            "config": {
+                "execution": {
+                    "skip": {
+                        "value": "True",
+                        "reason": "Skip"
+                    }
+                },
+                "retryCount": 2,
+                "iterations": 2,
+                "requirements": {
+                    "duts": {
+                        "*": {
+                            "count": 10,
+                            "application": {
+                                "bin": "test/dut/dummyDut2"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+  ]
+}

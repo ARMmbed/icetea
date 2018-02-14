@@ -1,0 +1,22 @@
+@startuml
+
+class TestcaseList {
+
++ logger : logging.Logger
+- _testcases : list
+
++ __init__(logging.Logger, list) : TestcaseList
++ __iter__() : Iterable
++ __len__() : int
++ get_list() : list
++ get_names() : list
++ filter(TestcaseFilter, list) : TestcaseList
++ get(int) : TestcaseContainer
++ append(TestcaseContainer)
++ import_from_path(str)
+- _get_local_testcases(str) : list
+- _parse_local_testcases(list, bool) : list
+
+}
+
+@enduml

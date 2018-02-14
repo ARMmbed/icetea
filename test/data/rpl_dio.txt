@@ -1,0 +1,98 @@
+
+Packet (Length: 100)
+Layer WPAN:
+	Extended Source: 02:00:00:00:00:00:ff:02 (02:00:00:00:00:00:ff:02)
+	.... 10.. .... .... = Destination Addressing Mode: Short/16-bit (0x0002)
+	..00 .... .... .... = Frame Version: 0
+	Source: 0xface
+	FCS: 0xb30f (Correct)
+	.... .... ..0. .... = Acknowledge Request: False
+	Origin: 9
+	Sequence Number: 160
+	10.. .... .... .... = Source Addressing Mode: Short/16-bit (0x0002)
+	.... .... .... .001 = Frame Type: Data (0x0001)
+	.... .... .1.. .... = Intra-PAN: True
+	.... .... .... 0... = Security Enabled: False
+	Frame Control Field: 0x8841, Frame Type: Data, Intra-PAN, Destination Addressing Mode: Short/16-bit, Source Addressing Mode: Short/16-bit
+	Destination PAN: 0xface
+	Destination: 0xffff
+	.... .... ...0 .... = Frame Pending: False
+Layer 6LOWPAN:
+	IPHC Header
+	.... .... .0.. .... = Source address compression: Stateless
+	011. .... = Pattern: IP header compression (0x03)
+	.... ..00 .... .... = Hop limit: Inline (0x0000)
+	Source context: fe80:: (fe80::)
+	Source: fe80::ff:fe00:face (fe80::ff:fe00:face)
+	Destination context: fe80:: (fe80::)
+	.... .... .... 1... = Multicast address compression: True
+	.... .0.. .... .... = Next header: Inline
+	.... .... .... ..11 = Destination address mode: 8-bits inline (0x0003)
+	Next header: ICMPv6 (0x3a)
+	Hop limit: 255
+	.... .... .... .0.. = Destination address compression: Stateless
+	...1 1... .... .... = Traffic class and flow label: Version, traffic class, and flow label compressed (0x0003)
+	Destination: ff02::1a (ff02::1a)
+	.... .... ..11 .... = Source address mode: Compressed (0x0003)
+	.... .... 0... .... = Context identifier extension: False
+Layer IPV6:
+	Source GeoIP: Unknown
+	Source: fe80::ff:fe00:face (fe80::ff:fe00:face)
+	Next header: ICMPv6 (58)
+	Destination: ff02::1a (ff02::1a)
+	.... .... ...0 .... .... .... .... .... = ECN-CE: Not set
+	0110 .... = Version: 6
+	Payload length: 84
+	.... .... ..0. .... .... .... .... .... = ECN-Capable Transport (ECT): Not set
+	.... 0000 00.. .... .... .... .... .... = Differentiated Services Field: Default (0x00000000)
+	0110 .... = This field makes the filter "ip.version == 6" possible: 6
+	Hop limit: 255
+	.... .... .... 0000 0000 0000 0000 0000 = Flowlabel: 0x00000000
+	.... 0000 0000 .... .... .... .... .... = Traffic class: 0x00000000
+	Destination GeoIP: Unknown
+Layer ICMPV6:
+	Destination Prefix: fd00:db8::ff:fe00:face (fd00:db8::ff:fe00:face)
+	Prefix: fd00:db8:: (fd00:db8::)
+	.... .000 = DODAG Preference: 0
+	Route Lifetime: 4294967295 (Infinity)
+	Valid Lifetime: 4294967295 (Infinity)
+	DODAGID: fd00:db8::ff:fe00:face (fd00:db8::ff:fe00:face)
+	Preferred Lifetime: 4294967295 (Infinity)
+	...0 0000 = Reserved: 0
+	Flag: 0x20
+	Reserved
+	Prefix Length: 64
+	Flags: 0x88
+	Prefix Length: 64
+	Type: Prefix Information (8)
+	Rank: 128
+	Reserved: 00
+	.0.. .... = Zero: False
+	Length: 30
+	Type: RPL Control (155)
+	RPLInstanceID: 1
+	Destination Advertisement Trigger Sequence Number (DTSN): 240
+	Flag
+	Version: 240
+	0... .... = On Link: Not set
+	1... .... = Grounded (G): True
+	..1. .... = Router Address: Set
+	Checksum: 0x3f6f [correct]
+	000. .000 = Reserved: 0
+	ICMPv6 RPL Option (Prefix Information fd00:db8::ff:fe00:face/64)
+	Code: 1 (DODAG Information Object)
+	..00 1... = Mode of Operation (MOP): Non-Storing Mode of Operation (0x01)
+	.0.. .... = Auto Address Config: Not set
+	...1 1... = Preference: Low (3)
+	Route Lifetime: 4294967295 (Infinity)
+	Prefix Length: 0
+	Flags: 0x00
+	Type: Routing Information (3)
+	Type: Routing Information (3)
+	Length: 14
+	Length: 6
+	Flag
+	000. .000 = Reserved: 0
+	ICMPv6 RPL Option (Routing Information fd00:db8::/64)
+	ICMPv6 RPL Option (Routing Information ::/0)
+	...0 0... = Preference: Medium (0)

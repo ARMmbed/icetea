@@ -1,0 +1,34 @@
+@startuml
+
+class SuiteException --|> Exception
+
+class TestSuite {
++ logger : logging.Logger
++ args : argparse.Namespace
++ cloud_module
++ status : TestStatus
+- _testcases : TestcaseList
+- _default_configs : dict
+- _results : ResultList
+
++ {static} get_suite_files(str) : list
++ __init__(logging.Logger, Cloud, argparse.Namespace) : TestSuite
++ __len__() : int
++ get_testcases() : TestcaseList
++ get_tcnames() : list
++ get_default_configs() : dict
++ get_results() : ResultList
++ run() : ResultList
++ list_testcases() : PrettyTable
++ update_testcases() : bool
+- _create_tc_list()
+- _prepare_suite()
+- _get_suite_tcs(str, str) : TestcaseList
+- _prepare_testcase(TestcaseContainer)
+- _load_suite_file(str, str) : dict or None
+- _load_suite_list() : TestcaseList
+
+
+}
+
+@enduml

@@ -1,0 +1,50 @@
+{
+
+  "__comment1": "A suite file has two key parts: 1. 'default' configuration 2. 'testcases' configuration",
+
+  "default": {
+    "__comment": "default configuration is valid for all tests and it will overwrite the configuration in the meta data of test case",
+    "iteration": 1,
+    "retryCount": 2,
+    "retryReason": "includeFailures",
+    "requirements":{
+      "duts":{
+        "*":{
+          "application":{"bin":"build_path/build_full_name"}
+        },
+        "1": {"nick": "dut1"}
+      }
+    }
+  },
+
+  "testcases": [
+    {"name":"test_cmdline",
+      "__comment0": "this is testcase configuration, and it can overwrite the default configuration above",
+      "__comment1": "Thus, the priority order is: suite testcases configuration > suite default configuration > test case meta data configuration",
+      "config":{
+        "requirements":{
+          "duts":{
+            "1": {
+              "nick": "dut",
+              "type": "process",
+              "application":{"bin": "test/dut/dummyDut"}
+            }
+          }
+        }
+      }
+    },
+    {"name":"sample_process_multidut_testcase",
+      "config":{
+        "requirements":{
+          "duts":{
+            "*": {
+              "count":200,
+              "type":"process",
+              "application":{"bin": "test/dut/dummyDut"}
+            }
+          }
+        }
+      }
+    }
+  ]
+}

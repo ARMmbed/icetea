@@ -1,0 +1,69 @@
+Packet (Length: 36)
+Layer WPAN:
+	Extended Source: 14:6e:0a:00:00:00:00:01 (14:6e:0a:00:00:00:00:01)
+	.... 11.. .... .... = Destination Addressing Mode: Long/64-bit (0x0003)
+	..00 .... .... .... = Frame Version: 0
+	Source: 0x0000
+	FCS: 0x4854 (Correct)
+	.... .... ..1. .... = Acknowledge Request: True
+	Destination: 14:6e:0a:00:00:00:00:02 (14:6e:0a:00:00:00:00:02)
+	Sequence Number: 13
+	10.. .... .... .... = Source Addressing Mode: Short/16-bit (0x0002)
+	.... .... .... .001 = Frame Type: Data (0x0001)
+	Origin: 5
+	.... .... .1.. .... = Intra-PAN: True
+	.... .... .... 0... = Security Enabled: False
+	Frame Control Field: 0x8c61, Frame Type: Data, Acknowledge Request, Intra-PAN, Destination Addressing Mode: Long/64-bit, Source Addressing Mode: Short/16-bit
+	Destination PAN: 0xface
+	.... .... ...0 .... = Frame Pending: False
+Layer 6LOWPAN:
+	IPHC Header
+	Source context: fe80:: (fe80::)
+	.... .... .0.. .... = Source address compression: Stateless
+	.... .0.. = Checksum: Inline
+	Destination port: 7
+	Hop limit: 64
+	.... ...0 = Destination port: Inline
+	.... .... ..11 .... = Source address mode: Compressed (0x0003)
+	1111 0... = Pattern: UDP compression header (0x1e)
+	...1 1... .... .... = Traffic class and flow label: Version, traffic class, and flow label compressed (0x0003)
+	UDP checksum: 0x29eb
+	.... .... 0... .... = Context identifier extension: False
+	011. .... = Pattern: IP header compression (0x03)
+	.... ..0. = Source port: Inline
+	.... .... .... ..11 = Destination address mode: Compressed (0x0003)
+	Destination context: fe80:: (fe80::)
+	Destination: fe80::166e:a00:0:2 (fe80::166e:a00:0:2)
+	.... .... .... .0.. = Destination address compression: Stateless
+	.... .... .... 0... = Multicast address compression: False
+	Source port: 65534
+	.... ..00 .... .... = Hop limit: Inline (0x0000)
+	.... .1.. .... .... = Next header: Compressed
+	Source: fe80::ff:fe00:0 (fe80::ff:fe00:0)
+	UDP header compression
+Layer IPV6:
+	Source GeoIP: Unknown
+	Source: fe80::ff:fe00:0 (fe80::ff:fe00:0)
+	Next header: UDP (17)
+	Destination: fe80::166e:a00:0:2 (fe80::166e:a00:0:2)
+	.... .... ...0 .... .... .... .... .... = ECN-CE: Not set
+	0110 .... = Version: 6
+	Payload length: 17
+	.... .... ..0. .... .... .... .... .... = ECN-Capable Transport (ECT): Not set
+	.... 0000 00.. .... .... .... .... .... = Differentiated Services Field: Default (0x00000000)
+	0110 .... = This field makes the filter "ip.version == 6" possible: 6
+	Hop limit: 64
+	.... .... .... 0000 0000 0000 0000 0000 = Flowlabel: 0x00000000
+	.... 0000 0000 .... .... .... .... .... = Traffic class: 0x00000000
+	Destination GeoIP: Unknown
+Layer UDP:
+	Length: 17
+	Calculated Checksum: 0x29eb
+	Stream index: 26
+	Bad Checksum: False
+	Checksum: 0x29eb [correct]
+	Source Port: 65534 (65534)
+	Destination Port: 7 (7)
+	Good Checksum: True
+Layer ECHO:
+	Echo data: 54657374696e672121

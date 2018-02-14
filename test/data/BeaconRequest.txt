@@ -1,0 +1,70 @@
+Packet (Length: 84)
+Layer ETH:
+	Destination: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+	.... ..1. .... .... .... .... = LG bit: Locally administered address (this is NOT the factory default)
+	Address: ff:ff:ff:ff:ff:ff (ff:ff:ff:ff:ff:ff)
+	.... ...1 .... .... .... .... = IG bit: Group address (multicast/broadcast)
+	Type: IP (0x0800)
+	Source: 00:1f:ee:00:0c:7a (00:1f:ee:00:0c:7a)
+	.... ..0. .... .... .... .... = LG bit: Globally unique address (factory default)
+	Address: 00:1f:ee:00:0c:7a (00:1f:ee:00:0c:7a)
+	.... ...0 .... .... .... .... = IG bit: Individual address (unicast)
+Layer IP:
+	Source GeoIP: Unknown
+	..0. .... = More fragments: Not set
+	Time to live: 128
+	0100 .... = Version: 4
+	.0.. .... = Don't fragment: Not set
+	Flags: 0x00
+	Differentiated Services Field: 0x00 (DSCP 0x00: Default; ECN: 0x00: Not-ECT (Not ECN-Capable Transport))
+	Good: False
+	Identification: 0x0180 (384)
+	Header checksum: 0x3928 [validation disabled]
+	.... ..00 = Explicit Congestion Notification: Not-ECT (Not ECN-Capable Transport) (0x00)
+	.... 0101 = Header Length: 20 bytes
+	Destination: 255.255.255.255 (255.255.255.255)
+	0000 00.. = Differentiated Services Codepoint: Default (0x00)
+	Fragment offset: 0
+	0... .... = Reserved bit: Not set
+	Total Length: 70
+	Source: 0.0.0.0 (0.0.0.0)
+	Bad: False
+	Protocol: UDP (17)
+	Destination GeoIP: Unknown
+Layer UDP:
+	Length: 50
+	Stream index: 0
+	Bad Checksum: False
+	Checksum: 0x0000 (none)
+	Source Port: 17754 (17754)
+	Destination Port: 17754 (17754)
+	Good Checksum: False
+Layer ZEP:
+	LQI/CRC Mode: LQI
+	Timestamp: Jan  1, 2015 19:38:40.192128000 FLE Standard Time (1420133920.192128000s)
+	Type: 1 (Data)
+	Link Quality Indication: 247
+	Device ID: 65534
+	Protocol ID String: EX
+	Length: 10 Bytes
+	Protocol Version: 2
+	Channel ID: 11
+	Sequence Number: 383
+Layer WPAN:
+	Frame Check Sequence (TI CC24xx format): FCS OK
+	.... 10.. .... .... = Destination Addressing Mode: Short/16-bit (0x0002)
+	..00 .... .... .... = Frame Version: 0
+	FCS Valid: True
+	.... .... ..0. .... = Acknowledge Request: False
+	RSSI: 18 dB
+	Sequence Number: 78
+	00.. .... .... .... = Source Addressing Mode: None (0x0000)
+	.... .... .... .011 = Frame Type: Command (0x0003)
+	.... .... .0.. .... = Intra-PAN: False
+	.... .... .... 0... = Security Enabled: False
+	Frame Control Field: 0x0803, Frame Type: Command, Destination Addressing Mode: Short/16-bit, Source Addressing Mode: None
+	Command Identifier: Beacon Request (0x07)
+	Destination PAN: 0xffff
+	Destination: 0xffff
+	LQI Correlation Value: 105
+	.... .... ...0 .... = Frame Pending: False

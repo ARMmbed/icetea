@@ -1,23 +1,23 @@
 # Command-line test framework
 
-*IcedTea* is an [mbed](www.mbed.com) test framework written
+*Icetea* is an [mbed](www.mbed.com) test framework written
 with python 2.7. It is generally used to verify the ARM mbed
 IoT Device Platform provides the operating system and cloud services.
 
 When testing [`mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
-*IcedTea* allows you to execute commands remotely via
+*Icetea* allows you to execute commands remotely via
 the command line interface in board (`DUT`).
 The interface between the test framework and `DUT` can be
 for example UART, sockets or for example stdio (process `DUT`).
 
-A more detailed description of the *IcedTea* concept is
+A more detailed description of the *Icetea* concept is
 available [here](doc/README.md).
 
 ## Installation
 
 `> python setup.py install`
 
-When installing IcedTea, installing to a
+When installing Icetea, installing to a
 [virtualenv](https://virtualenv.pypa.io/en/stable/installation/) is
 a good idea.
 
@@ -29,19 +29,24 @@ a good idea.
   * [mbed-flasher](https://github.com/ARMmbed/mbed-flasher)
     * to flash devices automatically
   * Both of these should be installed automatically by
-  IcedTea installation.
+  Icetea installation.
 
 **OS specific:**
 
 Linux:
 * python-dev and python-lxml
 `sudo apt-get install python-dev python-lxml`
+* For documentation install sphinx:
+`apt-get install python-sphinx`
 
 OS X:
 * [XCode developer tools](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/)
 * lxml as described
 [here](http://lxml.de/installation.html#installation):
 `STATIC_DEPS=true sudo pip install lxml`
+* For documentation install sphinx:
+`sudo port install py27-sphinx`, `sudo port select --set python python27`,
+`sudo port select --set sphinx py27-sphinx`
 
 Windows:
 * python-lxml installation is problematic on Windows since
@@ -50,6 +55,8 @@ from pre-built binaries.
     * Download binary for you system from the internet.
     * Navigate to the directory where you downloaded the
     binary and install it with `pip install <insert_file_name>`
+* For documentation install sphinx with pip:
+`pip install sphinx`
 
 ### Optional dependencies
 
@@ -65,8 +72,8 @@ install the coloredlogs module using pip. `pip install coloredlogs`
 ### Installation step-by-step
 
 ```
-git clone https://github.com/ARMmbed/mbed-test.git
-cd mbed-test
+git clone https://github.com/ARMmbed/icetea.git
+cd icetea
 python setup.py install
 ```
 
@@ -86,13 +93,13 @@ grant the required permissions to the USB ports.
 
 To print the help page:
 
-`icedtea --help`
+`icetea --help`
 
-All cli parameters are described in [icedtea.md](doc/icedtea.md)
+All cli parameters are described in [icetea.md](doc/icetea.md)
 
 To list all local testcases from the `./testcases` subfolder:
 
-`icedtea --list`
+`icetea --list`
 
 ## Test Case API
 
@@ -109,9 +116,24 @@ dut[string]             #dut nick name, or '*' to execute command in all duts
 cmd[string]             #command to be executed
 arguments[dictionary]   #optional argument list
         wait = <boolean>           # whether retcode is expected before continue next command. True (default) or False
-        expectedRetcode = <int>    # expected return code (default=0)
+        expected_retcode = <int>    # expected return code (default=0)
         timeout=<int>              # timeout, if no retcode receive
 ```
+
+## Documentation
+HTML documentation for Icetea can be built using sphinx. The source
+for the documentation is located in [doc-source](doc-source).
+For installation of sphinx see [installation](#installation).
+
+A build script for the documentation is included in build_docs.py.
+It's a simple python scripts that also generates autodoc api documentation.
+Run the script with:
+
+`python build_docs.py`
+
+Currently similar documentation is available in markdown format in
+[doc](doc). This documentation will be phased out and is not maintained
+as well as the sphinx documentation.
 
 ## Examples
 
@@ -122,29 +144,29 @@ To run following examples please compile `dummyDut` first using make:
 
 To print available parameters:
 
-`> icedtea --help`
+`> icetea --help`
 
 To run a single test case with the process dut:
 
-`> icedtea --tc test_cmdline --tcdir examples --type process --bin ./test/dut/dummyDut`
+`> icetea --tc test_cmdline --tcdir examples --type process --bin ./test/dut/dummyDut`
 
 To run all existing test cases from the `examples` folder:
 
-`> icedtea --tc all --tcdir examples --type process --bin ./test/dut/dummyDut`
+`> icetea --tc all --tcdir examples --type process --bin ./test/dut/dummyDut`
 
 To debug dut locally with [GDB](https://www.gnu.org/software/gdb/):
 
 **Note:** You have to install [gdb](https://www.gnu.org/software/gdb/) first (`apt-get install gdb`)
 
 ```
-> icedtea --tc test_cmdline --tcdir examples --type process --gdb 1 --bin ./test/dut/dummyDut
+> icetea --tc test_cmdline --tcdir examples --type process --gdb 1 --bin ./test/dut/dummyDut
 > sudo gdb ./CliNode 3460
 ```
 
 To debug dut remotely with GDB server:
 
 ```
-> icedtea --tc test_cmdline --tcdir examples --type process --gdbs 1 --bin  ./test/dut/dummyDut
+> icetea --tc test_cmdline --tcdir examples --type process --gdbs 1 --bin  ./test/dut/dummyDut
 > gdb  ./test/dut/dummyDut --eval-command="target remote localhost:2345"
 ```
 
@@ -152,10 +174,10 @@ To analyse memory leaks with valgrind:
 
 **Note:** You have to install [valgrind](http://valgrind.org) first (`apt-get install valgrind`)
 ```
-> icedtea --tc test_cmdline --tcdir examples --type process --valgrind --valgrind_tool memcheck --bin  ./test/dut/dummyDut
+> icetea --tc test_cmdline --tcdir examples --type process --valgrind --valgrind_tool memcheck --bin  ./test/dut/dummyDut
 ```
 
-## Running unit tests with *IcedTea*
+## Running unit tests with *Icetea*
 
 To build a test application for DUT and execute the test:
 
@@ -167,19 +189,19 @@ To build a test application for DUT and execute the test:
 To generate a coverage report (excluding plugins):
 
 ```
-> coverage html --include "icedtea_lib/*" --omit "icedtea_lib/Plugin/plugins/*"
+> coverage html --include "icetea_lib/*" --omit "icetea_lib/Plugin/plugins/*"
 ```
 
-To run unit tests for plugins that ship with IcedTea:
+To run unit tests for plugins that ship with Icetea:
 
 ```
-> coverage run -m unittest discover -s icedtea_lib/Plugin/plugins/plugin_tests
+> coverage run -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests
 ```
 
 To generate a coverage reports for plugin unit tests run:
 
 ```
-> coverage html --include "icedtea_lib/Plugin/plugins/*" --omit "icedtea_lib/Plugin/plugins/plugin_tests/*"
+> coverage html --include "icetea_lib/Plugin/plugins/*" --omit "icetea_lib/Plugin/plugins/plugin_tests/*"
 ```
 
 ### Dependencies

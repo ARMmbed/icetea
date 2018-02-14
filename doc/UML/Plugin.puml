@@ -1,0 +1,24 @@
+@startuml
+
+class PluginBase{
++ get_bench_api()
++ get_external_services()
++ get_parsers()
++ init(Bench)
++{static}find_one(str, str)
++{static}find_multiple(str, str)
+
+}
+
+class RunPluginBase{
++get_allocators()
+}
+
+enum PluginTypes{
+    BENCH
+    PARSER
+    EXTSERVICE
+    ALLOCATOR
+}
+
+@enduml

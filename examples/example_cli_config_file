@@ -1,0 +1,4 @@
+--tc test_cmdline --tcdir examples
+--type process
+--bin test/dut/dummyDut
+-v
