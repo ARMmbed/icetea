@@ -1754,13 +1754,13 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
             raise NameError(fail_reason)
         if req.response:
             if req.response.lines:
-                self.logger.debug("Last command response from D%s:", req.dutIndex)
+                self.logger.debug("Last command response from D%s:", req.dut_index)
                 self.logger.debug('\n'.join(req.response.lines))
 
             if req.response.timeout:
-                raise TestStepTimeout("dut"+str(req.dutIndex)+" TIMEOUT, cmd: '"+req.cmd+"'")
+                raise TestStepTimeout("dut"+str(req.dut_index)+" TIMEOUT, cmd: '"+req.cmd+"'")
             else:
-                reason = "dut"+str(req.dutIndex) + " cmd: '"+req.cmd+"',"
+                reason = "dut"+str(req.dut_index) + " cmd: '"+req.cmd+"',"
                 if req.response.retcode == -5:
                     reason += " unknown cmd"
                 elif req.response.retcode == -2:
