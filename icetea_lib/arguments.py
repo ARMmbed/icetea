@@ -389,6 +389,12 @@ def get_tc_arguments(parser):
                                   help='Force flashing of hardware device if '
                                        'binary is given, but only once. Defaults to False')
 
+    group2.add_argument('--interface',
+                        dest='interface',
+                        default='eth0',
+                        help='Network interface used in tests, unless the testcase specifies '
+                             'which one to use. Defaults to eth0')
+
     return parser
 
 
