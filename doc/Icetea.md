@@ -135,6 +135,7 @@ Supported cli parameters are described below:
 | --env_cfg | Use user specific environment configuration file | Valid file name or path |  |  |
 | --repeat | Run test cases N times | Integer | 1 |  |
 | --stop_on_failure | Stop run on first failed test case |  |  |  |
+| --plugin_path | Path to a python file containing desired plugins |  |  |  |
 | --failure_return_value | Set Icetea to return a failing code to caller if one or more tests fail during the run. Otherwise return value will always be 0 |  |  |  |
 | --ignore_invalid_params | Ignore parameters MIcetea cannot parse instead of stopping the run (for backwards compatibility) |  |  |  |
 | --parallel_flash | Enable parallel flashing of devices |  |  |  |
