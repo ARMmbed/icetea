@@ -71,8 +71,7 @@ def baseBuild(String platform) {
     setBuildStatus('PENDING', "${pluginBuildName}", 'plugin tests start')
     try {
         stage("${pluginBuildName}") {
-            execute 'coverage run --parallel-mode -m unittest discover -s
-            icetea_lib/Plugin/plugins/plugin_tests -v'
+            execute 'coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests -v'
         }
         setBuildStatus('SUCCESS', "${pluginBuildName}", 'plugin tests success')
     } catch (Exception e) {
