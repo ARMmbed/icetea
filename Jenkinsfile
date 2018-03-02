@@ -25,7 +25,7 @@ timestamps {
                             checkout scm
                         }
 
-                        def pipeline = load "pipeline.groovy"
+                        def pipeline = load "test.groovy"
 
                         pipeline.baseBuild('linux')
                     }
@@ -43,7 +43,7 @@ timestamps {
                             checkout scm
                         }
 
-                        def pipeline = load "pipeline.groovy"
+                        def pipeline = load "test.groovy"
 
                         pipeline.baseBuild('windows')
                     }
@@ -60,7 +60,7 @@ timestamps {
                             def pipeline = null
                             stage ("deploy") {
                                 checkout scm
-                                pipeline = load "pipeline.groovy"
+                                pipeline = load "test.groovy"
                             }
 
                             if (pipeline) {
