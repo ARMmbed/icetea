@@ -46,6 +46,7 @@ from icetea_lib.GitTool import get_git_info
 from icetea_lib.ResourceProvider.ResourceProvider import ResourceProvider
 from icetea_lib.ResourceProvider.ResourceConfig import ResourceConfig
 from icetea_lib.Result import Result
+from icetea_lib.ResultList import ResultList
 
 from icetea_lib.DeviceConnectors.Dut import DutConnectionError
 from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
@@ -152,6 +153,13 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
     #
     # executeCommand returns CliResponse class
     #
+
+    @staticmethod
+    def create_new_result(verdict, retcode, duration, input_data):
+        new_result = Result(input_data)
+        new_result.set_verdict(verdict, retcode, duration)
+        return new_result
+
     def __init__(self, **kwargs):
         self.__retcode = None
         self.__failreason = ""
@@ -172,6 +180,7 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         self.tshark_preferences = {}
         self.duts = []
         self._result = None
+        self._results = None
         self._dutinformations = []
         self.resource_configuration = None
         self.open_putty = self.open_node_terminal
@@ -228,6 +237,11 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         self.command = self.execute_command
         self.__parse_arguments()
 
+    def add_new_result(self, verdict, retcode, duration, input_data):
+        new_result = Bench.create_new_result(verdict, retcode, duration, input_data)
+        if not self._results:
+            self._results = ResultList()
+        self._results.append(new_result)
 
     def get_config(self):
         """
@@ -633,15 +647,16 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         :param tc_file: Location of test case file
         :return: Result
         """
+        if self._results is not None:
+            return self._results
         result = self._result if self._result else Result()
-
+        results = self._results if self._results else ResultList()
         result.set_tc_metadata(self.config)
 
         # regonize filepath and git information
         result.set_tc_git_info(get_git_info(self.get_tc_abspath(tc_file),
                                             verbose=self.args.verbose))
         self.logger.debug(result.tc_git_info)
-
         result.component = self.get_test_component()
         if isinstance(result.component, str):
             result.component = [result.component]
@@ -652,13 +667,9 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
             result.skip_reason = self.skip_reason()
 
         result.fail_reason = self.__failreason
-
         result.logpath = os.path.abspath(LogManager.get_base_dir())
-
         result.logfiles = LogManager.get_logfiles()
-
         result.retcode = self.__retcode
-
         return result
 
     def verify_trace_skip_fail(self, k, expected_traces):

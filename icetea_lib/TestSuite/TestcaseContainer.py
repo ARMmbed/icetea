@@ -30,9 +30,15 @@ from icetea_lib.bench import ReturnCodes
 from icetea_lib.tools.tools import get_fw_version, import_module, load_class
 from icetea_lib.arguments import get_parser, get_tc_arguments, get_base_arguments
 from icetea_lib.Result import Result
+from icetea_lib.ResultList import ResultList
+
+# pylint: disable=too-many-arguments,useless-super-delegation,too-many-branches,too-many-statements
 
 
 class TestStatus:
+    """
+    Enumeration for test statuses.
+    """
     PENDING = 4
     PREPARED = 3
     READY = 2
@@ -318,6 +324,11 @@ class TestcaseContainer(object):
         # cleanup Testcase
         tc_instance = None
         LogManager.finish_testcase_logging()
+        self.status = TestStatus.FINISHED
+
+        if isinstance(result, ResultList):
+            self.logger.debug("Received a list of results from test bench.")
+            return result
 
         if result.retcode == ReturnCodes.RETCODE_FAIL_ABORTED_BY_USER:
             print("Press CTRL + C again if you want to abort test run")
@@ -345,7 +356,7 @@ class TestcaseContainer(object):
             retcode=retcode,
             duration=duration)
         self._result = result
-        self.status = TestStatus.FINISHED
+
         return result
 
     def _create_new_bench_instance(self, modulename):
