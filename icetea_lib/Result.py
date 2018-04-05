@@ -78,6 +78,7 @@ class Result(object):  # pylint: disable=too-many-instance-attributes,too-many-p
                 self.set_verdict("pass", self.retcode)
             else:
                 self.set_verdict("fail", self.retcode)
+        self.uploaded = False
 
     def set_tc_git_info(self, git_info):
         """
@@ -367,6 +368,55 @@ class Result(object):  # pylint: disable=too-many-instance-attributes,too-many-p
         self.retcode = retcode
         if duration >= 0:
             self.duration = duration
+
+    def build_result_metadata(self, data=None, args=None):
+        """
+        collect metadata into this object
+
+        :param data: dict
+        :param args: build from args instead of data
+        """
+        data = data if data else self._build_result_metainfo(args)
+        if data.get("build_branch"):
+            self.build_branch = data.get("build_branch")
+        if data.get("buildcommit"):
+            self.buildcommit = data.get("buildcommit")
+        if data.get("build_git_url"):
+            self.build_git_url = data.get("build_git_url")
+        if data.get("build_url"):
+            self.build_url = data.get("build_url")
+        if data.get("campaign"):
+            self.campaign = data.get("campaign")
+        if data.get("job_id"):
+            self.job_id = data.get("job_id")
+        if data.get("toolchain"):
+            self.toolchain = data.get("toolchain")
+        if data.get("build_date"):
+            self.build_date = data.get("build_date")
+
+    @staticmethod
+    def _build_result_metainfo(args):
+        """
+        Internal helper for collecting metadata from args to results
+        """
+        data = dict()
+        if hasattr(args, "branch") and args.branch:
+            data["build_branch"] = args.branch
+        if hasattr(args, "commitId") and args.commitId:
+            data["buildcommit"] = args.commitId
+        if hasattr(args, "gitUrl") and args.gitUrl:
+            data["build_git_url"] = args.gitUrl
+        if hasattr(args, "buildUrl") and args.buildUrl:
+            data["build_url"] = args.buildUrl
+        if hasattr(args, "campaign") and args.campaign:
+            data["campaign"] = args.campaign
+        if hasattr(args, "jobId") and args.jobId:
+            data["job_id"] = args.jobId
+        if hasattr(args, "toolchain") and args.toolchain:
+            data["toolchain"] = args.toolchain
+        if hasattr(args, "buildDate") and args.buildDate:
+            data["build_date"] = args.buildDate
+        return data
 
     def set_tc_metadata(self, tc_metadata):
         """

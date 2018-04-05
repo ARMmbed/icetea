@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring,protected-access,unused-argument
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+
 import argparse
 import json
 import os
@@ -24,6 +27,7 @@ import mock
 from icetea_lib.TestSuite.TestSuite import TestSuite, SuiteException, TestStatus
 from icetea_lib.TestSuite.TestcaseContainer import DummyContainer
 from icetea_lib.Result import Result
+from icetea_lib.ResultList import ResultList
 from icetea_lib.DeviceConnectors.DutInformation import DutInformation
 from icetea_lib.build.build import Build
 
@@ -219,8 +223,13 @@ class TestSuiteTestcase(unittest.TestCase):
         fail_result.set_verdict('fail', 1000, 10)
         skipped_result = Result()
         skipped_result.set_verdict('skip', 0, 1)
+        resultlist = ResultList()
+        resultlist.append(pass_result)
         testsuite._default_configs["retryCount"] = 1
         cont1.run.side_effect = [pass_result, fail_result, skipped_result, KeyboardInterrupt, fail_result, pass_result]
+        cont_reslist = mock.MagicMock()
+        cont_reslist.run = mock.MagicMock()
+        cont_reslist.run.return_value = resultlist
         # Passing result
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
@@ -230,6 +239,15 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(len(testsuite._results), 1)
         self.assertEqual(testsuite._results[0].get_verdict(), "pass")
         self.assertTrue(self.args_tc.forceflash)
+
+        # ResultList as result
+        testsuite._testcases = []
+        testsuite._testcases.append(cont_reslist)
+        testsuite._results = []
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 1)
+        self.assertEqual(testsuite._results[0].get_verdict(), "pass")
 
         # Failing result, no retry
         testsuite._testcases = []
@@ -320,31 +338,6 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(len(testsuite._results), 2)
         self.assertEqual(testsuite._results[0].get_verdict(), "skip")
         self.assertEqual(testsuite._results[1].get_verdict(), "pass")
-
-    def test_result_metainfo_generation(self):
-        pass_result = Result()
-        pass_result.set_verdict('pass', 0, 10)
-        dinfo = DutInformation("Test_platform", "123456", "1")
-        dinfo.build = Build(ref="test_file", type="file")
-        pass_result.add_dutinformation(dinfo)
-        self.args_tc.branch = "test_branch"
-        self.args_tc.commitId = "123456"
-        self.args_tc.gitUrl = "url"
-        self.args_tc.buildUrl = "url2"
-        self.args_tc.campaign = "campaign"
-        self.args_tc.jobId = "test_job"
-        self.args_tc.toolchain = "toolchain"
-        self.args_tc.buildDate = "today"
-        ts = TestSuite(args=self.args_tc)
-        ts._build_result_metainfo(pass_result)
-        self.assertEqual(pass_result.build_branch, "test_branch")
-        self.assertEqual(pass_result.buildcommit, "123456")
-        self.assertEqual(pass_result.build_git_url, "url")
-        self.assertEqual(pass_result.build_url, "url2")
-        self.assertEqual(pass_result.campaign, "campaign")
-        self.assertEqual(pass_result.job_id, "test_job")
-        self.assertEqual(pass_result.toolchain, "toolchain")
-        self.assertEqual(pass_result.build_date, "today")
 
     @mock.patch("icetea_lib.TestSuite.TestSuite.TestSuite._create_tc_list")
     @mock.patch("icetea_lib.TestSuite.TestSuite.os.path")

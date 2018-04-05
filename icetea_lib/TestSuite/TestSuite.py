@@ -1,4 +1,5 @@
 """
+
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -11,12 +12,23 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+
+TestSuite module, containing the SuiteException exception and the TestSuite class
+
+TestSuite class is a representation of a runnable suite of test cases.
+
+SuiteException is an Exception that is raised by TestSuite when it needs to exit with a critical
+failure.
+
 """
+# pylint: disable=too-many-branches,too-many-arguments
 
 import json
 import os
 import sys
 
+from icetea_lib.Result import Result
 from icetea_lib.ResultList import ResultList
 from icetea_lib.TestSuite.TestcaseContainer import TestStatus, DummyContainer
 from icetea_lib.TestSuite.TestcaseList import TestcaseList
@@ -97,7 +109,8 @@ class TestSuite(object):
                                           self.args.forceflash)
                         i += 1
                     try:
-                        result, retries, repeat, iteration = self._run_testcase(test, retries,
+                        result, retries, repeat, iteration = self._run_testcase(test,
+                                                                                retries,
                                                                                 repeat,
                                                                                 repeats,
                                                                                 iteration,
@@ -107,8 +120,7 @@ class TestSuite(object):
                         self.logger.error("Test run aborted.")
                         self.status = TestStatus.FINISHED
                         return self._results
-                    if result:
-                        self._upload_result(result)
+                    self._upload_results(result)
                 if result and result.get_verdict() not in ['pass',
                                                            'skip'] and self.args.stop_on_failure:
                     break
@@ -142,10 +154,12 @@ class TestSuite(object):
                 repeat = repeats + 1
                 raise
             if result is not None:
+
                 # Test had required attributes and ran succesfully or was skipped.
                 # Note that a fail *during* a testcase run will still be reported.
+                if not isinstance(result, ResultList):
+                    result.build_result_metadata(args=self.args)
                 self._results.append(result)
-                self._build_result_metainfo(result)
                 if self.args.stop_on_failure and result.get_verdict() not in ['pass', 'skip']:
                     # Stopping run on failure,
                     self.logger.info("Test case %s failed or was inconclusive, "
@@ -167,7 +181,7 @@ class TestSuite(object):
                         self.logger.error("Testcase %s failed, %d "
                                           "retries left.\n", test.get_name(), retries)
                         retries -= 1
-                        self._upload_result(result)
+                        self._upload_results(result)
                         continue
                     else:
                         result.retries_left = 0
@@ -178,26 +192,7 @@ class TestSuite(object):
                     break
         return result, retries, repeat, iteration
 
-    def _build_result_metainfo(self, result):
-        if hasattr(self, "args"):
-            if hasattr(self.args, "branch") and self.args.branch:
-                result.build_branch = self.args.branch
-            if hasattr(self.args, "commitId") and self.args.commitId:
-                result.buildcommit = self.args.commitId
-            if hasattr(self.args, "gitUrl") and self.args.gitUrl:
-                result.build_git_url = self.args.gitUrl
-            if hasattr(self.args, "buildUrl") and self.args.buildUrl:
-                result.build_url = self.args.buildUrl
-            if hasattr(self.args, "campaign") and self.args.campaign:
-                result.campaign = self.args.campaign
-            if hasattr(self.args, "jobId") and self.args.jobId:
-                result.job_id = self.args.jobId
-            if hasattr(self.args, "toolchain") and self.args.toolchain:
-                result.toolchain = self.args.toolchain
-            if hasattr(self.args, "buildDate") and self.args.buildDate:
-                result.build_date = self.args.buildDate
-
-    def _upload_result(self, result):
+    def _upload_results(self, result):
         """
         Upload result to cloud.
 
@@ -206,10 +201,19 @@ class TestSuite(object):
         """
         if self.cloud_module:
             self.logger.debug("Uploading results to DB.")
-            response_data = self.cloud_module.send_result(result)
+            if isinstance(result, Result):
+                self._upload_result(result)
+            elif isinstance(result, ResultList):
+                for result_item in result:
+                    self._upload_result(result_item)
+
+    def _upload_result(self, result_object):
+        if not result_object.uploaded:
+            response_data = self.cloud_module.send_result(result_object)
             if response_data:
                 data = response_data
                 self.logger.info("Results sent to the server. ID: %s", data.get('_id'))
+                result_object.uploaded = True
 
 
     def get_default_configs(self):

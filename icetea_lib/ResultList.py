@@ -137,6 +137,35 @@ class ResultList(Iterator):
         """
         return len([i for i, result in enumerate(self.data) if result.skip])
 
+    @property
+    def skipped(self):
+        return True if self.skip_count() == len(self) else False
+
+    @property
+    def inconclusive(self):
+        return True if self.inconclusive_count() and not self.failure else False
+
+    @property
+    def success(self):
+        return True if not self.inconclusive and not self.failure else False
+
+    @property
+    def failure(self):
+        for item in self.data:
+            if item.failure:
+                return True
+        return False
+
+    def get_verdict(self):
+        if self.success:
+            return "pass"
+        elif self.failure:
+            return "fail"
+        elif self.skipped:
+            return "skip"
+        else:
+            return "inconclusive"
+
     def total_duration(self):
         """
         Sum of the durations of the tests in this list.

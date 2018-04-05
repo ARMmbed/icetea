@@ -327,6 +327,19 @@ class TestVerify(unittest.TestCase):
         logger.addHandler(logging.NullHandler())
         self.assertEqual(Bench._validate_dut_configs(duts_cfg, logger), None)
 
+    def test_create_new_result(self):
+        test_data = dict()
+        test_data["reason"] = "this is a reason"
+        result = Bench.create_new_result("fail", 1, 10, test_data)
+        self.assertTrue(result.failure)
+
+    def test_create_and_add_new_result(self):
+        test_data = dict()
+        test_data["reason"] = "this is a reason"
+        bench = Bench()
+        bench.add_new_result("fail", 1, 10, test_data)
+        self.assertEqual(len(bench._results), 1)
+
 
 if __name__=='__main__':
     unittest.main()
