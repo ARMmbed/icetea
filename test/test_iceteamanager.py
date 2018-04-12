@@ -305,6 +305,9 @@ class IceteaManagerTestcase(unittest.TestCase):
 
     def test_list_json_output(self):
         self.maxDiff = None
+        expected_test_path = os.path.abspath(os.path.join(__file__, "..", "tests",
+                                                          "json_output_test",
+                                                          "json_output_test_case.py"))
         expected_output = [
             {u"status": u"development",
              u"requirements": {
@@ -315,6 +318,7 @@ class IceteaManagerTestcase(unittest.TestCase):
                  u"external": {
                      u"apps": []}
              },
+             u"filepath": expected_test_path,
              u"name": u"json_output_test",
              u"title": u"Test list output as json",
              u"component": [u"Icetea_ut"],

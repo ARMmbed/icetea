@@ -186,7 +186,9 @@ class TestcaseContainer(object):
         Get configuration currently set into the test instance.
         :return: dict
         """
-        return self.get_instance().config
+        config = self.get_instance().config
+        config["filepath"] = self._filepath
+        return config
 
     def get_final_config(self):
         return self._final_configuration
