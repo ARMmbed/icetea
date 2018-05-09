@@ -184,4 +184,33 @@ def warningPublisher(String parser, String pattern) {
 }
 
 
+def runRegressionTests(){
+    // Run regression test with local devices
+
+    // run icetea e2e-loca-hw-test
+    String buildName = "e2e-local-hw-tests"
+
+    setBuildStatus('PENDING', "${buildName}", 'start')
+    try {
+        stage("${buildName}") {
+            sh """
+                set -e
+                virtualenv --python=../usr/bin/python py2venv --no-site-packages
+                . py2venv/bin/activate
+                pip install coverage mock lxml
+                python setup.py install
+                ykushcmd -u a
+                sleep 1
+                python test_regression/test_regression.py
+                deactivate
+            """
+        }
+        setBuildStatus('SUCCESS', "${buildName}", 'success')
+    } catch (Exception e) {
+        // set build fail
+        setBuildStatus('FAILURE', "${buildName}", "didn't pass")
+        currentBuild.result = 'FAILURE'
+    }
+}
+
 return this;
