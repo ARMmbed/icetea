@@ -75,13 +75,13 @@ timestamps {
                     }
                 }
             },
-            "stream e2e-local-hw-tests": {
+            "stream linux-e2e-local-hw-tests": {
                 node('oul_ext_lin_nuc') {
                     deleteDir()
                     try {
                         dir("icetea"){
                             def pipeline = null
-                            stage ("regressionCkoScm") {
+                            stage ("checkout linux-nuc source") {
                                 def scmVars = checkout scm
                                 env.GIT_COMMIT_HASH = scmVars.GIT_COMMIT
 
@@ -89,7 +89,34 @@ timestamps {
                             }
 
                             if (pipeline) {
-                                pipeline.runRegressionTests()
+                                pipeline.runLinuxHwTests()
+                            }
+                        }
+                    } catch (err) {
+                        throw err
+                    } finally {
+                        // clean up
+                        //step([$class: 'WsCleanup'])
+                    }
+
+
+                }
+            },
+            "stream win-e2e-local-hw-tests": {
+                node('oul_ext_win_flasher_nuc') {
+                    deleteDir()
+                    try {
+                        dir("icetea"){
+                            def pipeline = null
+                            stage ("checkout win-nuc source") {
+                                def scmVars = checkout scm
+                                env.GIT_COMMIT_HASH = scmVars.GIT_COMMIT
+
+                                pipeline = load "pipeline.groovy"
+                            }
+
+                            if (pipeline) {
+                                pipeline.runWinHwTests()
                             }
                         }
                     } catch (err) {
