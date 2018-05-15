@@ -2,46 +2,51 @@
 
 This doc explains reference of finding jobs build result from CI.
 
-Please note, for each PR there is only one CI job each time, which has two parallel nodes:
+Please note, for each PR there is only one CI job each time, which has multiple parallel nodes and tasks:
 
-    - linux: running tests on Linux
+number | CI-slave-node-name | github-status-label | task | function | env config
+--- | --- | --- | --- | --- | ---
+1 | linux | unittest in linux | run python 2 unittest in linux | `baseBuild("linux")` | N/A
+2 | windows | unittest in windows | run python 2 unittest in windows  | `baseBuild("windows")` | N/A
+3 | linux | plugin tests in linux | run python 2 plugin tests in linux | `baseBuild("linux")` | N/A
+4 | windows | plugin tests in windows | run python 2 plugin tests in windows | `baseBuild("windows")` | N/A
+5 | oul_ext_lin_nuc | e2e-local-hw-tests in linux | run e2e local hardware tests in linux | `runLinuxHwTests()` | python 2 virtualenv
+6 | oul_ext_win_flasher_nuc | e2e-local-hw-tests in windows | run e2e local hardware tests in windows | `runWinHwTests()` | python 2 virtualenv
+7 | arm-none-eabi-gcc | build app | build example mbed_cliapp with mbed-os5 | `buildExampleApp()` | N/A
+8 | linux | pylint check | run python 2 pylint check | `pylint_linux_check()` | N/A
+9 | N/A | continuous-integration/jenkins/pr-head | CI job result in general | N/A
 
-    - windows: running tests on Windows
+**Note: continuous-integration/jenkins/branch**
+
+- general build result
+- if one of listed above tasks result failed, this one would be failed
+- if all of listed above taks result are success, but this one is failed, it means some of post build
+actions, like archiving files, publish HTML results, publish junit result, etc is/are failed.
 
 
-## Github PR Status Lables
+## Key Functions
 
-The lable listed here would help to understand and quickly found what's wrong in CI if failed.
-
-1. **unittest in windows**
-    - shows build result of unittest running on Windows
-
-2. **unittest in linux**
-    - build result of unittest running on Linux
-
-3. **plugin tests in linux**
-    - build result of tests for testing plugin module running on Linux
-
-4. **plugin tests in windows**
-    - build result of tests for testing plugin module on Windows
-
-5. **pylint check**
-    - build result of pylint check for Icetea
-
-6. **continuous-integration/jenkins/branch**
-    - general build result
-    - if one of listed 5 above result failed, this one would be failed
-    - if all of listed 5 above result are success, but this one is failed, it means some of post build
-    actions, like archiving files, publish HTML results, publish junit result, etc is/are failed.
+1. `baseBuild(String platform)`
+    - platform value: `windows` or `linux`: means run task on OS linux or windows
+    - This function: run unittest, run plugin tests, create coverage report, publish HTML report
+2. `buildExampleApp()`: build example cliapp
+3. `pylint_linux_check()`: check global installed python version and run pylint check
+4. `runWinHwTests()`: run e2e local hardware tests on windows python 2 virtualenv
+5. `runLinuxHwTests()`: run e2e local hardware tests on linux python 2 virtualenv
+    - **Note:** becuase of the CI slave is shared
+with other jobs, ykush power switch might be turned off, so at here, turn on ykush first, and sleep 1 second to wait power
+switch on
+6. `setBuildStatus()`: function for set github status label and build result
 
 
 ## Check Logs
 
 In `Build Artifacts`, it collects all the logs needed:
 
+    * example_app   : save example binary and build log
     * log_linux/    : all the html results for unittest and plugin tests run on Linux
     * log_windows/  : all the html results for unittest and plugin tests run on Windows
-
+    * pylint.log    : check result of python 2 code style on linux
 
 
 ## HTML Reports
