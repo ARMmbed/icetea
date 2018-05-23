@@ -96,7 +96,7 @@ timestamps {
                         throw err
                     } finally {
                         // clean up
-                        //step([$class: 'WsCleanup'])
+                        step([$class: 'WsCleanup'])
                     }
 
 
@@ -123,7 +123,7 @@ timestamps {
                         throw err
                     } finally {
                         // clean up
-                        //step([$class: 'WsCleanup'])
+                        step([$class: 'WsCleanup'])
                     }
 
 
