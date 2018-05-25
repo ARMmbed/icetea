@@ -41,6 +41,13 @@ try:
 except ImportError:
     Flash = None
 
+try:
+    from mbed_flasher.common import FlashError
+    FLASHER_ERRORS = (NotImplementedError, SyntaxError, FlashError)
+except ImportError:
+    FlashError = None
+    FLASHER_ERRORS = (NotImplementedError, SyntaxError)
+
 
 class SerialParams(object):
     """
@@ -224,7 +231,7 @@ class DutSerial(Dut):
         """
         return self.config.get('allocated').get('target_id')
 
-    def flash(self, binary):
+    def flash(self, binary):  # pylint: disable=too-many-branches
         """
         Flash a binary to the target device using mbed-flasher.
 
@@ -248,6 +255,7 @@ class DutSerial(Dut):
             else:
                 # Backwards compatibility for older mbed-flasher versions.
                 flasher = Flash()
+            retcode = None
             try:
                 if self.device:
                     try:
@@ -256,23 +264,26 @@ class DutSerial(Dut):
                         self.logger.error("Build initialization failed. "
                                           "Check your build location.")
                         self.logger.debug(error)
-                        return False
+                        raise DutConnectionError(error)
                     buildfile = self.build.get_file()
                     if not buildfile:
-                        self.logger.error("Build file not found!")
-                        return False
+                        raise DutConnectionError("Binary {} not found".format(buildfile))
                     self.logger.info('Flashing dev: %s', self.device['target_id'])
                     target_id = self.device.get("target_id")
                     retcode = flasher.flash(build=buildfile, target_id=target_id,
                                             device_mapping_table=[self.device])
                 else:
                     error_occured = True
-            except NotImplementedError:
-                self.logger.error("Flashing not supported for this platform!")
-                error_occured = True
-            except SyntaxError:
-                self.logger.error("target_id required by mbed-flasher!")
-                error_occured = True
+            except FLASHER_ERRORS as error:
+                if error.__class__ == NotImplementedError:
+                    self.logger.error("Flashing not supported for this platform!")
+                elif error.__class__ == SyntaxError:
+                    self.logger.error("target_id required by mbed-flasher!")
+                if FlashError is not None:
+                    if error.__class__ == FlashError:
+                        self.logger.error("Flasher raised the following error: %s Error code: %i",
+                                          error.message, error.return_code)
+                raise DutConnectionError(error)
             else:
                 if retcode != 0:
                     error_occured = True

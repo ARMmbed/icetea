@@ -59,9 +59,9 @@ setup(name='icetea',
           "jsonmerge",
           "pyshark",
           "psutil",
-          "mbed-ls==1.3.6",
+          "mbed-ls==1.4.2",
           "semver",
-          "mbed-flasher==0.6.3",
+          "mbed-flasher==0.8.0",
           "six"
       ]
     )

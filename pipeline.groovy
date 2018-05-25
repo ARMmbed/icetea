@@ -184,4 +184,62 @@ def warningPublisher(String parser, String pattern) {
 }
 
 
+def runLinuxHwTests(){
+    // run icetea e2e-loca-hw-test
+    String buildName = "e2e-local-hw-tests in linux"
+
+    setBuildStatus('PENDING', "${buildName}", 'start')
+    try {
+        stage("${buildName}") {
+            sh """
+                set -e
+                virtualenv --python=../usr/bin/python py2venv --no-site-packages
+                . py2venv/bin/activate
+                pip install coverage mock lxml
+                python setup.py install
+                ykushcmd -u a
+                sleep 1
+                python test_regression/test_regression.py
+                deactivate
+            """
+        }
+        setBuildStatus('SUCCESS', "${buildName}", 'success')
+    } catch (Exception e) {
+        // set build fail
+        setBuildStatus('FAILURE', "${buildName}", "didn't pass")
+        currentBuild.result = 'FAILURE'
+    }
+}
+
+def runWinHwTests(){
+    // Run e2e-local-hw-tests on win-nuc
+    String buildName = "e2e-local-hw-tests in windows"
+
+    setBuildStatus('PENDING', "${buildName}", 'start')
+    try {
+        stage("${buildName}") {
+            bat """
+                virtualenv --python=c:\\Python27\\python.exe py2venv --no-site-packages || goto :error
+                echo "Activating venv"
+                call py2venv\\Scripts\\activate.bat || goto :error
+                pip install coverage mock lxml|| goto :error
+                pip freeze
+                python setup.py install  || goto :error
+                python test_regression/test_regression.py || goto :error
+                deactivate
+
+
+                :error
+                echo "Failed with error %errorlevel%"
+                exit /b %errorlevel%
+            """
+        }
+        setBuildStatus('SUCCESS', "${buildName}", 'success')
+    } catch (Exception e) {
+        // set build fail
+        setBuildStatus('FAILURE', "${buildName}", "didn't pass")
+        currentBuild.result = 'FAILURE'
+    }
+}
+
 return this;
