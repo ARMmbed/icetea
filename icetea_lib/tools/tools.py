@@ -17,9 +17,10 @@ import os
 import sys
 import platform
 import re
+import string
 import importlib
-from string import printable
 from pkg_resources import require, DistributionNotFound
+from six import iteritems
 from sys import platform as _platform
 try:
     from queue import Empty
@@ -352,8 +353,7 @@ def remove_empty_from_dict(d):
     if type(d) is dict:
         return dict(
             (k,
-             remove_empty_from_dict(
-                 v)) for k, v in d.iteritems() if v and remove_empty_from_dict(v))
+             remove_empty_from_dict(v)) for k, v in iteritems(d) if v and remove_empty_from_dict(v))
     elif type(d) is list:
         return [remove_empty_from_dict(v) for v in d if v and remove_empty_from_dict(v)]
     else:
@@ -365,21 +365,21 @@ def hex_escape_str(original_str):
     Function to make sure we can generate proper string reports.
     If character is not printable, call repr for that character.
     Finally join the result.
-
     :param original_str: Original fail reason as string.
     :return: string
     """
     new = []
     for char in original_str:
-        if char in printable:
-            new.append(char)
+        if str(char) in string.printable:
+            new.append(str(char))
             continue
 
         if IS_PYTHON3:
-            new.append(char.encode("unicode_escape").decode("ascii"))
+            new.append(str(char).encode("unicode_escape").decode("ascii"))
         else:
             new.append(repr(char).replace("'", ""))
     return "".join(new)
+
 
 
 def set_or_delete(dictionary, key, value):

@@ -28,6 +28,8 @@ from pprint import pformat
 import subprocess
 from jsonmerge import merge
 
+from six import string_types
+
 # Internal libraries
 
 from icetea_lib.CliRequest import CliRequest
@@ -284,7 +286,7 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         :param endpoint_id: nickname of dut
         :return: NodeEndPoint
         """
-        if isinstance(endpoint_id, basestring):
+        if isinstance(endpoint_id, string_types):
             endpoint_id = self.get_dut_index(endpoint_id)
         return NodeEndPoint(self, endpoint_id)
 
@@ -408,7 +410,7 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         if self.args.tc_cfg:
             tc_cfg = self.args.tc_cfg
         #TODO: this bit is not compatible with IceteaManager's --tc argument.
-        elif isinstance(self.args.tc, basestring) and os.path.exists(self.args.tc+'.json'):
+        elif isinstance(self.args.tc, string_types) and os.path.exists(self.args.tc+'.json'):
             tc_cfg = self.args.tc +'.json'
 
         if tc_cfg:

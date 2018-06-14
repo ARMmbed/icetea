@@ -16,6 +16,7 @@ limitations under the License.
 """
 
 import unittest
+import math
 import mock
 from icetea_lib.ResourceProvider.ResourceConfig import ResourceConfig
 from icetea_lib.ResourceProvider.ResourceRequirements import ResourceRequirements
@@ -220,7 +221,7 @@ class TestVerify(unittest.TestCase):
                          ]
                         )
 
-    def test_dut_reqs_locations_circle(self):
+    def test_reqs_locations_circle(self):
         self.resconfig.resolve_configuration(
             {
                 "requirements": {
@@ -230,14 +231,12 @@ class TestVerify(unittest.TestCase):
                                          "10*math.sin((3.5*{i})*({pi}/180))"]}
                     }
                 }
-            }
-        )
+            })
         self.assertEqual([req.get_requirements() for req in self.resconfig.get_dut_configuration()],
-                         [{"type": "hardware", "allowed_platforms": [],
-                           "location": [9.981347984218667, 0.6104853953486088],
-                           "nick": None}
-                         ]
-                        )
+                         [{"type": "hardware", "allowed_platforms": [], "location": [
+                             eval("10*math.cos((3.5*1)*({pi}/180))".replace("{pi}", str(math.pi))),
+                             eval("10*math.sin((3.5*1)*({pi}/180))".replace("{pi}", str(math.pi)))],
+                             "nick": None}])
 
     def test_dut_reqs_invalid_location(self):
         self.resconfig.resolve_configuration(

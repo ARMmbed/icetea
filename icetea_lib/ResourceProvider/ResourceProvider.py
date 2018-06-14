@@ -15,18 +15,22 @@ limitations under the License.
 ResourceProvider module. Handling of allocations and resource configurations is done here.
 """
 
+import six
+
 import icetea_lib.LogManager as LogManager
 from icetea_lib.ResourceProvider.exceptions import ResourceInitError
 from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
 from icetea_lib.tools.tools import Singleton
 
 
+@six.add_metaclass(Singleton)
 class ResourceProvider(object):
     """
     Singleton ResourceProvider class. ResourceProvider is common for the entire run and it
     handles allocation of resources based on requested resource configurations. It also
     determines which allocator is used for allocating these resources.
     """
+
     __metaclass__ = Singleton
 
     def __init__(self, args):
@@ -80,7 +84,7 @@ class ResourceProvider(object):
             allocations = self.allocator.allocate(resource_configuration, args=self.args)
             self.logger.info("Allocation successful")
         except AllocationError as error:
-            raise ResourceInitError(error.message)
+            raise ResourceInitError(error)
 
         return allocations
 

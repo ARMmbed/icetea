@@ -13,5 +13,5 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import default_plugins
-import plugins_to_load
+import icetea_lib.Plugin.plugins.default_plugins
+import icetea_lib.Plugin.plugins.plugins_to_load

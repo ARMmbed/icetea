@@ -24,6 +24,7 @@ import mock
 
 from icetea_lib.Events.EventMatcher import EventMatcher
 from icetea_lib.Events.Generics import EventTypes, Event, Observer
+from icetea_lib.tools.tools import IS_PYTHON3
 
 
 class MockLineProvider(object):  # pylint: disable=too-few-public-methods
@@ -84,9 +85,14 @@ class EventTestcase(unittest.TestCase):
         test_object = mock.MagicMock()
         callback = mock.MagicMock()
         event_flag = EventFlag()
-        event_matcher = EventMatcher(EventTypes.DUT_LINE_RECEIVED,
-                                     repr("\x00\x00\x00\x00\x00\x00\x01\xc8"), test_object,
-                                     flag=event_flag, callback=callback)
+        if IS_PYTHON3:
+            event_matcher = EventMatcher(EventTypes.DUT_LINE_RECEIVED,
+                                         "\x00\x00\x00\x00\x00\x00\x01\xc8", test_object,
+                                         flag=event_flag, callback=callback)
+        else:
+            event_matcher = EventMatcher(EventTypes.DUT_LINE_RECEIVED,
+                                         repr("\x00\x00\x00\x00\x00\x00\x01\xc8"), test_object,
+                                         flag=event_flag, callback=callback)
         event = Event(EventTypes.DUT_LINE_RECEIVED, test_object, "\x00\x00\x00\x00\x00\x00\x01\xc8")
         callback.assert_called_once_with(test_object, "\x00\x00\x00\x00\x00\x00\x01\xc8")
         self.assertTrue(event_flag.isSet())

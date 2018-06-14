@@ -16,6 +16,7 @@ limitations under the License.
 import re
 
 from icetea_lib.Events.Generics import Observer
+from icetea_lib.tools.tools import IS_PYTHON3
 
 
 class EventMatcher(Observer):
@@ -41,25 +42,23 @@ class EventMatcher(Observer):
         """
         If match_data is prefixed with regex: compile it to a regular expression pattern.
         Match event data with match_data as either regex or string.
-
         :param ref: Reference to object that generated this event.
         :param event_data: Data from event, as string.
-        :return: return True if match found, False if ref is not caller set for this Matcher or if
-        no match was found.
+        :return: return re.MatchObject if match found, False if ref is not caller
+        set for this Matcher or if no match was found.
         """
         if self.caller is None:
             pass
         elif ref is not self.caller:
             return False
         try:
-            dat = event_data.decode("utf-8")
+            dat = event_data if IS_PYTHON3 else event_data.decode("utf-8")
             if self.match_data.startswith("regex:"):
                 splt = self.match_data.split(":", 1)
                 pttrn = re.compile(splt[1])
                 match = re.search(pttrn, dat)
-                return True if match is not None else False
-            else:
-                return True if self.match_data in dat else False
+                return match if match is not None else False
+            return event_data if self.match_data in dat else False
         except UnicodeDecodeError:
             dat = repr(event_data)
             return self._resolve_match_data(ref, dat)

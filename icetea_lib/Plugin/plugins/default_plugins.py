@@ -14,11 +14,11 @@ limitations under the License.
 """
 
 
-from Asserts import AssertPlugin
-from default_parsers import DefaultParsers
-from FileApi import FileApiPlugin
-from HttpApi import HttpApiPlugin
-from plugin_localallocator import LocalAllocatorPlugin
+from icetea_lib.Plugin.plugins.Asserts import AssertPlugin
+from icetea_lib.Plugin.plugins.default_parsers import DefaultParsers
+from icetea_lib.Plugin.plugins.FileApi import FileApiPlugin
+from icetea_lib.Plugin.plugins.HttpApi import HttpApiPlugin
+from icetea_lib.Plugin.plugins.plugin_localallocator import LocalAllocatorPlugin
 
 default_plugins={
     "AssertPlugin": AssertPlugin,
