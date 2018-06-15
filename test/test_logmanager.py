@@ -20,6 +20,7 @@ import os
 import unittest
 
 from icetea_lib.LogManager import ContextFilter, traverse_json_obj
+from icetea_lib.tools.tools import IS_PYTHON3
 
 
 class ContextFilterTest(unittest.TestCase):
@@ -83,7 +84,7 @@ class ContextFilterTest(unittest.TestCase):
     def test_filter_binary_data(self):
         msg = []
         [msg.append(os.urandom(1024)) for _ in range(ContextFilter.MAXIMUM_LENGTH +1)]
-        msg = "".join(msg)
+        msg = b"".join(msg)
         expected = "{}...[10240974 more bytes]".format(msg[:50])
         record = self.create_log_record(msg)
         self.contextfilter.filter(record)
@@ -93,12 +94,10 @@ class ContextFilterTest(unittest.TestCase):
         msg = []
         [msg.append(u'\ufffd') for _ in range(ContextFilter.MAXIMUM_LENGTH + 1)]
         msg = "".join(msg)
-        expected = "u'\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd" \
-                   "\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd" \
-                   "\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd" \
-                   "\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd" \
-                   "\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd\\ufffd'" \
-                   "...[9951 more bytes]"
+        if not IS_PYTHON3:
+            expected = u"{}...[9951 more bytes]".format(repr(msg[:50]))
+        else:
+            expected = u"{}...[9951 more bytes]".format(msg[:50])
 
         record = self.create_log_record(msg)
         self.contextfilter.filter(record)

@@ -26,13 +26,14 @@ class RandomizeTestcase(unittest.TestCase):
         self.assertGreaterEqual(Randomize.random_integer(7, 3).value, 3)
         self.assertLessEqual(Randomize.random_integer(7, 3).value, 7)
 
-        self.assertIn(Randomize.random_list_elem(['a', 'bb', 'cc']),
-                      ['a', 'bb', 'cc'])
+        self.assertIn(Randomize.random_list_elem(['a', 'bb', 'cc']).value, ['a', 'bb', 'cc'])
 
-        self.assertGreaterEqual(len(Randomize.random_string(7, 3,
+        self.assertGreaterEqual(len(Randomize.random_string(7,
+                                                            3,
                                                             lambda x: random.choice(x), x='e34r')),
                                 3)
-        self.assertLessEqual(len(Randomize.random_string(7, 3,
+        self.assertLessEqual(len(Randomize.random_string(7,
+                                                         3,
                                                          lambda x: random.choice(x), x='e34r')),
                              7)
         self.assertIn(Randomize.random_string(chars=["aa", "bb", "ceedee"]).value,
@@ -40,12 +41,20 @@ class RandomizeTestcase(unittest.TestCase):
 
         self.assertIn(Randomize.random_array_elem(['a', 'bb', 'cc']).value, [['a'], ['bb'], ['cc']])
 
-        self.assertGreaterEqual(
-            len(Randomize.random_string_array(9, 3, 7, 2, lambda x: random.choice(x), x='e34r')),
-            3)
-        self.assertLessEqual(
-            len(Randomize.random_string_array(9, 3, 7, 2, lambda x: random.choice(x), x='e34r')),
-            9)
+        self.assertGreaterEqual(len(Randomize.random_string_array(9,
+                                                                  3,
+                                                                  7,
+                                                                  2,
+                                                                  lambda x: random.choice(x),
+                                                                  x='e34r')),
+                                3)
+        self.assertLessEqual(len(Randomize.random_string_array(9,
+                                                               3,
+                                                               7,
+                                                               2,
+                                                               lambda x: random.choice(x),
+                                                               x='e34r')),
+                             9)
 
     def test_chars_not_str(self):
         with self.assertRaises(ValueError):
@@ -83,7 +92,7 @@ class RandomizeTestcase(unittest.TestCase):
         rand_integer += 6
         value += 6
 
-        self.assertEqual(rand_integer, value)
+        self.assertEqual(rand_integer.value, value)
 
     def test_random_integer_repr(self):
         rand_integer = Randomize.random_integer(6)

@@ -15,4 +15,4 @@ limitations under the License.
 """
 
 
-from CloudTestModule import create
+from .CloudTestModule import create  # pylint: disable=relative-import

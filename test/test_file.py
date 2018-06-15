@@ -54,7 +54,7 @@ class TestFileTestCase(unittest.TestCase):
                                 stderr=subprocess.STDOUT,
                                 cwd=self.root_path)
         out, error = proc.communicate()  # pylint: disable=unused-variable
-        self.assertTrue(out.find("Binary not found") != -1,
+        self.assertTrue(out.find(b"Binary not found") != -1,
                         "non exitent file error was not risen")
         self.assertEqual(proc.returncode, 0)
 
@@ -68,7 +68,7 @@ class TestFileTestCase(unittest.TestCase):
                                 stderr=subprocess.STDOUT,
                                 cwd=self.root_path)
         out, error = proc.communicate()  # pylint: disable=unused-variable
-        self.assertTrue(out.find('test_cmdline |   pass') != -1, "exitent file was not accepted")
+        self.assertTrue(out.find(b'test_cmdline |   pass') != -1, "exitent file was not accepted")
         self.assertEqual(proc.returncode, 0, "Icetea execution with existing file crashed")
 
 

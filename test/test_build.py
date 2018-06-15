@@ -43,7 +43,7 @@ class BuildTestCase(unittest.TestCase):
         self.assertEqual(build.get_type(), "file")
         self.assertEqual(build.get_url(), "./test/test_build.py")
         self.assertEqual(build.is_exists(), True)
-        self.assertTrue(build.get_data().startswith('#!/usr/bin/env python'))
+        self.assertTrue(build.get_data().startswith(b'#!/usr/bin/env python'))
 
         build = Build.init("file:\\test\\build.py")
         self.assertEqual(build.get_type(), "file")

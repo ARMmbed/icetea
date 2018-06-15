@@ -183,6 +183,40 @@ def warningPublisher(String parser, String pattern) {
 
 }
 
+def runPy3Unittests() {
+    execute """python3 -m venv .py3venv --without-pip
+    . .py3venv/bin/activate
+    curl https://bootstrap.pypa.io/get-pip.py | python
+    pip install coverage mock lxml
+    id
+    pip freeze
+    python setup.py install
+    coverage run --parallel-mode -m unittest discover -s test
+    coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests
+    deactivate
+    """
+}
+
+def py3LinuxBuild() {
+    // Run unit tests on linux with python 3
+
+    // run clitest unittest
+    String buildName = "Py3 unittest in Linux"
+
+
+    setBuildStatus('PENDING', "${buildName}", 'py3 unittest start')
+    try {
+        stage("${buildName}") {
+            runPy3Unittests()
+        }
+        setBuildStatus('SUCCESS', "${buildName}", 'py3 unittest success')
+    } catch (Exception e) {
+        // set build fail
+        setBuildStatus('FAILURE', "${buildName}", "py3 unittests didn't pass")
+        currentBuild.result = 'FAILURE'
+    }
+}
+
 
 def runLinuxHwTests(){
     // run icetea e2e-loca-hw-test

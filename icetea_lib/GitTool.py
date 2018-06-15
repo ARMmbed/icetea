@@ -18,6 +18,8 @@ from os.path import abspath, relpath, dirname
 import subprocess
 import re
 
+from icetea_lib.tools.tools import IS_PYTHON3
+
 
 def get_path(filename):
     """
@@ -164,16 +166,14 @@ def __get_git_bin():
 
 
 def __run_git(cmd, path=None):
-    """
-    internal run git command.
-
+    """internal run git command
     :param cmd: git parameters as array
     :param path: path where command will be executed
     :return: tuple (<line>, <returncode>)
     """
     exe = [__get_git_bin()] + cmd
     try:
-        process = subprocess.Popen(exe, cwd=path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(exe, cwd=path, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except subprocess.CalledProcessError:
         return None, None
     except ValueError:
@@ -181,11 +181,13 @@ def __run_git(cmd, path=None):
     except OSError:
         return None, None
 
-    out, err = process.communicate()
+    out, err = proc.communicate()
+    if IS_PYTHON3:
+        out = out.decode("utf-8")
     if err:
         print("Cmd ('%s') fails: %s" % (' '.join(exe), err))
-        return None, process.returncode
-    return out.strip(), process.returncode
+        return None, proc.returncode
+    return out.strip(), proc.returncode
 
 
 if __name__ == "__main__":

@@ -15,8 +15,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import json
 import unittest
 import sys
+
+import xml.etree.ElementTree as ET
+
 from lxml import html
 
 try:
@@ -146,32 +150,39 @@ class ReportCase(unittest.TestCase):
 
     def test_junit_default(self):
         str_should_be = '<testsuite failures="0" tests="1" errors="0" skipped="0">\n\
-    <testcase classname="test-case-A1" name="unknown" time="20"></testcase>\n\
-</testsuite>'
+            <testcase classname="test-case-A1" name="unknown" time="20"></testcase>\n\
+        </testsuite>'
         results = ResultList()
         results.append(Result({"testcase": "test-case-A1", "verdict": "PASS", "duration": 20}))
         junit = ReportJunit(results)
-        string = junit.to_string()
-        self.assertEqual(string, str_should_be)
+        str_report = junit.to_string()
+        xml_shouldbe = ET.fromstring(str_should_be)
+        report_xml = ET.fromstring(str_report)
+        self.assertDictEqual(xml_shouldbe.attrib, report_xml.attrib)
+        self.assertDictEqual(xml_shouldbe.find("testcase").attrib, report_xml.find(
+            "testcase").attrib)
+        self.assertEqual(len(xml_shouldbe.findall("testcase")), len(report_xml.findall(
+            "testcase")))
 
     def test_junit_multiple(self):
         str_should_be = '<testsuite failures="2" tests="7" errors="1" skipped="1">\n\
-    <testcase classname="test-case-A1" name="unknown" time="20"></testcase>\n\
-    <testcase classname="test-case-A2" name="unknown" time="50"></testcase>\n\
-    <testcase classname="test-case-A3" name="unknown" time="120"></testcase>\n\
-    <testcase classname="test-case-A4" name="unknown" time="120">\n\
-        <failure message="unknown"></failure>\n\
-    </testcase>\n\
-    <testcase classname="test-case-A5" name="unknown" time="1">\n\
-        <skipped></skipped>\n\
-    </testcase>\n\
-    <testcase classname="test-case-A6" name="unknown" time="2">\n\
-        <error message="unknown"></error>\n\
-    </testcase>\n\
-    <testcase classname="test-case-A4" name="unknown" time="1220">\n\
-        <failure message="WIN blue screen"></failure>\n\
-    </testcase>\n\
-</testsuite>'
+            <testcase classname="test-case-A1" name="unknown" time="20"></testcase>\n\
+            <testcase classname="test-case-A2" name="unknown" time="50"></testcase>\n\
+            <testcase classname="test-case-A3" name="unknown" time="120"></testcase>\n\
+            <testcase classname="test-case-A4" name="unknown" time="120">\n\
+                <failure message="unknown"></failure>\n\
+            </testcase>\n\
+            <testcase classname="test-case-A5" name="unknown" time="1">\n\
+                <skipped></skipped>\n\
+            </testcase>\n\
+            <testcase classname="test-case-A6" name="unknown" time="2">\n\
+                <error message="unknown"></error>\n\
+            </testcase>\n\
+            <testcase classname="test-case-A4" name="unknown" time="1220">\n\
+                <failure message="WIN blue screen"></failure>\n\
+            </testcase>\n\
+        </testsuite>'
+        shouldbe_xml = ET.fromstring(str_should_be)
         results = ResultList()
         results.append(Result({"testcase": "test-case-A1", "verdict": "PASS", "duration": 20}))
         results.append(Result({"testcase": "test-case-A2", "verdict": "PASS", "duration": 50}))
@@ -183,70 +194,95 @@ class ReportCase(unittest.TestCase):
         results.append(Result({"testcase": "test-case-A6",
                                "verdict": "INCONCLUSIVE", "reason": "unknown", "duration": 2}))
         results.append(
-            Result({"testcase": "test-case-A4", "verdict": "FAIL",
-                    "reason": "WIN blue screen", "duration": 1220}))
+            Result({"testcase": "test-case-A4",
+                    "verdict": "FAIL", "reason": "WIN blue screen", "duration": 1220}))
         junit = ReportJunit(results)
-        string = junit.to_string()
-        self.assertEqual(string, str_should_be)
+        str_report = junit.to_string()
+        is_xml = ET.fromstring(str_report)
+        self.assertDictEqual(is_xml.attrib, {"failures": "2", "tests": "7", "errors": "1",
+                                             "skipped": "1"})
+        self.assertEqual(len(is_xml.findall("testcase")), len(shouldbe_xml.findall("testcase")))
+        self.assertEqual(len(is_xml.findall("failure")), len(shouldbe_xml.findall("failure")))
+        self.assertEqual(len(is_xml.findall("skipped")), len(shouldbe_xml.findall("skipped")))
+        self.assertEqual(len(is_xml.findall("error")), len(shouldbe_xml.findall("error")))
 
     def test_junit_hex_escape_support(self):
         reprstring = hex_escape_str(b'\x00\x00\x00\x00\x00\x00\x01\xc8')
         str_should_be = '<testsuite failures="1" tests="1" errors="0" skipped="0">\n\
-    <testcase classname="test-case-A1" name="unknown" time="20">\n\
-        <failure message="' + reprstring + '"></failure>\n\
-    </testcase>\n\
-</testsuite>'
+            <testcase classname="test-case-A1" name="unknown" time="20">\n\
+                <failure message="' + reprstring + '"></failure>\n\
+            </testcase>\n\
+        </testsuite>'
         results = ResultList()
         results.append(Result({"testcase": "test-case-A1", "verdict": "FAIL",
                                "reason": b'\x00\x00\x00\x00\x00\x00\x01\xc8', "duration": 20}))
         junit = ReportJunit(results)
-        string = junit.to_string()
-        self.assertEqual(string, str_should_be)
+        str_report = junit.to_string()
+        xml_report = ET.fromstring(str_report)
+        shouldbe_report = ET.fromstring(str_should_be)
+        self.assertDictEqual(xml_report.attrib, shouldbe_report.attrib)
+        reported_tc = xml_report.find("testcase")
+        failure_reason = reported_tc.find("failure")
+        required_tc = shouldbe_report.find("testcase")
+        required_reason = required_tc.find("failure")
+        self.assertTrue(required_reason.attrib["message"] == failure_reason.attrib["message"])
 
     def test_junit_hides(self):
         str_should_be1 = '<testsuite failures="0" tests="3" errors="0" skipped="0">\n\
-    <testcase classname="test-case-A1" name="unknown" time="20"></testcase>\n\
-    <testcase classname="test-case-A4" name="unknown" time="120"></testcase>\n\
-    <testcase classname="test-case-A6" name="unknown" time="2"></testcase>\n\
-</testsuite>'
+            <testcase classname="test-case-A1" name="unknown" time="20"></testcase>\n\
+            <testcase classname="test-case-A4" name="unknown" time="120"></testcase>\n\
+            <testcase classname="test-case-A6" name="unknown" time="2"></testcase>\n\
+        </testsuite>'
         results = ResultList()
         results.append(Result({"testcase": "test-case-A1", "verdict": "PASS", "duration": 20}))
-        failres = Result({"testcase": "test-case-A4", "verdict": "FAIL",
-                          "reason": "unknown", "duration": 120})
+        failres = Result({"testcase": "test-case-A4", "verdict": "FAIL", "reason": "unknown",
+                          "duration": 120})
         failres.retries_left = 1
         results.append(failres)
         results.append(
             Result({"testcase": "test-case-A4", "verdict": "PASS", "duration": 120}))
-        incres = Result({"testcase": "test-case-A6", "verdict": "INCONCLUSIVE",
+        incres = Result({"testcase": "test-case-A6",
+                         "verdict": "INCONCLUSIVE",
                          "reason": "unknown", "duration": 2})
         incres.retries_left = 1
         results.append(incres)
         results.append(Result({"testcase": "test-case-A6", "verdict": "PASS", "duration": 2}))
 
         junit = ReportJunit(results)
-        string = junit.to_string()
-        self.assertEqual(string, str_should_be1)
+        str_report = junit.to_string()
+        report_xml = ET.fromstring(str_report)
+        shouldbe_xml = ET.fromstring(str_should_be1)
+        self.assertDictEqual(report_xml.attrib, shouldbe_xml.attrib)
+        self.assertEqual(len(report_xml.findall("testcase")), len(shouldbe_xml.findall("testcase")))
 
         str_should_be2 = '<testsuite failures="0" tests="3" errors="1" skipped="0">\n\
-    <testcase classname="test-case-A1" name="unknown" time="20"></testcase>\n\
-    <testcase classname="test-case-A4" name="unknown" time="12"></testcase>\n\
-    <testcase classname="test-case-A6" name="unknown" time="2">\n\
-        <error message="unknown"></error>\n\
-    </testcase>\n\
-</testsuite>'
+            <testcase classname="test-case-A1" name="unknown" time="20"></testcase>\n\
+            <testcase classname="test-case-A4" name="unknown" time="12"></testcase>\n\
+            <testcase classname="test-case-A6" name="unknown" time="2">\n\
+                <error message="unknown"></error>\n\
+            </testcase>\n\
+        </testsuite>'
         results = ResultList()
         results.append(Result({"testcase": "test-case-A1", "verdict": "PASS", "duration": 20}))
-        failres = Result({"testcase": "test-case-A4", "verdict": "FAIL",
-                          "reason": "unknown", "duration": 120})
+        failres = Result({"testcase": "test-case-A4",
+                          "verdict": "FAIL", "reason": "unknown", "duration": 120})
         failres.retries_left = 1
         results.append(failres)
         results.append(Result({"testcase": "test-case-A4", "verdict": "PASS", "duration": 12}))
         results.append(
-            Result({"testcase": "test-case-A6", "verdict": "INCONCLUSIVE",
-                    "reason": "unknown", "duration": 2}))
+            Result({"testcase": "test-case-A6",
+                    "verdict": "INCONCLUSIVE", "reason": "unknown", "duration": 2}))
         junit = ReportJunit(results)
-        string = junit.to_string()
-        self.assertEqual(string, str_should_be2)
+        str_report = junit.to_string()
+        report_xml = ET.fromstring(str_report)
+        shouldbe_xml = ET.fromstring(str_should_be2)
+        self.assertDictEqual(report_xml.attrib, shouldbe_xml.attrib)
+        self.assertEqual(len(report_xml.findall("testcase")), len(shouldbe_xml.findall("testcase")))
+        errors = []
+        for elem in report_xml.findall("testcase"):
+            if elem.find("error") is not None:
+                errors.append(elem)
+        self.assertEqual(len(errors), 1)
 
     """
     ReportHtml tests

@@ -23,7 +23,7 @@ import time
 import types
 from collections import deque
 from threading import Thread, Event, Semaphore
-
+from six import string_types
 
 import icetea_lib.LogManager as LogManager
 from icetea_lib.CliAsyncResponse import CliAsyncResponse
@@ -459,7 +459,7 @@ class Dut(object):
         :param kwargs: Configurations (wait, timeout) which will be used when string mode is in use.
         :return: CliResponse, which contains all received data from Dut and parsed retcode.
         """
-        if isinstance(req, basestring):
+        if isinstance(req, string_types):
             # backward compatible
             timeout = 50 # Use same default timeout as bench.py
             wait = True

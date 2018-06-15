@@ -9,7 +9,8 @@ properties ([
             daysToKeepStr: '30',
             numToKeepStr: '100'
         )
-    )
+    ),
+    disableConcurrentBuilds()
 ])
 
 
@@ -28,6 +29,7 @@ timestamps {
                         def pipeline = load "pipeline.groovy"
 
                         pipeline.baseBuild('linux')
+                        pipeline.py3LinuxBuild()
                     }
 
                     // clean up

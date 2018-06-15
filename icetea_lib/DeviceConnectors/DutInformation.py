@@ -66,17 +66,20 @@ class DutInformationList(object):
 
     def get_uniq_list_dutmodels(self):
         """
-        Gets a list of dut models in this TC.
-
+        Gets a list of dut models in this TC
         :return: List of dut models in this TC. Empty list if information is not available.
         """
         models = []
         if self.dutinformations:
             for info in self.dutinformations:
                 models.append(info.platform)
-            unique_models = list(set(models))
-            return unique_models
+            seen = []
+            for item in models:
+                if item not in seen:
+                    seen.append(item)
+            return seen
         return models
+
 
     def get_resource_ids(self):
         """
