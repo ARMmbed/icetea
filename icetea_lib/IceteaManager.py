@@ -26,6 +26,7 @@ correct parameters etc.
 import json
 import sys
 import shutil
+import six
 import os
 
 
@@ -73,6 +74,7 @@ class ExitCodes:
     EXIT_INCONC = 3
 
 
+@six.add_metaclass(Singleton)
 class TCMetaSchema(object):
     """
     Singleton metadata schema object.
