@@ -26,6 +26,7 @@ import unittest
 import mock
 from icetea_lib.IceteaManager import IceteaManager, ExitCodes
 from icetea_lib.TestSuite.TestSuite import SuiteException
+from icetea_lib.tools.tools import IS_PYTHON3
 
 
 class MockResults(object):
@@ -301,7 +302,7 @@ class IceteaManagerTestcase(unittest.TestCase):
                                  "test/tests", "-s"], stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, _ = proc.communicate()
-        self.assertTrue(re.search("This is a failing test case", output))
+        self.assertTrue(re.search(b"This is a failing test case", output))
 
     def test_list_json_output(self):
         self.maxDiff = None
@@ -341,7 +342,9 @@ class IceteaManagerTestcase(unittest.TestCase):
                                 stderr=subprocess.PIPE)
 
         output, _ = proc.communicate()
-        output = output.rstrip("\n")
+        output = output.rstrip(b"\n")
+        if IS_PYTHON3:
+            output = output.decode("utf-8")
         self.assertDictEqual(expected_output[0], json.loads(output)[0])
 
     def test_list_export_to_suite(self):
@@ -355,7 +358,7 @@ class IceteaManagerTestcase(unittest.TestCase):
         output, _ = proc.communicate()
         with open("test_suite.json", "r") as file_handle:
             read_data = file_handle.read()
-        self.assertEqual(expected_call, read_data)
+        self.assertDictEqual(json.loads(expected_call), json.loads(read_data))
 
 
 if __name__ == '__main__':

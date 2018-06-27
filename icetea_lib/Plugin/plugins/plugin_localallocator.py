@@ -15,7 +15,7 @@ limitations under the License.
 
 
 from icetea_lib.Plugin.PluginBase import RunPluginBase
-from LocalAllocator import LocalAllocator
+from icetea_lib.Plugin.plugins.LocalAllocator import LocalAllocator
 
 class LocalAllocatorPlugin(RunPluginBase):
     def __init__(self):

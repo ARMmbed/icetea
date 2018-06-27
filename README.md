@@ -4,6 +4,9 @@
 with python 2.7. It is generally used to verify the ARM mbed
 IoT Device Platform provides the operating system and cloud services.
 
+Python 3 is preliminarily supported, but there might be some
+compatibility issues that will be fixed as they are found.
+
 When testing [`mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
 *Icetea* allows you to execute commands remotely via
 the command line interface in board (`DUT`).
@@ -96,7 +99,7 @@ To print the help page:
 
 `icetea --help`
 
-All cli parameters are described in [icetea.md](doc/icetea.md)
+All cli parameters are described in [Icetea.md](doc/Icetea.md)
 
 To list all local testcases from the `./testcases` subfolder:
 

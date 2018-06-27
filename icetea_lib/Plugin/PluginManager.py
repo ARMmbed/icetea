@@ -20,7 +20,7 @@ import sys
 import os
 
 from icetea_lib.Plugin.PluginBase import PluginTypes, PluginBase, RunPluginBase
-from plugins.default_plugins import default_plugins  # pylint: disable=relative-import
+from icetea_lib.Plugin.plugins.default_plugins import default_plugins
 
 
 class PluginException(Exception):

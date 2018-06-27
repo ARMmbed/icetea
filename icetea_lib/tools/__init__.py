@@ -21,9 +21,3 @@ from icetea_lib.tools.tools import recursive_dictionary_get, get_pkg_version
 from icetea_lib.tools.tools import sha1_of_file, strip_escape, load_class
 from icetea_lib.tools.tools import remove_empty_from_dict, Singleton
 from icetea_lib.tools.tools import UNIXPLATFORM, IS_PYTHON3, set_or_delete, split_by_n
-
-import file
-import file.SessionFiles
-import HTTP
-import HTTP.Api
-import asserts
