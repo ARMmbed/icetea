@@ -41,6 +41,7 @@ Linux:
 
 OS X:
 * [XCode developer tools](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/)
+* [MacPorts](https://www.macports.org/install.php)
 * lxml as described
 [here](http://lxml.de/installation.html#installation):
 `STATIC_DEPS=true sudo pip install lxml`
