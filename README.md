@@ -98,7 +98,7 @@ To print the help page:
 
 `icetea --help`
 
-All cli parameters are described in [icetea.md](doc/icetea.md)
+All cli parameters are described in [Icetea.md](doc/Icetea.md)
 
 To list all local testcases from the `./testcases` subfolder:
 
