@@ -22,6 +22,11 @@ def build_docs(location="doc-source", target=None, library="icetea_lib"):
     except CalledProcessError as error:
         print("Documentation build failed. Return code: {}".format(error.returncode))
         return 3
+    except OSError as error:
+        print(error)
+        print("Documentation build failed. Are you missing Sphinx? Please install sphinx using "
+              "'pip install sphinx'.")
+        return 3
 
     target = "doc{}html".format(os.sep) if target is None else target
     cmd_ar = ["sphinx-build", "-b", "html", location, target]
@@ -30,6 +35,11 @@ def build_docs(location="doc-source", target=None, library="icetea_lib"):
         retcode = check_call(cmd_ar)
     except CalledProcessError as error:
         print("Documentation build failed. Return code: {}".format(error.returncode))
+        return 3
+    except OSError as error:
+        print(error)
+        print("Documentation build failed. Are you missing Sphinx? Please install sphinx using "
+              "'pip install sphinx'.")
         return 3
     print("Documentation built.")
     return 0
