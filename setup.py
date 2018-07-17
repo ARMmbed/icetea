@@ -22,6 +22,23 @@ DESCRIPTION = "Icetea - test framework"
 OWNER_NAMES = 'Jussi Vatjus-Anttila'
 OWNER_EMAILS = 'jussi.vatjus-anttila@arm.com'
 
+INSTALL_REQUIRES = [
+          "prettytable",
+          "requests",
+          "yattag",
+          "pyserial>2.5",
+          "jsonmerge",
+          "psutil",
+          "mbed-ls==1.4.2",
+          "semver",
+          "mbed-flasher==0.8.0",
+          "six"
+      ]
+if sys.version_info.major == "3":
+    INSTALL_REQUIRES.append("pyshark")
+else:
+    INSTALL_REQUIRES.append("pyshark-legacy")
+
 
 # Utility function to cat in a file (used for the README)
 def read(fname):
@@ -51,17 +68,5 @@ setup(name='icetea',
               "icetea=icetea_lib:icetea_main"
           ]
       },
-      install_requires=[
-          "prettytable",
-          "requests",
-          "yattag",
-          "pyserial>2.5",
-          "jsonmerge",
-          "pyshark",
-          "psutil",
-          "mbed-ls==1.4.2",
-          "semver",
-          "mbed-flasher==0.8.0",
-          "six"
-      ]
+      install_requires=INSTALL_REQUIRES
     )
