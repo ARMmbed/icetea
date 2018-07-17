@@ -21,7 +21,7 @@ import os
 
 from yattag import Doc
 
-from icetea_lib.tools.tools import hex_escape_str
+from icetea_lib.tools.tools import hex_escape_str, get_fw_version, get_fw_name
 from icetea_lib.Reports.ReportBase import ReportBase
 
 
@@ -110,6 +110,11 @@ class ReportHtml(ReportBase):
                             text('Duration:')
                         with tag('td'):
                             text(self.duration_to_string(self.summary["duration"]))
+                    with tag('tr'):
+                        with tag('th'):
+                            text('{} version:'.format(get_fw_name()))
+                        with tag('td'):
+                            text(get_fw_version())
 
                 with tag('table', style='border-collapse: collapse;'):
                     with tag('tr'):
