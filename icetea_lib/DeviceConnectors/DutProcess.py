@@ -16,7 +16,6 @@ DutProcess module.
 """
 
 from icetea_lib.DeviceConnectors.Dut import Dut, DutConnectionError
-from icetea_lib.TestStepError import TestStepError, TestStepFail
 from icetea_lib.GenericProcess import GenericProcess
 from icetea_lib.DeviceConnectors.DutInformation import DutInformation
 from icetea_lib.build.build import Build
@@ -82,12 +81,7 @@ class DutProcess(Dut, GenericProcess):
 
         :return: Nothing
         """
-        if self.is_alive():
-            self.logger.info("Process alive, trying to exit", extra={'type': 'XXX'})
-            try:
-                self.execute_command("exit", wait=False)
-            except (TestStepError, TestStepFail):
-                self.logger.warning("exit timed out", extra={'type': 'XXX'})
+        pass
 
     def close_connection(self):
         """
