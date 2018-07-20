@@ -181,6 +181,7 @@ Supported cli parameters are described below:
 | --kill_putty | Kill old putty/kitty processes |  |  |  |
 | --forceflash | Force flashing of hardware devices if binary is given. |  |  | Mutually exclusive with forceflash_once |
 | --forceflash_once | Force flashing of hardware devices if binary is given, but only once. |  |  | Mutually exclusive with forceflash |
+| --sync_start | Make sure dut applications have started using 'echo' command. | Boolean | False |  |
 
 ## Results
 

@@ -203,6 +203,9 @@ def get_base_arguments(parser):
                         help="Output results of --list as json instead of a table.")
     parser.add_argument("--export", default=None, metavar="SUITE_FILE_NAME",
                         help="Export list into suite template file.")
+    parser.add_argument("--sync_start", default=False, action="store_true",
+                        help="Use echo-command to try and make sure duts have "
+                             "started before proceeding with test.")
     return parser
 
 

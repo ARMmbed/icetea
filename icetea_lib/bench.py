@@ -23,6 +23,8 @@ import os
 import sys
 import time
 import traceback
+from threading import Event
+import uuid
 import json
 from pprint import pformat
 import subprocess
@@ -41,6 +43,8 @@ from icetea_lib.arguments import get_parser
 from icetea_lib.arguments import get_base_arguments
 from icetea_lib.arguments import get_tc_arguments
 from icetea_lib.build import Build
+from icetea_lib.Events.EventMatcher import EventMatcher
+from icetea_lib.Events.Generics import EventTypes
 
 from icetea_lib.GenericProcess import GenericProcess
 from icetea_lib.GitTool import get_git_info
@@ -773,6 +777,43 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         """
         return self.config["requirements"]["duts"]["*"]["type"] == "hardware"
 
+    def sync_cli(self, dut, generator_function, generator_function_args=None, retries=5):
+        """
+        Synchronize cli for a dut using custom function.
+
+        :param dut: Dut
+        :param generator_function: callable
+        :param generator_function_args: list or arguments for generator_function
+        :param retries: int
+        :raises TestStepError: If synchronization of dut fails.
+        """
+        generator_args = generator_function_args if generator_function_args else []
+        init_done_flag = Event()
+        matcher = None
+        for _ in range(0, retries):
+            cmd_tuple = generator_function(generator_args)
+            command = cmd_tuple[0]
+            retval = cmd_tuple[1]
+            self.logger.debug("Sending %s. Expecting %s", command, retval)
+            matcher = EventMatcher(EventTypes.DUT_LINE_RECEIVED,
+                                   retval, dut, init_done_flag)
+            self.command(dut.index, command, timeout=5,
+                         asynchronous=True, wait=False,
+                         report_cmd_fail=False)
+            if init_done_flag.wait(5):
+                self.logger.debug("Synchronization complete.")
+                break
+            else:
+                self.logger.debug("Retrying...")
+                matcher.forget()
+        if not init_done_flag.isSet():
+            self.logger.error("Command line interface synchronization failed.")
+            dut.close_dut()
+            dut.close_connection()
+            matcher.forget()
+            raise TestStepError("Synhronization failed.")
+        matcher.forget()
+
     # Internal function to Initialize cli dut's
     def __init_duts(self):
         """
@@ -821,7 +862,13 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
                                     " started before we started reading? Try adding --reset"
                                     " to your run command.")
                 raise DutConnectionError("Dut cli failed to initialize within set timeout!")
-
+            if self.args.sync_start:
+                self.logger.debug("Synchronizing the command line interface.")
+                try:
+                    self.sync_cli(dut, self.get_echo_uuid)
+                except TestStepError:
+                    raise DutConnectionError("Synchronized start "
+                                             "for dut {} failed!".format(dut.index))
             self.logger.debug("Cli initialized.")
 
         # @TODO: Refactor this into some more sensible way
