@@ -777,6 +777,17 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         """
         return self.config["requirements"]["duts"]["*"]["type"] == "hardware"
 
+    @staticmethod
+    def get_echo_uuid(*args):  # pylint: disable=unused-argument
+        """
+        Get a echo command for start synchronization.
+
+        :param args: Nothing needed here.
+        :return: tuple ("echo <uuid>, <uuid>")
+        """
+        uid = str(uuid.uuid1())
+        return ("echo {}".format(uid), uid)
+
     def sync_cli(self, dut, generator_function, generator_function_args=None, retries=5):
         """
         Synchronize cli for a dut using custom function.
