@@ -23,17 +23,17 @@ OWNER_NAMES = 'Jussi Vatjus-Anttila'
 OWNER_EMAILS = 'jussi.vatjus-anttila@arm.com'
 
 INSTALL_REQUIRES = [
-          "prettytable",
-          "requests",
-          "yattag",
-          "pyserial>2.5",
-          "jsonmerge",
-          "psutil",
-          "mbed-ls==1.4.2",
-          "semver",
-          "mbed-flasher==0.8.0",
-          "six"
-      ]
+    "prettytable",
+    "requests",
+    "yattag",
+    "pyserial>2.5",
+    "jsonmerge",
+    "psutil",
+    "mbed-ls==1.4.2",
+    "semver",
+    "mbed-flasher==0.8.0",
+    "six"
+]
 if sys.version_info.major == "3":
     INSTALL_REQUIRES.append("pyshark")
 else:
@@ -46,7 +46,7 @@ def read(fname):
 
 
 setup(name='icetea',
-      version='1.0.0',
+      version='1.0.0-rc.8',
       description=DESCRIPTION,
       long_description=read('README.md'),
       author=OWNER_NAMES,
@@ -55,7 +55,7 @@ setup(name='icetea',
       maintainer_email=OWNER_EMAILS,
       url='https://github.com/ARMmbed/icetea.git',
       packages=find_packages(include=["icetea_lib.*", "icetea_lib"]),
-      package_data={'': ['tc_schema.json']},
+      data_files=[('icetea_lib', ['icetea_lib/tc_schema.json'])],
       include_package_data=True,
       license="(R) ARM",
       tests_require=["coverage", "netifaces", "mock"],
@@ -69,4 +69,4 @@ setup(name='icetea',
           ]
       },
       install_requires=INSTALL_REQUIRES
-    )
+      )
