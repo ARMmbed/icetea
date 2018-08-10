@@ -23,17 +23,17 @@ OWNER_NAMES = 'Jussi Vatjus-Anttila'
 OWNER_EMAILS = 'jussi.vatjus-anttila@arm.com'
 
 INSTALL_REQUIRES = [
-    "prettytable",
-    "requests",
-    "yattag",
-    "pyserial>2.5",
-    "jsonmerge",
-    "psutil",
-    "mbed-ls==1.4.2",
-    "semver",
-    "mbed-flasher==0.8.0",
-    "six"
-]
+          "prettytable",
+          "requests",
+          "yattag",
+          "pyserial>2.5",
+          "jsonmerge",
+          "psutil",
+          "mbed-ls==1.4.2",
+          "semver",
+          "mbed-flasher==0.8.0",
+          "six"
+      ]
 if sys.version_info.major == "3":
     INSTALL_REQUIRES.append("pyshark")
 else:
@@ -69,4 +69,4 @@ setup(name='icetea',
           ]
       },
       install_requires=INSTALL_REQUIRES
-      )
+    )
