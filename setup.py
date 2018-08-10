@@ -46,7 +46,7 @@ def read(fname):
 
 
 setup(name='icetea',
-      version='1.0.0',
+      version='1.0.0-rc2',
       description=DESCRIPTION,
       long_description=read('README.md'),
       author=OWNER_NAMES,
@@ -55,7 +55,7 @@ setup(name='icetea',
       maintainer_email=OWNER_EMAILS,
       url='https://github.com/ARMmbed/icetea.git',
       packages=find_packages(include=["icetea_lib.*", "icetea_lib"]),
-      package_data={'': ['tc_schema.json']},
+      data_files=[('icetea_lib', ['icetea_lib/tc_schema.json'])],
       include_package_data=True,
       license="(R) ARM",
       tests_require=["coverage", "netifaces", "mock"],

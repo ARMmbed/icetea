@@ -63,7 +63,7 @@ def get_fw_version():
         except Exception:
             pass
     else:
-        version = pkg.version
+        version = "-rc".join(pkg.version.split("rc"))
     return version
 
 
