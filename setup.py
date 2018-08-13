@@ -29,9 +29,9 @@ INSTALL_REQUIRES = [
           "pyserial>2.5",
           "jsonmerge",
           "psutil",
-          "mbed-ls==1.4.2",
+          "mbed-ls>=1.4.2,==1.*",
           "semver",
-          "mbed-flasher==0.8.0",
+          "mbed-flasher==0.9.*",
           "six"
       ]
 if sys.version_info.major == "3":
