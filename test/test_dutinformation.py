@@ -50,6 +50,33 @@ class DutInfoTestcase(unittest.TestCase):
     def test_get_resourceids(self):
         self.assertListEqual(self.testlist.get_resource_ids(), ['12345', '23456', '34567'])
 
+    def test_cache(self):
+        # pylint: disable=W0212
+        DutInformationList._cache = dict()
+        self.assertDictEqual(DutInformationList._cache, dict())
+
+        DutInformationList.push_resource_cache("test", {"a": "1"})
+        self.assertDictEqual(DutInformationList._cache, {"test": {"a": "1"}})
+
+        DutInformationList.get_resource_cache("test")["b"] = "2"
+        self.assertDictEqual(DutInformationList._cache, {"test": {"a": "1", "b": "2"}})
+
+        DutInformationList.push_resource_cache("test", {"a": "2"})
+        self.assertDictEqual(DutInformationList._cache, {"test": {"a": "2", "b": "2"}})
+
+        DutInformationList._cache = dict()
+        self.assertDictEqual(DutInformationList._cache, dict())
+
+    def test_build_sha(self):
+        # pylint: disable=W0212
+        DutInformationList._cache = dict()
+        info = DutInformation("plat1", "12345", "1", "vendor")
+        self.assertEqual(info.build_binary_sha1, None)
+        info.build_binary_sha1 = "123"
+        self.assertEqual(info.build_binary_sha1, "123")
+        DutInformationList._cache = dict()
+
+
 
 if __name__ == '__main__':
     unittest.main()

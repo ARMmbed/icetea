@@ -125,6 +125,33 @@ class DutSerialTestcase(unittest.TestCase):
             with self.assertRaises(DutConnectionError):
                 dut.flash("try4")
 
+    @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
+    @mock.patch("icetea_lib.DeviceConnectors.DutSerial.inspect")
+    @mock.patch("icetea_lib.DeviceConnectors.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.DeviceConnectors.DutSerial.Flash")
+    @mock.patch("icetea_lib.DeviceConnectors.DutSerial.Build")
+    def test_flash_skip_flash(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
+                              mock_bench_logger):
+        mock_build_object = mock.MagicMock()
+        mock_build_object.get_file = mock.MagicMock(return_value="Thisbin")
+        mock_build.init = mock.MagicMock(return_value=mock_build_object)
+        mock_inspect.getargspec = mock.MagicMock()
+        mock_inspect.getargspec.return_value = MockArgspec(["logger"])
+        mock_logger_for_flasher = mock.MagicMock()
+        mocked_logger.return_value = mock_logger_for_flasher
+        mock_flasher_object = mock.MagicMock()
+        mock_flasher.return_value = mock_flasher_object
+        mock_flasher_object.flash = mock.MagicMock()
+        mock_flasher_object.flash.side_effect = [0]
+        dut = DutSerial(port="test", config={
+            "allocated": {"target_id": "thing"},
+            "application": "thing"
+        })
+        self.assertTrue(dut.flash("try"))
+        self.assertTrue(dut.flash("try"))
+        self.assertTrue(dut.flash("try"))
+        self.assertEqual(mock_flasher_object.flash.call_count, 1)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -231,63 +231,70 @@ class DutSerial(Dut):
         """
         return self.config.get('allocated').get('target_id')
 
-    def flash(self, binary):  # pylint: disable=too-many-branches
+    def flash(self, binary, forceflash=None):  # pylint: disable=too-many-branches
         """
         Flash a binary to the target device using mbed-flasher.
 
         :param binary: Binary to flash to device
-        :param target_id: Target device id
-        :param dev: Device
+        :param forceflash: Boolean
         :return: False if an error was encountered during flashing. True if flasher retcode == 0
-        :raises: ImportError if mbed-flasher not installed
+        :raises: ImportError if mbed-flasher not installed.
+        :raises: DutConnectionError if Build initialization fails (binary not found usually).
         """
         error_occured = False
         if Flash is None:
             self.logger.warning("mbed-flasher not installed. "
                                 "(https://github.com/ARMmbed/mbed-flasher)")
             raise ImportError("Mbed-flasher not installed.")
+
+        try:
+            # Create build object.
+            self.build = Build.init(binary)
+        except NotImplementedError as error:
+            self.logger.error("Build initialization failed. Check your build location.")
+            self.logger.debug(error)
+            raise DutConnectionError(error)
+
+        # Check if flashing is needed. Depends on forceflash-option.
+        if not self._flash_needed(forceflash=forceflash):
+            self.logger.info("Skipping flash, not needed.")
+            return True
+
+        if "logger" in inspect.getargspec(Flash.__init__).args:
+            # get_resourceprovider_logger returns previous logger if one already exists.
+            # If no logger with name mbed-flasher exists, a new one is created.
+            logger = get_resourceprovider_logger("mbed-flasher", "FLS")
+            flasher = Flash(logger=logger)
         else:
-            if "logger" in inspect.getargspec(Flash.__init__).args:
-                # get_resourceprovider_logger returns previous logger if one already exists.
-                # If no logger with name mbed-flasher exists, a new one is created.
-                logger = get_resourceprovider_logger("mbed-flasher", "FLS")
-                flasher = Flash(logger=logger)
+            # Backwards compatibility for older mbed-flasher versions.
+            flasher = Flash()
+        retcode = None
+        try:
+            if self.device:
+                buildfile = self.build.get_file()
+                if not buildfile:
+                    raise DutConnectionError("Binary {} not found".format(buildfile))
+                self.logger.info('Flashing dev: %s', self.device['target_id'])
+                target_id = self.device.get("target_id")
+                retcode = flasher.flash(build=buildfile, target_id=target_id,
+                                        device_mapping_table=[self.device])
             else:
-                # Backwards compatibility for older mbed-flasher versions.
-                flasher = Flash()
-            retcode = None
-            try:
-                if self.device:
-                    try:
-                        self.build = Build.init(binary)
-                    except NotImplementedError as error:
-                        self.logger.error("Build initialization failed. "
-                                          "Check your build location.")
-                        self.logger.debug(error)
-                        raise DutConnectionError(error)
-                    buildfile = self.build.get_file()
-                    if not buildfile:
-                        raise DutConnectionError("Binary {} not found".format(buildfile))
-                    self.logger.info('Flashing dev: %s', self.device['target_id'])
-                    target_id = self.device.get("target_id")
-                    retcode = flasher.flash(build=buildfile, target_id=target_id,
-                                            device_mapping_table=[self.device])
-                else:
-                    error_occured = True
-            except FLASHER_ERRORS as error:
-                if error.__class__ == NotImplementedError:
-                    self.logger.error("Flashing not supported for this platform!")
-                elif error.__class__ == SyntaxError:
-                    self.logger.error("target_id required by mbed-flasher!")
-                if FlashError is not None:
-                    if error.__class__ == FlashError:
-                        self.logger.error("Flasher raised the following error: %s Error code: %i",
-                                          error.message, error.return_code)
-                raise DutConnectionError(error)
-            else:
-                if retcode != 0:
-                    error_occured = True
-            return not error_occured
+                error_occured = True
+        except FLASHER_ERRORS as error:
+            if error.__class__ == NotImplementedError:
+                self.logger.error("Flashing not supported for this platform!")
+            elif error.__class__ == SyntaxError:
+                self.logger.error("target_id required by mbed-flasher!")
+            if FlashError is not None:
+                if error.__class__ == FlashError:
+                    self.logger.error("Flasher raised the following error: %s Error code: %i",
+                                      error.message, error.return_code)
+            raise DutConnectionError(error)
+        if retcode != 0:
+            error_occured = True
+        else:
+            self.dutinformation.build_binary_sha1 = self.build.sha1
+        return not error_occured
 
     def get_info(self):
         """
@@ -527,6 +534,16 @@ class DutSerial(Dut):
         """
         return self.config
 
-    def _flash_needed(self):
-        """Not implemented"""
-        pass
+    def _flash_needed(self, **kwargs):
+        """
+        Check if flashing is needed. Flashing can be skipped if resource binary_sha1 attribute
+        matches build sha 1 and forceflash is not True.
+
+        :param kwargs: Keyword arguments (forceflash: Boolean)
+        :return: Boolean
+        """
+        forceflash = kwargs.get("forceflash", False)
+        cur_binary_sha1 = self.dutinformation.build_binary_sha1
+        if not forceflash and self.build.sha1 == cur_binary_sha1:
+            return False
+        return True
