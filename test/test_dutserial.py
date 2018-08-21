@@ -142,7 +142,7 @@ class DutSerialTestcase(unittest.TestCase):
         mock_flasher_object = mock.MagicMock()
         mock_flasher.return_value = mock_flasher_object
         mock_flasher_object.flash = mock.MagicMock()
-        mock_flasher_object.flash.side_effect = [0]
+        mock_flasher_object.flash.return_value = 0
         dut = DutSerial(port="test", config={
             "allocated": {"target_id": "thing"},
             "application": "thing"
@@ -151,6 +151,8 @@ class DutSerialTestcase(unittest.TestCase):
         self.assertTrue(dut.flash("try"))
         self.assertTrue(dut.flash("try"))
         self.assertEqual(mock_flasher_object.flash.call_count, 1)
+        self.assertTrue(dut.flash("try", forceflash=True))
+        self.assertEqual(mock_flasher_object.flash.call_count, 2)
 
 
 if __name__ == '__main__':
