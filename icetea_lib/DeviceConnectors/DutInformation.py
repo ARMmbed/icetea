@@ -21,6 +21,9 @@ several helper methods to get some relevant information from it's contents.
 #Disable too many arguments warning, too few public methods warning
 #pylint: disable=R0913,R0903
 
+from jsonmerge import merge
+
+from icetea_lib.ResourceProvider.exceptions import ResourceInitError
 
 
 class DutInformation(object):
@@ -28,12 +31,51 @@ class DutInformation(object):
     DutInformation object.
     Contains fields platform (string), index (int), vendor (string), and build (Build)
     """
-    def __init__(self, platform, resourceid, index="", vendor="", build=None):
+    def __init__(self, platform, resourceid, index="", vendor="", build=None, provider=None):
         self.platform = platform
         self.index = index
         self.resource_id = resourceid
         self.vendor = vendor
         self.build = build
+        self.provider = provider
+        if resourceid:
+            DutInformationList.push_resource_cache(resourceid, self.as_dict())
+
+    def as_dict(self):
+        """
+        Generate a dictionary of the contents of this DutInformation object.
+
+        :return: dict
+        """
+        my_info = {}
+        if self.platform:
+            my_info["model"] = self.platform
+        if self.resource_id:
+            my_info["sn"] = self.resource_id
+        if self.vendor:
+            my_info["vendor"] = self.vendor
+        if self.provider:
+            my_info["provider"] = self.provider
+        return my_info
+
+    @property
+    def build_binary_sha1(self):
+        """
+        Get flashed binary sha1 or None if not flashed yet.
+
+        :return: dict object
+        """
+        cache = DutInformationList.get_resource_cache(self.resource_id)
+        return cache.get("build_binary_sha1")
+
+    @build_binary_sha1.setter
+    def build_binary_sha1(self, value):
+        """
+        Setter for flashed binary sha1.
+
+        :return: Nothing
+        """
+        DutInformationList.push_resource_cache(self.resource_id, {"build_binary_sha1": value})
 
 
 class DutInformationList(object):
@@ -42,6 +84,9 @@ class DutInformationList(object):
     helper methods for getting unique dut models in either string or list format and a list of
     resource ID:s.
     """
+
+    _cache = dict()
+
     def __init__(self, content=None):
         self.dutinformations = content if content else []
 
@@ -80,7 +125,6 @@ class DutInformationList(object):
             return seen
         return models
 
-
     def get_resource_ids(self):
         """
         Get resource ids as a list.
@@ -110,3 +154,32 @@ class DutInformationList(object):
         :return: Length of internal dutinformation list as int
         """
         return len(self.dutinformations)
+
+    @staticmethod
+    def push_resource_cache(resourceid, info):
+        """
+        Cache resource specific information
+
+        :param resourceid: Resource id as string
+        :param info: Dict to push
+        :return: Nothing
+        """
+        if not resourceid:
+            raise ResourceInitError("Resource id missing")
+        if not DutInformationList._cache.get(resourceid):
+            DutInformationList._cache[resourceid] = dict()
+        DutInformationList._cache[resourceid] = merge(DutInformationList._cache[resourceid], info)
+
+    @staticmethod
+    def get_resource_cache(resourceid):
+        """
+        Get a cached dictionary related to an individual resourceid.
+
+        :param resourceid: String resource id.
+        :return: dict
+        """
+        if not resourceid:
+            raise ResourceInitError("Resource id missing")
+        if not DutInformationList._cache.get(resourceid):
+            DutInformationList._cache[resourceid] = dict()
+        return DutInformationList._cache[resourceid]
