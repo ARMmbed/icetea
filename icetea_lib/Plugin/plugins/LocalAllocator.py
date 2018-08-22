@@ -75,7 +75,7 @@ def init_hardware_dut(contextlist, conf, index, args):
         if contextlist.check_flashing_need('hardware',
                                            binary,
                                            args.forceflash):
-            if dut.flash(binary=binary):
+            if dut.flash(binary=binary, forceflash=args.forceflash):
                 contextlist.logger.info('flash ready')
             else:
                 dut.close_dut(False)
