@@ -233,6 +233,16 @@ Get a handle to a DUT with index, see section
 [DUT public API](#dut-public-api) for functions that can
 be accessed using DUT handle.
 
+**self.sync_cli(callable, list, int)**
+The test bench contains a method to make sure that the application is
+synchronized. This is called sync_cli and it can be found in
+[bench.py](icetea_lib/bench.py).
+This can be used to verify that the application is ready to receive commands.
+Icetea itself uses this method to synchronize the cli application
+at the start of a test case. Icetea sends an echo command, asking to echo
+a unique id. This function raises a TestStepError if the synchronization
+fails.
+
 ## Test case errors
 A testcase can take advantage of the built-in error
 types of the Bench class. These are TestStepFail,

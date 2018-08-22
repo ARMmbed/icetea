@@ -340,6 +340,16 @@ class TestVerify(unittest.TestCase):
         bench.add_new_result("fail", 1, 10, test_data)
         self.assertEqual(len(bench._results), 1)
 
+    def test_sync_cli(self):
+        mock_gen = mock.MagicMock(return_value=("val1", "val2"))
+        logger = logging.getLogger('unittest')
+        logger.addHandler(logging.NullHandler())
+        bench = Bench()
+        bench.logger = logger
+        with self.assertRaises(TestStepError):
+            with mock.patch.object(bench, "command"):
+                bench.sync_cli(mock.MagicMock(), mock_gen, retries=1)
+
 
 if __name__=='__main__':
     unittest.main()
