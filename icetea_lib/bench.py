@@ -199,7 +199,7 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
             "compatible": {
                 "framework": {
                     "name": "Icetea",
-                    "version": ">=1.0.0"
+                    "version": ">=1.0.0-rc1"
                 },
                 "automation": {
                     "value": True
