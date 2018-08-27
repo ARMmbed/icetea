@@ -1,7 +1,7 @@
-# Command-line test framework
+# Icetea test framework
 
 *Icetea* is an [mbed](www.mbed.com) test framework written
-with python 2.7. It is generally used to verify the ARM mbed
+with python. It is generally used to verify the ARM mbed
 IoT Device Platform provides the operating system and cloud services.
 
 Python 3 is preliminarily supported, but there might be some
@@ -18,21 +18,8 @@ available [here](doc/README.md).
 
 ## Installation
 
-`> python setup.py install`
+`> pip install icetea`
 
-When installing Icetea, installing to a
-[virtualenv](https://virtualenv.pypa.io/en/stable/installation/) is
-a good idea.
-
-### Required dependencies:
-
-* In case you want to use **local mbed devices**
-  * [mbed-ls](https://github.com/armmbed/mbed-ls)
-    * To enumerate connected boards
-  * [mbed-flasher](https://github.com/ARMmbed/mbed-flasher)
-    * to flash devices automatically
-  * Both of these should be installed automatically by
-  Icetea installation.
 
 **OS specific:**
 
@@ -48,9 +35,10 @@ OS X:
 * lxml as described
 [here](http://lxml.de/installation.html#installation):
 `STATIC_DEPS=true sudo pip install lxml`
-* For documentation install sphinx:
-`sudo port install py27-sphinx`, `sudo port select --set python python27`,
-`sudo port select --set sphinx py27-sphinx`
+* For building documentation install sphinx:
+  * `sudo port install py27-sphinx`
+  * `sudo port select --set python python27`
+  * `sudo port select --set sphinx py27-sphinx`
 
 Windows:
 * python-lxml installation is problematic on Windows since
@@ -221,3 +209,12 @@ Unit tests depend on mock, coverage and netifaces.
 ## License
 
 See the [license](LICENSE) agreement.
+
+
+## Development
+
+**TODO:**
+extract some stuff from here to own md file
+* dev deps installations instructions to separate file
+* icetea own test helps to separate file
+* 
