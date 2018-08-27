@@ -6,8 +6,8 @@ IoT Device Platform provides the operating system and cloud services.
 
 When testing [`Mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
 *Icetea* allows you to execute commands remotely via
-the command line interface in board (`DUT`).
-The interface between the test framework and `DUT` can be
+the [command line interface](https://github.com/ARMmbed/mbed-client-cli)
+in a (`DUT`). The interface between the test framework and `DUT` can be
 for example UART, sockets or for example stdio (process `DUT`).
 
 More detailed documentation and information on deeper details of
