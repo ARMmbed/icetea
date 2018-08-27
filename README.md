@@ -200,4 +200,4 @@ To analyze memory leaks with valgrind:
 
 ### License
 
-See the [license](LICENSE) agreement.
+See the [license](https://github.com/ARMmbed/icetea/blob/master/LICENSE) agreement.
