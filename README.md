@@ -1,11 +1,8 @@
-# Icetea test framework
+## Icetea test framework
 
-*Icetea* is an [mbed](https://www.mbed.com) test framework written
+*Icetea* is an [Mbed](https://www.mbed.com) test framework written
 with python. It is generally used to verify the ARM mbed
 IoT Device Platform provides the operating system and cloud services.
-
-Python 3 is preliminarily supported, but there might be some
-compatibility issues that will be fixed as they are found.
 
 When testing [`Mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
 *Icetea* allows you to execute commands remotely via
@@ -16,7 +13,7 @@ for example UART, sockets or for example stdio (process `DUT`).
 A more detailed description of the *Icetea* concept is
 available [here](doc/README.md).
 
-## Installation
+### Installation
 
 `> pip install icetea`
 
@@ -50,7 +47,7 @@ from pre-built binaries.
 * For documentation install sphinx with pip:
 `pip install sphinx`
 
-### Optional dependencies
+#### Optional dependencies
 
 * If you wish to decorate your console log with all kinds of colors,
 install the coloredlogs module using pip. `pip install coloredlogs`
@@ -61,7 +58,7 @@ install the coloredlogs module using pip. `pip install coloredlogs`
 * [gdb](https://www.gnu.org/software/gdb/)
 
 
-### Installation step-by-step
+#### Installation step-by-step
 
 ```
 git clone https://github.com/ARMmbed/icetea.git
@@ -81,7 +78,7 @@ Log out & log in back to Linux
 This command will add the user 'username' to the 'dialout' group and
 grant the required permissions to the USB ports.
 
-## Usage
+### Usage
 
 To print the help page:
 
@@ -93,7 +90,7 @@ To list all local testcases from the `./testcases` subfolder:
 
 `icetea --list`
 
-## Test Case API
+### Test Case API
 
 To execute a single command line:
 
@@ -112,22 +109,7 @@ arguments[dictionary]   #optional argument list
         timeout=<int>              # timeout, if no retcode receive
 ```
 
-## Documentation
-HTML documentation for Icetea can be built using sphinx. The source
-for the documentation is located in [doc-source](doc-source).
-For installation of sphinx see [installation](#installation).
-
-A build script for the documentation is included in build_docs.py.
-It's a simple python scripts that also generates autodoc api documentation.
-Run the script with:
-
-`python build_docs.py`
-
-Currently similar documentation is available in markdown format in
-[doc](doc). This documentation will be phased out and is not maintained
-as well as the sphinx documentation.
-
-## Examples
+### Examples
 
 **Note:** Following examples uses [`dummyDut`](test/dut/dummyDut.c)
 application. It works in unix systems.
@@ -169,7 +151,29 @@ To analyse memory leaks with valgrind:
 > icetea --tc test_cmdline --tcdir examples --type process --valgrind --valgrind_tool memcheck --bin  ./test/dut/dummyDut
 ```
 
-## Running unit tests with *Icetea*
+### License
+
+See the [license](LICENSE) agreement.
+
+
+### Development
+
+#### Documentation
+HTML documentation for Icetea can be built using sphinx. The source
+for the documentation is located in [doc-source](doc-source).
+For installation of sphinx see [installation](#installation).
+
+A build script for the documentation is included in build_docs.py.
+It's a simple python scripts that also generates autodoc api documentation.
+Run the script with:
+
+`python build_docs.py`
+
+Currently similar documentation is available in markdown format in
+[doc](doc). This documentation will be phased out and is not maintained
+as well as the sphinx documentation.
+
+#### Running unit tests with *Icetea*
 
 To build a test application for DUT and execute the test:
 
@@ -196,7 +200,7 @@ To generate a coverage reports for plugin unit tests run:
 > coverage html --include "icetea_lib/Plugin/plugins/*" --omit "icetea_lib/Plugin/plugins/plugin_tests/*"
 ```
 
-### Dependencies
+#### Dependencies
 
 Unit tests depend on mock, coverage and netifaces.
 
@@ -205,16 +209,3 @@ Unit tests depend on mock, coverage and netifaces.
 > pip install netifaces
 > pip install coverage
 ```
-
-## License
-
-See the [license](LICENSE) agreement.
-
-
-## Development
-
-**TODO:**
-extract some stuff from here to own md file
-* dev deps installations instructions to separate file
-* icetea own test helps to separate file
-* 
