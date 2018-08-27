@@ -1,6 +1,6 @@
 # Icetea test framework
 
-*Icetea* is an [mbed](www.mbed.com) test framework written
+*Icetea* is an [mbed](https://www.mbed.com) test framework written
 with python. It is generally used to verify the ARM mbed
 IoT Device Platform provides the operating system and cloud services.
 
