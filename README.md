@@ -36,17 +36,18 @@ We support both python 2.7 and 3. Some OS specific prerequisites below:
 * OS X
     * [XCode developer tools](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/)
     * [MacPorts](https://www.macports.org/install.php)
-    * lxml as described
-    [here](http://lxml.de/installation.html#installation):
+    * [lxml](http://lxml.de/installation.html#installation):
         `STATIC_DEPS=true sudo pip install lxml`
 
 * Windows
     * python-lxml installation is problematic on Windows since
     it usually requires build tools. It can however be installed
     from pre-built binaries.
-        * Download binary for you system from the internet.
+        * Search for a binary for you system from the internet.
         * Navigate to the directory where you downloaded the
         binary and install it with `pip install <insert_file_name>`
+    * You can follow instructions [here](http://lxml.de/installation.html#installation)
+    instead.
 
 #### Optional
 
@@ -87,6 +88,7 @@ To run all existing test cases from the `examples` folder:
 
 In this example we assume that a compatible board has been connected
 to the computer and an application binary for said board is available.
+The test case mentioned here is available in our github repository.
 
 `> icetea --tc test_cmdline --tcdir examples --type hardware --bin <path to a binary>`
 
@@ -108,13 +110,21 @@ For further details see our documentation linked
 at [the top](#icetea-test-framework) of this document.
 
 **Running a premade suite**
-Icetea supports a simple suite file that describes a suite of test cases
+Icetea supports a suite file that describes a suite of test cases
 in json format.
 
 `> icetea --suite <suite file name> --tcdir <test case search path> --suitedir <path to suite directory>`
 
 **Enabling debug level logging**
-Add -v or -vv to the command.
+Add -v or -vv to the command. -v increases the frameworks logging level
+to debug (default is info) and the level of logging in
+certain plugins and external components to info (default is warning).
+--vv also increases the external component and plugin logging level to debug.
+
+**Further details**
+See documentation links at [the top](#icetea-test-framework).
+A first time user guide is available [here](https://github.com/ARMmbed/icetea/blob/master/first_time_use_guide.md).
+
 
 #### Creating a test case
 Test case creation is further described in the documentation linked at
@@ -142,18 +152,17 @@ from icetea_lib.bench import Bench
 class Testcase(Bench):
     def __init__(self):
         Bench.__init__(self,
-                       name="test_cmdline",
-                       title="Smoke test for command line interface",
-                       status="released",
-                       purpose="Verify Command Line Interface",
-                       component=["cmdline"],
+                       name="example_test",
+                       title="Example test",
+                       status="development",
+                       purpose="Show example of a test",
+                       component=["examples"],
                        type="smoke",
                        requirements={
                            "duts": {
                                '*': {
                                     "count": 1,
-                                    "type": "hardware",
-                                    "allowed_platforms": ['K64F']
+                                    "type": "hardware"
                                }
                            }
                        }
@@ -161,43 +170,17 @@ class Testcase(Bench):
 
     def setup(self):
         # nothing for now
-        self.device = self.get_node_endpoint(1)
+        pass
 
 
     def case(self):
         self.command(1, "echo hello world", timeout=5)
-        self.device.command("help")
+        self.command("help")
 
     def teardown(self):
         # nothing for now
         pass
 ```
 
-#### Debugging
-
-To debug dut 1 locally with [GDB](https://www.gnu.org/software/gdb/):
-
-**Note:** You have to install [gdb](https://www.gnu.org/software/gdb/) first (`apt-get install gdb`)
-
-```
-> icetea --tc test_cmdline --tcdir examples --type process --gdb 1 --bin ./test/dut/dummyDut
-> sudo gdb ./CliNode 3460
-```
-
-To debug dut 1 remotely with GDB server:
-
-```
-> icetea --tc test_cmdline --tcdir examples --type process --gdbs 1 --bin  ./test/dut/dummyDut
-> gdb  ./test/dut/dummyDut --eval-command="target remote localhost:2345"
-```
-
-To analyze memory leaks with valgrind:
-
-**Note:** You have to install [valgrind](http://valgrind.org) first (`apt-get install valgrind`)
-```
-> icetea --tc test_cmdline --tcdir examples --type process --valgrind --valgrind_tool memcheck --bin  ./test/dut/dummyDut
-```
-
 ### License
-
 See the [license](https://github.com/ARMmbed/icetea/blob/master/LICENSE) agreement.
