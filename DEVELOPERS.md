@@ -1,7 +1,9 @@
 ## Developing Icetea
-This document describes some information that is relevant for developers of Icetea.
+
+This document describes some information that is relevant for those who wish to develop Icetea further.
 
 ### Documentation
+
 HTML documentation for Icetea can be built using sphinx
 (see Sphinx installation below).
 The source for the documentation is located in
@@ -26,12 +28,14 @@ Run the script with:
     * `sudo port select --set sphinx py27-sphinx`
 
 #### Markdown documentation
+
 The [doc](doc) folder contains a markdown copy of the rst documentation located in [doc-source](doc-source).
 We try to keep both documentation formats
 aligned so that they are identical, so please update
 both if you make changes to the documentation.
 
-### Running unit tests with *Icetea*
+### Running unit tests for Icetea
+
 These instructions assume that you are using a linux system.
 If you use Windows for development, note that tests using process duts
 will be skipped.
