@@ -3,7 +3,7 @@
 Icetea is an [Mbed](https://www.mbed.com) test framework written
 with Python.
 
-Icetea is the automated testing framework fro Mbed development.
+Icetea is the automated testing framework for Mbed development.
 It automates the process of flashing Mbed boards, running tests
 and accumulating test results into reports.
 Developers use it for local development as well as for
