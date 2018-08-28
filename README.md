@@ -1,223 +1,188 @@
-# Command-line test framework
+## Icetea test framework
 
-*Icetea* is an [mbed](www.mbed.com) test framework written
-with python 2.7. It is generally used to verify the ARM mbed
-IoT Device Platform provides the operating system and cloud services.
+Icetea is an automated testing framework for Mbed development.
+It automates the process of flashing Mbed boards, running tests
+and accumulating test results into reports.
+Developers use it for local development as well as for
+automation in a Continuous Integration Environment.
 
-Python 3 is preliminarily supported, but there might be some
-compatibility issues that will be fixed as they are found.
-
-When testing [`mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
-*Icetea* allows you to execute commands remotely via
-the command line interface in board (`DUT`).
+When testing [`Mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
+Icetea allows you to execute commands remotely via
+the command line interface (`CLI`) in a device under test (`DUT`).
 The interface between the test framework and `DUT` can be
-for example UART, sockets or for example stdio (process `DUT`).
+for example UART or stdio.
 
-A more detailed description of the *Icetea* concept is
-available [here](doc/README.md).
+More detailed documentation on the tool is available
+[here in rst format](https://github.com/ARMmbed/icetea/tree/master/doc-source)
+and [here in markdown format](https://github.com/ARMmbed/icetea/tree/master/doc).
 
-## Installation
+### Prerequisites
+Icetea supports Linux (Ubuntu preferred), Windows and OS X. Our main target is Linux.
+We support both Python 2.7 and 3.5 or later. Some OS specific prerequisites below:
 
-`> python setup.py install`
+* Linux
+    * python-dev and python-lxml
+        `sudo apt-get install python-dev python-lxml`
+    * In order to run test cases with hardware in Linux without sudo rights:
+        ```
+        sudo usermod -a -G dialout username
+        Log out & log in back to Linux
+        ```
+        This command will add the user 'username' to the 'dialout' group and
+        grant the required permissions to the USB ports.
+* OS X
+    * [XCode developer tools](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/)
+    * [MacPorts](https://www.macports.org/install.php)
+    * [lxml](http://lxml.de/installation.html#installation):
+        `STATIC_DEPS=true sudo pip install lxml`
 
-When installing Icetea, installing to a
-[virtualenv](https://virtualenv.pypa.io/en/stable/installation/) is
-a good idea.
+* Windows
+    * python-lxml installation is problematic on Windows since
+    it usually requires build tools. It can however be installed
+    from pre-built binaries.
+        * Search for a binary for you system from the internet.
+        * Navigate to the directory where you downloaded the
+        binary and install it with `pip install <insert_file_name>`
+    * You can follow instructions [here](http://lxml.de/installation.html#installation)
+    instead.
 
-### Required dependencies:
-
-* In case you want to use **local mbed devices**
-  * [mbed-ls](https://github.com/armmbed/mbed-ls)
-    * To enumerate connected boards
-  * [mbed-flasher](https://github.com/ARMmbed/mbed-flasher)
-    * to flash devices automatically
-  * Both of these should be installed automatically by
-  Icetea installation.
-
-**OS specific:**
-
-Linux:
-* python-dev and python-lxml
-`sudo apt-get install python-dev python-lxml`
-* For documentation install sphinx:
-`apt-get install python-sphinx`
-
-OS X:
-* [XCode developer tools](http://osxdaily.com/2014/02/12/install-command-line-tools-mac-os-x/)
-* [MacPorts](https://www.macports.org/install.php)
-* lxml as described
-[here](http://lxml.de/installation.html#installation):
-`STATIC_DEPS=true sudo pip install lxml`
-* For documentation install sphinx:
-`sudo port install py27-sphinx`, `sudo port select --set python python27`,
-`sudo port select --set sphinx py27-sphinx`
-
-Windows:
-* python-lxml installation is problematic on Windows since
-it usually requires build tools. It can however be installed
-from pre-built binaries.
-    * Download binary for you system from the internet.
-    * Navigate to the directory where you downloaded the
-    binary and install it with `pip install <insert_file_name>`
-* For documentation install sphinx with pip:
-`pip install sphinx`
-
-### Optional dependencies
+#### Optional
 
 * If you wish to decorate your console log with all kinds of colors,
 install the coloredlogs module using pip. `pip install coloredlogs`
     * There have been issues with coloredlogs installation on Windows.
      We might switch to a different module at some point to enable
      colored logging on Windows as well.
-* [valgrind](http://valgrind.org)
-* [gdb](https://www.gnu.org/software/gdb/)
 
+### Installation
 
-### Installation step-by-step
+`> pip install icetea`
 
-```
-git clone https://github.com/ARMmbed/icetea.git
-cd icetea
-python setup.py install
-```
-
-**Linux**
-
-In order to run test cases with hardware in Linux without sudo rights:
-
-```
-sudo usermod -a -G dialout username
-Log out & log in back to Linux
-```
-
-This command will add the user 'username' to the 'dialout' group and
-grant the required permissions to the USB ports.
-
-## Usage
+### Usage
 
 To print the help page:
 
 `icetea --help`
 
-All cli parameters are described in [Icetea.md](doc/Icetea.md)
+To list all local testcases from the examples subfolder:
 
-To list all local testcases from the `./testcases` subfolder:
+`icetea --list --tcdir examples`
 
-`icetea --list`
+To print Icetea version:
 
-## Test Case API
+`icetea --version`
 
-To execute a single command line:
+#### Typical use
 
-` execute_command(<dut>, <cmd>, (<arguments>) ) `
+All of the commands described below might also need other options,
+depending on the test case.
 
-or alias `command(...)`
+**Running test cases using the tc argument**
 
-
-```
-dut[number]             #dut index (1..)
-dut[string]             #dut nick name, or '*' to execute command in all duts
-cmd[string]             #command to be executed
-arguments[dictionary]   #optional argument list
-        wait = <boolean>           # whether retcode is expected before continue next command. True (default) or False
-        expected_retcode = <int>    # expected return code (default=0)
-        timeout=<int>              # timeout, if no retcode receive
-```
-
-## Documentation
-HTML documentation for Icetea can be built using sphinx. The source
-for the documentation is located in [doc-source](doc-source).
-For installation of sphinx see [installation](#installation).
-
-A build script for the documentation is included in build_docs.py.
-It's a simple python scripts that also generates autodoc api documentation.
-Run the script with:
-
-`python build_docs.py`
-
-Currently similar documentation is available in markdown format in
-[doc](doc). This documentation will be phased out and is not maintained
-as well as the sphinx documentation.
-
-## Examples
-
-**Note:** Following examples uses [`dummyDut`](test/dut/dummyDut.c)
-application. It works in unix systems.
-To run following examples please compile `dummyDut` first using make:
-`> make -C test/dut`.
-
-To print available parameters:
-
-`> icetea --help`
-
-To run a single test case with the process dut:
-
-`> icetea --tc test_cmdline --tcdir examples --type process --bin ./test/dut/dummyDut`
+`> icetea --tc <test case name> --tcdir <test case search path>`
 
 To run all existing test cases from the `examples` folder:
 
-`> icetea --tc all --tcdir examples --type process --bin ./test/dut/dummyDut`
+`> icetea --tc all --tcdir examples`
 
-To debug dut locally with [GDB](https://www.gnu.org/software/gdb/):
+**Running an example test case with hardware**
 
-**Note:** You have to install [gdb](https://www.gnu.org/software/gdb/) first (`apt-get install gdb`)
+In this example, we assume that a compatible board has been connected
+to the computer and an application binary for the board is available.
+The referred test case is available in [the icetea github repository](https://github.com/ARMmbed/icetea/blob/master/examples/test_cmdline.py).
 
-```
-> icetea --tc test_cmdline --tcdir examples --type process --gdb 1 --bin ./test/dut/dummyDut
-> sudo gdb ./CliNode 3460
-```
+`> icetea --tc test_cmdline --tcdir examples --type hardware --bin <path to a binary>`
 
-To debug dut remotely with GDB server:
+**Using metadata filters**
 
-```
-> icetea --tc test_cmdline --tcdir examples --type process --gdbs 1 --bin  ./test/dut/dummyDut
-> gdb  ./test/dut/dummyDut --eval-command="target remote localhost:2345"
-```
+To run all test cases with testtype regression in the metadata:
 
-To analyse memory leaks with valgrind:
+`> icetea --testtype regression --tcdir <test case search path>`
 
-**Note:** You have to install [valgrind](http://valgrind.org) first (`apt-get install valgrind`)
-```
-> icetea --tc test_cmdline --tcdir examples --type process --valgrind --valgrind_tool memcheck --bin  ./test/dut/dummyDut
-```
+The following metadata filters are available:
+* test type (--testtype)
+* test subtype (--subtype)
+* feature (--feature)
+* test case name (--tc)
+* tested component (--component)
+* test case folder (--group)
 
-## Running unit tests with *Icetea*
+**Running a premade suite**
 
-To build a test application for DUT and execute the test:
+Icetea supports a suite file that describes a suite of test cases
+in `json` format.
 
-```
-> make
-> coverage run -m unittest discover -s test
-```
+`> icetea --suite <suite file name> --tcdir <test case search path> --suitedir <path to suite directory>`
 
-To generate a coverage report (excluding plugins):
+**Enabling debug level logging**
 
-```
-> coverage html --include "icetea_lib/*" --omit "icetea_lib/Plugin/plugins/*"
-```
+Use -v or -vv arguments to control logging levels. -v increases the frameworks logging level
+to debug (default is info) and the level of logging in
+certain plugins and external components to info (default is warning).
+--vv increases the level of logging on all Icetea loggers to debug.
 
-To run unit tests for plugins that ship with Icetea:
+**Further details**
 
-```
-> coverage run -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests
-```
+For further details on any of the features see our documentation.
 
-To generate a coverage reports for plugin unit tests run:
+#### Creating a test case
+Icetea test cases are implemented as Python classes that inherit the Bench object available in `icetea_lib.bench` module.
+The test case needs to have an initialization function that defines the metadata and a case function that implements the test sequence.
+There are two optional functions, setup and teardown. More information is available in our documentation.
 
-```
-> coverage html --include "icetea_lib/Plugin/plugins/*" --omit "icetea_lib/Plugin/plugins/plugin_tests/*"
-```
-
-### Dependencies
-
-Unit tests depend on mock, coverage and netifaces.
+An example test case is shown below:
 
 ```
-> pip install mock
-> pip install netifaces
-> pip install coverage
+"""
+Copyright 2017 ARM Limited
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
+from icetea_lib.bench import Bench
+
+
+class Testcase(Bench):
+    def __init__(self):
+        Bench.__init__(self,
+                       name="example_test",
+                       title="Example test",
+                       status="development",
+                       purpose="Show example of a test",
+                       component=["examples"],
+                       type="smoke",
+                       requirements={
+                           "duts": {
+                               '*': {
+                                    "count": 1,
+                                    "type": "hardware"
+                               }
+                           }
+                       }
+                       )
+
+    def setup(self):
+        # nothing for now
+        pass
+
+
+    def case(self):
+        self.command(1, "echo hello world", timeout=5)
+        self.command("help")
+
+    def teardown(self):
+        # nothing for now
+        pass
 ```
 
-## License
-
-See the [license](LICENSE) agreement.
+### License
+See the [license](https://github.com/ARMmbed/icetea/blob/master/LICENSE) agreement.
