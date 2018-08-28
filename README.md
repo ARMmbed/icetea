@@ -3,15 +3,13 @@
 Icetea is an [Mbed](https://www.mbed.com) test framework written
 with Python.
 
-
 When testing [`Mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
 Icetea allows you to execute commands remotely via
 the command line interface (`CLI`)
 in a device under test (`DUT`). The interface between the test framework and `DUT` can be
 for example UART or for example stdio (process `DUT`).
 
-More detailed documentation and information on deeper details of
-the framework is available
+More detailed documentation on the tool is available
 [here in rst format](https://github.com/ARMmbed/icetea/tree/master/doc-source).
 and [here in markdown format](https://github.com/ARMmbed/icetea/tree/master/doc).
 
@@ -86,9 +84,9 @@ To run all existing test cases from the `examples` folder:
 
 **Running an example test case with hardware**
 
-In this example we assume that a compatible board has been connected
-to the computer and an application binary for said board is available.
-The test case mentioned here is available in our github repository.
+In this example, we assume that a compatible board has been connected
+to the computer and an application binary for the board is available.
+The referred test case is available in [the icetea github repository](https://github.com/ARMmbed/icetea/blob/master/examples/test_cmdline.py).
 
 `> icetea --tc test_cmdline --tcdir examples --type hardware --bin <path to a binary>`
 
@@ -109,25 +107,23 @@ The following metadata filters are available:
 **Running a premade suite**
 
 Icetea supports a suite file that describes a suite of test cases
-in json format.
+in `json` format.
 
 `> icetea --suite <suite file name> --tcdir <test case search path> --suitedir <path to suite directory>`
 
 **Enabling debug level logging**
 
-Add -v or -vv to the command. -v increases the frameworks logging level
+Use -v or -vv arguments to control logging levels. -v increases the frameworks logging level
 to debug (default is info) and the level of logging in
 certain plugins and external components to info (default is warning).
---vv also increases the external component and plugin logging level to debug.
+--vv increases the level of logging on all Icetea loggers to debug.
 
 **Further details**
 
 For further details on any of the features see our documentation.
-A first time user guide is available [here](https://github.com/ARMmbed/icetea/blob/master/first_time_use_guide.md).
-
 
 #### Creating a test case
-Icetea test cases are implemented as Python classes that inherit the Bench object available in icetea_lib.bench module.
+Icetea test cases are implemented as Python classes that inherit the Bench object available in `icetea_lib.bench` module.
 The test case needs to have an initialization function that defines the metadata and a case function that implements the test sequence.
 There are two optional functions, setup and teardown. More information is available in our documentation.
 
