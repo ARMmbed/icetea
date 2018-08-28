@@ -1,11 +1,11 @@
 ## Icetea test framework
 
-*Icetea* is an [Mbed](https://www.mbed.com) test framework written
-with python. It is generally used to verify the ARM mbed
-IoT Device Platform provides the operating system and cloud services.
+Icetea is an [Mbed](https://www.mbed.com) test framework written
+with python. It can be used to verify the ARM mbed
+IoT Device Platform, Mbed OS and Pelion Device Management.
 
 When testing [`Mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
-*Icetea* allows you to execute commands remotely via
+Icetea allows you to execute commands remotely via
 the command line interface (`CLI`)
 in a device under test (`DUT`). The interface between the test framework and `DUT` can be
 for example UART or for example stdio (process `DUT`).
@@ -15,13 +15,9 @@ the framework is available
 [here in rst format](https://github.com/ARMmbed/icetea/tree/master/doc-source).
 and [here in markdown format](https://github.com/ARMmbed/icetea/tree/master/doc).
 
-### Installation
-
-`> pip install icetea`
-
-#### Prerequisites
+### Prerequisites
 Icetea supports Linux (Ubuntu preferred), Windows and OS X. Our main target is Linux.
-We support both python 2.7 and 3. Some OS specific prerequisites below:
+We support both python 2.7 and 3.5 or later. Some OS specific prerequisites below:
 
 * Linux
     * python-dev and python-lxml
@@ -56,6 +52,10 @@ install the coloredlogs module using pip. `pip install coloredlogs`
     * There have been issues with coloredlogs installation on Windows.
      We might switch to a different module at some point to enable
      colored logging on Windows as well.
+
+### Installation
+
+`> pip install icetea`
 
 ### Usage
 
@@ -106,29 +106,32 @@ The following metadata filters are available:
 * tested component (--component)
 * test case folder (--group)
 
-For further details see our documentation linked
-at [the top](#icetea-test-framework) of this document.
-
 **Running a premade suite**
+
 Icetea supports a suite file that describes a suite of test cases
 in json format.
 
 `> icetea --suite <suite file name> --tcdir <test case search path> --suitedir <path to suite directory>`
 
 **Enabling debug level logging**
+
 Add -v or -vv to the command. -v increases the frameworks logging level
 to debug (default is info) and the level of logging in
 certain plugins and external components to info (default is warning).
 --vv also increases the external component and plugin logging level to debug.
 
 **Further details**
-See documentation links at [the top](#icetea-test-framework).
+
+For further details on any of the features see our documentation.
 A first time user guide is available [here](https://github.com/ARMmbed/icetea/blob/master/first_time_use_guide.md).
 
 
 #### Creating a test case
-Test case creation is further described in the documentation linked at
-[the top](#icetea-test-framework). An example test case is shown below:
+Icetea test cases are implemented as python classes that inherit the Bench object available in icetea_lib.bench module.
+The test case needs to have an initialization function that defines the metadata and a case function that implements the test sequence.
+There are two optional functions, setup and teardown. More information is available in our documentation.
+
+An example test case is shown below:
 
 ```
 """
