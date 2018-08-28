@@ -1,8 +1,8 @@
 ## Icetea test framework
 
 Icetea is an [Mbed](https://www.mbed.com) test framework written
-with python. It can be used to verify the ARM mbed
-IoT Device Platform, Mbed OS and Pelion Device Management.
+with Python.
+
 
 When testing [`Mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
 Icetea allows you to execute commands remotely via
@@ -17,7 +17,7 @@ and [here in markdown format](https://github.com/ARMmbed/icetea/tree/master/doc)
 
 ### Prerequisites
 Icetea supports Linux (Ubuntu preferred), Windows and OS X. Our main target is Linux.
-We support both python 2.7 and 3.5 or later. Some OS specific prerequisites below:
+We support both Python 2.7 and 3.5 or later. Some OS specific prerequisites below:
 
 * Linux
     * python-dev and python-lxml
@@ -127,7 +127,7 @@ A first time user guide is available [here](https://github.com/ARMmbed/icetea/bl
 
 
 #### Creating a test case
-Icetea test cases are implemented as python classes that inherit the Bench object available in icetea_lib.bench module.
+Icetea test cases are implemented as Python classes that inherit the Bench object available in icetea_lib.bench module.
 The test case needs to have an initialization function that defines the metadata and a case function that implements the test sequence.
 There are two optional functions, setup and teardown. More information is available in our documentation.
 
