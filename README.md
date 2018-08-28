@@ -3,11 +3,17 @@
 Icetea is an [Mbed](https://www.mbed.com) test framework written
 with Python.
 
+Icetea is the automated testing framework fro Mbed development.
+It automates the process of flashing Mbed boards, running tests
+and accumulating test results into reports.
+Developers use it for local development as well as for
+automation in a Continuous Integration Environment.
+
 When testing [`Mbed OS`](https://www.mbed.com/en/platform/mbed-os/)
 Icetea allows you to execute commands remotely via
-the command line interface (`CLI`)
-in a device under test (`DUT`). The interface between the test framework and `DUT` can be
-for example UART or for example stdio (process `DUT`).
+the command line interface (`CLI`) in a device under test (`DUT`).
+The interface between the test framework and `DUT` can be
+for example UART or stdio.
 
 More detailed documentation on the tool is available
 [here in rst format](https://github.com/ARMmbed/icetea/tree/master/doc-source).
