@@ -39,7 +39,6 @@ installed by `Icetea` installation.
     * requests (`pip install requests`)
     * coverage (`pip install coverage`), for unit tests.
     * mock  (`pip install mock`), for unit tests.
-    * psutil (`pip install psutil`)
     * coloredlogs (`pip install coloredlogs`), optional
     * semver (`pip install semver`)
     * six (`pip install six`)
