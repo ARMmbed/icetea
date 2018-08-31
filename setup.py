@@ -45,7 +45,7 @@ def read(fname):
 
 
 setup(name='icetea',
-      version='1.0.0',
+      version='1.0.1',
       description=DESCRIPTION,
       long_description=read('README.md'),
       author=OWNER_NAMES,
