@@ -3,15 +3,41 @@
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
 version: 2
+
 workflows:
   version: 2
   test:
     jobs:
-      - test-3.6
-      - test-3.5
-      - test-2.7
+      - test-3.7:
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - test-3.6:
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - test-3.5:
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - test-2.7:
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - test-3.7
+            - test-3.6
+            - test-3.5
+            - test-2.7
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+
 jobs:
-  test-3.6: &test-template
+  test-3.6: &defaults
     docker:
       - image: circleci/python:3.6.1
 
@@ -63,15 +89,15 @@ jobs:
           destination: htmlcov
   
   test-3.7:
-    <<: *test-template
+    <<: *defaults
     docker:
       - image: circleci/python:3.7-stretch
   test-3.5:
-    <<: *test-template
+    <<: *defaults
     docker:
       - image: circleci/python:3.5-jessie
   test-2.7:
-    <<: *test-template
+    <<: *defaults
     docker:
       - image: python:2.7.13
   deploy:
@@ -101,34 +127,3 @@ jobs:
           command: |
             . venv/bin/activate
             twine upload dist/*
-workflows:
-  version: 2
-  test-deploy:
-    jobs:
-      - test-3.7:
-          filters:  # required since `deploy` has tag filters AND requires `build`
-            tags:
-              only: /.*/
-      - test-3.6:
-          filters:  # required since `deploy` has tag filters AND requires `build`
-            tags:
-              only: /.*/
-      - test-3.5:
-          filters:  # required since `deploy` has tag filters AND requires `build`
-            tags:
-              only: /.*/
-      - test-2.7:
-          filters:  # required since `deploy` has tag filters AND requires `build`
-            tags:
-              only: /.*/
-      - deploy:
-          requires:
-            - test-3.7
-            - test-3.6
-            - test-3.5
-            - test-2.7
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
