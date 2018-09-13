@@ -56,7 +56,9 @@ class ReportConsole(ReportBase):
         # Generate Summary table
         table = PrettyTable(['Summary', ''])
         final_verdict = "FAIL"
-        if self.summary["fail"] == 0 and self.summary["inconclusive"] == 0:
+        if self.summary["skip"] == self.summary["count"]:
+            final_verdict = "INCONCLUSIVE"
+        elif self.summary["fail"] == 0 and self.summary["inconclusive"] == 0:
             final_verdict = "PASS"
         elif self.summary["fail"] == 0 and self.summary["inconclusive"] > 0:
             final_verdict = "INCONCLUSIVE"
