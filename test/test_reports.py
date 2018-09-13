@@ -77,6 +77,25 @@ class ReportCase(unittest.TestCase):
         finally:
             sys.stdout = saved_stdout
 
+    def test_reportconsole_not_just_skips(self):
+        saved_stdout = sys.stdout
+        results = ResultList()
+        results.append(Result({"verdict": "skip"}))
+        results.append(Result({"verdict": "pass"}))
+        try:
+            out = StringIO()
+            sys.stdout = out
+            report = ReportConsole(results)
+            report.generate()
+            output = out.getvalue().strip()
+            lines = output.split("\n")
+            self.assertEqual(len(lines), 16)
+            self.assertRegexpMatches(lines[9], r"Final Verdict.*PASS", lines[9])
+            self.assertRegexpMatches(lines[10], r"count.*2", lines[10])
+            self.assertRegexpMatches(lines[11], r"passrate.*100.00 \%", lines[11])
+        finally:
+            sys.stdout = saved_stdout
+
     def test_reportconsole_multiple_results(self):  # pylint: disable=invalid-name
         saved_stdout = sys.stdout
         results = ResultList()
@@ -114,7 +133,7 @@ class ReportCase(unittest.TestCase):
             lines = output.split("\n")
             self.assertEqual(len(lines), 14)
             self.assertRegexpMatches(lines[3], r"skip.*Skip_reason")
-            self.assertRegexpMatches(lines[8], r"Final Verdict.*PASS", lines[8])
+            self.assertRegexpMatches(lines[8], r"Final Verdict.*INCONCLUSIVE", lines[8])
             self.assertRegexpMatches(lines[9], r"count.*1", lines[9])
             self.assertRegexpMatches(lines[10], r"passrate.*0.00 \%", lines[10])
             self.assertRegexpMatches(lines[11], r"skip.*1", lines[10])
