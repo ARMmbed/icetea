@@ -73,7 +73,5 @@ To generate a coverage reports for plugin unit tests run:
 Unit tests depend on mock, coverage and netifaces.
 
 ```
-> pip install mock
-> pip install netifaces
-> pip install coverage
+> pip install -r dev_requirements.txt
 ```

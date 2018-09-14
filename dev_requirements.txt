@@ -1,0 +1,3 @@
+coverage
+mock
+sphinx;platform_system=="Windows"

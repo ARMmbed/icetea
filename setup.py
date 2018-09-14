@@ -1,5 +1,5 @@
 """
-Copyright 2017 ARM Limited
+Copyright 2017-2018 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
@@ -17,55 +17,80 @@ import os
 import sys
 from distutils.core import setup
 from setuptools import find_packages
+from setuptools.command.install import install
+
 
 DESCRIPTION = "Icetea - test framework"
 OWNER_NAMES = 'Jussi Vatjus-Anttila'
 OWNER_EMAILS = 'jussi.vatjus-anttila@arm.com'
+VERSION = "1.0.1"
 
-INSTALL_REQUIRES = [
-          "prettytable",
-          "requests",
-          "yattag",
-          "pyserial>2.5",
-          "jsonmerge",
-          "mbed-ls>=1.5.1,==1.*",
-          "semver",
-          "mbed-flasher==0.9.*",
-          "six"
-      ]
+
+def read(fname):
+    """
+    Utility function to cat in a file
+    :param fname: filename
+    :return: file content as a String
+    """
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+
+INSTALL_REQUIRES = read("requirements.txt").splitlines()
+TEST_REQUIRES = read("dev_requirements.txt").splitlines()
+# todo move pyshark as optional dep:
+# pyshark-legacy; python_version < "3.0"
+# pyshark; python_version >= "3.5"
 if sys.version_info.major == "3":
     INSTALL_REQUIRES.append("pyshark")
 else:
     INSTALL_REQUIRES.append("pyshark-legacy")
 
 
-# Utility function to cat in a file (used for the README)
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+class VerifyVersionCommand(install):
+    """
+    Custom command to verify that the git tag matches our version
+    """
+    description = 'verify that the git tag matches our version'
+
+    def run(self):
+        tag = os.getenv('CIRCLE_TAG')
+        if tag != VERSION:
+            info = "Git tag: {0} does not match the"\
+            "version of this app: {1}".format(tag, VERSION)
+            sys.exit(info)
 
 
-setup(name='icetea',
-      version='1.0.1',
+setup(name="icetea",
+      version=VERSION,
       description=DESCRIPTION,
-      long_description=read('README.md'),
+      long_description=read("README.md"),
+      long_description_content_type='text/markdown',
       author=OWNER_NAMES,
       author_email=OWNER_EMAILS,
       maintainer=OWNER_NAMES,
       maintainer_email=OWNER_EMAILS,
-      url='https://github.com/ARMmbed/icetea.git',
+      url="https://github.com/ARMmbed/icetea.git",
       packages=find_packages(include=["icetea_lib.*", "icetea_lib"]),
-      data_files=[('icetea_lib', ['icetea_lib/tc_schema.json'])],
+      data_files=[("icetea_lib", ["icetea_lib/tc_schema.json"])],
       include_package_data=True,
+      keywords='armbed mbed-os mbed-cli ci framework testing automation',
       license="(R) ARM",
-      tests_require=["coverage", "netifaces", "mock"],
-      extras_require={
-          "colors": ["coloredlogs"]
-      },
+      tests_require=TEST_REQUIRES,
       test_suite='test',
       entry_points={
           "console_scripts": [
               "icetea=icetea_lib:icetea_main"
           ]
       },
-      install_requires=INSTALL_REQUIRES
+      install_requires=INSTALL_REQUIRES,
+      classifiers=[
+          "Programming Language :: Python :: 2.7",
+          "Programming Language :: Python :: 3.6",
+          "Programming Language :: Python :: 3.7",
+          "License :: OSI Approved :: Apache Software License",
+          "Operating System :: OS Independent",
+      ],
+      cmdclass={
+          'verify': VerifyVersionCommand,
+      }
     )
