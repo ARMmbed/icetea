@@ -47,12 +47,12 @@ jobs:
       - checkout
 
       # Download and cache dependencies
-      - restore_cache:
-          keys:
+      #- restore_cache:
+      #    keys:
           # todo: switch to requirements.txt
-          - v1-dependencies-{{ checksum "setup.py" }}
+      #    - v1-dependencies-{{ checksum "setup.py" }}
           # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+      #    - v1-dependencies-
 
       - run:
           name: install dependencies
@@ -68,7 +68,7 @@ jobs:
 
       - save_cache:
           paths:
-            - ./venv
+            - ~/icetea/venv
           # todo: switch to requirements.txt
           key: v1-dependencies-{{ checksum "setup.py" }}
 
