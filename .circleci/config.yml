@@ -1,0 +1,139 @@
+# Python CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-python/ for more details
+#
+version: 2
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test-3.7:
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - test-3.6:
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - test-3.5:
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - test-2.7:
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - test-3.7
+            - test-3.6
+            - test-3.5
+            - test-2.7
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+
+jobs:
+  test-3.6: &defaults
+    docker:
+      - image: circleci/python:3.6
+
+    working_directory: ~/icetea
+
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      #- restore_cache:
+      #    keys:
+          # todo: switch to requirements.txt
+      #    - v1-dependencies-{{ checksum "setup.py" }}
+          # fallback to using the latest cache if no exact match is found
+      #    - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python --version
+            python -m venv venv || virtualenv venv
+            echo activate
+            . venv/bin/activate
+            echo TODO: pip install -r requirements.txt
+            echo TODO: pip install -r dev_requirements.txt
+            pip install coveralls
+            pip install mock coverage jsonschema
+            python setup.py develop
+
+      - save_cache:
+          paths:
+            - ~/icetea/venv
+          # todo: switch to requirements.txt
+          key: v1-dependencies-{{ checksum "setup.py" }}
+
+      # run tests!
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            coverage run --parallel-mode -m unittest discover -s test
+            coverage combine --append
+            coverage html --include='*icetea_lib*'
+            coverage xml --include='*icetea_lib*'
+            coveralls || true
+            pip install astroid pylint
+            pylint ./setup.py ./icetea.py ./icetea_lib ./test ./examples > pylint.log || true
+
+      - store_artifacts:
+          path: htmlcov
+          destination: htmlcov
+
+      - store_artifacts:
+          path: coverage.xml
+          destination: coverage.xml
+
+      - store_artifacts:
+          path: pylint.log
+          destination: pylint.log
+
+  test-3.7:
+    <<: *defaults
+    docker:
+      - image: circleci/python:3.7-stretch
+  test-3.5:
+    <<: *defaults
+    docker:
+      - image: circleci/python:3.5-jessie
+  test-2.7:
+    <<: *defaults
+    docker:
+      - image: circleci/python:2.7
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/icetea
+      - run:
+          name: verify git tag vs. version
+          command: |
+            . venv/bin/activate
+            python setup.py verify
+      - run:
+          name: init .pypirc
+          command: |
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = $PYPI_USERNAME" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
+      - run:
+          command: |
+            # create a source distribution
+            python setup.py sdist
+            # create a wheel
+            python setup.py bdist_wheel
+      - run:
+          name: upload to pypi
+          command: |
+            . venv/bin/activate
+            twine upload dist/*
