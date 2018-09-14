@@ -75,7 +75,7 @@ class DutTestcase(unittest.TestCase):
             dut.init_cli_human()
             self.assertListEqual(dut.post_cli_cmds, [["com1", True, False]])
             self.assertEqual(len(m_com.mock_calls), 1)
-            m_com.assert_called_once_with("com1", wait=False, async=True)
+            m_com.assert_called_once_with("com1", wait=False, asynchronous=True)
 
 
 if __name__ == '__main__':
