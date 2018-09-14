@@ -56,7 +56,7 @@ def get_fw_version():
             with open(os.path.join(setup_path, 'setup.py')) as setup_file:
                 lines = setup_file.readlines()
                 for line in lines:
-                    m = re.search(r"version=\'([\S]{5,})\'", line)
+                    m = re.search(r"VERSION = \"([\S]{5,})\"", line)
                     if m:
                         version = m.group(1)
                         break
