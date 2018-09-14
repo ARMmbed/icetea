@@ -846,46 +846,6 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         """
         return self.__env['sniffer']['iface']
 
-    def __required_sniffer(self):
-        """
-        Check if sniffer was requested for this run.
-
-        :return: Boolean
-        """
-        required = self.args.use_sniffer
-        self.logger.debug("%s" % "Required NW Sniffer" if required else "Skip Sniffing NW data")
-        return required
-
-    def __start_sniffer(self):
-        """
-        Start network sniffer capturing pcap to a file.
-
-        :return: Nothing
-        """
-        from icetea_lib.wireshark import Wireshark
-        # TODO: Replace hardcoded network log filename
-        self.capture_file = LogManager.get_testcase_logfilename("network.nw.pcap")
-        self.logger.debug('Start wireshark capture: %s', self.capture_file)
-        self.wshark = Wireshark()
-
-        # Add self.tshark_preferences to parameters
-        # when pyshark starts supporting the -o tshark argument
-        self.wshark.startCapture(self.__get_nw_interface(),
-                                 self.capture_file,
-                                 self.tshark_arguments)
-        self.__sniffing = True
-
-    def __stop_sniffer(self):
-        """
-        Stop the network sniffer.
-
-        :return: Nothing
-        """
-        if self.__sniffing:
-            self.logger.debug('Stop wireshark capture: %s', self.capture_file)
-            packet_count = self.wshark.stopCapture()
-            self.logger.debug("Got total %i NW packets", packet_count)
-
     def delay(self, seconds):
         """
         Sleep command
@@ -1370,9 +1330,6 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
                 self._result.dut_type = 'process'
 
             self._starttime = time.time()
-
-            if self.__required_sniffer():
-                self.__start_sniffer()
         else:
             self.logger.debug("This TC doesn't use DUT's at all :o")
             self._dut_count = 0
@@ -1463,32 +1420,6 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
 
             self.logger.debug("delete duts")
             del self.duts
-
-        if self.__required_sniffer():
-            if hasattr(self, "wshark"):
-                self.logger.debug("Close wshark pipes")
-                import psutil
-                from pkg_resources import parse_version
-
-                # Note: the psutil has changed the API at around version 3.0 but user likely has
-                # the older version installed unless it has specifically installed via pip.
-                if parse_version(psutil.__version__) < parse_version('3.0.0'):
-                    self.logger.warning("NOTE: your psutil version %s is likely too old,"
-                                        " please update!", psutil.__version__)
-
-                dumpcaps = []
-                for process in self.wshark.liveLoggingCapture.running_processes:
-                    children = psutil.Process(process.pid).children(recursive=True)
-                    for child in children:
-                        if child.name() in ('dumpcap', 'tshark-bin', 'dumpcap-bin'):
-                            dumpcaps.append(child)
-                self.__stop_sniffer()
-                for child in dumpcaps:
-                    try:
-                        child.kill()
-                        child.wait(timeout=2)
-                    except (OSError, psutil.NoSuchProcess, psutil.TimeoutExpired):
-                        pass
 
         self.logger.debug("Stop external services if any")
         self.__stop_external_services()

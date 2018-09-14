@@ -304,12 +304,6 @@ def get_tc_arguments(parser):
                         default=False,
                         help='Show origins of undefined values. Default: false; '
                              'Used only if the Valgrind tool is memcheck')
-
-    group2.add_argument('--use_sniffer',
-                        dest='use_sniffer',
-                        action='store_true',
-                        default=False,
-                        help='Use Sniffer')
     group2.add_argument('--my_duts',
                         dest="my_duts",
                         help='Use only some of duts. e.g. --my_duts 1,3')
