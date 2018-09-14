@@ -327,7 +327,7 @@ class Dut(object):
                     wait = cli_cmd[2]
                 else:
                     wait = True
-                self.execute_command(cli_cmd[0], wait=wait, async=asynchronous)
+                self.execute_command(cli_cmd[0], wait=wait, asynchronous=asynchronous)
             else:
                 self.execute_command(cli_cmd)
 
@@ -374,7 +374,7 @@ class Dut(object):
                         wait = cli_cmd[2]
                     else:
                         wait = True
-                    self.execute_command(cli_cmd[0], wait=wait, async=asynchronous)
+                    self.execute_command(cli_cmd[0], wait=wait, asynchronous=asynchronous)
                 else:
                     self.execute_command(cli_cmd)
             except (TestStepFail, TestStepError, TestStepTimeout):
@@ -469,13 +469,13 @@ class Dut(object):
                     wait = kwargs[key]
                 elif key == 'timeout':
                     timeout = kwargs[key]  # [ms]
-                elif key == 'async':
+                elif key == 'asynchronous':
                     asynchronous = kwargs[key]
             req = CliRequest(req,
                              timestamp=self.get_time(),
                              wait=wait,
                              timeout=timeout,
-                             async=asynchronous)
+                             asynchronous=asynchronous)
 
         # wait for previous command ready
         if req.wait:
