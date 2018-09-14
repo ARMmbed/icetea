@@ -39,7 +39,6 @@ INSTALL_REQUIRES = read("requirements.txt").splitlines()
 TEST_REQUIRES = read("dev_requirements.txt").splitlines()
 
 
-
 class VerifyVersionCommand(install):
     """
     Custom command to verify that the git tag matches our version

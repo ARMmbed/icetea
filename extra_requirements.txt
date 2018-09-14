@@ -1,2 +1,4 @@
 coloredlogs
 psutil
+pyshark; python_version >= "3.5"
+pyshark-legacy; python_version < "3.0"
