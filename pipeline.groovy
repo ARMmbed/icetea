@@ -187,7 +187,7 @@ def runPy3Unittests() {
     execute """python3 -m venv .py3venv --without-pip
     . .py3venv/bin/activate
     curl https://bootstrap.pypa.io/get-pip.py | python
-    pip install coverage mock lxml
+    pip install -r dev_requirements.txt
     id
     pip freeze
     python setup.py install
@@ -229,7 +229,7 @@ def runLinuxHwTests(){
                 set -e
                 virtualenv --python=../usr/bin/python py2venv --no-site-packages
                 . py2venv/bin/activate
-                pip install coverage mock lxml
+                pip install -r dev_requirements.txt
                 python setup.py install
                 ykushcmd -u a
                 sleep 1
@@ -256,7 +256,7 @@ def runWinHwTests(){
                 virtualenv --python=c:\\Python27\\python.exe py2venv --no-site-packages || goto :error
                 echo "Activating venv"
                 call py2venv\\Scripts\\activate.bat || goto :error
-                pip install coverage mock lxml|| goto :error
+                pip install -r dev_requirements.txt || goto :error
                 pip freeze
                 python setup.py install  || goto :error
                 python test_regression/test_regression.py || goto :error
