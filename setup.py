@@ -33,7 +33,7 @@ INSTALL_REQUIRES = [
           "mbed-flasher==0.9.*",
           "six"
       ]
-if sys.version_info.major == "2":
+if sys.version_info[0] < 3:
     INSTALL_REQUIRES.append("pyshark-legacy")
 else:
     INSTALL_REQUIRES.append("pyshark")
