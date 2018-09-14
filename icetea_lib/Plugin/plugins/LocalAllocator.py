@@ -186,6 +186,8 @@ class LocalAllocator(BaseAllocator):
 
         if next((item for item in dut_config_list if item.get("type") == "hardware"), False):
             self._available_devices = DutDetection().get_available_devices()
+            if len(self._available_devices) < len(dut_config_list):
+                raise AllocationError("Required amount of devices not available.")
 
         # Enumerate all required DUT's
         try:
