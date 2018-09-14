@@ -1467,28 +1467,32 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         if self.__required_sniffer():
             if hasattr(self, "wshark"):
                 self.logger.debug("Close wshark pipes")
-                import psutil
-                from pkg_resources import parse_version
+                try:
+                    import psutil
+                except ImportError:
+                    self.logger.error("psutil module missing")
+                else:
+                    from pkg_resources import parse_version
 
-                # Note: the psutil has changed the API at around version 3.0 but user likely has
-                # the older version installed unless it has specifically installed via pip.
-                if parse_version(psutil.__version__) < parse_version('3.0.0'):
-                    self.logger.warning("NOTE: your psutil version %s is likely too old,"
-                                        " please update!", psutil.__version__)
+                    # Note: the psutil has changed the API at around version 3.0 but user likely has
+                    # the older version installed unless it has specifically installed via pip.
+                    if parse_version(psutil.__version__) < parse_version('3.0.0'):
+                        self.logger.warning("NOTE: your psutil version %s is likely too old,"
+                                            " please update!", psutil.__version__)
 
-                dumpcaps = []
-                for process in self.wshark.liveLoggingCapture.running_processes:
-                    children = psutil.Process(process.pid).children(recursive=True)
-                    for child in children:
-                        if child.name() in ('dumpcap', 'tshark-bin', 'dumpcap-bin'):
-                            dumpcaps.append(child)
-                self.__stop_sniffer()
-                for child in dumpcaps:
-                    try:
-                        child.kill()
-                        child.wait(timeout=2)
-                    except (OSError, psutil.NoSuchProcess, psutil.TimeoutExpired):
-                        pass
+                    dumpcaps = []
+                    for process in self.wshark.liveLoggingCapture.running_processes:
+                        children = psutil.Process(process.pid).children(recursive=True)
+                        for child in children:
+                            if child.name() in ('dumpcap', 'tshark-bin', 'dumpcap-bin'):
+                                dumpcaps.append(child)
+                    self.__stop_sniffer()
+                    for child in dumpcaps:
+                        try:
+                            child.kill()
+                            child.wait(timeout=2)
+                        except (OSError, psutil.NoSuchProcess, psutil.TimeoutExpired):
+                            pass
 
         self.logger.debug("Stop external services if any")
         self.__stop_external_services()

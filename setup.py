@@ -37,13 +37,7 @@ def read(fname):
 
 INSTALL_REQUIRES = read("requirements.txt").splitlines()
 TEST_REQUIRES = read("dev_requirements.txt").splitlines()
-# todo move pyshark as optional dep:
-# pyshark-legacy; python_version < "3.0"
-# pyshark; python_version >= "3.5"
-if sys.version_info[0] < 3:
-    INSTALL_REQUIRES.append("pyshark-legacy")
-else:
-    INSTALL_REQUIRES.append("pyshark")
+
 
 
 class VerifyVersionCommand(install):

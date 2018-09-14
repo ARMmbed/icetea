@@ -51,6 +51,8 @@ We support both Python 2.7 and 3.5 or later. Some OS specific prerequisites belo
 There are some optional dependencies that brings some optional features,
 like `coloredlogs` which decorate your console outputs with all kind of colors.
 
+If you wish to use the wireshark integration, you need the pyshark module and psutil.
+
 All optional dependencies are declared [`extra_requirements.txt`](extra_requirements.txt) and they can be installed using pip.
 Note that you need `extra_requirements.txt` file locally.
 
