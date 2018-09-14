@@ -21,8 +21,8 @@ from setuptools.command.install import install
 
 
 DESCRIPTION = "Icetea - test framework"
-OWNER_NAMES = 'Jussi Vatjus-Anttila'
-OWNER_EMAILS = 'jussi.vatjus-anttila@arm.com'
+OWNER_NAMES = "Jussi Vatjus-Anttila"
+OWNER_EMAILS = "jussi.vatjus-anttila@arm.com"
 VERSION = "1.0.1"
 
 
@@ -50,14 +50,17 @@ class VerifyVersionCommand(install):
     """
     Custom command to verify that the git tag matches our version
     """
-    description = 'verify that the git tag matches our version'
+    description = "verify that the git tag matches our version"
 
     def run(self):
-        tag = os.getenv('CIRCLE_TAG')
-        if tag != VERSION:
-            info = "Git tag: {0} does not match the"\
-            "version of this app: {1}".format(tag, VERSION)
-            sys.exit(info)
+        is_ci = os.getenv("CIRCLECI")
+        if is_ci:
+            tag = os.getenv("CIRCLE_TAG")
+            if tag != VERSION:
+                info = "Git tag: {0} does not match the"\
+                       "version of this app: {1}".format(tag, VERSION)
+                sys.exit(info)
+        # else: you are your own - please do not publish any releases without tag!
 
 
 setup(name="icetea",
@@ -73,10 +76,10 @@ setup(name="icetea",
       packages=find_packages(include=["icetea_lib.*", "icetea_lib"]),
       data_files=[("icetea_lib", ["icetea_lib/tc_schema.json"])],
       include_package_data=True,
-      keywords='armbed mbed-os mbed-cli ci framework testing automation',
+      keywords="armbed mbed-os mbed-cli ci framework testing automation",
       license="(R) ARM",
       tests_require=TEST_REQUIRES,
-      test_suite='test',
+      test_suite="test",
       entry_points={
           "console_scripts": [
               "icetea=icetea_lib:icetea_main"
@@ -91,6 +94,6 @@ setup(name="icetea",
           "Operating System :: OS Independent",
       ],
       cmdclass={
-          'verify': VerifyVersionCommand,
+          "verify": VerifyVersionCommand,
       }
-    )
+     )

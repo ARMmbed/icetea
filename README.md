@@ -48,10 +48,10 @@ We support both Python 2.7 and 3.5 or later. Some OS specific prerequisites belo
 
 #### Optional
 
-There is punch of optional dependencies which brings some optional features,
+There are some optional dependencies that brings some optional features,
 like `coloredlogs` which decorate your console outputs with all kind of colors.
 
-All optional dependencies are declared [here](extra_requirements.txt) and they can be installed using pip.
+All optional dependencies are declared [`extra_requirements.txt`](extra_requirements.txt) and they can be installed using pip.
 Note that you need `extra_requirements.txt` file locally.
 
 ```
