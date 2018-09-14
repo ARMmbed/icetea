@@ -2,6 +2,15 @@
 
 This document describes some information that is relevant for those who wish to develop Icetea further.
 
+### Install development dependencies
+
+All development dependencies are visible in [`dev_requirements.txt`](dev_requirements.txt) and can be installed using pip:
+
+```
+> pip install -r dev_requirements.txt
+```
+
+
 ### Documentation
 
 HTML documentation for Icetea can be built using sphinx
@@ -16,16 +25,6 @@ Run the script with:
 
 `python build_docs.py`
 
-#### Sphinx installation
-
-* **Ubuntu linux**
-    * `apt-get install python-sphinx`
-* **Windows**
-    * `pip install sphinx`
-* **OS X**:
-    * `sudo port install py27-sphinx`
-    * `sudo port select --set python python27`
-    * `sudo port select --set sphinx py27-sphinx`
 
 #### Markdown documentation
 
@@ -66,14 +65,4 @@ To generate a coverage reports for plugin unit tests run:
 
 ```
 > coverage html --include "icetea_lib/Plugin/plugins/*" --omit "icetea_lib/Plugin/plugins/plugin_tests/*"
-```
-
-#### Unit test dependencies
-
-Unit tests depend on mock, coverage and netifaces.
-
-```
-> pip install mock
-> pip install netifaces
-> pip install coverage
 ```

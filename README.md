@@ -48,11 +48,15 @@ We support both Python 2.7 and 3.5 or later. Some OS specific prerequisites belo
 
 #### Optional
 
-* If you wish to decorate your console log with all kinds of colors,
-install the coloredlogs module using pip. `pip install coloredlogs`
-    * There have been issues with coloredlogs installation on Windows.
-     We might switch to a different module at some point to enable
-     colored logging on Windows as well.
+There are some optional dependencies that brings some optional features,
+like `coloredlogs` which decorate your console outputs with all kind of colors.
+
+All optional dependencies are declared [`extra_requirements.txt`](extra_requirements.txt) and they can be installed using pip.
+Note that you need `extra_requirements.txt` file locally.
+
+```
+> pip install -r extra_requirements.txt
+```
 
 ### Installation
 
