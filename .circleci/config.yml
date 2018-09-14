@@ -63,6 +63,7 @@ jobs:
             . venv/bin/activate
             echo TODO: pip install -r requirements.txt
             echo TODO: pip install -r dev_requirements.txt
+            pip install coveralls
             pip install mock coverage jsonschema
             python setup.py develop
 
@@ -88,7 +89,7 @@ jobs:
       - store_artifacts:
           path: htmlcov
           destination: htmlcov
-  
+
   test-3.7:
     <<: *defaults
     docker:
