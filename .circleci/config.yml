@@ -84,11 +84,19 @@ jobs:
             coverage xml --include='*icetea_lib*'
             coveralls || true
             pip install astroid pylint
-            pylint ./setup.py ./icetea.py ./icetea_lib ./test ./examples > pylint.log
+            pylint ./setup.py ./icetea.py ./icetea_lib ./test ./examples > pylint.log || true
 
       - store_artifacts:
           path: htmlcov
           destination: htmlcov
+
+      - store_artifacts:
+          path: coverage.xml
+          destination: coverage.xml
+
+      - store_artifacts:
+          path: pylint.log
+          destination: pylint.log
 
   test-3.7:
     <<: *defaults
