@@ -1,0 +1,3 @@
+[run]
+include =
+    icetea_lib/*
