@@ -82,6 +82,16 @@ class TestVerify(unittest.TestCase):
         mfunc.get_dut_configuration.return_value = "Not a list"
         self.assertRaises(AllocationError, alloc.allocate, mfunc)
 
+    def test_allocate_raises_devices_not_available(self, mock_logging, mock_dutdetection):
+        detected = [1]
+        mock_dutdetection.get_available_devices = mock.MagicMock(return_value=detected)
+        alloc = LocalAllocator()
+        mfunc = mock.MagicMock()
+        mfunc.get_dut_configuration = mock.MagicMock()
+        mfunc.get_dut_configuration.return_value = [{"type": "hardware"}, {"type": "hardware"}]
+        with self.assertRaises(AllocationError):
+            alloc.allocate(mfunc)
+
     def test_internal_allocate_no_type_raises(self, mock_logging, mock_dutdetection):
         alloc = LocalAllocator()
         data = {"notype": None}
