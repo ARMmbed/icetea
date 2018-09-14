@@ -61,10 +61,9 @@ jobs:
             python -m venv venv || virtualenv venv
             echo activate
             . venv/bin/activate
-            echo TODO: pip install -r requirements.txt
-            echo TODO: pip install -r dev_requirements.txt
+            pip install -r requirements.txt
+            pip install -r dev_requirements.txt
             pip install coveralls
-            pip install mock coverage jsonschema
             python setup.py develop
 
       - save_cache:
