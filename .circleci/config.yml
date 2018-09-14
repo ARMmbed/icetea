@@ -63,6 +63,7 @@ jobs:
             . venv/bin/activate
             echo TODO: pip install -r requirements.txt
             echo TODO: pip install -r dev_requirements.txt
+            pip install mock coverage
             python setup.py develop
 
       - save_cache:
