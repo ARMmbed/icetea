@@ -17,16 +17,17 @@ LocalAllocator module. Implements allocating local resources using mbedls
 """
 
 import logging
-import os
 
 from icetea_lib.LogManager import get_resourceprovider_logger, set_level
-from icetea_lib.DeviceConnectors.DutDetection import DutDetection
-from icetea_lib.DeviceConnectors.DutConsole import DutConsole, DutProcess
-from icetea_lib.DeviceConnectors.DutSerial import DutSerial
 from icetea_lib.AllocationContext import AllocationContext, AllocationContextList
 from icetea_lib.ResourceProvider.Allocators.BaseAllocator import BaseAllocator
 from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
 from icetea_lib.ResourceProvider.exceptions import ResourceInitError
+
+from icetea_lib.Plugin.plugins.LocalAllocator.DutDetection import DutDetection
+from icetea_lib.Plugin.plugins.LocalAllocator.DutConsole import DutConsole
+from icetea_lib.Plugin.plugins.LocalAllocator.DutProcess import DutProcess
+from icetea_lib.Plugin.plugins.LocalAllocator.DutSerial import DutSerial
 
 
 def init_hardware_dut(contextlist, conf, index, args):

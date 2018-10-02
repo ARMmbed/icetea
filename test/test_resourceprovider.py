@@ -16,6 +16,7 @@ limitations under the License.
 # pylint: disable=missing-docstring,old-style-class,protected-access
 # pylint: disable=attribute-defined-outside-init,too-few-public-methods,unused-argument
 
+import os
 import unittest
 import mock
 
@@ -167,6 +168,32 @@ class RPTestcase(unittest.TestCase):
         self.res_pro.allocator = None
         with self.assertRaises(ResourceInitError):
             self.res_pro.allocate_duts(mock_resconf)
+
+    def test_config_file_reading(self, mock_logman):
+        mock_logman.get_resourceprovider_logger = mock.MagicMock(return_value=MockLogger())
+        filepath = os.path.abspath(os.path.join(__file__, os.path.pardir, "tests",
+                                                "allocator_config.json"))
+        self.res_pro = ResourceProvider(MockArgs())
+
+        with open(filepath, "r") as cfg_file:
+            test_data = json.load(cfg_file)
+
+        self.res_pro = ResourceProvider(MockArgs())
+        retval = self.res_pro._read_allocator_config("testallocator", filepath)
+        self.assertEquals(retval, test_data.get("testallocator"))
+
+    def test_config_file_errors(self, mock_logman):
+        mock_logman.get_resourceprovider_logger = mock.MagicMock(return_value=MockLogger())
+        self.res_pro = ResourceProvider(MockArgs())
+        with self.assertRaises(ResourceInitError):
+            self.res_pro._read_allocator_config("generic", "does_not_exist")
+        with self.assertRaises(ResourceInitError):
+            not_a_file = os.path.abspath(os.path.join(__file__, os.path.pardir, "tests"))
+            self.res_pro._read_allocator_config("generic", not_a_file)
+        with self.assertRaises(ResourceInitError):
+            no_config_here = os.path.abspath(os.path.join(__file__, os.path.pardir, "suites",
+                                                          "dummy_suite.json"))
+            self.res_pro._read_allocator_config("generic", no_config_here)
 
     def tearDown(self):
         self.res_pro.cleanup()

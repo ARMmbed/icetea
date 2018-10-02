@@ -15,6 +15,8 @@ limitations under the License.
 ResourceProvider module. Handling of allocations and resource configurations is done here.
 """
 
+import json
+
 import six
 
 import icetea_lib.LogManager as LogManager
@@ -107,11 +109,15 @@ class ResourceProvider(object):
         :raises: ResourceInitError
         """
         allocator_name = self.args.allocator
+        allocator_cfg_file = self.args.allocator_cfg
+        allocator_cfg = dict()
+        if allocator_cfg_file:
+            allocator_cfg = self._read_allocator_config(allocator_name, allocator_cfg_file)
         allocator = self._pluginmanager.get_allocator(allocator_name)
         if allocator is None:
             raise ResourceInitError("Unable to load allocator {}".format(allocator_name))
         self.logger.debug("Using allocator %s", allocator_name)
-        return allocator(self.args, None)
+        return allocator(self.args, None, allocator_cfg)
 
     def get_my_duts(self):
         """
@@ -124,3 +130,34 @@ class ResourceProvider(object):
             myduts = self.args.my_duts.split(',')
             return myduts
         return None
+
+    def _read_allocator_config(self, allocator_name, allocator_cfg_file):
+        """
+        Read configuration for allocator from a json file.
+        Json file needs to have an object that contains key allocator_name (if you want to use
+        the same config for each allocator for example)
+
+        :param allocator_name: Name of the allocator.
+        :param allocator_cfg_file: absolute path to the json config file to use.
+        :return: dict
+        :raises: ResourceInitError if config file not found.
+        """
+        allocator_config = dict()
+        self.logger.debug("Reading allocator configuration from {}".format(allocator_cfg_file))
+        try:
+            with open(allocator_cfg_file, "r") as cfg_file:
+                data = json.load(cfg_file)
+
+                if allocator_name in data:
+                    allocator_config = data.get(allocator_name)
+                else:
+                    self.logger.error(
+                        "Allocator configuration not found in {}".format(allocator_cfg_file))
+                    raise ResourceInitError(
+                        "Allocator configuration not found in {}".format(allocator_cfg_file))
+        except IOError as error:
+            self.logger.error(error)
+            raise ResourceInitError("Unable to read allocator config: {}".format(error))
+        self.logger.debug("Read allocator configuration from {}: {}".format(allocator_cfg_file,
+                                                                            allocator_config))
+        return allocator_config
