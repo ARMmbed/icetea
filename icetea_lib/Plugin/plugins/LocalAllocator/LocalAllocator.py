@@ -152,14 +152,17 @@ class LocalAllocator(BaseAllocator):
     LocalAllocator class, subclasses BaseAllocator. Implements allocation of local resources for
     use in test cases. Uses mbedls to detect mbed devices.
     """
-    def __init__(self, args=None, logger=None):
+    def __init__(self, args=None, logger=None, allocator_cfg=None):
         super(LocalAllocator, self).__init__()
-
         self.logger = logger
         if self.logger is None:
             self.logger = get_resourceprovider_logger("LocalAllocator", "LAL")
             set_level("LAL", logging.DEBUG)
         self._available_devices = []
+
+    @property
+    def share_allocations(self):
+        return False
 
     def can_allocate(self, dut_configuration):
         """

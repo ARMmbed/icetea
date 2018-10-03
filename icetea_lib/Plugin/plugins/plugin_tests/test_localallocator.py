@@ -21,11 +21,12 @@ import logging
 import mock
 
 from icetea_lib.AllocationContext import AllocationContextList
-from icetea_lib.Plugin.plugins.LocalAllocator import LocalAllocator, init_hardware_dut
-from icetea_lib.Plugin.plugins.LocalAllocator import init_process_dut
 from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
 from icetea_lib.ResourceProvider.ResourceRequirements import ResourceRequirements
 from icetea_lib.ResourceProvider.exceptions import ResourceInitError
+
+from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import LocalAllocator, init_hardware_dut
+from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import init_process_dut
 
 
 @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutDetection", create=False)

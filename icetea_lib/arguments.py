@@ -140,11 +140,15 @@ def get_base_arguments(parser):
                                   "where custom plugins are imported from.")
 
     # Allocator group
-    alloc_group = parser.add_mutually_exclusive_group(required=False)
+    alloc_group = parser.add_argument_group("Allocator", "Control allocation of resources for "
+                                                         "tests.")
     alloc_group.add_argument("--allocator",
                              default="LocalAllocator",
                              help="Allocator to be used for allocating resources. "
                                   "Default is LocalAllocator")
+    alloc_group.add_argument("--allocator_cfg",
+                            help="File that contains configuration for used allocator.",
+                            default=None)
 
     # Other arguments
     parser.add_argument('--env_cfg',

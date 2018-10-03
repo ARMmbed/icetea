@@ -16,6 +16,7 @@ limitations under the License.
 # pylint: disable=missing-docstring,old-style-class,protected-access
 # pylint: disable=attribute-defined-outside-init,too-few-public-methods,unused-argument
 
+import json
 import os
 import unittest
 import mock
@@ -44,7 +45,7 @@ class MockLogger:
 
 
 class MockAllocator:
-    def __init__(self, thing1, thing2):
+    def __init__(self, thing1, thing2, thing3):
         self.allocate_calls = 0
 
     def reset_logging(self):
@@ -87,10 +88,11 @@ class MockArgs:
         self.allocator = "TestAllocator"
         self.list = False
         self.listsuites = False
+        self.allocator_cfg = "test_file"
 
 
 @mock.patch("icetea_lib.ResourceProvider.ResourceProvider.LogManager", spec=LogManager)
-@mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.get_resourceprovider_logger")
+@mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.get_resourceprovider_logger")
 class RPTestcase(unittest.TestCase):
 
     def test_init(self, mock_rplogger_get, mock_logman):
