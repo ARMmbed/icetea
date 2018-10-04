@@ -146,7 +146,12 @@ class ResourceProvider(object):
         self.logger.debug("Reading allocator configuration from {}".format(allocator_cfg_file))
         try:
             with open(allocator_cfg_file, "r") as cfg_file:
-                data = json.load(cfg_file)
+                try:
+                    data = json.load(cfg_file)
+                except ValueError as e:
+                    self.logger.error(e)
+                    raise ResourceInitError("Failed to decode json "
+                                            "from allocator config file {}".format(cfg_file))
 
                 if allocator_name in data:
                     allocator_config = data.get(allocator_name)

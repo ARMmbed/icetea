@@ -186,7 +186,8 @@ class RPTestcase(unittest.TestCase):
         retval = self.res_pro._read_allocator_config("testallocator", filepath)
         self.assertEquals(retval, test_data.get("testallocator"))
 
-    def test_config_file_errors(self, mock_rplogger_get, mock_logman):
+    @mock.patch("icetea_lib.ResourceProvider.ResourceProvider.json")
+    def test_config_file_errors(self, mock_rplogger_get, mock_logman, mocked_json):
         mock_logman.get_resourceprovider_logger = mock.MagicMock(return_value=MockLogger())
         self.res_pro = ResourceProvider(MockArgs())
         with self.assertRaises(ResourceInitError):
@@ -198,6 +199,13 @@ class RPTestcase(unittest.TestCase):
             no_config_here = os.path.abspath(os.path.join(__file__, os.path.pardir, "suites",
                                                           "dummy_suite.json"))
             self.res_pro._read_allocator_config("generic", no_config_here)
+
+        with self.assertRaises(ResourceInitError):
+            mocked_json.load = mock.MagicMock()
+            mocked_json.load.side_effect = [ValueError]
+            filepath = os.path.abspath(os.path.join(__file__, os.path.pardir, "tests",
+                                                    "allocator_config.json"))
+            self.res_pro._read_allocator_config("testallocator", filepath)
 
     def tearDown(self):
         self.res_pro.cleanup()
