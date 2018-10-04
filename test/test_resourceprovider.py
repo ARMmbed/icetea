@@ -88,7 +88,7 @@ class MockArgs:
         self.allocator = "TestAllocator"
         self.list = False
         self.listsuites = False
-        self.allocator_cfg = "test_file"
+        self.allocator_cfg = None
 
 
 @mock.patch("icetea_lib.ResourceProvider.ResourceProvider.LogManager", spec=LogManager)
@@ -157,6 +157,7 @@ class RPTestcase(unittest.TestCase):
         m_args = MockArgs()
         mock_resconf = mock.MagicMock()
         mock_resconf.count_hardware = mock.MagicMock(return_value=1)
+        mock_resconf.count_simulate = mock.MagicMock(return_value=0)
         mock_resconf.get_dut_configuration = mock.MagicMock(return_value=[mock.MagicMock()])
         mock_resconf.count_duts = mock.MagicMock(return_value=1)
         self.res_pro = ResourceProvider(m_args)
@@ -166,12 +167,13 @@ class RPTestcase(unittest.TestCase):
         mock_allocator = mock.MagicMock()
         mock_pluginmanager.get_allocator = mock.MagicMock(side_effect=[mock_allocator, None])
         self.res_pro.allocate_duts(mock_resconf)
-        mock_allocator.assert_called_once_with(m_args, None)
+        mock_allocator.assert_called_once_with(m_args, None, dict())
+
         self.res_pro.allocator = None
         with self.assertRaises(ResourceInitError):
             self.res_pro.allocate_duts(mock_resconf)
 
-    def test_config_file_reading(self, mock_logman):
+    def test_config_file_reading(self, mock_rplogger_get, mock_logman):
         mock_logman.get_resourceprovider_logger = mock.MagicMock(return_value=MockLogger())
         filepath = os.path.abspath(os.path.join(__file__, os.path.pardir, "tests",
                                                 "allocator_config.json"))
@@ -184,7 +186,7 @@ class RPTestcase(unittest.TestCase):
         retval = self.res_pro._read_allocator_config("testallocator", filepath)
         self.assertEquals(retval, test_data.get("testallocator"))
 
-    def test_config_file_errors(self, mock_logman):
+    def test_config_file_errors(self, mock_rplogger_get, mock_logman):
         mock_logman.get_resourceprovider_logger = mock.MagicMock(return_value=MockLogger())
         self.res_pro = ResourceProvider(MockArgs())
         with self.assertRaises(ResourceInitError):

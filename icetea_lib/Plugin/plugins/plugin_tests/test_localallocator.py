@@ -29,8 +29,9 @@ from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import LocalAllocat
 from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import init_process_dut
 
 
-@mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutDetection", create=False)
-@mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.get_resourceprovider_logger", create=True)
+@mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutDetection", create=False)
+@mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.get_resourceprovider_logger",
+            create=True)
 class TestVerify(unittest.TestCase):
 
     def setUp(self):
@@ -287,7 +288,7 @@ class TestVerify(unittest.TestCase):
         alloc = LocalAllocator()
         alloc.release()
 
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutConsole")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutConsole")
     def test_init_console_dut(self, mock_dc, mock_logging, mock_dutdetection):
         conf = {}
         conf["subtype"] = "console"
@@ -299,7 +300,7 @@ class TestVerify(unittest.TestCase):
         con_list = AllocationContextList(self.nulllogger)
         self.assertIsNone(init_process_dut(con_list, conf, 1, mock.MagicMock()))
 
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutSerial")
     def test_init_hw_dut(self, mock_ds, mock_logging, mock_dutdetection):
         conf = {"allocated": {"serial_port": "port", "baud_rate": 115200,
                               "platform_name": "test", "target_id": "id"},
@@ -337,7 +338,7 @@ class TestVerify(unittest.TestCase):
             dut1.close_dut.assert_called()
             dut1.close_connection.assert_called()
 
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutSerial")
     def test_init_hw_dut_nondefault_baud_rate(self, mock_ds, mock_logging, mock_dutdetection):
         conf = {"allocated": {"serial_port": "port", "baud_rate": 115200,
                               "platform_name": "test", "target_id": "id"},
@@ -386,6 +387,7 @@ class TestVerify(unittest.TestCase):
                                             serial_config={'serial_timeout': True,
                                                            'serial_rtscts': True},
                                             params=args)
+
 
 if __name__ == '__main__':
     unittest.main()
