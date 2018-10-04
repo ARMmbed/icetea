@@ -11,23 +11,22 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-"""
 
-#Disable too many arguments warning and string statement has no effect warning
-#Disable Too few public methods warning, too many public methods warning
-#pylint: disable=R0913,W0105,R0903,R0904
-
-"""
 DutSerial module contains the DutSerial Dut subclass and two parameter objects, which contain
 serial and chunk mode parameters.
 """
+
+# Disable too many arguments warning and string statement has no effect warning
+# Disable Too few public methods warning, too many public methods warning
+# pylint: disable=R0913,W0105,R0903,R0904
+# pylint: disable=too-many-instance-attributes
 
 import inspect
 import time
 from collections import deque
 from threading import Thread
-from prettytable import PrettyTable
 from serial import SerialException
+from prettytable import PrettyTable
 
 from icetea_lib.DeviceConnectors.Dut import Dut, DutConnectionError
 from icetea_lib.enhancedserial import EnhancedSerial
@@ -182,6 +181,11 @@ class DutSerial(Dut):
 
     @property
     def serial_baudrate(self):
+        """
+        Getter for serial baudrate.
+
+        :return: int
+        """
         return self.serialparams.baudrate
 
     @serial_baudrate.setter
@@ -197,6 +201,12 @@ class DutSerial(Dut):
 
     @serial_timeout.setter
     def serial_timeout(self, value):
+        """
+        Setter for serial connection timeout.
+
+        :param value: Value to set
+        :return: Nothing
+        """
         self.serialparams.timeout = value
 
     @property
@@ -316,9 +326,10 @@ class DutSerial(Dut):
         if self.readthread is not None:
             raise DutConnectionError("Trying to open serial port which was already open")
 
-        self.logger.info("Open Connection for '%s' using '%s' baudrate: %d" % (self.dut_name,
-                                                                               self.comport,
-                                                                               self.serial_baudrate),
+        self.logger.info("Open Connection "
+                         "for '%s' using '%s' baudrate: %d" % (self.dut_name,
+                                                               self.comport,
+                                                               self.serial_baudrate),
                          extra={'type': '<->'})
         if self.serial_xonxoff:
             self.logger.debug("Use software flow control for dut: %s" % self.dut_name)
@@ -421,6 +432,7 @@ class DutSerial(Dut):
             else:
                 self.logger.warning("reset failed", extra={'type': '<->'})
             return result
+        return None
 
     # transfer data to the serial port
     def writeline(self, data):

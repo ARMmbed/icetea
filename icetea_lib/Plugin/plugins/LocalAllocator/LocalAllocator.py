@@ -1,3 +1,5 @@
+# pylint: disable=unused-argument
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -103,7 +105,7 @@ def init_process_dut(contextlist, conf, index, args):
         if conf["subtype"] != "console":
             msg = "Unrecognized process subtype: {}"
             contextlist.logger.error(msg.format(conf["subtype"]))
-            return None
+            raise ResourceInitError("Unrecognized process subtype: {}")
         # This is a specialized 'console' process
         config = None
         if "application" in conf:
@@ -162,6 +164,11 @@ class LocalAllocator(BaseAllocator):
 
     @property
     def share_allocations(self):
+        """
+        Just return False, allocation sharing not implemented for this allocator.
+
+        :return: False
+        """
         return False
 
     def can_allocate(self, dut_configuration):
@@ -178,6 +185,7 @@ class LocalAllocator(BaseAllocator):
     def allocate(self, dut_configuration_list, args=None):
         """
         Allocates resources from available local devices.
+
         :param dut_configuration_list: List of ResourceRequirements objects
         :param args: Not used
         :return: AllocationContextList with allocated resources
