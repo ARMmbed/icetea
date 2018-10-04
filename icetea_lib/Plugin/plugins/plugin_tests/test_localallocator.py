@@ -298,7 +298,9 @@ class TestVerify(unittest.TestCase):
 
         conf["subtype"] = "other"
         con_list = AllocationContextList(self.nulllogger)
-        self.assertIsNone(init_process_dut(con_list, conf, 1, mock.MagicMock()))
+        with self.assertRaises(ResourceInitError):
+            self.assertIsNone(init_process_dut(con_list, conf, 1, mock.MagicMock()))
+
 
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutSerial")
     def test_init_hw_dut(self, mock_ds, mock_logging, mock_dutdetection):
