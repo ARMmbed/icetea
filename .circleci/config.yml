@@ -78,6 +78,7 @@ jobs:
           command: |
             . venv/bin/activate
             coverage run --parallel-mode -m unittest discover -s test
+            coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests
             coverage combine --append
             coverage html --include='*icetea_lib*'
             coverage xml --include='*icetea_lib*'
