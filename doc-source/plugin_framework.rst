@@ -232,8 +232,8 @@ Implementing an allocator
 Allocators are implemented as global plugins, which means that only one
 allocator can be used during a run. The used allocator can be selected
 from the Icetea cli using parameter --allocator.
-The actual allocator plugin implementation requires two parts:
-The plugin and the allocator.
+The actual allocator plugin implementation requires three parts:
+The plugin, a Dut object and the allocator.
 
 The plugin is implemented in a manner similar to the other types. First
 create a class that inherits the RunPluginBase class. This class must
@@ -245,6 +245,21 @@ the --allocator cli parameter.
 The actual allocator class needs to inherit the
 `BaseAllocator <../../icetea_lib/ResourceProvider/Allocators/BaseAllocator.py>`_
 class and implement at least the allocate-function defined there.
+
+The allocator is responsible for parsing the ResourceRequirements, selecting the correct binary
+to the objects and generating the AllocationContextList objects.
+
+Please see `LocalAllocator <../icetea_lib/Plugin/plugins/LocalAllocator/LocalAllocator.py>`_
+for examples on how the allocator should behave.
+
+Implementing Duts
+-----------------
+
+The Allocator is paired with objects that describe and provide API:s for handling the devices
+under test. These are classes that need to inherit the `Dut <../icetea_lib/DeviceConnectors/Dut.py>`_
+object. The Allocator should contain a method that generates an object like this from the
+provided configuration and cli arguments and returns it. The allocator should add a reference to
+this function and the dut type into the AllocationContextList it creates.
 
 ********
 Examples
