@@ -16,6 +16,7 @@ limitations under the License.
 """
 
 import unittest
+import mock
 
 from icetea_lib.Result import Result
 from icetea_lib.cloud import Cloud, create_result_object
@@ -24,9 +25,13 @@ from icetea_lib.cloud import Cloud, create_result_object
 class CloudTestcase(unittest.TestCase):
 
     def setUp(self):
-        self.cloudclient = Cloud(module="test.moduletest")
+        with mock.patch("icetea_lib.cloud.get_pkg_version") as mocked_reader:
+            mocked_reader.return_value = [mock.MagicMock()]
+            self.cloudclient = Cloud(module="moduletest")
 
-    def test_module_import(self):
+    @mock.patch("icetea_lib.cloud.get_pkg_version")
+    def test_module_import(self, mocked_version_reader):
+        mocked_version_reader.return_value = "1.0.0"
         # Test ImportError with non-existent module
         with self.assertRaises(ImportError):
             cloud_module = Cloud(module="Nonexistentmodule")
