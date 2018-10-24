@@ -35,8 +35,24 @@ def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
 
-INSTALL_REQUIRES = read("requirements.txt").splitlines()
-TEST_REQUIRES = read("dev_requirements.txt").splitlines()
+INSTALL_REQUIRES = ["prettytable",
+                    "requests",
+                    "yattag",
+                    "pyserial>2.5",
+                    "jsonmerge",
+                    "jsonschema",
+                    "mbed-ls>=1.5.1,==1.*",
+                    "semver",
+                    "mbed-flasher==0.9.*",
+                    "six"
+                    ]
+TEST_REQUIRES = ["coverage",
+                 "mock",
+                 "sphinx",
+                 "lxml",
+                 "pylint",
+                 "astroid"
+                 ]
 # todo move pyshark as optional dep:
 # pyshark-legacy; python_version < "3.0"
 # pyshark; python_version >= "3.5"
