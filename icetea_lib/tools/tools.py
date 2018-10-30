@@ -60,7 +60,7 @@ def get_fw_version():
                     if m:
                         version = m.group(1)
                         break
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             pass
     else:
         version = "-rc".join(pkg.version.split("rc"))
@@ -76,14 +76,19 @@ def sha1_of_file(filepath):
     """
     import hashlib
     try:
-        with open(filepath, 'rb') as f:
-            return hashlib.sha1(f.read()).hexdigest()
+        with open(filepath, 'rb') as file_to_hash:
+            return hashlib.sha1(file_to_hash.read()).hexdigest()
     except:
         return None
 
-
 # Check if number is integer or not
 def check_int(s):
+    """
+    Check if number is integer or not.
+
+    :param s: Number as str
+    :return: Boolean
+    """
     if not isinstance(s, str):
         return False
     if s[0] in ('-', '+'):
@@ -93,6 +98,12 @@ def check_int(s):
 
 # Convert string to the number
 def num(s):
+    """
+    Convert string to the number.
+
+    :param s: String to convert
+    :return: int or None
+    """
     try:
         if check_int(s):
             return int(s)
@@ -104,14 +115,23 @@ def num(s):
 
 # Check if PID (process id) is running
 def is_pid_running(pid):
-    return (_is_pid_running_on_windows(pid) if platform.system() == "Windows"
-        else _is_pid_running_on_unix(pid))
+    """
+    Check if PID (process id) is running.
+
+    :param pid: Pid to check
+    :return : Boolean
+    """
+    if platform.system() == "Windows":
+        return _is_pid_running_on_windows(pid)
+    return _is_pid_running_on_unix(pid)
 
 
 def _is_pid_running_on_unix(pid):
+    """
+    Check if PID is running for Unix systems.
+    """
     try:
         os.kill(pid, 0)
-
     except OSError as err:
         # if error is ESRCH, it means the process doesn't exist
         return not err.errno == os.errno.ESRCH
@@ -119,6 +139,9 @@ def _is_pid_running_on_unix(pid):
 
 
 def _is_pid_running_on_windows(pid):
+    """
+    Check if PID is running for Windows systems
+    """
     import ctypes.wintypes
 
     kernel32 = ctypes.windll.kernel32
@@ -136,6 +159,12 @@ ansi_eng = re.compile(ansi_pattern)
 
 
 def strip_escape(string=''):
+    """
+    Strip escape characters from string.
+
+    :param string: string to work on
+    :return: stripped string
+    """
     matches = []
     for match in ansi_eng.finditer(string):
         matches.append(match)
@@ -224,7 +253,7 @@ def get_abs_path(relative_path):
 
 def get_pkg_version(pkg_name, parse=False):
     """
-    verify and get installed python package version.
+    Verify and get installed python package version.
 
     :param pkg_name:    python package name
     :param parse: parse version number with pkg_resourc.parse_version -function
