@@ -19,7 +19,7 @@ import unittest
 import os
 import copy
 
-from icetea_lib.tools.tools import remove_empty_from_dict
+from icetea_lib.tools.tools import remove_empty_from_dict, get_pkg_version
 
 
 def create_result_object(result):
@@ -189,6 +189,13 @@ class Cloud(object):
         if not module:
             module = os.environ.get("ICETEA_CLOUD_PROVIDER", 'opentmi-client')
         self.module = __import__(module, globals(), fromlist=[""])
+
+        version = get_pkg_version(module)
+        if self.logger and version is not None:
+            self.logger.info("using {} version {}".format(module, version))
+        else:
+            if self.logger:
+                self.logger.warning("Unable to parse cloud module version")
 
         # Parse host and port from combined host
         if host is None:
