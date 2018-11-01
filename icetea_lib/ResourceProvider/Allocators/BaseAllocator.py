@@ -70,3 +70,8 @@ class BaseAllocator(object):
         :return:
         """
         pass
+
+    @property
+    def share_allocations(self):
+        raise NotImplementedError("share_allocations has to be implemented by subclassing "
+                                  "BaseAllocator")

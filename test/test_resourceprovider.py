@@ -16,6 +16,8 @@ limitations under the License.
 # pylint: disable=missing-docstring,old-style-class,protected-access
 # pylint: disable=attribute-defined-outside-init,too-few-public-methods,unused-argument
 
+import json
+import os
 import unittest
 import mock
 
@@ -43,7 +45,7 @@ class MockLogger:
 
 
 class MockAllocator:
-    def __init__(self, thing1, thing2):
+    def __init__(self, thing1, thing2, thing3):
         self.allocate_calls = 0
 
     def reset_logging(self):
@@ -86,10 +88,11 @@ class MockArgs:
         self.allocator = "TestAllocator"
         self.list = False
         self.listsuites = False
+        self.allocator_cfg = None
 
 
 @mock.patch("icetea_lib.ResourceProvider.ResourceProvider.LogManager", spec=LogManager)
-@mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.get_resourceprovider_logger")
+@mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.get_resourceprovider_logger")
 class RPTestcase(unittest.TestCase):
 
     def test_init(self, mock_rplogger_get, mock_logman):
@@ -154,6 +157,7 @@ class RPTestcase(unittest.TestCase):
         m_args = MockArgs()
         mock_resconf = mock.MagicMock()
         mock_resconf.count_hardware = mock.MagicMock(return_value=1)
+        mock_resconf.count_simulate = mock.MagicMock(return_value=0)
         mock_resconf.get_dut_configuration = mock.MagicMock(return_value=[mock.MagicMock()])
         mock_resconf.count_duts = mock.MagicMock(return_value=1)
         self.res_pro = ResourceProvider(m_args)
@@ -163,10 +167,45 @@ class RPTestcase(unittest.TestCase):
         mock_allocator = mock.MagicMock()
         mock_pluginmanager.get_allocator = mock.MagicMock(side_effect=[mock_allocator, None])
         self.res_pro.allocate_duts(mock_resconf)
-        mock_allocator.assert_called_once_with(m_args, None)
+        mock_allocator.assert_called_once_with(m_args, None, dict())
+
         self.res_pro.allocator = None
         with self.assertRaises(ResourceInitError):
             self.res_pro.allocate_duts(mock_resconf)
+
+    def test_config_file_reading(self, mock_rplogger_get, mock_logman):
+        mock_logman.get_resourceprovider_logger = mock.MagicMock(return_value=MockLogger())
+        filepath = os.path.abspath(os.path.join(__file__, os.path.pardir, "tests",
+                                                "allocator_config.json"))
+        self.res_pro = ResourceProvider(MockArgs())
+
+        with open(filepath, "r") as cfg_file:
+            test_data = json.load(cfg_file)
+
+        self.res_pro = ResourceProvider(MockArgs())
+        retval = self.res_pro._read_allocator_config("testallocator", filepath)
+        self.assertEquals(retval, test_data.get("testallocator"))
+
+    @mock.patch("icetea_lib.ResourceProvider.ResourceProvider.json")
+    def test_config_file_errors(self, mock_rplogger_get, mock_logman, mocked_json):
+        mock_logman.get_resourceprovider_logger = mock.MagicMock(return_value=MockLogger())
+        self.res_pro = ResourceProvider(MockArgs())
+        with self.assertRaises(ResourceInitError):
+            self.res_pro._read_allocator_config("generic", "does_not_exist")
+        with self.assertRaises(ResourceInitError):
+            not_a_file = os.path.abspath(os.path.join(__file__, os.path.pardir, "tests"))
+            self.res_pro._read_allocator_config("generic", not_a_file)
+        with self.assertRaises(ResourceInitError):
+            no_config_here = os.path.abspath(os.path.join(__file__, os.path.pardir, "suites",
+                                                          "dummy_suite.json"))
+            self.res_pro._read_allocator_config("generic", no_config_here)
+
+        with self.assertRaises(ResourceInitError):
+            mocked_json.load = mock.MagicMock()
+            mocked_json.load.side_effect = [ValueError]
+            filepath = os.path.abspath(os.path.join(__file__, os.path.pardir, "tests",
+                                                    "allocator_config.json"))
+            self.res_pro._read_allocator_config("testallocator", filepath)
 
     def tearDown(self):
         self.res_pro.cleanup()

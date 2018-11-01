@@ -1,0 +1,10 @@
+{
+  "allocator": {
+    "test_attr": "attr1",
+    "this_other_attr": "attr2"
+  },
+  "testallocator": {
+    "this_test_attr": "attr3",
+    "the_fourth_attr": "attr4"
+  }
+}
