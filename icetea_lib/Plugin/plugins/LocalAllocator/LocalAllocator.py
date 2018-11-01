@@ -1,3 +1,5 @@
+# pylint: disable=unused-argument
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,16 +19,17 @@ LocalAllocator module. Implements allocating local resources using mbedls
 """
 
 import logging
-import os
 
 from icetea_lib.LogManager import get_resourceprovider_logger, set_level
-from icetea_lib.DeviceConnectors.DutDetection import DutDetection
-from icetea_lib.DeviceConnectors.DutConsole import DutConsole, DutProcess
-from icetea_lib.DeviceConnectors.DutSerial import DutSerial
 from icetea_lib.AllocationContext import AllocationContext, AllocationContextList
 from icetea_lib.ResourceProvider.Allocators.BaseAllocator import BaseAllocator
 from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
 from icetea_lib.ResourceProvider.exceptions import ResourceInitError
+
+from icetea_lib.Plugin.plugins.LocalAllocator.DutDetection import DutDetection
+from icetea_lib.Plugin.plugins.LocalAllocator.DutConsole import DutConsole
+from icetea_lib.Plugin.plugins.LocalAllocator.DutProcess import DutProcess
+from icetea_lib.Plugin.plugins.LocalAllocator.DutSerial import DutSerial
 
 
 def init_hardware_dut(contextlist, conf, index, args):
@@ -102,7 +105,7 @@ def init_process_dut(contextlist, conf, index, args):
         if conf["subtype"] != "console":
             msg = "Unrecognized process subtype: {}"
             contextlist.logger.error(msg.format(conf["subtype"]))
-            return None
+            raise ResourceInitError("Unrecognized process subtype: {}")
         # This is a specialized 'console' process
         config = None
         if "application" in conf:
@@ -151,14 +154,22 @@ class LocalAllocator(BaseAllocator):
     LocalAllocator class, subclasses BaseAllocator. Implements allocation of local resources for
     use in test cases. Uses mbedls to detect mbed devices.
     """
-    def __init__(self, args=None, logger=None):
+    def __init__(self, args=None, logger=None, allocator_cfg=None):
         super(LocalAllocator, self).__init__()
-
         self.logger = logger
         if self.logger is None:
             self.logger = get_resourceprovider_logger("LocalAllocator", "LAL")
             set_level("LAL", logging.DEBUG)
         self._available_devices = []
+
+    @property
+    def share_allocations(self):
+        """
+        Just return False, allocation sharing not implemented for this allocator.
+
+        :return: False
+        """
+        return False
 
     def can_allocate(self, dut_configuration):
         """
@@ -174,6 +185,7 @@ class LocalAllocator(BaseAllocator):
     def allocate(self, dut_configuration_list, args=None):
         """
         Allocates resources from available local devices.
+
         :param dut_configuration_list: List of ResourceRequirements objects
         :param args: Not used
         :return: AllocationContextList with allocated resources

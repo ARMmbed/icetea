@@ -17,11 +17,10 @@ DutConsole module, contains DutConsole class which inherits DutProcess.
 
 
 # Disable "string statement has no effect" warning
-#pylint: disable=W0105
+# pylint: disable=W0105
 
 
-from icetea_lib.DeviceConnectors.DutProcess import DutProcess
-
+from icetea_lib.Plugin.plugins.LocalAllocator.DutProcess import DutProcess
 
 
 class DutConsole(DutProcess):
