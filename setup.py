@@ -56,9 +56,10 @@ class VerifyVersionCommand(install):
         is_ci = os.getenv("CIRCLECI")
         if is_ci:
             tag = os.getenv("CIRCLE_TAG")
-            if tag != VERSION:
+            version = "v" + VERSION
+            if tag != version:
                 info = "Git tag: {0} does not match the"\
-                       "version of this app: {1}".format(tag, VERSION)
+                       "version of this app: {1}".format(tag, version)
                 sys.exit(info)
         # else: you are your own - please do not publish any releases without tag!
 
