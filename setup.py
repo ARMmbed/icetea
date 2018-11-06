@@ -41,7 +41,7 @@ INSTALL_REQUIRES = [
     "yattag",
     "pyserial>2.5",
     "jsonmerge",
-    "jsonschema",
+    "jsonschema<3.0.0",
     "mbed-ls>=1.5.1,==1.*",
     "semver",
     "mbed-flasher==0.9.*",
