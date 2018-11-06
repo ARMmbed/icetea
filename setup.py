@@ -23,7 +23,7 @@ from setuptools.command.install import install
 DESCRIPTION = "Icetea - test framework"
 OWNER_NAMES = "Jussi Vatjus-Anttila"
 OWNER_EMAILS = "jussi.vatjus-anttila@arm.com"
-VERSION = "1.1.0-rc2"
+VERSION = "1.1.0-rc3"
 
 
 def read(fname):
@@ -41,7 +41,7 @@ INSTALL_REQUIRES = [
     "yattag",
     "pyserial>2.5",
     "jsonmerge",
-    "jsonschema",
+    "jsonschema<3.0.0",
     "mbed-ls>=1.5.1,==1.*",
     "semver",
     "mbed-flasher==0.9.*",
