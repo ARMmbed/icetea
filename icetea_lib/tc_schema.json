@@ -142,6 +142,35 @@
                                     },
                                     "minItems": 0,
                                     "maxItems": 2
+                                },
+                                "expires": {
+                                  "type": "number"
+                                },
+                                "selected_dut": {
+                                  "type": "object",
+                                  "properties": {
+                                    "platform_name": {
+                                      "type": "string"
+                                    },
+                                    "tags": {
+                                      "type": "object",
+                                      "additionalProperties": {
+                                        "type": [
+                                          "boolean",
+                                          "null"
+                                        ]
+                                      }
+                                    }
+                                  }
+                                },
+                                "tags": {
+                                  "type": "object",
+                                  "additionalProperties": {
+                                    "type": [
+                                      "boolean",
+                                      "null"
+                                    ]
+                                  }
                                 }
                             }
                         }
