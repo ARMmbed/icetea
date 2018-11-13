@@ -132,6 +132,14 @@
                                             "items": {
                                                 "type": "string"
                                             }
+                                        },
+                                        "on_release": {
+                                          "type": "string",
+                                          "enum": [
+                                            "none",
+                                            "erase",
+                                            "reset"
+                                          ]
                                         }
                                     }
                                 },
