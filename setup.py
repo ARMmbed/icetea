@@ -44,7 +44,7 @@ INSTALL_REQUIRES = [
     "jsonschema<3.0.0",
     "mbed-ls>=1.5.1,==1.*",
     "semver",
-    "mbed-flasher==0.9.*",
+    "mbed-flasher>=0.9.0,==0.*",
     "six"
 ]
 TEST_REQUIRES = [
