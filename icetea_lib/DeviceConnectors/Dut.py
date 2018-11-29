@@ -356,7 +356,15 @@ class Dut(object):
 
         :return: value of init_done
         """
-        return self.init_done.wait(timeout=self.init_wait_timeout)
+        init_done = self.init_done.wait(timeout=self.init_wait_timeout)
+        if not init_done:
+            if hasattr(self, "peek"):
+                app = self.config.get("application")
+                if app:
+                    bef_init_cmds = app.get("cli_ready_trigger")
+                    if bef_init_cmds in self.peek():  # pylint: disable=no-member
+                        init_done = True
+        return init_done
 
     def init_cli_human(self):
         """

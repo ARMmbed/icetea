@@ -12,6 +12,7 @@ like found in the telnetlib.
 """
 import re
 import pkg_resources
+from threading import Lock
 from serial import Serial, SerialException, SerialTimeoutException
 
 class EnhancedSerial(Serial):
@@ -21,6 +22,7 @@ class EnhancedSerial(Serial):
         if timeout < 0.01: timeout = 0.1
         kwargs['timeout'] = timeout
         Serial.__init__(self, *args, **kwargs)
+        self.buffer_lock = Lock()
         self.buf = ''
         self.pyserial_version = self.get_pyserial_version()
         self.is_pyserial_v3 = self.pyserial_version >= 3.0
@@ -103,16 +105,27 @@ class EnhancedSerial(Serial):
                 # Will be raised when parameter are out of range, e.g. baud rate, data bits.
                 # UnicodeError-Raised when a Unicode-related encoding or decoding error occurs. It is a subclass of ValueError.
                 block = ''
-            self.buf += block
-            pos = self.buf.find('\n')
-            if pos >= 0:
-                line, self.buf = self.buf[:pos+1], self.buf[pos+1:]
-                return line
+            with self.buffer_lock:
+                # Let's lock, just in case
+                self.buf += block
+                pos = self.buf.find('\n')
+                if pos >= 0:
+                    line, self.buf = self.buf[:pos+1], self.buf[pos+1:]
+                    return line
             tries += 1
             if tries * self.timeout > timeout:
                 break
-        line, self.buf = self.buf, ''
-        return line
+        return None
+
+    def peek(self):
+        """
+        Peek into the buffer to see if there are unfinished lines of data available.
+
+        :return: str
+        """
+        with self.buffer_lock:
+            # Let's lock, just in case.
+            return self.buf
 
     def readlines(self, sizehint=None, timeout=1):
         """read all lines that are available. abort after timout
@@ -125,15 +138,3 @@ class EnhancedSerial(Serial):
             if not line or line[-1:] != '\n':
                 break
         return lines
-
-if __name__=='__main__':
-    #do some simple tests with a Loopback HW (see test.py for details)
-    PORT = 0
-    #test, only with Loopback HW (shortcut RX/TX pins (3+4 on DSUB 9 and 25) )
-    s = EnhancedSerial(PORT)
-    #write out some test data lines
-    s.write('\n'.join("hello how are you".split()))
-    #and read them back
-    print( s.readlines() )
-    #this one should print an empty list
-    print( s.readlines(timeout=0.4) )

@@ -26,7 +26,9 @@ class ResourceRequirementTestcase(unittest.TestCase):
         self.simple_testreqs = {
             "type": "process",
             "allowed_platforms": [],
-            "nick": None
+            "expires": 2000,
+            "nick": None,
+            "tags": {"test": True}
         }
         self.simple_testreqs2 = {
             "type": "process",
@@ -56,11 +58,30 @@ class ResourceRequirementTestcase(unittest.TestCase):
     def test_set(self):
         dutreq = ResourceRequirements(self.simple_testreqs)
         dutreq.set("test_key", "test_val")
-        # pylint: disable=protected-access
         self.assertEqual(dutreq._requirements["test_key"], "test_val")
         # Test override
         dutreq.set("test_key", "test_val2")
         self.assertEqual(dutreq._requirements["test_key"], "test_val2")
+
+        # test tags merging. Also a test for set_tag(tags=stuff)
+        dutreq.set("tags", {"test": False, "test2": True})
+        self.assertEqual(dutreq._requirements["tags"], {"test": False, "test2": True})
+        dutreq.set("tags", {"test2": False})
+        self.assertEqual(dutreq._requirements["tags"], {"test": False, "test2": False})
+
+    def test_set_tags(self):
+        dutreq = ResourceRequirements(self.simple_testreqs)
+        dutreq._set_tag(tag="test", value=False)
+        dutreq._set_tag(tag="test2", value=True)
+        self.assertDictEqual(dutreq._requirements["tags"], {"test": False, "test2": True})
+
+    def test_empty_tags(self):
+        dutreq = ResourceRequirements(self.simple_testreqs)
+        dutreq._set_tag("test", value=None)
+        dutreq.remove_empty_tags()
+        self.assertEqual(dutreq._requirements["tags"], {})
+        self.assertEqual(dutreq.remove_empty_tags(tags={"test1": True, "test2": None}),
+                         {"test1": True})
 
 
 if __name__ == '__main__':
