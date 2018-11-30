@@ -251,6 +251,7 @@ def runWinHwTests(){
 
     setBuildStatus('PENDING', "${buildName}", 'start')
     try {
+        bat "c:\\32a31_ykushcmd_rev1.1.0\\ykushcmd\\bin\\ykushcmd.exe -u a"
         stage("${buildName}") {
             bat """
                 virtualenv --python=c:\\Python27\\python.exe py2venv --no-site-packages || goto :error

@@ -26,14 +26,19 @@ class TestClass():
     def __init__(self):
         self.test = True
 
+
+def testingfunction(arg1, arg2):  # pylint: disable=unused-argument
+    pass
+
+
 class TestTools(unittest.TestCase):
     def test_loadClass_Success(self):
         sys.path.append(os.path.dirname(__file__))
-        #Test that loadClass can import a class that is initializable
+        # Test that loadClass can import a class that is initializable
         module = tools.load_class("test_tools.TestClass", verbose=False, silent=True)
         self.assertIsNotNone(module)
         moduleInstance = module()
-        self.assertTrue( moduleInstance.test )
+        self.assertTrue(moduleInstance.test)
         del moduleInstance
 
     def test_loadClass_Fail(self):
@@ -101,6 +106,12 @@ class TestTools(unittest.TestCase):
         self.assertEqual(d.get("test"), "val3")
         tools.set_or_delete(d, "test2", None)
         self.assertTrue("test2" not in d)
+
+    def test_getargspec(self):
+        expected_args = ["arg1", "arg2"]
+        spec = tools.getargspec(testingfunction)
+        for item in expected_args:
+            self.assertTrue(item in spec.args)
 
     def test_strip_escape(self):
         test_data_no_escapes = "aaaa"

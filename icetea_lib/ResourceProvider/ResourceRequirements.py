@@ -38,11 +38,14 @@ class ResourceRequirements(object):
         :param value: Value to set for requirement key
         :return: Nothing, modifies requirement
         """
-        if isinstance(value, dict) and key in self._requirements and isinstance(
-                self._requirements[key], dict):
-            self._requirements[key] = merge(self._requirements[key], value)
+        if key == "tags":
+            self._set_tag(tags=value)
         else:
-            self._requirements[key] = value
+            if isinstance(value, dict) and key in self._requirements and isinstance(
+                    self._requirements[key], dict):
+                self._requirements[key] = merge(self._requirements[key], value)
+            else:
+                self._requirements[key] = value
 
     def get(self, key):
         """
@@ -79,3 +82,38 @@ class ResourceRequirements(object):
         :return: Dictionary
         """
         return self._requirements
+
+    def _set_tag(self, tag=None, tags=None, value=True):
+        """
+        Sets the value of a specific tag or merges existing tags with a dict of new tags.
+        Either tag or tags must be None.
+
+        :param tag: Tag which needs to be set.
+        :param tags: Set of tags which needs to be merged with existing tags.
+        :param value: Value to set for net tag named by :param tag.
+        :return: Nothing
+        """
+        existing_tags = self._requirements.get("tags")
+        if tags and not tag:
+            existing_tags = merge(existing_tags, tags)
+            self._requirements["tags"] = existing_tags
+        elif tag and not tags:
+            existing_tags[tag] = value
+            self._requirements["tags"] = existing_tags
+
+    def remove_empty_tags(self, tags=None):
+        """
+        Tags whose value is set to None shall be removed from tags.
+        :param tags: Tags which are to be processed.
+        If None, tags found in self._requirements are used.
+        :return: If tags is not None, returns dict with processed tags. Else returns None.
+        """
+        new_tags = {}
+        old_tags = tags if tags else self.get("tags")
+        for tag in old_tags.keys():
+            if old_tags[tag] is not None:
+                new_tags[tag] = old_tags[tag]
+        if not tags:
+            self._requirements["tags"] = new_tags
+            return None
+        return new_tags

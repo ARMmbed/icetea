@@ -21,7 +21,6 @@ serial and chunk mode parameters.
 # pylint: disable=R0913,W0105,R0903,R0904
 # pylint: disable=too-many-instance-attributes
 
-import inspect
 import time
 from collections import deque
 from threading import Thread
@@ -30,7 +29,7 @@ from prettytable import PrettyTable
 
 from icetea_lib.DeviceConnectors.Dut import Dut, DutConnectionError
 from icetea_lib.enhancedserial import EnhancedSerial
-from icetea_lib.tools.tools import strip_escape, split_by_n
+from icetea_lib.tools.tools import strip_escape, split_by_n, getargspec
 from icetea_lib.DeviceConnectors.DutInformation import DutInformation
 from icetea_lib.build.build import Build
 from icetea_lib.LogManager import get_resourceprovider_logger
@@ -270,7 +269,7 @@ class DutSerial(Dut):
             self.logger.info("Skipping flash, not needed.")
             return True
 
-        if "logger" in inspect.getargspec(Flash.__init__).args:
+        if "logger" in getargspec(Flash.__init__).args:
             # get_resourceprovider_logger returns previous logger if one already exists.
             # If no logger with name mbed-flasher exists, a new one is created.
             logger = get_resourceprovider_logger("mbed-flasher", "FLS")
@@ -462,10 +461,20 @@ class DutSerial(Dut):
         Read line from serial port.
 
         :param timeout: timeout, default is 1
-        :return: stripped line
+        :return: stripped line or None
         """
         line = self.port.readline(timeout=timeout)
-        return strip_escape(line.strip())
+        return strip_escape(line.strip()) if line is not None else line
+
+    def peek(self):
+        """
+        Peek into the port line buffer to see if there are incomplete lines.
+
+        :return: str
+        """
+        if self.port:
+            return self.port.peek()
+        return ""
 
     def run(self):
         """

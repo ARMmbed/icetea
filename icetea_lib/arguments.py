@@ -398,6 +398,10 @@ def get_tc_arguments(parser):
                         default='eth0',
                         help='Network interface used in tests, unless the testcase specifies '
                              'which one to use. Defaults to eth0')
+    group2.add_argument("--skip_flash",
+                        default=False,
+                        action="store_true",
+                        help="Skip flashing hardware devices during this run.")
 
     return parser
 
