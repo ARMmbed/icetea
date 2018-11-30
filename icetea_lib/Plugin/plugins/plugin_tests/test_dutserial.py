@@ -149,6 +149,37 @@ class DutSerialTestcase(unittest.TestCase):
         self.assertTrue(dut.flash("try", forceflash=True))
         self.assertEqual(mock_flasher_object.flash.call_count, 2)
 
+    @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
+    def test_peek(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
+                  mock_bench_logger):
+        dut = DutSerial(port="test", config={
+            "allocated": {"target_id": "thing"},
+            "application": "thing"
+        })
+        dut.port = mock.MagicMock()
+        dut.port.peek = mock.MagicMock(return_value="test")
+        self.assertEqual(dut.peek(), "test")
+
+    @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
+    def test_readline(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
+                  mock_bench_logger):
+        dut = DutSerial(port="test", config={
+            "allocated": {"target_id": "thing"},
+            "application": "thing"
+        })
+        dut.port = mock.MagicMock()
+        dut.port.readline = mock.MagicMock(side_effect=["test\n", None])
+        self.assertEqual(dut._readline(), "test")
+        self.assertIsNone(dut._readline())
+
 
 if __name__ == '__main__':
     unittest.main()

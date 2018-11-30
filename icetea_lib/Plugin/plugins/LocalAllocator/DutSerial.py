@@ -461,10 +461,20 @@ class DutSerial(Dut):
         Read line from serial port.
 
         :param timeout: timeout, default is 1
-        :return: stripped line
+        :return: stripped line or None
         """
         line = self.port.readline(timeout=timeout)
-        return strip_escape(line.strip())
+        return strip_escape(line.strip()) if line is not None else line
+
+    def peek(self):
+        """
+        Peek into the port line buffer to see if there are incomplete lines.
+
+        :return: str
+        """
+        if self.port:
+            return self.port.peek()
+        return ""
 
     def run(self):
         """
