@@ -301,7 +301,6 @@ class TestVerify(unittest.TestCase):
         with self.assertRaises(ResourceInitError):
             self.assertIsNone(init_process_dut(con_list, conf, 1, mock.MagicMock()))
 
-
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutSerial")
     def test_init_hw_dut(self, mock_ds, mock_logging, mock_dutdetection):
         conf = {"allocated": {"serial_port": "port", "baud_rate": 115200,
@@ -313,6 +312,8 @@ class TestVerify(unittest.TestCase):
         s_timeout = mock.PropertyMock(return_value=True)
         s_ch_size = mock.PropertyMock(return_value=1)
         s_ch_delay = mock.PropertyMock(return_value=True)
+        skip_flash = mock.PropertyMock(return_value=False)
+        type(args).skip_flash = skip_flash
         type(args).serial_xonxoff = s_xonxoff
         type(args).serial_rtscts = rtscts
         type(args).serial_timeout = s_timeout
@@ -341,6 +342,42 @@ class TestVerify(unittest.TestCase):
             dut1.close_connection.assert_called()
 
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutSerial")
+    def test_init_hw_dut_skip_flash(self, mock_ds, mock_logging, mock_dutdetection):
+        conf = {"allocated": {"serial_port": "port", "baud_rate": 115200,
+                              "platform_name": "test", "target_id": "id"},
+                "application": {"bin": "binary"}}
+        args = mock.MagicMock()
+        rtscts = mock.PropertyMock(return_value=True)
+        s_xonxoff = mock.PropertyMock(return_value=True)
+        s_timeout = mock.PropertyMock(return_value=True)
+        s_ch_size = mock.PropertyMock(return_value=1)
+        s_ch_delay = mock.PropertyMock(return_value=True)
+        skip_flash = mock.PropertyMock(return_value=True)
+        type(args).skip_flash = skip_flash
+        type(args).serial_xonxoff = s_xonxoff
+        type(args).serial_rtscts = rtscts
+        type(args).serial_timeout = s_timeout
+        type(args).serial_ch_size = s_ch_size
+        type(args).ch_mode_ch_delay = s_ch_delay
+
+        # Setup mocked dut
+        dut1 = mock.MagicMock()
+        dut1.close_dut = mock.MagicMock()
+        dut1.close_connection = mock.MagicMock()
+        dut1.flash = mock.MagicMock()
+        dut1.flash.side_effect = [True, False]
+        dut1.getInfo = mock.MagicMock(return_value="test")
+        type(dut1).index = mock.PropertyMock()
+
+        con_list = AllocationContextList(self.nulllogger)
+        with mock.patch.object(con_list, "check_flashing_need") as mock_cfn:
+            mock_cfn = mock.MagicMock()
+            mock_cfn.return_value = True
+            mock_ds.return_value = dut1
+            init_hardware_dut(con_list, conf, 1, args)
+            dut1.flash.assert_not_called()
+
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutSerial")
     def test_init_hw_dut_nondefault_baud_rate(self, mock_ds, mock_logging, mock_dutdetection):
         conf = {"allocated": {"serial_port": "port", "baud_rate": 115200,
                               "platform_name": "test", "target_id": "id"},
@@ -352,6 +389,8 @@ class TestVerify(unittest.TestCase):
         s_timeout = mock.PropertyMock(return_value=True)
         s_ch_size = mock.PropertyMock(return_value=1)
         s_ch_delay = mock.PropertyMock(return_value=True)
+        skip_flash = mock.PropertyMock(return_value=False)
+        type(args).skip_flash = skip_flash
         type(args).baudrate = mock.PropertyMock(return_value=False)
         type(args).serial_xonxoff = s_xonxoff
         type(args).serial_rtscts = rtscts

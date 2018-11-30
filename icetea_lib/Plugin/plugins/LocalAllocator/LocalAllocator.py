@@ -74,7 +74,7 @@ def init_hardware_dut(contextlist, conf, index, args):
     dut.index = index
 
     # If something to flash, get the allocated device and flash it
-    if binary:
+    if binary and not args.skip_flash:
         if contextlist.check_flashing_need('hardware',
                                            binary,
                                            args.forceflash):
