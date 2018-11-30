@@ -35,14 +35,13 @@ class DutSerialTestcase(unittest.TestCase):
 
     # Mock base class
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
     def test_flasher_logger_insert(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
                                    mock_bench_logger):
-        mock_inspect.getargspec = mock.MagicMock()
-        mock_inspect.getargspec.return_value = MockArgspec(["logger"])
+        mock_inspect.return_value = MockArgspec(["logger"])
         mocked_logger_for_flasher = mock.MagicMock()
         mocked_logger.return_value = mocked_logger_for_flasher
         dut = DutSerial(port="test",
@@ -51,22 +50,21 @@ class DutSerialTestcase(unittest.TestCase):
         mock_flasher.assert_called_with(logger=mocked_logger_for_flasher)
 
         mock_flasher.reset_mock()
-        mock_inspect.getargspec.return_value = MockArgspec([])
+        mock_inspect.return_value = MockArgspec([])
         dut = DutSerial(port="test",
                         config={"allocated": {"target_id": "thing"}, "application": "thing"})
         dut.flash("this_is_not_a_binary")
         mock_flasher.assert_called_with()
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
     def test_flash_build_init_not_implemented(self, mock_build, mock_flasher, mocked_logger,
                                               mock_inspect, mock_bench_logger):
         mock_build.init = mock.MagicMock(side_effect=[NotImplementedError])
-        mock_inspect.getargspec = mock.MagicMock()
-        mock_inspect.getargspec.return_value = MockArgspec(["logger"])
+        mock_inspect.return_value = MockArgspec(["logger"])
         mocked_logger_for_flasher = mock.MagicMock()
         mocked_logger.return_value = mocked_logger_for_flasher
         dut = DutSerial(port="test",
@@ -75,7 +73,7 @@ class DutSerialTestcase(unittest.TestCase):
             dut.flash("try")
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
@@ -84,8 +82,7 @@ class DutSerialTestcase(unittest.TestCase):
         mock_build_object = mock.MagicMock()
         mock_build_object.get_file = mock.MagicMock(side_effect=[False, "Thisbin"])
         mock_build.init = mock.MagicMock(return_value=mock_build_object)
-        mock_inspect.getargspec = mock.MagicMock()
-        mock_inspect.getargspec.return_value = MockArgspec(["logger"])
+        mock_inspect.return_value = MockArgspec(["logger"])
         mocked_logger_for_flasher = mock.MagicMock()
         mocked_logger.return_value = mocked_logger_for_flasher
         dut = DutSerial(port="test",
@@ -94,7 +91,7 @@ class DutSerialTestcase(unittest.TestCase):
             dut.flash("try")
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
@@ -103,8 +100,7 @@ class DutSerialTestcase(unittest.TestCase):
         mock_build_object = mock.MagicMock()
         mock_build_object.get_file = mock.MagicMock(return_value="Thisbin")
         mock_build.init = mock.MagicMock(return_value=mock_build_object)
-        mock_inspect.getargspec = mock.MagicMock()
-        mock_inspect.getargspec.return_value = MockArgspec(["logger"])
+        mock_inspect.return_value = MockArgspec(["logger"])
         mocked_logger_for_flasher = mock.MagicMock()
         mocked_logger.return_value = mocked_logger_for_flasher
         mock_flasher_object = mock.MagicMock()
@@ -126,7 +122,7 @@ class DutSerialTestcase(unittest.TestCase):
                 dut.flash("try4")
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
@@ -135,8 +131,7 @@ class DutSerialTestcase(unittest.TestCase):
         mock_build_object = mock.MagicMock()
         mock_build_object.get_file = mock.MagicMock(return_value="Thisbin")
         mock_build.init = mock.MagicMock(return_value=mock_build_object)
-        mock_inspect.getargspec = mock.MagicMock()
-        mock_inspect.getargspec.return_value = MockArgspec(["logger"])
+        mock_inspect.return_value = MockArgspec(["logger"])
         mock_logger_for_flasher = mock.MagicMock()
         mocked_logger.return_value = mock_logger_for_flasher
         mock_flasher_object = mock.MagicMock()
@@ -155,7 +150,7 @@ class DutSerialTestcase(unittest.TestCase):
         self.assertEqual(mock_flasher_object.flash.call_count, 2)
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
@@ -170,7 +165,7 @@ class DutSerialTestcase(unittest.TestCase):
         self.assertEqual(dut.peek(), "test")
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")

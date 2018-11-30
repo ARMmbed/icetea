@@ -19,6 +19,7 @@ import platform
 import re
 import string
 import importlib
+import inspect
 from pkg_resources import require, DistributionNotFound
 from six import iteritems
 from sys import platform as _platform
@@ -410,7 +411,6 @@ def hex_escape_str(original_str):
     return "".join(new)
 
 
-
 def set_or_delete(dictionary, key, value):
     """
     Set value as value of dict key key. If value is None, delete key key from dict.
@@ -434,6 +434,18 @@ def split_by_n(seq, n):
     while seq:
         yield seq[:n]
         seq = seq[n:]
+
+
+def getargspec(fnct):
+    """
+    Compatibility wrapper for inspect.getargspec, which is deprecated in python 3.
+
+    :param fnct: Function to inspect
+    :return: Named tuple
+    """
+    if IS_PYTHON3:
+        return inspect.getfullargspec(fnct)  # pylint: disable=no-member
+    return inspect.getargspec(fnct)
 
 
 class Singleton(type):
