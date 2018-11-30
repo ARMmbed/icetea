@@ -159,7 +159,7 @@ ansi_pattern = '\033\[((?:\d|;)*)([a-zA-Z])'
 ansi_eng = re.compile(ansi_pattern)
 
 
-def strip_escape(string=''):
+def strip_escape(string='', encoding="utf-8"):
     """
     Strip escape characters from string.
 
@@ -167,8 +167,19 @@ def strip_escape(string=''):
     :return: stripped string
     """
     matches = []
-    for match in ansi_eng.finditer(string):
-        matches.append(match)
+    try:
+        if hasattr(string, "decode"):
+            string = string.decode(encoding)
+    except Exception: # pylint: disable=broad-except
+        # Tried to decode something that is not decodeable in the specified encoding. Let's just
+        # move on.
+        pass
+    try:
+        for match in ansi_eng.finditer(string):
+            matches.append(match)
+    except TypeError as error:
+        raise TypeError("Unable to strip escape characters from data {}: {}".format(
+            string, error))
     matches.reverse()
     for match in matches:
         start = match.start()

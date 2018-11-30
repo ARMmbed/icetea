@@ -112,3 +112,13 @@ class TestTools(unittest.TestCase):
         spec = tools.getargspec(testingfunction)
         for item in expected_args:
             self.assertTrue(item in spec.args)
+
+    def test_strip_escape(self):
+        test_data_no_escapes = "aaaa"
+        self.assertEqual(tools.strip_escape(test_data_no_escapes), "aaaa")
+        test_data_encoded = "aaaa".encode("utf-8")
+        self.assertEqual(tools.strip_escape(test_data_encoded), "aaaa")
+        mock_str = mock.MagicMock()
+        mock_str.decode = mock.MagicMock(side_effect=[UnicodeDecodeError])
+        with self.assertRaises(TypeError):
+            tools.strip_escape(mock_str)
