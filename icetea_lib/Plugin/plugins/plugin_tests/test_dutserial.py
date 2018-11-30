@@ -150,7 +150,7 @@ class DutSerialTestcase(unittest.TestCase):
         self.assertEqual(mock_flasher_object.flash.call_count, 2)
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
@@ -165,7 +165,7 @@ class DutSerialTestcase(unittest.TestCase):
         self.assertEqual(dut.peek(), "test")
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.inspect")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
