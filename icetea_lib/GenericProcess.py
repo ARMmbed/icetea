@@ -244,13 +244,12 @@ class NonBlockingStreamReader(object):
         :return: popped line from descriptor queue. None if nothing found
         :raises: RuntimeError if errors happened while reading PIPE
         """
-        if self.has_error():
-            raise RuntimeError("Errors reading PIPE")
         try:
             return self._descriptor.read_queue.pop()
         except IndexError:
             # No lines in queue
-            pass
+            if self.has_error():
+                raise RuntimeError("Errors reading PIPE")
         return None
 
 
