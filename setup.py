@@ -45,7 +45,9 @@ INSTALL_REQUIRES = [
     "mbed-ls>=1.5.1,==1.*",
     "semver",
     "mbed-flasher==0.9.*",
-    "six"
+    "six",
+    "pydash",
+    "transitions"
 ]
 TEST_REQUIRES = [
     "coverage",

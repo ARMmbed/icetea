@@ -16,7 +16,7 @@ DutProcess module.
 """
 
 from icetea_lib.DeviceConnectors.Dut import Dut, DutConnectionError
-from icetea_lib.GenericProcess import GenericProcess
+from icetea_lib.tools.GenericProcess import GenericProcess
 from icetea_lib.DeviceConnectors.DutInformation import DutInformation
 from icetea_lib.build.build import Build
 

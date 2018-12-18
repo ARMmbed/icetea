@@ -459,6 +459,34 @@ def getargspec(fnct):
     return inspect.getargspec(fnct)
 
 
+def is_test(method_name):
+    """
+    :param method_name: Method name to check.
+    :return: True if method name starts with test or if it is case.
+    """
+    # TODO: Implement other methods of recognicing which are tests.
+    return method_name == "case"  # or method_name.startswith("test_")
+
+
+def test_methods(target, test_filter=is_test):
+    """
+    Return a list of test methods.
+
+    :param target: Target object whose methods to find.
+    :param test_filter: filtering function.
+    :return: list
+    """
+    def is_fnc(method_name):
+        """
+        Check that method name attr of target object is callable.
+        :param method_name: Attribute name as string
+        :return: True if target.method_name is callable
+        """
+        return callable(getattr(target, method_name))
+    return [method_name for method_name in dir(target) if
+            test_filter(method_name) and is_fnc(method_name)]
+
+
 class Singleton(type):
     """
     Singleton metaclass implementation:

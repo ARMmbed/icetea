@@ -15,9 +15,9 @@ limitations under the License.
 
 __author__ = 'joonik'
 
-import os
+
 from icetea_lib.bench import Bench
-from icetea_lib.TestStepError import TestStepFail
+
 
 class Testcase(Bench):
     def __init__(self):
@@ -40,5 +40,5 @@ class Testcase(Bench):
     def case(self):
         pass
 
-    def tearDown(self):
+    def teardown(self):
         pass

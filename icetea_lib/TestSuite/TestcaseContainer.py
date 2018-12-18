@@ -133,7 +133,7 @@ class TestcaseContainer(object):
         :return: Nothing, modifies objects content in place
         """
         self._modulename = modulename
-        self.tcname = tc_instance.get_test_name()
+        self.tcname = tc_instance.test_name
         self.status = TestStatus.PENDING
         self._instance = tc_instance
         self._final_configuration = {}
@@ -305,9 +305,9 @@ class TestcaseContainer(object):
 
         args.forceflash = forceflash
         self.status = TestStatus.RUNNING
-        tc_instance.set_args(args)
+        tc_instance.args = args
         self.logger.info("")
-        self.logger.info("START TEST CASE EXECUTION: '%s'" % tc_instance.get_test_name())
+        self.logger.info("START TEST CASE EXECUTION: '%s'" % tc_instance.test_name)
         self.logger.info("")
 
         a = datetime.datetime.now()
@@ -369,7 +369,7 @@ class TestcaseContainer(object):
                 continue
             if getattr(test_class, "IS_TEST", False) is True or test_class_name == "Testcase":
                 inst = test_class()
-                if inst.get_test_name() == self.tcname:
+                if inst.test_name == self.tcname:
                     return inst
                 else:
                     continue

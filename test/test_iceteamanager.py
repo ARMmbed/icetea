@@ -325,7 +325,7 @@ class IceteaManagerTestcase(unittest.TestCase):
              u"component": [u"Icetea_ut"],
              u"compatible": {
                  u"framework": {
-                     u"version": u">=1.0.0-rc1",
+                     u"version": u">=1.0.0",
                      u"name": u"Icetea"},
                  u"hw": {u"value": True},
                  u"automation": {u"value": True}

@@ -203,7 +203,7 @@ class IceteaManager(object):
         """
         Runs the set of tests within the given path.
         """
-        # Disable "Too many branches" and "Too many return statmenets" warnings
+        # Disable "Too many branches" and "Too many return statemets" warnings
         # pylint: disable=R0912,R0911
         retcodesummary = ExitCodes.EXIT_SUCCESS
         self.args = args if args else self.args
@@ -276,16 +276,16 @@ class IceteaManager(object):
             results = testsuite.run()
         else:
             results = ResultList()
-        #Disable "Expression is assigned to nothing" warning
-        #pylint: disable=W0106
+        # Disable "Expression is assigned to nothing" warning
+        # pylint: disable=W0106
         [handler.flush() for handler in self.logger.handlers]
         results.save(heads={'Build': '', 'Branch': self.args.branch})
         sys.stdout.flush()
         self._cleanup_resourceprovider()
         return results
 
-    #Disable "String statement has no effect" warning
-    #pylint: disable=W0105
+    # Disable "String statement has no effect" warning
+    # pylint: disable=W0105
     """
         PRIVATE FUNCTIONS HERE
     """
@@ -296,8 +296,8 @@ class IceteaManager(object):
 
         :return: Nothing
         """
-        #Disable too broad exception warning
-        #pylint: disable=W0703
+        # Disable too broad exception warning
+        # pylint: disable=W0703
         self.resourceprovider = ResourceProvider(self.args)
         try:
             self.resourceprovider.cleanup()

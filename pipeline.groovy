@@ -200,7 +200,7 @@ def runPy3Unittests() {
 def py3LinuxBuild() {
     // Run unit tests on linux with python 3
 
-    // run clitest unittest
+    // run icetea unittest
     String buildName = "Py3 unittest in Linux"
 
 

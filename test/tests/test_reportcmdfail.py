@@ -24,14 +24,14 @@ class Testcase(Bench):
         Bench.__init__(self,
                         name="cmdfailtestcase",
                         title="Bench test file",
-                        status="development",  #allowed values: released, development, maintenance, broken, unknown
+                        status="development",  # allowed values: released, development, maintenance, broken, unknown
                         purpose="test",
                         component=["None"],
-                        type="regression", # allowed values: installation, compatibility, smoke,
-                       # regression, acceptance, alpha, beta, destructive, performance
+                        type="regression",  # allowed values: installation, compatibility, smoke,
+                        # regression, acceptance, alpha, beta, destructive, performance
                         requirements={
                             "duts": {
-                                '*': { #requirements for all nodes
+                                '*': {  # requirements for all nodes
                                     "count": 0
                                     }
                                 }
@@ -42,5 +42,6 @@ class Testcase(Bench):
         d = MagicMock()
         d.execute_command = MagicMock(side_effect=[TestStepTimeout])
         self.duts.append(d)
+        self.resource_configuration._dut_count = 1  # pylint: disable=protected-access
         self.command(1, "test", report_cmd_fail=False)
 
