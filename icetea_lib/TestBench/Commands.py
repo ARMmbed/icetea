@@ -13,14 +13,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Bench module. This does all the things and is in dire need of refactoring to reduce complexity
-and speed up further development and debugging.
-"""
-
-"""
 Commands for duts.
 """
-
 
 import sys
 from threading import Event
@@ -34,7 +28,7 @@ from icetea_lib.Events.Generics import EventTypes
 from icetea_lib.TestStepError import TestStepError, TestStepFail, TestStepTimeout
 
 
-class CommandResponseCodes(object):
+class CommandResponseCodes(object):  # pylint: disable=too-few-public-methods
     """
     Enum for cliapp command invalid return codes.
     """
@@ -393,3 +387,4 @@ class Commands(object):
             matcher.forget()
             raise TestStepError("Synchronization for dut {} failed.".format(dut.index))
         matcher.forget()
+        return None

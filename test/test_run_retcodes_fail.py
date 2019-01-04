@@ -16,25 +16,29 @@ limitations under the License.
 from icetea_lib.bench import Bench
 from icetea_lib.TestStepError import TestStepFail
 
+
 class Testcase(Bench):
+    """
+    This test case should always result in a failure.
+    """
     def __init__(self):
         Bench.__init__(self,
                        name="test_run_retcodes_fail",
-                       title = "unittest dut crash in testcase",
+                       title="unittest dut crash in testcase",
                        status="development",
                        type="acceptance",
-                       purpose = "dummy",
+                       purpose="dummy",
                        component=["Icetea_ut"],
                        requirements={
                            "duts": {
-                               '*': { #requirements for all nodes
-                                    "count": 0
-                                }
+                               '*': {
+                                   "count": 0
+                               }
                            }}
-        )
+                      )
 
-
-    def case(self):
+    def case(self):  # pylint: disable=no-self-use
+        """
+        Raise a TestStepFail to fail the test case.
+        """
         raise TestStepFail("This must fail!")
-
-

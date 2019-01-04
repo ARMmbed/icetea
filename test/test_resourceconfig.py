@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring,protected-access
+# pylint: disable=missing-docstring,protected-access,eval-used
 
 """
 Copyright 2017 ARM Limited
@@ -20,6 +20,7 @@ import math
 import mock
 from icetea_lib.ResourceProvider.ResourceConfig import ResourceConfig
 from icetea_lib.ResourceProvider.ResourceRequirements import ResourceRequirements
+
 
 class TestVerify(unittest.TestCase):
     def setUp(self):
@@ -232,11 +233,19 @@ class TestVerify(unittest.TestCase):
                     }
                 }
             })
-        self.assertEqual([req.get_requirements() for req in self.resconfig.get_dut_configuration()],
-                         [{"type": "hardware", "allowed_platforms": [], "location": [
-                             eval("10*math.cos((3.5*1)*({pi}/180))".replace("{pi}", str(math.pi))),
-                             eval("10*math.sin((3.5*1)*({pi}/180))".replace("{pi}", str(math.pi)))],
-                             "nick": None}])
+        self.assertEqual(
+            [
+                req.get_requirements() for req in self.resconfig.get_dut_configuration()
+            ],
+            [
+                {
+                    "type": "hardware",
+                    "allowed_platforms": [],
+                    "location": [
+                        eval("10*math.cos((3.5*1)*({pi}/180))".replace("{pi}", str(math.pi))),
+                        eval("10*math.sin((3.5*1)*({pi}/180))".replace("{pi}", str(math.pi)))
+                    ],
+                    "nick": None}])
 
     def test_dut_reqs_invalid_location(self):
         self.resconfig.resolve_configuration(

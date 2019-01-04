@@ -56,7 +56,7 @@ confidence=
 # --disable=W"
 # Disabled: Suppressed %s (from line %d), Useless suppression of %s,
 # Unnecessary parens after %r keyword
-disable=I0021,I0020,C0325
+disable=I0021,I0020,C0325,duplicate-code,fixme
 
 
 [REPORTS]

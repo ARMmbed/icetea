@@ -1,3 +1,5 @@
+# pylint: disable=invalid-name,too-many-arguments,missing-docstring
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -11,28 +13,26 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+Testcase for Testcase and Bench, test teardown with invalid command sent to dut.
+Should fail in all cases and cause execution to skip case and go to from setup to teardown.
 """
 
 import sys
 from icetea_lib.bench import Bench
 from icetea_lib.TestStepError import TestStepFail, TestStepError, TestStepTimeout
 
-'''
-Testcase for Testcase and Bench, test teardown with invalid command sent to dut.
-Should fail in all cases and cause execution to skip case and go to from setUp to tearDown.
-'''
-
 
 class Testcase(Bench):
-    def __init__(self, testStepFail=None, testStepError=None, testStepTimeout=None,
-                 exception=None, nameError=None, valueError=None, testStepTimeoutInCase=None):
-        self.testStepFail = testStepFail
-        self.testStepError = testStepError
-        self.testStepTimeout = testStepTimeout
+    def __init__(self, teststepfail=None, teststeperror=None, teststeptimeout=None,
+                 exception=None, name_error=None, value_error=None, teststeptimeout_in_case=None):
+        self.teststepfail = teststepfail
+        self.teststeperror = teststeperror
+        self.teststeptimeout = teststeptimeout
         self.exception = exception
-        self.nameError = nameError
-        self.valueError = valueError
-        self.testStepTimeoutInCase = testStepTimeoutInCase
+        self.name_error = name_error
+        self.value_error = value_error
+        self.timeout_in_case = teststeptimeout_in_case
         Bench.__init__(self,
                        name="test_tcTearDown",
                        title="Test Testcase teardown with invalid command",
@@ -46,31 +46,31 @@ class Testcase(Bench):
                                    "count": 0,
                                }
                            }}
-                       )
+                      )
 
     def setup(self):
-        # Send invalid command to test if tearDown is launched.
-        if self.testStepFail:
+        # Send invalid command to test if teardown is launched.
+        if self.teststepfail:
             raise TestStepFail("Failed!")
-        elif self.testStepError:
+        elif self.teststeperror:
             raise TestStepError("Error!")
-        elif self.testStepTimeout:
+        elif self.teststeptimeout:
             raise TestStepTimeout("Timeout!")
-        elif self.nameError:
+        elif self.name_error:
             raise NameError("This is a NameError")
-        elif self.valueError:
+        elif self.value_error:
             raise ValueError("This is a ValueError")
         elif self.exception:
             raise Exception("This is a generic exception")
 
     # If no exception thrown in setUp, case should be run
     def case(self):
-        if self.testStepTimeoutInCase:
+        if self.timeout_in_case:
             raise TestStepTimeout("Timeout in case!")
 
     def teardown(self):
         pass
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     sys.exit(Testcase().run())

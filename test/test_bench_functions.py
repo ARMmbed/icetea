@@ -19,7 +19,7 @@ import mock
 from icetea_lib.TestBench.BenchFunctions import BenchFunctions
 
 
-class MockedDut(object):
+class MockedDut(object):  # pylint: disable=too-few-public-methods
     def __init__(self):
         self.traces = ["test1", "test2"]
 

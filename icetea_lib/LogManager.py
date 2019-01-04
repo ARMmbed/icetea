@@ -540,7 +540,7 @@ def init_base_logging(directory="./log", verbose=0, silent=False, color=False, n
             raise OSError("Log path %s already exists." % LOGPATHDIR)
         filename = LOGGING_CONFIG.get("IceteaManager").get("file").get("name", "icetea.log")
         icetealogger = _add_filehandler(icetealogger, get_base_logfilename(filename),
-                                         formatter, "IceteaManager")
+                                        formatter, "IceteaManager")
     if verbose and not silent:
         stream_handler.setLevel(logging.DEBUG)
     elif silent:

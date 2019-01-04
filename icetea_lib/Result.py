@@ -20,7 +20,7 @@ import os
 import datetime
 
 from icetea_lib.tools.tools import get_fw_name, get_fw_version, set_or_delete
-from .DeviceConnectors.DutInformation import DutInformationList
+from icetea_lib.DeviceConnectors.DutInformation import DutInformationList
 
 try:
     import pwd
@@ -63,7 +63,7 @@ class Result(object):  # pylint: disable=too-many-instance-attributes,too-many-p
         self.logpath = None
         self.retcode = kwargs.get("retcode", -1)
         self.tester = Result.__get_username()
-        self.component = [] # CUT - Component Under Test
+        self.component = []  # CUT - Component Under Test
         self.feature = []   # FUT - Feature Under Test
         self.logfiles = []
         self.tc_metadata = kwargs.get("tc_metadata", {'name': '', 'purpose': ''})
@@ -133,7 +133,7 @@ class Result(object):  # pylint: disable=too-many-instance-attributes,too-many-p
     def tc_git_url(self, value):
         self.tc_git_info['gitUrl'] = value
 
-    ## BUILD
+    # BUILD
 
     # Build name
     @property
@@ -361,7 +361,7 @@ class Result(object):  # pylint: disable=too-many-instance-attributes,too-many-p
         """
         verdict = verdict.lower()
         if not verdict in ['pass', 'fail', 'unknown', 'skip', 'inconclusive']:
-            raise ValueError("Unknown verdict %s", verdict)
+            raise ValueError("Unknown verdict {}".format(verdict))
         if retcode == -1 and verdict == 'pass':
             retcode = 0
         self.__verdict = verdict

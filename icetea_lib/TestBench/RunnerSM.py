@@ -13,14 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Bench module. This does all the things and is in dire need of refactoring to reduce complexity
-and speed up further development and debugging.
-"""
-
-"""
 Runner state machine for running tests.
 Uses pytransitions/transitions module that implements the state machine.
 """
+
 
 from transitions import Machine
 
@@ -233,7 +229,7 @@ class RunnerSM(object):
         """
         self.logger.info("Test case finished.")
 
-    def run(self):
+    def run(self):  # pylint: disable=too-many-return-statements
         """
         Run through the state machine states, triggering states in the correct order for correct
         operation. Fail states are triggered through method 'failure'.
@@ -317,6 +313,7 @@ class RunnerSM(object):
             self.failure(error, "finish", returncode, message)
         if self.state == self.FINISHED_STATE:
             return self.retcode
+        return self.retcode
 
     def _select_error_returncode(self, state, error):
         """

@@ -11,10 +11,10 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-Bench module. This does all the things and is in dire need of refactoring to reduce complexity
-and speed up further development and debugging.
 """
+
+# pylint: disable=unused-import
+
 
 from icetea_lib.TestBench.Bench import Bench
 from icetea_lib.ReturnCodes import ReturnCodes

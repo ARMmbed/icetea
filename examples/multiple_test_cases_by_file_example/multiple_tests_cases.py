@@ -81,7 +81,7 @@ limitations under the License.
 # |      fail     |       1        |
 # |    Duration   | 0:00:00.020000 |
 # +---------------+----------------+
-
+# pylint: disable=missing-docstring,unused-argument,invalid-name,unnecessary-pass
 
 from icetea_lib.bench import Bench
 from icetea_lib.bench import TestStepError
@@ -89,7 +89,7 @@ from icetea_lib.tools.tools import test_case
 
 
 # Test environment which will be shared by all tests cases in this file
-# The environment is initialized by same setUp and terminate by tearDown
+# The environment is initialized by same setup and terminate by teardown
 class MultipleTestsCaseExampleTestEnv(Bench):
     def __init__(self, **kwargs):
         testcase_args = {
@@ -105,7 +105,6 @@ class MultipleTestsCaseExampleTestEnv(Bench):
                 }
             }
         }
-
         testcase_args.update(kwargs)
         Bench.__init__(self, **testcase_args)
 

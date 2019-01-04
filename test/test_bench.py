@@ -456,12 +456,12 @@ class TestVerify(unittest.TestCase):
 
     @mock.patch("test.tests.test_tcTearDown.Testcase.teardown")
     def test_rampdown_called(self, mock_teardown):
-        retcode = TearDownTest(testStepFail=True).run()
+        retcode = TearDownTest(teststepfail=True).run()
         self.assertEquals(retcode, 1001)
         self.assertTrue(mock_teardown.called)
         mock_teardown.reset_mock()
 
-        retcode = TearDownTest(testStepError=True).run()
+        retcode = TearDownTest(teststeperror=True).run()
         self.assertEquals(retcode, 1001)
         self.assertFalse(mock_teardown.called)
 
@@ -469,21 +469,21 @@ class TestVerify(unittest.TestCase):
         self.assertEquals(retcode, 1001)
         self.assertFalse(mock_teardown.called)
 
-        retcode = TearDownTest(testStepTimeout=True).run()
+        retcode = TearDownTest(teststeptimeout=True).run()
         self.assertEquals(retcode, 1001)
         self.assertFalse(mock_teardown.called)
 
         # Test tearDown is called when TestStepTimeout raised in test case
-        retcode = TearDownTest(testStepTimeoutInCase=True).run()
+        retcode = TearDownTest(teststeptimeout_in_case=True).run()
         self.assertEquals(retcode, 1005)
         self.assertTrue(mock_teardown.called)
         mock_teardown.reset_mock()
 
-        retcode = TearDownTest(nameError=True).run()
+        retcode = TearDownTest(name_error=True).run()
         self.assertEquals(retcode, 1001)
         self.assertFalse(mock_teardown.called)
 
-        retcode = TearDownTest(valueError=True).run()
+        retcode = TearDownTest(value_error=True).run()
         self.assertEquals(retcode, 1001)
         self.assertFalse(mock_teardown.called)
 

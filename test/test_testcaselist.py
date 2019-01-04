@@ -20,6 +20,7 @@ import mock
 
 from icetea_lib.TestSuite.TestcaseContainer import TestcaseContainer, DummyContainer
 from icetea_lib.TestSuite.TestcaseList import TestcaseList
+# pylint: disable=missing-docstring,protected-access
 
 
 class TCListTestcase(unittest.TestCase):
@@ -29,22 +30,22 @@ class TCListTestcase(unittest.TestCase):
             self.tc_meta_schema = json.load(data_file)
 
     def test_append_and_len(self):
-        tc = TestcaseContainer.find_testcases("examples.test_cmdline",
-                                              "examples", self.tc_meta_schema)
+        testcase = TestcaseContainer.find_testcases("examples.test_cmdline",
+                                                    "examples", self.tc_meta_schema)
         tlist = TestcaseList()
-        tlist.append(tc[0])
+        tlist.append(testcase[0])
         self.assertEqual(len(tlist), 1)
-        tlist.append(tc[0])
+        tlist.append(testcase[0])
         self.assertEqual(len(tlist), 2)
 
     @mock.patch("icetea_lib.TestSuite.TestcaseList.TestcaseContainer.find_testcases")
-    def test_parse_local_testcases_exceptions(self, mock_finder):
+    def test_parse_local_testcases_exceptions(self, mock_finder):  # pylint: disable=invalid-name
         mock_finder.side_effect = [IndexError, TypeError, ValueError, ImportError, [1], [2]]
         lst = TestcaseList()
         self.assertEqual(len(lst._parse_local_testcases("", False)), 0)
         lst._parse_local_testcases(["1234", "1234", "1234", "1234", "1234"], False)
 
-    def test_filtering_adds_dummycontainers(self):
+    def test_filtering_adds_dummycontainers(self):  # pylint: disable=invalid-name
         filt = mock.MagicMock()
         filt.match = mock.MagicMock()
         filt.match.side_effect = [True, False, True]

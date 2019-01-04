@@ -15,4 +15,7 @@ limitations under the License.
 
 
 class ResourceInitError(Exception):
+    """
+    ResourceInitError exception.
+    """
     pass

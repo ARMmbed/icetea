@@ -19,6 +19,9 @@ import json
 
 
 class Seed(object):
+    """
+    Base Seed implementation.
+    """
     def __init__(self, value, seed_id=None, date=None):
         self.__seed_value = value
         self.__seed_id = seed_id if seed_id else str(uuid.uuid4())
@@ -38,39 +41,84 @@ class Seed(object):
 
     @property
     def value(self):
+        """
+        get __seed_value.
+
+        :return: __seed_value
+        """
         return self.__seed_value
 
     @property
     def seed_id(self):
+        """
+        get __seed_id.
+
+        :return: __seed_id
+        """
         return self.__seed_id
 
     @property
     def date(self):
+        """
+        Return date.
+
+        :return: __date
+        """
         return self.__date
 
     def store(self, filename):
-        with open(filename, 'w') as f:
+        """
+        Store seed in json format into a file
+
+        :param filename: File name to save
+        :return: Nothing
+        """
+        with open(filename, 'w') as file_handle:
             seed_dict = {"seed_id": self.seed_id, "seed_value": self.value, "date": self.date}
-            json.dump(seed_dict, f)
+            json.dump(seed_dict, file_handle)
 
     @staticmethod
     def load(filename):
-        with open(filename, 'r') as f:
-            return json.load(f)
+        """
+        Load seed from a file.
+
+        :param filename: Source file name
+        :return: dict
+        """
+        with open(filename, 'r') as file_handle:
+            return json.load(file_handle)
 
 
 class SeedInteger(Seed):
+    """
+    Integer seed implementation.
+    """
     def __iadd__(self, other):
         return SeedInteger(self.value + other)
 
     @staticmethod
     def load(filename):
+        """
+        Load seed from a file.
+
+        :param filename: Source file name
+        :return: SeedInteger
+        """
         json_obj = Seed.load(filename)
         return SeedInteger(json_obj["seed_value"], json_obj["seed_id"], json_obj["date"])
 
 
 class SeedString(Seed):
+    """
+    String seed implementation
+    """
     def __getitem__(self, index):
+        """
+        Return character at index.
+
+        :param index: index of character.
+        :return: str
+        """
         return self.value[index]
 
     def __len__(self):
@@ -90,6 +138,9 @@ class SeedString(Seed):
 
 
 class SeedStringArray(Seed):
+    """
+    SeedStringArray implementation.
+    """
     def __getitem__(self, index):
         return self.value[index]
 
@@ -101,9 +152,9 @@ class SeedStringArray(Seed):
             yield elem
 
     def store(self, filename):
-        with open(filename, 'w') as f:
+        with open(filename, 'w') as file_handle:
             seed_dict = {"seed_id": self.seed_id, "seed_value": self.value, "date": self.date}
-            json.dump(seed_dict, f, default=lambda array_elem: array_elem.value)
+            json.dump(seed_dict, file_handle, default=lambda array_elem: array_elem.value)
 
     @staticmethod
     def load(filename):

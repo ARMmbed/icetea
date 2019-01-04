@@ -20,7 +20,7 @@ import mock
 from icetea_lib.TestBench.Plugins import Plugins, PluginException
 
 
-class MockArgs(object):
+class MockArgs(object):  # pylint: disable=too-few-public-methods
     def __init__(self):
         self.silent = True
 

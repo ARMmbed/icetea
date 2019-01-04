@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,10 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
-#!/usr/bin/env python
+# pylint: disable=bad-indentation,missing-docstring,unused-argument
 import mock
 
 
+# Deliberately badly formatted.
 def dummy(*args, **kwargs):
    return mock.MagicMock()

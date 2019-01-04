@@ -26,9 +26,8 @@ correct parameters etc.
 import json
 import sys
 import shutil
-import six
 import os
-
+import six
 
 import icetea_lib.LogManager as LogManager
 from icetea_lib.ResourceProvider.ResourceProvider import ResourceProvider

@@ -12,15 +12,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# pylint: disable=missing-docstring,pointless-string-statement
 from icetea_lib.bench import Bench
 
 '''
 Icetea test case example: Command and response public API
 
-Command: async:
-               Send command but wait for response in parallel. When sending next command previous response will be wait.
-               When using async mode, response is dummy.
+Command: asynchronous:
+               Send command but wait for response in parallel. When sending next command previous
+               response will be wait. When using async mode, response is dummy.
                For all command details, please read tc_api.md.
 
 '''
@@ -36,25 +36,25 @@ class Testcase(Bench):
                        purpose="show an example usage of async command",
                        component=["Icetea"],
                        requirements={
-                            "duts": {
-                                '*': {
-                                    "count": 1,  # devices number
-                                    "type": "hardware",  # "hardware" (by default) or "process"
-                                    "application": {
-                                        "bin": "build_path/build_full_name",  # build binary path
-                                    }
-                                }
-                            }
-                        }
-                       )
+                           "duts": {
+                               '*': {
+                                   "count": 1,  # devices number
+                                   "type": "hardware",  # "hardware" (by default) or "process"
+                                   "application": {
+                                       "bin": "build_path/build_full_name",  # build binary path
+                                   }
+                               }
+                           }
+                       }
+                      )
 
     def case(self):
         # launch an async command
-        asyncCmd = self.command(1, "echo hello!", async=True)
+        async_cmd = self.command(1, "echo hello!", asynchronous=True)
 
         # Wait_for_async_response:
         # Wait for the given asynchronous response to be ready and then parse it
-        resp = self.wait_for_async_response("echo", asyncCmd)
+        resp = self.wait_for_async_response("echo", async_cmd)
 
         # Verifies that expected response messages found
         resp.verify_message("hello!")

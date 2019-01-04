@@ -113,6 +113,7 @@ class IceteaManagerTestcase(unittest.TestCase):
             suitedir="./test/suites", forceflash_once=False, forceflash=False,
             ignore_invalid_params=True, failure_return_value=False, stop_on_failure=False,
             branch="", platform_name=None, json=False)
+        self.maxdiff = None
 
     def tearDown(self):
         if os.path.exists("test_suite.json"):
@@ -129,7 +130,7 @@ class IceteaManagerTestcase(unittest.TestCase):
 
     @mock.patch("icetea_lib.IceteaManager._cleanlogs")
     @mock.patch("icetea_lib.IceteaManager.TestSuite")
-    def test_run(self, mock_suite, mock_clean):
+    def test_run(self, mock_suite, mock_clean):  # pylint: disable=unused-argument
         ctm = IceteaManager()
 
         # Testing different return codes
@@ -305,7 +306,7 @@ class IceteaManagerTestcase(unittest.TestCase):
         self.assertTrue(re.search(b"This is a failing test case", output))
 
     def test_list_json_output(self):
-        self.maxDiff = None
+        self.maxdiff = None
         expected_test_path = os.path.abspath(os.path.join(__file__, "..", "tests",
                                                           "json_output_test",
                                                           "json_output_test_case.py"))
@@ -355,7 +356,7 @@ class IceteaManagerTestcase(unittest.TestCase):
                                 stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
-        output, _ = proc.communicate()
+        output, _ = proc.communicate()  # pylint: disable=unused-variable
         with open("test_suite.json", "r") as file_handle:
             read_data = file_handle.read()
         self.assertDictEqual(json.loads(expected_call), json.loads(read_data))

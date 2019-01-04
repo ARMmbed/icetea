@@ -38,7 +38,7 @@ def template_function(*args):
     pass
 
 
-class MockArgs(object):
+class MockArgs(object):  # pylint: disable=too-few-public-methods
     def __init__(self):
         self.pre_cmds = []
         self.post_cmds = []

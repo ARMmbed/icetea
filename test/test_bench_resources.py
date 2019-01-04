@@ -32,7 +32,7 @@ TEST_REQS = {
 }
 
 
-class MockArgs(object):
+class MockArgs(object):  # pylint: disable=too-few-public-methods
     def __init__(self):
         self.silent = True
 

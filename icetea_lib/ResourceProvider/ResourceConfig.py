@@ -155,6 +155,7 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
                                                                         idx))
             self._solve_location(req, len(dut_requirements), idx)
         self._dut_requirements = dut_requirements
+        return None
 
     def _solve_location(self, req, dut_req_len, idx):
         """

@@ -20,7 +20,7 @@ from icetea_lib.Plugin.plugins.FileApi import FileApiPlugin
 from icetea_lib.Plugin.plugins.HttpApi import HttpApiPlugin
 from icetea_lib.Plugin.plugins.plugin_localallocator import LocalAllocatorPlugin
 
-default_plugins={
+default_plugins = {  # pylint: disable=invalid-name
     "AssertPlugin": AssertPlugin,
     "default_parsers": DefaultParsers,
     "FileApi": FileApiPlugin,

@@ -15,7 +15,7 @@ limitations under the License.
 This is an example plugin that implements no real functionality.
 It demonstrated the implementation of external service type plugins and response parsers.
 """
-
+# pylint: disable=missing-docstring,no-self-use,unnecessary-pass,useless-super-delegation
 
 from icetea_lib.Plugin.PluginBase import PluginBase
 

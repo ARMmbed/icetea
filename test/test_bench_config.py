@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring,no-self-use,protected-access,invalid-name
+# pylint: disable=missing-docstring,no-self-use,protected-access,invalid-name,too-few-public-methods
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");

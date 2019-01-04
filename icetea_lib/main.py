@@ -17,7 +17,12 @@ import sys
 
 
 def icetea_main():
+    """
+    Main function for running Icetea. Calls sys.exit with the return code to exit.
+
+    :return: Nothing.
+    """
     from icetea_lib import IceteaManager
     manager = IceteaManager.IceteaManager()
-    returnCode = manager.run()
-    sys.exit(returnCode)
+    return_code = manager.run()
+    sys.exit(return_code)

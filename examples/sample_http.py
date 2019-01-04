@@ -14,7 +14,7 @@ limitations under the License.
 
 Testcase for demonstrating usage of HttpApi plugin.
 """
-
+# pylint: disable=missing-docstring,attribute-defined-outside-init
 from icetea_lib.bench import Bench
 
 
@@ -26,23 +26,21 @@ class Testcase(Bench):
                        status="development",
                        type="acceptance",
                        purpose="dummy",
-                       requirements={
-                           "duts": {
-                           }}
-                       )
+                       requirements={}
+                      )
 
     def setup(self):
         pass
 
     def case(self):
-        #Initialize the HttpApi with the path to the server you want to contact
-        http = self.HttpApi("https://www.mbed.com/en/")
-        #Send get request to "https://mbed.com/", should respond with 200
+        # Initialize the HttpApi with the path to the server you want to contact
+        http = self.HttpApi("https://www.mbed.com/en/")  # pylint: disable=no-member
+        # Send get request to "https://mbed.com/", should respond with 200
         resp = http.get("/")
         if resp.status_code == 200:
             self.logger.info("mbed.com responded with status code 200!")
-        #This should fail
-        #resp = http.get("/", expected=201)
+        # This should fail
+        # resp = http.get("/", expected=201)
 
     def teardown(self):
         pass

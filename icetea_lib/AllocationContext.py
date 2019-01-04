@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-AllocationContext module, cotnains two classes that represent
+AllocationContext module, contains two classes that represent
 allocation information of resources allocated for a test case.
 
 These classes implement storing of Allocated resources as well as conversion of allocated

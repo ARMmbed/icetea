@@ -1,3 +1,5 @@
+# pylint: disable=missing-docstring,pointless-string-statement,wrong-import-position
+# pylint: disable=redefined-outer-name
 from __future__ import unicode_literals
 
 """
@@ -17,50 +19,32 @@ limitations under the License.
 REST API methods for use with Icetea. Implements GET, PUT, POST and DELETE methods for now.
 Also includes helper functions to set values for default headers, cert and host address.
 
-Basic logger also included, can be easily replaced by custom loggers when constructing HttpApi object or later with setter
+Basic logger also included, can be easily replaced by custom loggers when constructing
+HttpApi object or later with setter.
 
 @Author: Joonas Nikula
 """
 
 import json
+import urllib
 import jsonmerge
 import requests
-import urllib
-import logging
-from requests import RequestException
 from six import binary_type, string_types
-from icetea_lib.tools.tools import combine_urls
+from icetea_lib.tools.tools import combine_urls, initLogger
 
 
 # Schema to make sure header fields are overwritten
-schema = {
+SCHEMA = {
     "properties": {
         "mergeStrategy": "overwrite"
     }
 }
 
 
-def init_default_logger():
-    """
-    Initializes a basic logger for use with the API. Can be replaced when constructing
-    the HttpApi object or afterwards with setter
-    """
-    logger = logging.getLogger("HttpApi")
-    logger.setLevel(logging.INFO)
-    # Skip attaching StreamHandler if one is already attached to logger
-    if not getattr(logger, "streamhandler_set", None):
-        ch = logging.StreamHandler()
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        ch.setFormatter(formatter)
-        ch.setLevel(logging.INFO)
-        logger.addHandler(ch)
-        logger.streamhandler_set = True
-    return logger
-
-
 class HttpApi(object):
+    # pylint: disable=invalid-name
     def __init__(self, host, defaultHeaders=None, cert=None, logger=None):
-        self.logger = init_default_logger() if logger is None else logger
+        self.logger = initLogger("HttpApi") if logger is None else logger
         self.defaultHeaders = {} if defaultHeaders is None else defaultHeaders
         self.host = host
         self.cert = cert
@@ -88,8 +72,8 @@ class HttpApi(object):
 
     def set_cert(self, cert):
         """
-        Setter for certificate field. Valid values are either a string containing path to certificate .pem file
-        or Tuple, ('cert', 'key') pair.
+        Setter for certificate field. Valid values are either a string
+        containing path to certificate .pem file or Tuple, ('cert', 'key') pair.
 
         :param cert: Valid values are either a string containing path to certificate .pem file
         or Tuple, ('cert', 'key') pair.
@@ -122,7 +106,7 @@ class HttpApi(object):
         """
 
         if headers is not None:
-            merger = jsonmerge.Merger(schema)
+            merger = jsonmerge.Merger(SCHEMA)
             kwargs["headers"] = merger.merge(self.defaultHeaders, headers)
         else:
             kwargs["headers"] = self.defaultHeaders
@@ -143,7 +127,7 @@ class HttpApi(object):
         try:
             resp = requests.get(url, params, **kwargs)
             self._log_response(resp)
-        except RequestException as es:
+        except requests.RequestException as es:
             self._log_exception(es)
             raise
         return resp
@@ -165,7 +149,7 @@ class HttpApi(object):
         """
 
         if headers is not None:
-            merger = jsonmerge.Merger(schema)
+            merger = jsonmerge.Merger(SCHEMA)
             kwargs["headers"] = merger.merge(self.defaultHeaders, headers)
         else:
             kwargs["headers"] = self.defaultHeaders
@@ -178,7 +162,7 @@ class HttpApi(object):
         try:
             resp = requests.post(url, data, json, **kwargs)
             self._log_response(resp)
-        except RequestException as es:
+        except requests.RequestException as es:
             self._log_exception(es)
             raise
 
@@ -200,7 +184,7 @@ class HttpApi(object):
         """
 
         if headers is not None:
-            merger = jsonmerge.Merger(schema)
+            merger = jsonmerge.Merger(SCHEMA)
             kwargs["headers"] = merger.merge(self.defaultHeaders, headers)
         else:
             kwargs["headers"] = self.defaultHeaders
@@ -213,7 +197,7 @@ class HttpApi(object):
         try:
             resp = requests.put(url, data, **kwargs)
             self._log_response(resp)
-        except RequestException as es:
+        except requests.RequestException as es:
             self._log_exception(es)
             raise
         return resp
@@ -233,7 +217,7 @@ class HttpApi(object):
         """
 
         if headers is not None:
-            merger = jsonmerge.Merger(schema)
+            merger = jsonmerge.Merger(SCHEMA)
             kwargs["headers"] = merger.merge(self.defaultHeaders, headers)
         else:
             kwargs["headers"] = self.defaultHeaders
@@ -246,7 +230,7 @@ class HttpApi(object):
         try:
             resp = requests.delete(url, **kwargs)
             self._log_response(resp)
-        except RequestException as es:
+        except requests.RequestException as es:
             self._log_exception(es)
             raise
 
@@ -257,7 +241,8 @@ class HttpApi(object):
         Sends a PATCH request to host/path.
 
         :param path: String, resource path on server
-        :param data: Data as a dictionary, bytes, or file-like object to send in the body of the request.
+        :param data: Data as a dictionary, bytes, or file-like object to
+        send in the body of the request.
         :param headers: Dictionary of HTTP headers to be sent with the request,
         overwrites default headers if there is overlap
         :param kwargs: Other arguments used in the requests.request call
@@ -268,7 +253,7 @@ class HttpApi(object):
         """
 
         if headers is not None:
-            merger = jsonmerge.Merger(schema)
+            merger = jsonmerge.Merger(SCHEMA)
             kwargs["headers"] = merger.merge(self.defaultHeaders, headers)
         else:
             kwargs["headers"] = self.defaultHeaders
@@ -281,28 +266,29 @@ class HttpApi(object):
         try:
             resp = requests.patch(url, data=data, **kwargs)
             self._log_response(resp)
-        except RequestException as es:
+        except requests.RequestException as es:
             self._log_exception(es)
             raise
 
         return resp
 
+    # pylint: disable=len-as-condition
     def _log_response(self, resp):
-        self.logger.debug("Request url:     {}".format(resp.request.url))
-        self.logger.debug("Request headers: {}".format(resp.request.headers))
-        self.logger.debug("Server responded with {}".format(resp.status_code))
-        self.logger.debug("Response headers: {}".format(resp.headers))
+        self.logger.debug("Request url: %s", resp.request.url)
+        self.logger.debug("Request headers: %s", resp.request.headers)
+        self.logger.debug("Server responded with %d", resp.status_code)
+        self.logger.debug("Response headers: %s", resp.headers)
         if hasattr(resp, "content") and len(resp.content) > 0:
             try:
                 json_content = json.loads(resp.content)
                 self.logger.debug("Response content: {}".format(json_content))
             except ValueError:
-                if type(resp.content) == binary_type:
+                if isinstance(resp.content, binary_type):
                     try:
                         self.logger.debug("Response payload: {}".format(resp.content))
                     except UnicodeDecodeError:
                         self.logger.debug("Response payload: {}".format(repr(resp.content)))
-                elif type(resp.content) in string_types:
+                elif isinstance(resp.content, string_types):
                     self.logger.debug("Response payload: {}".format(resp.content.decode("utf-8")))
                 else:
                     self.logger.debug("Unable to parse response payload")

@@ -11,31 +11,32 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 
-
 Testcase container class for TestSuite.
 """
 
-from jsonmerge import merge
-from jsonschema import validate, ValidationError, SchemaError
-import semver
 import datetime
 import traceback
 import gc
 import time
 from inspect import isclass
+
+from jsonmerge import merge
+from jsonschema import validate, ValidationError, SchemaError
 from six import iteritems
+import semver
 
 import icetea_lib.LogManager as LogManager
-from icetea_lib.bench import ReturnCodes
+from icetea_lib.ReturnCodes import ReturnCodes
 from icetea_lib.tools.tools import get_fw_version, import_module, load_class
 from icetea_lib.arguments import get_parser, get_tc_arguments, get_base_arguments
 from icetea_lib.Result import Result
 from icetea_lib.ResultList import ResultList
 
 # pylint: disable=too-many-arguments,useless-super-delegation,too-many-branches,too-many-statements
+# pylint: disable=too-many-instance-attributes,protected-access
 
 
-class TestStatus:
+class TestStatus(object):  # pylint: disable=no-init,too-few-public-methods
     """
     Enumeration for test statuses.
     """
@@ -47,14 +48,17 @@ class TestStatus:
 
 
 class TestcaseContainer(object):
+    """
+    Container for a single test case.
+    """
     def __init__(self, logger=None):
         self.logger = logger
         self.status = None
+        self.tcname = None
         self._instance = None
         self._modulename = None
         self._moduleroot = None
         self._final_configuration = {}
-        self.tcname = None
         self._meta_schema = None
         self._result = None
         self._filepath = None
@@ -63,7 +67,7 @@ class TestcaseContainer(object):
         if not logger:
             import logging
             self.logger = logging.getLogger("TCContainer")
-            if len(self.logger.handlers) == 0:
+            if not self.logger.handlers:
                 self.logger.addHandler(logging.StreamHandler())
                 self.logger.setLevel(logging.INFO)
 
@@ -84,16 +88,16 @@ class TestcaseContainer(object):
         if not isinstance(modulename, str):
             raise TypeError("modulename should be a string")
 
-        if len(modulename) == 0:
+        if len(modulename) == 0:  # pylint: disable=len-as-condition
             raise ValueError("modulename shouldn't be empty")
 
-        #Try to import the module.
+        # Try to import the module.
         try:
             module = import_module(modulename)
-        except Exception as e:
+        except Exception as error:
             if logger:
-                logger.debug("Error while importing module {}: {}".format(modulename, e))
-            raise ImportError("Error importing module {}: {}".format(modulename, e))
+                logger.debug("Error while importing module {}: {}".format(modulename, error))
+            raise ImportError("Error importing module {}: {}".format(modulename, error))
 
         tclist = []
 
@@ -111,11 +115,12 @@ class TestcaseContainer(object):
         return tclist
 
     def __copy__(self):
-        cont = TestcaseContainer.find_testcases(self._modulename, self._moduleroot, self._meta_schema, self._filepath,
+        cont = TestcaseContainer.find_testcases(self._modulename, self._moduleroot,
+                                                self._meta_schema, self._filepath,
                                                 self._suiteconfig, self.logger)
-        for tc in cont:
-            if self.tcname == tc.tcname:
-                return tc
+        for testcase in cont:
+            if self.tcname == testcase.tcname:
+                return testcase
         return None
 
     def generate_members(self, modulename, tc_instance, moduleroot, path, meta_schema,
@@ -170,6 +175,11 @@ class TestcaseContainer(object):
         }
 
     def get_infodict(self):
+        """
+        Getter for internal infodict variable.
+
+        :return: dict
+        """
         return self._infodict
 
     def get(self, field):
@@ -191,9 +201,19 @@ class TestcaseContainer(object):
         return config
 
     def get_final_config(self):
+        """
+        Getter for final configuration of the test case from the _final_configuration variable.
+
+        :return: dict
+        """
         return self._final_configuration
 
     def get_suiteconfig(self):
+        """
+        Getter for the internal _suiteconfig variable.
+
+        :return: dict
+        """
         return self._suiteconfig
 
     def get_instance(self):
@@ -205,9 +225,19 @@ class TestcaseContainer(object):
         return self._instance
 
     def get_result(self):
+        """
+        Get the internal Result object.
+
+        :return: Result
+        """
         return self._result
 
     def get_name(self):
+        """
+        Get the test case name.
+
+        :return: str
+        """
         return self.tcname
 
     def merge_tc_config(self, conf_to_merge):
@@ -221,9 +251,21 @@ class TestcaseContainer(object):
         self._final_configuration = merge(self._final_configuration, conf_to_merge)
 
     def set_suiteconfig(self, config):
+        """
+        Setter for suite config.
+
+        :param config: dict
+        :return: Nothing
+        """
         self._suiteconfig = config
 
     def set_result(self, result):
+        """
+        Setter for result object.
+
+        :param result: Result
+        :return: Nothing
+        """
         self._result = result
 
     def set_final_config(self):
@@ -244,12 +286,18 @@ class TestcaseContainer(object):
             raise SyntaxError("Invalid TC metadata")
         self._final_configuration = self.get_instance().get_config()
 
-    def validate_testcase_metadata(self, tc):
+    def validate_testcase_metadata(self, testcase):
+        """
+        Validate tc metadata. Returns True if validation succeeds or False if if fails.
+
+        :param testcase: Bench
+        :return: Boolean
+        """
         try:
-            validate(tc.config, self._meta_schema)
-        except ValidationError  as err:
+            validate(testcase.config, self._meta_schema)
+        except ValidationError as err:
             self.logger.error("Metadata validation failed! Please fix your TC Metadata!")
-            self.logger.debug(tc.config)
+            self.logger.debug(testcase.config)
             self.logger.error(err)
             return False
         except SchemaError as err:
@@ -270,12 +318,12 @@ class TestcaseContainer(object):
             self._instance = self._create_new_bench_instance(self._modulename)
             self.set_final_config()
         self.status = TestStatus.RUNNING
-        self.logger.debug("Starting test case {}".format(self.tcname))
+        self.logger.debug("Starting test case %s", self.tcname)
         tc_instance = self.get_instance()
 
         result = self._check_skip(tc_instance)
         if result:
-            self.logger.debug("Skipping test case {}".format(self.tcname))
+            self.logger.debug("Skipping test case %s", self.tcname)
             self._result = result
             self.status = TestStatus.FINISHED
             return result
@@ -284,19 +332,20 @@ class TestcaseContainer(object):
         # and if the bench has the compatible key in it's config.
         result = self._check_version(tc_instance)
         if result is not None:
-            self.logger.debug("Version check triggered, skipping test case {}.".format(self.tcname))
+            self.logger.debug("Version check triggered, skipping test case %s", self.tcname)
             self._result = result
             self.status = TestStatus.FINISHED
             return result
 
         parser = get_tc_arguments(get_base_arguments(get_parser()))
         args, unknown = parser.parse_known_args()
-        if len(unknown) > 0:
+        if unknown:
             for para in unknown:
-                self.logger.warning("Icetea received unknown parameter {}".format(para))
+                self.logger.warning("Icetea received unknown parameter %s", para)
             if not args.ignore_invalid_params:
                 self.logger.error(
-                    "Unknown parameters received, exiting. To ignore this add --ignore_invalid_params flag.")
+                    "Unknown parameters received, exiting. To ignore this add "
+                    "--ignore_invalid_params flag.")
                 parser.print_help()
                 result = tc_instance.get_result()
                 result.set_verdict(verdict="inconclusive", retcode=-1, duration=0)
@@ -307,24 +356,25 @@ class TestcaseContainer(object):
         self.status = TestStatus.RUNNING
         tc_instance.args = args
         self.logger.info("")
-        self.logger.info("START TEST CASE EXECUTION: '%s'" % tc_instance.test_name)
+        self.logger.info("START TEST CASE EXECUTION: '%s'", tc_instance.test_name)
         self.logger.info("")
 
-        a = datetime.datetime.now()
+        start_time = datetime.datetime.now()
         try:
             retcode = tc_instance.run()
-            self.logger.debug("Test bench returned return code {}".format(retcode))
-        except:
+            self.logger.debug("Test bench returned return code %d", retcode)
+        except:  # pylint: disable=bare-except
             traceback.print_exc()
             retcode = -9999
 
-        b = datetime.datetime.now()
+        stop_time = datetime.datetime.now()
 
         result = tc_instance.get_result(tc_file=self._filepath)
         # Force garbage collection
-        gc.collect()
+
         # cleanup Testcase
         tc_instance = None
+        gc.collect()
         LogManager.finish_testcase_logging()
         self.status = TestStatus.FINISHED
 
@@ -340,9 +390,9 @@ class TestcaseContainer(object):
                 self.status = TestStatus.FINISHED
                 raise
 
-        c = b - a
-        duration = c.total_seconds()
-        self.logger.debug("Duration: {} seconds".format(duration))
+        total_duration = stop_time - start_time
+        duration = total_duration.total_seconds()
+        self.logger.debug("Duration: %d seconds", duration)
 
         verdict = None
         if retcode == 0:
@@ -362,6 +412,12 @@ class TestcaseContainer(object):
         return result
 
     def _create_new_bench_instance(self, modulename):
+        """
+        Create a new Bench instance of this test for repeat and retry purposes.
+
+        :param modulename: Name of the original module.
+        :return: Bench or None
+        """
         module = import_module(modulename)
 
         for test_class_name, test_class in iteritems(module.__dict__):
@@ -373,8 +429,9 @@ class TestcaseContainer(object):
                     return inst
                 else:
                     continue
+        return None
 
-    def _load_testcase(self, modulename, verbose=False):
+    def _load_testcase(self, modulename, verbose=False):  # pylint: disable=no-self-use
         """
         :param modulename: testcase to be loaded
         :param verbose: print exceptions when loading class
@@ -386,8 +443,8 @@ class TestcaseContainer(object):
             raise TypeError("Error, runTest: modulename not a string.")
         try:
             module = load_class(modulename, verbose)
-        except ValueError as e:
-            raise ImportError("Error, load_testcase: loadClass raised ValueError: {}".format(e))
+        except ValueError as error:
+            raise ImportError("Error, load_testcase: loadClass raised ValueError: {}".format(error))
 
         if module is None:
             raise ImportError("Error, runTest: "
@@ -396,6 +453,12 @@ class TestcaseContainer(object):
         return module()
 
     def _check_skip(self, tc_instance):
+        """
+        Check if this tc should be skipped according to the configuration.
+
+        :param tc_instance: Bench
+        :return: False if no skip is needed, Result with the skip set otherwise.
+        """
         # Skip the TC IF NOT defined on the command line
         if tc_instance.skip():
             info = tc_instance.skip_info()
@@ -403,28 +466,38 @@ class TestcaseContainer(object):
                 # only_type cannot be properly checked here, se we proceed
                 # and check the final configuration in Bench.
                 return False
-            else:
-                self.logger.info("TC '%s' will be skipped because of '%s'" % (
-                    tc_instance.get_test_name(), (tc_instance.skip_reason())))
-                result = tc_instance.get_result()
-                result.set_verdict(verdict='skip', retcode=-1, duration=0)
-                del tc_instance
-                self._result = result
-                return result
-        else:
-            return False
+            self.logger.info("TC '%s' will be skipped because of '%s'", tc_instance.get_test_name(),
+                             tc_instance.skip_reason())
+            result = tc_instance.get_result()
+            result.set_verdict(verdict='skip', retcode=-1, duration=0)
+            del tc_instance
+            self._result = result
+            return result
+        return False
 
-    def _check_major_version(self, fw_version, version_string):
+    def _check_major_version(self, fw_version, version_string):  # pylint: disable=no-self-use
+        """
+        Check if major version matches.
+
+        :param fw_version: semver string
+        :param version_string: semver string
+        :return: Boolean
+        """
         if int(fw_version[0]) > 0 and version_string[0] == '0':
             return False
         elif int(fw_version[0]) > 0 and version_string[1] == '0':
             return False
         elif int(fw_version[0]) > 0 and version_string[2] == '0':
             return False
-        else:
-            return True
+        return True
 
     def _check_version(self, tc_instance):
+        """
+        Check if version number is compatible with this version of Icetea.
+
+        :param tc_instance: Bench
+        :return: None or Result.
+        """
         if tc_instance.config.get(
                 "compatible") and tc_instance.config['compatible']['framework']['name']:
             framework = tc_instance.config['compatible']['framework']
@@ -455,9 +528,17 @@ class TestcaseContainer(object):
             return None
 
     def _wrong_version(self, tc_instance, ver_str, msg=None):
+        """
+        Helper for constructing a Result object for version checking.
+
+        :param tc_instance: Bench, del is called for this before returning.
+        :param ver_str: semver string.
+        :param msg: message.
+        :return: Result
+        """
         msg = msg if msg else "Version {} of Icetea required".format(ver_str)
-        self.logger.info("TC '%s' will be skipped because of '%s'" % (
-            tc_instance.get_test_name(), msg))
+        self.logger.info("TC '%s' will be skipped because of '%s'", tc_instance.get_test_name(),
+                         msg)
         result = tc_instance.get_result()
         result.skip_reason = msg
         result.set_verdict(verdict='skip', retcode=-1, duration=0)
@@ -489,18 +570,18 @@ class DummyContainer(TestcaseContainer):
         Static method find_testcases. Returns a DummyContainer with attributes collected from
         function params.
         """
-        dc = DummyContainer(logger)
-        dc.tcname = modulename
-        dc._modulename = modulename
-        dc.status = TestStatus.PENDING
-        dc._instance = None
-        dc._final_configuration = {}
-        dc._moduleroot = moduleroot
-        dc._meta_schema = tc_meta_schema
-        dc._result = None
-        dc._filepath = path
-        dc._suiteconfig = suiteconfig if suiteconfig else {}
-        return dc
+        dummycontainer = DummyContainer(logger)
+        dummycontainer.tcname = modulename
+        dummycontainer._modulename = modulename
+        dummycontainer.status = TestStatus.PENDING
+        dummycontainer._instance = None
+        dummycontainer._final_configuration = {}
+        dummycontainer._moduleroot = moduleroot
+        dummycontainer._meta_schema = tc_meta_schema
+        dummycontainer._result = None
+        dummycontainer._filepath = path
+        dummycontainer._suiteconfig = suiteconfig if suiteconfig else {}
+        return dummycontainer
 
     def run(self, forceflash=False):
         """

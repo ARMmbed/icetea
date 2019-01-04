@@ -19,7 +19,6 @@ allocators.
 
 from jsonmerge import merge
 from icetea_lib.tools.tools import recursive_dictionary_get as recursive_search
-from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
 
 
 class ResourceRequirements(object):

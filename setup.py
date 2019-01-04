@@ -1,3 +1,5 @@
+# pylint: disable=no-name-in-module,import-error
+
 """
 Copyright 2017-2018 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");

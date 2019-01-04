@@ -73,5 +73,10 @@ class BaseAllocator(object):
 
     @property
     def share_allocations(self):
+        """
+        Return boolean, which is True if allocations are shared between test cases in the run.
+
+        :return: Boolean
+        """
         raise NotImplementedError("share_allocations has to be implemented by subclassing "
                                   "BaseAllocator")

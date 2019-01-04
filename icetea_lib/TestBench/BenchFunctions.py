@@ -13,11 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Bench module. This does all the things and is in dire need of refactoring to reduce complexity
-and speed up further development and debugging.
-"""
-
-"""
 BenchFunctions module. Contains functions for the test bench.
 """
 
@@ -169,7 +164,7 @@ class BenchFunctions(object):
             raise LookupError("{} not found in traces.".format(expected_traces))
         return status
 
-    def get_time(self):
+    def get_time(self):  # pylint: disable=no-self-use
         """
         Get timestamp using time.time().
 

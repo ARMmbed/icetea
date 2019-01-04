@@ -11,9 +11,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-"""
 
-"""
 Randomize class for generating randomized content.
 """
 
@@ -48,6 +46,7 @@ class Randomize(object):
                 if not isinstance(elem, str):
                     raise TypeError("list element can only be string")
             return SeedString(random.choice(str_list))
+        return None
 
     @staticmethod
     def random_string(max_len=1, min_len=1, chars=string.ascii_letters, **kwargs):
