@@ -88,6 +88,7 @@ class Dut(object):
         self.waiting_for_response = None
         self.response_coming_in = None  # Response coming in
         self.prev = None  # Previous command, stored for logging purposes
+        self._store_traces = True
         self.traces = []  # All traces
         self.response_traces = []  # Incoming response lines
         self.response_received = Event()
@@ -179,6 +180,31 @@ class Dut(object):
     def build(self, value):
         if self.dutinformation:
             self.dutinformation.build = value
+
+    @property
+    def store_traces(self):
+        """
+        Getter for _store_traces. _store_traces controls in memory storing of received lines.
+
+        :return: Boolean
+        """
+        return self._store_traces
+
+    @store_traces.setter
+    def store_traces(self, value):
+        """
+        Setter for _store_traces. _store_traces controls in memory storing of received lines.
+        Also logs the change for the user.
+
+        :param value: Boolean
+        :return: Nothing
+        """
+        if not value:
+            self.logger.debug("Stopping storing received lines for dut %d", self.index)
+            self._store_traces = False
+        else:
+            self.logger.debug("Resuming storing received lines for dut %d", self.index)
+            self._store_traces = True
 
     # Minimum requirements from Dut Implementation
     def open_connection(self):
@@ -607,7 +633,7 @@ class Dut(object):
                 if dut.waiting_for_response is not None:
                     item = dut.waiting_for_response
                     # pylint: disable=protected-access
-                    dut.response_coming_in = dut.__read_response()
+                    dut.response_coming_in = dut._read_response()
                     if dut.response_coming_in is None:
                         # Continue to next node
                         continue
@@ -645,7 +671,8 @@ class Dut(object):
                     dut.response_received.set()
                     continue
                 if line:
-                    dut.traces.append(line)
+                    if dut.store_traces:
+                        dut.traces.append(line)
                     EventObject(EventTypes.DUT_LINE_RECEIVED, dut, line)
                     retcode = dut.check_retcode(line)
                     if retcode is not None:
@@ -656,7 +683,7 @@ class Dut(object):
                 pass
         Dut._logger.debug("End DUT communication", extra={'type': '<->'})
 
-    def __read_response(self):
+    def _read_response(self):
         """
         Internal response reader.
 
@@ -668,9 +695,10 @@ class Dut(object):
             Dut._logger.warning("Failed to read PIPE", extra={'type': '!<-'})
             return -1
         if line:
-            self.traces.append(line)
+            if self.store_traces:
+                self.traces.append(line)
+                self.response_traces.append(line)
             EventObject(EventTypes.DUT_LINE_RECEIVED, self, line)
-            self.response_traces.append(line)
             match = re.search(r"^\[([\w\W]{4})\]\[([\W\w]{4,}?)\]\: (.*)", line)
             if match:
                 self.logger.debug(line, extra={'type': '<<<'})
