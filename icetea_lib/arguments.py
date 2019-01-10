@@ -375,7 +375,7 @@ def get_tc_arguments(parser):
                         type=float,
                         help='User defined delay between characters. '
                              'Used only when serial_ch_size>0. (default 0.01)')
-    group2.add_argument('--nobuf', help="Do not use stdio buggers in node process.")
+    group2.add_argument('--nobuf', help="Do not use stdio buffers in node process.")
     group2.add_argument('--kill_putty',
                         action='store_true',
                         help='Kill old putty/kitty processes')
