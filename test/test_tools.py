@@ -134,3 +134,69 @@ class TestTools(unittest.TestCase):
         expected = {"y": {"x": "2"}, "x": "1"}
         self.assertDictEqual(json.loads(dict2, object_pairs_hook=tools.find_duplicate_keys),
                              expected)
+
+    def test_create_combined_set(self):
+        test_phrase = "filter3 and (filter1 or filter2)"
+        test_list = test_phrase.split(" ")
+        combined, _ = tools._create_combined_set(test_list, 2)
+        self.assertEqual(combined, "(filter1 or filter2)")
+
+        test_phrase = "(filter3 and (filter1 or filter2))"
+        test_list = test_phrase.split(" ")
+        combined, _ = tools._create_combined_set(test_list, 0)
+        self.assertEqual(combined, "(filter3 and (filter1 or filter2))")
+
+        test_phrase = "filter3 and (filter1 or filter2"
+        test_list = test_phrase.split(" ")
+        combined, _ = tools._create_combined_set(test_list, 2)
+        self.assertIsNone(combined)
+
+    def test_create_combined_words(self):
+        test_phrase = "filter3 and 'filter1 with filter2'"
+        test_list = test_phrase.split(" ")
+        combined, _ = tools._create_combined_words(test_list, 2)
+        self.assertEqual(combined, "'filter1 with filter2'")
+
+    def test_create_match_bool(self):
+        test_data = list()
+        test_data.append("filter1")
+        test_data.append("filter1,filter2")
+        test_data.append("filter1 or filter2")
+        test_data.append("(filter1 or filter2)")
+        test_data.append("filter1 and filter2")
+        test_data.append("filter3 and (filter1 or filter2)")
+        test_data.append("filter1 and 'filter2 with filter3'")
+        test_data.append("filter1 and ('filter2 with filter3' or filter1)")
+        test_data.append("(filter1 or filter2 and (((not (filter3)) "
+                         "and not filter4) and not filter5))")
+
+        def eval_func(str_to_match, args):  # pylint: disable=unused-argument
+            if str_to_match == "filter1":
+                return True
+            elif str_to_match == "filter2":
+                return False
+            elif str_to_match == "filter3":
+                return True
+            elif str_to_match == "filter4":
+                return True
+            elif str_to_match == "filter5":
+                return False
+            elif str_to_match == "filter2 with filter3":
+                return True
+
+        # Check that no exceptions are raised
+        for test_string in test_data:
+            tools.create_match_bool(test_string, eval_func, None)
+
+        self.assertTrue(tools.create_match_bool(test_data[0], eval_func, None))
+        self.assertTrue(tools.create_match_bool(test_data[1], eval_func, None))
+        self.assertTrue(tools.create_match_bool(test_data[2], eval_func, None))
+        self.assertTrue(tools.create_match_bool(test_data[3], eval_func, None))
+        self.assertFalse(tools.create_match_bool(test_data[4], eval_func, None))
+        self.assertTrue(tools.create_match_bool(test_data[5], eval_func, None))
+        self.assertTrue(tools.create_match_bool(test_data[6], eval_func, None))
+        self.assertTrue(tools.create_match_bool(test_data[7], eval_func, None))
+        self.assertTrue(tools.create_match_bool(test_data[8], eval_func, None))
+        test_data.append("filter3 and (filter1 or filter2")
+        with self.assertRaises(SyntaxError):
+            tools.create_match_bool(test_data[9], eval_func, None)

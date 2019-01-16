@@ -468,6 +468,106 @@ def getargspec(fnct):
     return inspect.getargspec(fnct)
 
 
+def _create_combined_set(words, startindex):
+    """
+    Combines a single string wrapped in parenthesis from a list of words.
+    Example: ['feature1', 'or', '(feature2', 'and', 'feature3)'] -> '(feature2 and feature3)'
+
+    :param words: List of words
+    :param startindex: Index of starting parenthesis.
+    :return: string
+    """
+    counter = 0
+    for i, word in enumerate(words[startindex:]):
+        if ")" in word and counter == 0:
+            return " ".join(words[startindex:startindex + i + 1]), i
+        elif ")" in word and counter != 0:
+            amount = word.count(")")
+            counter -= amount
+        if "(" in word:
+            counter += word.count("(")
+        if counter == 0:
+            return " ".join(words[startindex:startindex + i + 1]), i
+    return None, 0
+
+
+def _create_combined_words(words, startindex):
+    """
+    Helper for create_match_bool, used to combine words inside single quotes from a list into a
+    single string.
+
+    :param words: List of words.
+    :param startindex: Index where search is started.
+    :return: (str, int) or (None, 0) if no closing quote is found.
+    """
+    for i, word in enumerate(words[startindex+1:]):
+        if "'" in word:
+            return " ".join(words[startindex:startindex+i+2]), i+1
+    return None, 0
+
+
+# pylint: disable=too-many-branches
+def create_match_bool(words_as_string, eval_function, eval_function_args):
+    """
+    Evaluates components of words_as_string step by step into a single boolean value using
+    eval_function to evaluate each separate component of words_as_string into booleans.
+
+    :param words_as_string: String to evaluate
+    :param eval_function: Function for evaluating each component of the string
+    :param eval_function_args: Arguments for eval_function as list or tuple
+    :return: Boolean
+    :raises: SyntaxError if eval raises one.
+    """
+    new_set = []
+    count = 0
+    words_as_string = words_as_string.replace(",", " or ")
+    words = words_as_string.split(" ")
+    # First we combine items that contain spaces back into single entries
+    for i, word in enumerate(words):
+        if count != 0:
+            count -= 1
+            continue
+        if "'" in word:
+            # Combine stuff between quotes into single entry
+            combined_data, count = _create_combined_words(words, i)
+            if combined_data is None:
+                raise SyntaxError("Missing closing quote for: {}".format(word))
+            # Count needed to skip over the N next items while we continue
+            new_set.append(combined_data)
+        else:
+            new_set.append(word)
+
+    newest_set = []
+
+    # Then we combine elements inside parentheses into single entries.
+    for i, word in enumerate(new_set):
+        if count != 0:
+            count -= 1
+            continue
+        if "(" in word:
+            # Combine stuff between parentheses into single entry that can be reduced later.
+            combined_data, count = _create_combined_set(new_set, i)
+            if combined_data is None:
+                raise SyntaxError("Missing closing parenthesis for: {}".format(word))
+            # Count needed to skip over the N next items while we continue
+            newest_set.append(combined_data)
+        else:
+            newest_set.append(word)
+
+    # Finally we enter deeper inside the parenthesis structure and start working upwards
+    for i, word in enumerate(newest_set):
+        if "(" in word:
+            # Still parentheses remaining, we must go deeper.
+            result = create_match_bool(word[1:len(word) - 1], eval_function,
+                                       eval_function_args)
+            newest_set[i] = str(result)
+    for i, word in enumerate(newest_set):
+        if word not in ["True", "False", "or", "and", "not"]:
+            newest_set[i] = str(eval_function(word.replace("'", ""), eval_function_args))
+    result = eval(" ".join(newest_set))  # pylint: disable=eval-used
+    return result
+
+
 def is_test(method_name):
     """
     :param method_name: Method name to check.
