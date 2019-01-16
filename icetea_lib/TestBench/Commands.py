@@ -248,7 +248,8 @@ class Commands(object):
             # construct command object to be execute
 
             req = CliRequest(cmd, timestamp=self._benchfunctions.get_time(), wait=wait,
-                             expected_retcode=expected_retcode, timeout=timeout, async=asynchronous,
+                             expected_retcode=expected_retcode, timeout=timeout,
+                             asynchronous=asynchronous,
                              dutIndex=dut.index)
             # execute command
             try:
