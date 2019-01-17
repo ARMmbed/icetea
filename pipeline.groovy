@@ -155,7 +155,7 @@ def pylint_linux_check() {
     try {
         echo "REST OF THESE ARE FOR PYLINT"
         sh 'pip install astroid pylint'
-        sh 'pylint ./setup.py ./icetea.py ./icetea_lib ./test ./examples > pylint.log ||  exit 0'
+        sh 'pylint ./setup.py ./icetea.py ./icetea_lib ./test ./examples > pylint.log'
         setBuildStatus('SUCCESS', "${pylintBuildName}", 'done')
     } catch (Exception e) {
         // set build fail
