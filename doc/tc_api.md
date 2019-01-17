@@ -273,6 +273,10 @@ this returns the serial port name or path
 (eg. COM0 or /dev/ttyACM0).
 Please note only local device has this comport usage.
 
+**store_traces**
+This property (boolean) controls storing received lines for a dut. If this is set to True (default), all lines the dut receives are stored in memory in an internal list called traces.
+If set to False, no lines will be stored. This also affects lines related to CliResponse objects, so command response objects will not have lines stored in them either.
+
 ## Command and response public API
 The testcase superclass Bench contains
 a command api that can be used to send commands to the DUT.
