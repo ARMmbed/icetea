@@ -100,6 +100,7 @@ def baseBuild(String platform) {
 
             // publish warnings checked for console log and pylint log
             warningPublisher('PyLint', '**/pylint.log')
+            archiveArtifacts artifacts: "**/pylint.log"
         }
 
         catchError {
