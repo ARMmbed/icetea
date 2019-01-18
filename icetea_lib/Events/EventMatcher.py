@@ -24,11 +24,11 @@ class EventMatcher(Observer):
                  flag=None, callback=None):
         Observer.__init__(self)
         self.caller = caller
-        self.observe(event_type, self._event_received)
         self.event_type = event_type
         self.flag_to_set = flag
         self.callback = callback
         self.match_data = match_data
+        self.observe(event_type, self._event_received)
 
     def _event_received(self, ref, data):
         if self._resolve_match_data(ref, data):
