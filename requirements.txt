@@ -1,10 +1,10 @@
-prettytable
+prettytable==0.*
 requests
-yattag
+yattag==1.*
 pyserial>2.5
-jsonmerge
-jsonschema
+jsonmerge==1.*
+jsonschema<3.0.0
 mbed-ls>=1.5.1,==1.*
-semver
+semver==2.*
 mbed-flasher==0.9.*
-six
+six==1.*
