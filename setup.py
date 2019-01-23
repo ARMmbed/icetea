@@ -51,7 +51,7 @@ TEST_REQUIRES = [
     "coverage==4.*",
     "mock==2.*",
     "sphinx==1.*",
-    "lxml==3.*",
+    "lxml",
     "pylint==1.*",
     "astroid==1.*"
 ]
