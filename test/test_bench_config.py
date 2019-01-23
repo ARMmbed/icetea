@@ -23,6 +23,8 @@ from icetea_lib.TestBench.Configurations import Configurations
 from icetea_lib.TestStepError import InconclusiveError, TestStepError
 from icetea_lib.IceteaManager import ExitCodes
 
+from dummy_dut import compile_dummy_dut
+
 
 class MockArgs(object):
     def __init__(self):
@@ -107,6 +109,7 @@ class ConfigMixerTests(unittest.TestCase):
 
     @unittest.skipIf(sys.platform == 'win32', "windows does't support process tests")
     def test_config_parse_corner_case_33(self):
+        compile_dummy_dut()
         script_file = os.path.abspath(os.path.join(__file__, os.path.pardir, os.path.pardir,
                                                    "icetea.py"))
         tcdir = os.path.abspath(os.path.join(__file__, os.path.pardir))
