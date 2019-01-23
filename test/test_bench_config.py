@@ -1,4 +1,5 @@
 # pylint: disable=missing-docstring,no-self-use,protected-access,invalid-name,too-few-public-methods
+# pylint: disable=wrong-import-order
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +24,7 @@ from icetea_lib.TestBench.Configurations import Configurations
 from icetea_lib.TestStepError import InconclusiveError, TestStepError
 from icetea_lib.IceteaManager import ExitCodes
 
-from dummy_dut import compile_dummy_dut
+from test.dummy_dut import compile_dummy_dut
 
 
 class MockArgs(object):
