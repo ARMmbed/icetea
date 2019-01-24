@@ -621,7 +621,7 @@ class Dut(object):  # pylint: disable=too-many-instance-attributes,too-many-publ
 
     # Thread runner
     @staticmethod
-    def run():
+    def run():  # pylint: disable=too-many-branches
         """
         Main thread runner for all Duts.
 
