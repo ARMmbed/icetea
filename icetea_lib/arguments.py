@@ -147,8 +147,8 @@ def get_base_arguments(parser):
                              help="Allocator to be used for allocating resources. "
                                   "Default is LocalAllocator")
     alloc_group.add_argument("--allocator_cfg",
-                            help="File that contains configuration for used allocator.",
-                            default=None)
+                             help="File that contains configuration for used allocator.",
+                             default=None)
 
     # Other arguments
     parser.add_argument('--env_cfg',
@@ -406,7 +406,7 @@ def get_tc_arguments(parser):
     return parser
 
 
-class Abspathify(argparse.Action):  #pylint: disable=too-few-public-methods
+class Abspathify(argparse.Action):  # pylint: disable=too-few-public-methods
     """
     Action to convert paths to absolute paths.
     """
@@ -414,7 +414,7 @@ class Abspathify(argparse.Action):  #pylint: disable=too-few-public-methods
         setattr(args, self.dest, os.path.abspath(values))
 
 
-class LoadFromFile(argparse.Action):  #pylint: disable=too-few-public-methods
+class LoadFromFile(argparse.Action):  # pylint: disable=too-few-public-methods
     """
     Action to load more arguments into parser from a file.
     """

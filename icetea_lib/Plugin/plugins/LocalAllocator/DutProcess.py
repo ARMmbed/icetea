@@ -16,12 +16,13 @@ DutProcess module.
 """
 
 from icetea_lib.DeviceConnectors.Dut import Dut, DutConnectionError
-from icetea_lib.GenericProcess import GenericProcess
+from icetea_lib.tools.GenericProcess import GenericProcess
 from icetea_lib.DeviceConnectors.DutInformation import DutInformation
 from icetea_lib.build.build import Build
+# pylint: disable=redefined-builtin
 
 
-class DutProcess(Dut, GenericProcess):
+class DutProcess(Dut, GenericProcess):  # pylint: disable=too-many-instance-attributes
     """
     DutProcess class, subclasses both Dut and GenericProcess. Implements an interface for
     communicating with a process as if it were a device under test.

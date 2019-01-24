@@ -1,5 +1,5 @@
 # pylint: disable=unused-argument,missing-docstring,too-many-arguments,too-few-public-methods
-# pylint: disable=no-self-use
+# pylint: disable=no-self-use,protected-access,invalid-name
 
 """
 Copyright 2017 ARM Limited
@@ -170,7 +170,7 @@ class DutSerialTestcase(unittest.TestCase):
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
     def test_readline(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
-                  mock_bench_logger):
+                      mock_bench_logger):
         dut = DutSerial(port="test", config={
             "allocated": {"target_id": "thing"},
             "application": "thing"

@@ -41,7 +41,6 @@ class ReportConsole(ReportBase):
         # Generate TC result table
         table = PrettyTable(
             ["Testcase", "Verdict", "Fail Reason", "Skip Reason", "platforms", "duration"])
-        table.align["Testcase"] = "l"  # Left align
         for result in self.results:
             table.add_row([
                 result.get_tc_name(),

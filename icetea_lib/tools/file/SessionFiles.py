@@ -14,32 +14,18 @@ limitations under the License.
 """
 
 import json
-import logging
 import os
 
 from icetea_lib.tools.file import FileUtils
-
-
-def initLogger(name):
-    '''
-    Initializes a basic logger. Can be replaced when constructing the
-    HttpApi object or afterwards with setter
-    '''
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.INFO)
-    #Skip attaching StreamHandler if one is already attached to logger
-    if not getattr(logger, "streamhandler_set", None):
-        ch = logging.StreamHandler()
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        ch.setFormatter(formatter)
-        ch.setLevel(logging.INFO)
-        logger.addHandler(ch)
-        logger.streamhandler_set = True
-    return logger
+from icetea_lib.tools.tools import initLogger
+# pylint: disable=too-many-arguments
 
 
 class JsonFile(object):
-    def __init__(self, logger = None, filepath=None, filename=None):
+    """
+    JsonFile class, for generating and handling json files.
+    """
+    def __init__(self, logger=None, filepath=None, filename=None):
         self.logger = logger if logger else initLogger("JsonFile")
         self.filepath = filepath if filepath else os.path.sep
         self.filename = filename if filename else "default_file.json"
@@ -62,8 +48,8 @@ class JsonFile(object):
         if not os.path.exists(path):
             try:
                 os.makedirs(path)
-            except OSError as e:
-                self.logger.error("Error while creating directory: {}".format(e))
+            except OSError as error:
+                self.logger.error("Error while creating directory: {}".format(error))
                 raise
 
         name = self._ends_with(name, ".json")
@@ -77,12 +63,13 @@ class JsonFile(object):
             data_to_write = content
 
         try:
-            self._write_json(path, name, 'w', data_to_write, 2)
+            indent = indent if indent else 2
+            self._write_json(path, name, 'w', data_to_write, indent)
             return os.path.join(path, name)
-        except EnvironmentError as e:
-            self.logger.error("Error while opening or writing to file: {}".format(e))
+        except EnvironmentError as error:
+            self.logger.error("Error while opening or writing to file: {}".format(error))
             raise
-        except ValueError as e:
+        except ValueError:
             raise
 
     def read_file(self, filepath=None, filename=None):
@@ -101,11 +88,11 @@ class JsonFile(object):
 
         try:
             return self._read_json(path, name)
-        except EnvironmentError as e:
-            self.logger.error("Error while opening or reading the file: {}".format(e))
+        except EnvironmentError as error:
+            self.logger.error("Error while opening or reading the file: {}".format(error))
             raise
-        except ValueError as e:
-            self.logger.error("File contents cannot be decoded to JSON: {}".format(e))
+        except ValueError as error:
+            self.logger.error("File contents cannot be decoded to JSON: {}".format(error))
             raise
 
     def read_value(self, key, filepath=None, filename=None):
@@ -129,8 +116,8 @@ class JsonFile(object):
                 raise KeyError("Key '{}' not found in file {}".format(key, filename))
             else:
                 return output[key]
-        except EnvironmentError as e:
-            self.logger.error("Error while opening or reading the file: {}".format(e))
+        except EnvironmentError as error:
+            self.logger.error("Error while opening or reading the file: {}".format(error))
             raise
 
     def write_values(self, data, filepath=None, filename=None, indent=None, keys_to_write=None):
@@ -159,10 +146,10 @@ class JsonFile(object):
         if not os.path.isfile(path + name):
             try:
                 return self.write_file(data, path, name, indent, keys_to_write)
-            except EnvironmentError as e:
-                self.logger.error("Error while opening or writing to file: {}".format(e))
+            except EnvironmentError as error:
+                self.logger.error("Error while opening or writing to file: {}".format(error))
                 raise
-            except ValueError as e:
+            except ValueError:
                 raise
 
         if keys_to_write:
@@ -179,18 +166,21 @@ class JsonFile(object):
                 for key in data_to_write:
                     try:
                         output[key] = data_to_write[key]
-                    except TypeError as e:
-                        self.logger.error("File contents could not be serialized into a dict. {}".format(e))
+                    except TypeError as error:
+                        self.logger.error(
+                            "File contents could not be serialized into a dict. {}".format(error))
                         raise
             self._write_json(path, name + ".temp", "w", output, indent)
             FileUtils.remove_file(name, path)
             FileUtils.rename_file(name + '.temp', name, path)
             return os.path.join(path, name)
-        except EnvironmentError as e:
-            self.logger.error("Error while writing to, opening or reading the file: {}".format(e))
+        except EnvironmentError as error:
+            self.logger.error(
+                "Error while writing to, opening or reading the file: {}".format(error))
             raise
-        except ValueError as e:
-            self.logger.error("File could not be decoded to JSON. It might be empty? {}".format(e))
+        except ValueError as error:
+            self.logger.error(
+                "File could not be decoded to JSON. It might be empty? {}".format(error))
             try:
                 self._write_json(path, name, "w", data_to_write, indent)
                 return os.path.join(path, name)
@@ -198,18 +188,41 @@ class JsonFile(object):
                 raise
 
     def _write_json(self, filepath, filename, writemode, content, indent):
+        """
+        Helper for writing content to a file.
+
+        :param filepath: path to file
+        :param filename: name of file
+        :param writemode: writemode used
+        :param content: content to write
+        :param indent: value for dump indent parameter.
+        :return: Norhing
+        """
         with open(os.path.join(filepath, filename), writemode) as fil:
             json.dump(content, fil, indent=indent)
             self.logger.info("Wrote content to file {}".format(filename))
 
     def _read_json(self, path, name):
+        """
+        Load a json into a dictionary from a file.
+
+        :param path: path to file
+        :param name: name of file
+        :return: dict
+        """
         with open(os.path.join(path, name), 'r') as fil:
             output = json.load(fil)
             self.logger.info("Read contents of {}".format(name))
             return output
 
-    def _ends_with(self, string, end):
-        if not string.endswith(end):
-            return string + end
-        else:
-            return string
+    def _ends_with(self, string_to_edit, end):  # pylint: disable=no-self-use
+        """
+        Check if string ends with characters in end, if not merge end to string.
+
+        :param string_to_edit: string to check and edit.
+        :param end: str
+        :return: string_to_edit or string_to_edit + end
+        """
+        if not string_to_edit.endswith(end):
+            return string_to_edit + end
+        return string_to_edit

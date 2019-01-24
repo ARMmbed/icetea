@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# pylint: disable=missing-docstring,useless-super-delegation
 from icetea_lib.Plugin.PluginBase import PluginBase
 
 
@@ -23,5 +23,5 @@ class Plugin(PluginBase):
     def get_bench_api(self):
         return {"test_plugin": self.test_plugin}
 
-    def test_plugin(self):
+    def test_plugin(self):  # pylint: disable=no-self-use
         return 1

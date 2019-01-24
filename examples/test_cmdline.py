@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# pylint: disable=missing-docstring
 from icetea_lib.bench import Bench
 
 
@@ -28,18 +28,17 @@ class Testcase(Bench):
                        requirements={
                            "duts": {
                                '*': {
-                                    "count": 1,
-                                    "type": "hardware",
-                                    "allowed_platforms": ['K64F']
+                                   "count": 1,
+                                   "type": "hardware",
+                                   "allowed_platforms": ['K64F']
                                }
                            }
                        }
-                       )
+                      )
 
     def setup(self):
         # nothing for now
-        self.device = self.get_node_endpoint(1)
-
+        self.device = self.get_node_endpoint(1)  # pylint: disable=attribute-defined-outside-init
 
     def case(self):
         self.command(1, "echo hello world", timeout=5)

@@ -16,6 +16,7 @@ This module contains generic event mechanism classes.
 """
 
 
+# pylint: disable=too-few-public-methods
 class EventTypes(object):
     """
     Enum for event types
@@ -65,7 +66,8 @@ class Observer(object):
             self._observers.remove(self)
 
 
-class Event:
+# pylint: disable=protected-access
+class Event(object):
     """
     Event emitter
     Usage:

@@ -12,15 +12,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# pylint: disable=missing-docstring,pointless-string-statement,no-member
 from icetea_lib.bench import Bench
 
 '''
-Icetea test case command and response public API usage example. For details, please check 
+Icetea test case command and response public API usage example. For details, please check
 doc/tc_api.md
 
 function:
-    self.command(k, cmd, wait = True, expectedRetcode = 0, timeout=50, async=False, reportCmdFail=True)
+    self.command(k, cmd, wait = True, expectedRetcode = 0, timeout=50, async=False,
+                reportCmdFail=True)
         """
         :param: k: Value: 1. DUT Index or DUT nick will send command to a DUT
                           2. '*' -send command to all DUTs
@@ -53,7 +54,8 @@ Object: CliResponse
         5. verifyResponseDuration(expected=None, zero=0, threshold_percent=0, breakInFail=True):
             Verifies that response duration is in bounds
 
-        6. verifyResponseTime(expectedBelow): Verifies that response time was below expected threshold.
+        6. verifyResponseTime(expectedBelow): Verifies that response time was below
+            expected threshold.
 '''
 
 
@@ -67,23 +69,23 @@ class Testcase(Bench):
                        purpose="show an example usage of Icetea command and response APIs",
                        component=["Icetea"],
                        requirements={
-                            "duts": {
-                                '*': {
-                                    "count": 2, # devices number
-                                    "type": "hardware",  # "hardware" (by default) or "process"
-                                    "application": {
-                                        "bin": "build_path/build_full_name",  # build binary path
-                                    }
-                                },
-                                "1": {
-                                    "nick": "dut1" # give dut a nick
-                                },
-                                "2": {
-                                    "nick": "dut2"
-                                }
-                            }
-                        }
-                       )
+                           "duts": {
+                               '*': {
+                                   "count": 2,  # devices number
+                                   "type": "hardware",  # "hardware" (by default) or "process"
+                                   "application": {
+                                       "bin": "build_path/build_full_name",  # build binary path
+                                   }
+                               },
+                               "1": {
+                                   "nick": "dut1"  # give dut a nick
+                               },
+                               "2": {
+                                   "nick": "dut2"
+                               }
+                           }
+                       }
+                      )
 
     def case(self):
         # send command "echo hello" to 1st dut by index

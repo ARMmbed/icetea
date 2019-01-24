@@ -52,7 +52,7 @@ class Location(object):  # pylint: disable=too-few-public-methods
         self.y_coord = y_coord
 
 
-class Dut(object):
+class Dut(object):  # pylint: disable=too-many-instance-attributes,too-many-public-methods
     """
     The Dut object is the base behind all our Dut types. It implements the read thread run loop
     and Dut signaling mechanisms and contains many of the shared attributes, methods and data of
@@ -160,6 +160,7 @@ class Dut(object):
         """
         if self.dutinformation:
             return self.dutinformation.vendor
+        return None
 
     @vendor.setter
     def vendor(self, value):
@@ -175,6 +176,7 @@ class Dut(object):
         """
         if self.dutinformation:
             return self.dutinformation.build
+        return None
 
     @build.setter
     def build(self, value):
@@ -495,7 +497,7 @@ class Dut(object):
         """
         if isinstance(req, string_types):
             # backward compatible
-            timeout = 50 # Use same default timeout as bench.py
+            timeout = 50  # Use same default timeout as bench.py
             wait = True
             asynchronous = False
             for key in kwargs:
@@ -527,7 +529,8 @@ class Dut(object):
         self.query_timeout = self.get_time() + req.timeout if req.wait else 0
         self.query = req
 
-        msg = "Async CMD {}, timeout={}, time={}" if req.asynchronous else "CMD {}, timeout={}, time={}"
+        msg = "Async CMD {}, " \
+              "timeout={}, time={}" if req.asynchronous else "CMD {}, timeout={}, time={}"
         msg = msg.format(req.cmd, int(self.query_timeout), int(self.get_time()))
         self.logger.debug(msg, extra={'type': '<->'})
 

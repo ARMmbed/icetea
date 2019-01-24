@@ -14,4 +14,4 @@ limitations under the License.
 """
 
 
-plugins_to_load = {}
+plugins_to_load = {}  # pylint: disable=invalid-name

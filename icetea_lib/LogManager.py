@@ -1,37 +1,65 @@
 """
-Copyright 2017 ARM Limited
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-
-LogManager module contains all logging related methods,
-classes and helpers used by Icetea.
+LogManager module contains all logging related methods, classes and helpers used by Icetea.
 """
 
-import os
-import time
+import datetime
+import json
 import logging
 import logging.config
+import os
 import re
+
+import jsonmerge
+import jsonschema
+import pytz
 import six
 
 COLORS = True
 try:
     import coloredlogs
 except ImportError:
-    coloredlogs = None
     COLORS = False
 
 # Heavy use of global statement in this module for good reasons. Disable global-statement warning.
 # pylint: disable=global-statement
+LOGGING_CONFIG = {
+    "IceteaManager": {
+        "format": "%(asctime)s | %(message)s",
+        "dateformat": "%Y-%m-%dT%H:%M:%S.%FZ",
+        "level": "INFO",
+        "truncate_logs": {"truncate": True, "max_len": 10000, "reveal_len": 50},
+        "file": {
+            "format": "%(asctime)s | %(source)s %(type)s %(threadName)s: %(message)s",
+            "dateformat": "%Y-%m-%dT%H:%M:%S.%FZ",
+            "level": "DEBUG",
+            "name": "icetea.log"
+        }
+    },
+    "external": {
+        "format": "%(asctime)s | %(source)s %(type)s %(threadName)s: %(message)s",
+        "dateformat": "%Y-%m-%dT%H:%M:%S.%FZ",
+        "level": "WARN",
+        "truncate_logs": {"truncate": True, "max_len": 10000, "reveal_len": 50},
+        "file": {
+            "format": "%(asctime)s | %(source)s %(type)s %(threadName)s: %(message)s",
+            "dateformat": "%Y-%m-%dT%H:%M:%S.%FZ",
+            "level": "DEBUG"
+        }
+    }
+}
+
+DEFAULT_LOGGING_CONFIG = {
+    "format": "%(asctime)s | %(source)s %(type)s %(threadName)s: %(message)s",
+    "dateformat": "%Y-%m-%dT%H:%M:%S.%FZ",
+    "level": "INFO",
+    "truncate_logs": {"truncate": True, "max_len": 10000, "reveal_len": 50},
+    "file": {
+        "format": "%(asctime)s | %(source)s %(type)s %(threadName)s: %(message)s",
+        "dateformat": "%Y-%m-%dT%H:%M:%S.%FZ",
+        "level": "DEBUG",
+        "name": "bench.log"
+    }
+}
 
 LOGPATHDIR = None  # Path to run log directory
 LOGTCDIR = None
@@ -41,10 +69,11 @@ LOGFILES = []
 GLOBAL_LOGFILES = []
 REPEATNUM = 0
 STANDALONE_LOGGING = True
-VERBOSE_ON = True
+VERBOSE_LEVEL = 0
 SILENT_ON = False
 COLOR_ON = False
 TRUNCATE_LOG = True
+
 
 LEVEL_FORMATS = dict(
     debug=dict(color='white'),
@@ -69,29 +98,65 @@ class BenchLoggerAdapter(logging.LoggerAdapter):
     Adapter to add field 'extra' to logger.
     """
     def process(self, msg, kwargs):
-        if not "extra" in kwargs:
+        if "extra" not in kwargs:
             kwargs["extra"] = {}
         kwargs["extra"]["source"] = self.extra["source"]
         return msg, kwargs
+
+
+class BenchFormatter(logging.Formatter):
+    """
+    Handle time zone conversion to UTC and append milliseconds on %F.
+    """
+    converter = datetime.datetime.fromtimestamp
+
+    def formatTime(self, record, datefmt=None):
+        date_and_time = self.converter(record.created, tz=pytz.utc)
+        if "%F" in datefmt:
+            msec = "%03d" % record.msecs
+            datefmt = datefmt.replace("%F", msec)
+        str_time = date_and_time.strftime(datefmt)
+        return str_time
 
 
 class BenchFormatterWithType(object):  # pylint: disable=too-few-public-methods
     """
     Bench logger formatter.
     """
-    def __init__(self, color=False):
+    def __init__(self, color=False, loggername="Bench"):
         if not color:
-            self._formatter = logging.Formatter(
-                "%(asctime)s.%(msecs)03d | %(source)s %(type)s %(threadName)s: "
-                "%(message)s", "%H:%M:%S")
+            config = LOGGING_CONFIG.get(loggername, {})
+            self._formatter = BenchFormatter(
+                config.get("format", DEFAULT_LOGGING_CONFIG.get("format")),
+                config.get("dateformat", DEFAULT_LOGGING_CONFIG.get("dateformat")))
         else:
-            self._formatter = coloredlogs.ColoredFormatter(
-                "%(asctime)s.%(msecs)03d | %(source)s %(type)s %(threadName)s: "
-                "%(message)s", "%H:%M:%S", LEVEL_FORMATS, FIELD_STYLES)
+
+            class ColoredBenchFormatter(coloredlogs.ColoredFormatter):
+                """
+                This is defined as an internal class here because coloredlogs is and optional
+                dependency.
+                """
+                converter = datetime.datetime.fromtimestamp
+
+                def formatTime(self, record, datefmt=None):
+                    date_and_time = self.converter(record.created, tz=pytz.utc)
+                    if "%F" in datefmt:
+                        msec = "%03d" % record.msecs
+                        datefmt = datefmt.replace("%F", msec)
+                    str_time = date_and_time.strftime(datefmt)
+                    return str_time
+
+            self._formatter = ColoredBenchFormatter(
+                LOGGING_CONFIG.get(loggername, {}).get(
+                    "format", DEFAULT_LOGGING_CONFIG.get("format")),
+                LOGGING_CONFIG.get(loggername, {}).get(
+                    "dateformat", DEFAULT_LOGGING_CONFIG.get("dateformat")),
+                LEVEL_FORMATS, FIELD_STYLES)
 
     def format(self, record):
         """
         Format record with formatter.
+
         :param record: Record to format
         :return: Formatted record
         """
@@ -104,10 +169,9 @@ def remove_handlers(logger):
     # TODO: Issue related to placeholder logger objects appearing in some rare cases. Check below
     # required as a workaround
     """
-    remove handlers from logger.
+    Remove handlers from logger.
 
     :param logger: Logger whose handlers to remove
-    :return:
     """
     if hasattr(logger, "handlers"):
         for handler in logger.handlers[::-1]:
@@ -136,8 +200,8 @@ def get_testcase_log_dir():
 
 
 def get_testcase_logfilename(logname, prepend_tc_name=False):
-    """
-    Return filename for a logfile, filename will contain the actual path + filename.
+    """ Return filename for a logfile, filename will contain the actual path +
+    filename
 
     :param logname: Name of the log including the extension, should describe
     what it contains (eg. "device_serial_port.log")
@@ -154,7 +218,8 @@ def get_testcase_logfilename(logname, prepend_tc_name=False):
 
 
 def get_base_logfilename(logname):
-    """ Return filename for a logfile, filename will contain the actual path + filename
+    """ Return filename for a logfile, filename will contain the actual path +
+    filename
 
     :param logname: Name of the log including the extension, should describe
     what it contains (eg. "device_serial_port.log")
@@ -178,7 +243,8 @@ def get_file_logger(name, formatter=None):
     directory. Anything logged with a file logger won't be visible in the
     console or any other logger.
 
-    :param name, Name of the logger, eg. the module name
+    :param name: Name of the logger, eg. the module name
+    :param formatter: Formatter to use
     """
     if name is None or name == "":
         raise ValueError("Can't make a logger without name")
@@ -188,27 +254,22 @@ def get_file_logger(name, formatter=None):
     logger.setLevel(logging.INFO)
 
     if formatter is None:
-        formatter = logging.Formatter("%(asctime)s.%(msecs)03d %(message)s", "%H:%M:%S")
+        config = LOGGING_CONFIG.get(name, {}).get("file", DEFAULT_LOGGING_CONFIG.get("file"))
+        formatter = BenchFormatter(config.get("level", "DEBUG"), config.get("dateformat"))
     func = get_testcase_logfilename(name + ".log")
     handler = _get_filehandler_with_formatter(func, formatter)
     logger.addHandler(handler)
-
     return logger
 
 
-def get_resourceprovider_logger(name=None, short_name=" ", log_to_file=True):
+def _check_existing_logger(loggername, short_name):
     """
-    Get logger for ResourceProvider and related classes.
+    Check if logger with name loggername exists.
 
-    :param name: Name of the logger
-    :param short_name: Shorthand name
-    :param log_to_file: If True enable logging to file.
-    :return: logging.Logger
+    :param loggername: Name of logger.
+    :param short_name: Shortened name for the logger.
+    :return: Logger or None
     """
-
-    global LOGGERS
-    loggername = name
-    # Return existing logger if one exists
     if loggername in LOGGERS:
         # Check if short_name matches the existing one, if not update it
         if isinstance(LOGGERS[loggername], BenchLoggerAdapter):
@@ -216,28 +277,122 @@ def get_resourceprovider_logger(name=None, short_name=" ", log_to_file=True):
                     LOGGERS[loggername].extra["source"] != short_name):
                 LOGGERS[loggername].extra["source"] = short_name
         return LOGGERS[loggername]
+    return None
 
+
+def _add_filehandler(logger, logpath, formatter=None, name="Bench"):
+    """
+    Adds a FileHandler to logger.
+
+    :param logger: Logger.
+    :param logpath: Path to file.
+    :param formatter: Formatter to be used
+    :param name: Name for logger
+    :return: Logger
+    """
+    formatter = formatter if formatter else BenchFormatterWithType(loggername=name)
+    handler = _get_filehandler_with_formatter(logpath, formatter)
+    config = LOGGING_CONFIG.get(name, {}).get("file", DEFAULT_LOGGING_CONFIG.get("file"))
+    handler.setLevel(getattr(logging, config.get("level", "DEBUG")))
+    logger.addHandler(handler)
+    return logger
+
+
+def _get_basic_logger(loggername, log_to_file, logpath):
+    """
+    Get a logger with our basic configuration done.
+
+    :param loggername: Name of logger.
+    :param log_to_file: Boolean, True if this logger should write a file.
+    :return: Logger
+    """
     logger = logging.getLogger(loggername)
     remove_handlers(logger)
     logger.setLevel(logging.DEBUG)
-    if TRUNCATE_LOG:
-        logger.addFilter(ContextFilter())
+    logger_config = LOGGING_CONFIG.get(loggername, DEFAULT_LOGGING_CONFIG)
+    if TRUNCATE_LOG or logger_config.get("truncate_logs").get("truncate"):
+        cfilter = ContextFilter()
+        trunc_logs = logger_config.get("truncate_logs")
+        # pylint: disable=invalid-name
+        cfilter.MAXIMUM_LENGTH = trunc_logs.get("max_len",
+                                                DEFAULT_LOGGING_CONFIG.get(
+                                                    "truncate_logs").get("max_len"))
+        cfilter.REVEAL_LENGTH = trunc_logs.get("reveal_len",
+                                               DEFAULT_LOGGING_CONFIG.get(
+                                                   "truncate_logs").get("reveal_len"))
+        logger.addFilter(cfilter)
 
     # Filehandler for logger
     if log_to_file:
-        func = get_base_logfilename(name + ".log")
-        handler = _get_filehandler_with_formatter(func, BenchFormatterWithType())
-        handler.setLevel(logging.DEBUG)
-        logger.addHandler(handler)
+        _add_filehandler(logger, logpath, name=loggername)
+
+    return logger
+
+
+def get_resourceprovider_logger(name=None, short_name=" ", log_to_file=True):
+    """
+    Get a logger for ResourceProvider and it's components, such as Allocators.
+
+    :param name: Name for logger
+    :param short_name: Shorthand name for the logger
+    :param log_to_file: Boolean, True if logger should log to a file as well.
+    :return: Logger
+    """
+
+    global LOGGERS
+    loggername = name
+    logger = _check_existing_logger(loggername, short_name)
+    if logger is not None:
+        return logger
+    logger_config = LOGGING_CONFIG.get(name, DEFAULT_LOGGING_CONFIG)
+    logger = _get_basic_logger(loggername, log_to_file, get_base_logfilename(loggername + ".log"))
 
     cbh = logging.StreamHandler()
     cbh.formatter = BenchFormatterWithType(COLOR_ON)
-    if VERBOSE_ON:
+    if VERBOSE_LEVEL > 0 and not SILENT_ON:
         cbh.setLevel(logging.DEBUG)
     elif SILENT_ON:
         cbh.setLevel(logging.WARN)
     else:
+        cbh.setLevel(getattr(logging, logger_config.get("level")))
+    logger.addHandler(cbh)
+
+    LOGGERS[loggername] = BenchLoggerAdapter(logger, {"source": short_name})
+
+    return LOGGERS[loggername]
+
+
+def get_external_logger(name=None, short_name=" ", log_to_file=True):
+    """
+    Get a logger for external modules, whose logging should usually be on a less verbose level.
+
+    :param name: Name for logger
+    :param short_name: Shorthand name for logger
+    :param log_to_file: Boolean, True if logger should log to a file as well.
+    :return: Logger
+    """
+
+    global LOGGERS
+    loggername = name
+    logger = _check_existing_logger(loggername, short_name)
+    if logger is not None:
+        return logger
+    logging_config = LOGGING_CONFIG.get(name, LOGGING_CONFIG.get("external"))
+    filename = logging_config.get("file", {}).get("name", loggername)
+    if not filename.endswith(".log"):
+        filename = str(filename) + ".log"
+    logger = _get_basic_logger(loggername, log_to_file, get_base_logfilename(filename))
+    cbh = logging.StreamHandler()
+    cbh.formatter = BenchFormatterWithType(COLOR_ON)
+
+    if VERBOSE_LEVEL == 1 and not SILENT_ON:
         cbh.setLevel(logging.INFO)
+    elif VERBOSE_LEVEL >= 2 and not SILENT_ON:
+        cbh.setLevel(logging.DEBUG)
+    elif SILENT_ON:
+        cbh.setLevel(logging.ERROR)
+    else:
+        cbh.setLevel(getattr(logging, logging_config.get("level")))
     logger.addHandler(cbh)
 
     LOGGERS[loggername] = BenchLoggerAdapter(logger, {"source": short_name})
@@ -263,27 +418,12 @@ def get_bench_logger(name=None, short_name="  ", log_to_file=True):
         return LOGGERS["bench"]
 
     loggername = "bench." + name
-    # Return existing logger if one exists
-    if loggername in LOGGERS:
-        # Check if short_name matches the existing one, if not update it
-        if isinstance(LOGGERS[loggername], BenchLoggerAdapter):
-            if ("source" not in LOGGERS[loggername].extra or
-                    LOGGERS[loggername].extra["source"] != short_name):
-                LOGGERS[loggername].extra["source"] = short_name
-        return LOGGERS[loggername]
 
-    logger = logging.getLogger(loggername)
-    remove_handlers(logger)
-    logger.setLevel(logging.DEBUG)
-    if TRUNCATE_LOG:
-        logger.addFilter(ContextFilter())
-
-    # Filehandler for logger
-    if log_to_file:
-        func = get_testcase_logfilename(name + ".log")
-        handler = _get_filehandler_with_formatter(func, BenchFormatterWithType())
-        handler.setLevel(logging.DEBUG)
-        logger.addHandler(handler)
+    logger = _check_existing_logger(loggername, short_name)
+    if logger is not None:
+        return logger
+    logger = _get_basic_logger(loggername, log_to_file, get_testcase_logfilename(loggername +
+                                                                                 ".log"))
 
     LOGGERS[loggername] = BenchLoggerAdapter(logger, {"source": short_name})
 
@@ -292,8 +432,7 @@ def get_bench_logger(name=None, short_name="  ", log_to_file=True):
 
 def get_dummy_logger():
     """
-    Get dummy logger.
-
+    Get dummy logger
     :return: logger with NullHandler
     """
     logger = logging.getLogger("dummy")
@@ -302,19 +441,15 @@ def get_dummy_logger():
 
 
 def get_logfiles():
-    """
-    Return a list of logfiles with relative paths from the log
-    root directory
-    """
+    """Return a list of logfiles with relative paths from the log
+    root directory"""
     logfiles = [f for f in LOGFILES]
     logfiles.extend(GLOBAL_LOGFILES)
     return logfiles
 
 
 def set_level(name, level):
-    """
-    Set level for given logger.
-
+    """ Set level for given logger
     :param name: Name of logger to set the level for
     :param level: The new level, see possible levels from python logging library
     """
@@ -325,76 +460,106 @@ def set_level(name, level):
 
 
 # pylint: disable=too-many-arguments
-def init_base_logging(directory="./log", verbose=False, silent=False, color=False, no_file=False,
-                      truncate=True):
+def init_base_logging(directory="./log", verbose=0, silent=False, color=False, no_file=False,
+                      truncate=True, config_location=None):
     """
     Initialize the Icetea logging by creating a directory to store logs
     for this run and initialize the console logger for Icetea itself.
 
     :param directory: Directory where to store the resulting logs
-    :param verbose: Log level debug
+    :param verbose: Log level as integer
     :param silent: Log level warning
     :param no_file: Log to file
     :param color: Log coloring
     :param truncate: Log truncating
-    :return: Nothing
+    :param config_location: Location of config file.
+    :raises IOError if unable to read configuration file.
+    :raises OSError if log path already exists.
+    :raises ImportError if colored logging was requested but coloredlogs module is not installed.
     """
     global LOGPATHDIR
     global STANDALONE_LOGGING
     global TRUNCATE_LOG
     global COLOR_ON
     global SILENT_ON
-    global VERBOSE_ON
+    global VERBOSE_LEVEL
 
-    LOGPATHDIR = os.path.join(directory, time.strftime("%Y-%m-%d_%H%M%S"))
-    if not os.path.exists(LOGPATHDIR) and not no_file:
-        os.makedirs(LOGPATHDIR)
+    if config_location:
+        try:
+            _read_config(config_location)
+        except IOError as error:
+            raise IOError("Unable to read from configuration file {}: {}".format(config_location,
+                                                                                 error))
+        except jsonschema.SchemaError as error:
+            raise jsonschema.SchemaError("Logging configuration schema "
+                                         "file malformed: {}".format(error))
+
+    LOGPATHDIR = os.path.join(directory, datetime.datetime.now().strftime(
+        "%Y-%m-%d_%H%M%S.%f").rstrip("0"))
 
     # Initialize the simple console logger for IceteaManager
     icetealogger = logging.getLogger("icetea")
     icetealogger.setLevel(logging.DEBUG)
     stream_handler = logging.StreamHandler()
-    formatter = logging.Formatter("%(asctime)s.%(msecs)03d %(message)s", "%H:%M:%S")
+    formatter = BenchFormatter(LOGGING_CONFIG.get("IceteaManager").get("format"),
+                               LOGGING_CONFIG.get("IceteaManager").get("dateformat"))
     if not color:
         stream_handler.setFormatter(formatter)
     elif color and not COLORS:
-        raise ImportError("Missing coloredlogs module. Please install with"
+        raise ImportError("Missing coloredlogs module. Please install with "
                           "pip to use colors in logging.")
     else:
-        stream_handler.setFormatter(coloredlogs.ColoredFormatter(
-            "%(asctime)s.%(msecs)03d %(message)s", "%H:%M:%S"))
 
-    if color and COLORS:
+        class ColoredBenchFormatter(coloredlogs.ColoredFormatter):
+            """
+            This is defined as an internal class here because coloredlogs is and optional
+            dependency.
+            """
+            converter = datetime.datetime.fromtimestamp
+
+            def formatTime(self, record, datefmt=None):
+                date_and_time = self.converter(record.created, tz=pytz.utc)
+                if "%F" in datefmt:
+                    msec = "%03d" % record.msecs
+                    datefmt = datefmt.replace("%F", msec)
+                str_time = date_and_time.strftime(datefmt)
+                return str_time
+
         COLOR_ON = color
+        stream_handler.setFormatter(ColoredBenchFormatter(
+            LOGGING_CONFIG.get("IceteaManager").get("format"),
+            LOGGING_CONFIG.get("IceteaManager").get("dateformat"),
+            LEVEL_FORMATS, FIELD_STYLES))
+
     SILENT_ON = silent
-    VERBOSE_ON = verbose
+    VERBOSE_LEVEL = verbose
     if not no_file:
-        file_handler = logging.FileHandler(get_base_logfilename("icetea.log"))
-        file_handler.setFormatter(formatter)
-        file_handler.setLevel(logging.DEBUG)
-        icetealogger.addHandler(file_handler)
-    if verbose:
+        try:
+            os.makedirs(LOGPATHDIR)
+        except OSError:
+            raise OSError("Log path %s already exists." % LOGPATHDIR)
+        filename = LOGGING_CONFIG.get("IceteaManager").get("file").get("name", "icetea.log")
+        icetealogger = _add_filehandler(icetealogger, get_base_logfilename(filename),
+                                        formatter, "IceteaManager")
+    if verbose and not silent:
         stream_handler.setLevel(logging.DEBUG)
     elif silent:
         stream_handler.setLevel(logging.WARN)
     else:
-        stream_handler.setLevel(logging.INFO)
+        stream_handler.setLevel(getattr(logging, LOGGING_CONFIG.get("IceteaManager").get("level")))
     icetealogger.addHandler(stream_handler)
     TRUNCATE_LOG = truncate
     if TRUNCATE_LOG:
         icetealogger.addFilter(ContextFilter())
-
     STANDALONE_LOGGING = False
 
 
-def init_testcase_logging(name, verbose=True, silent=False, color=False,
+def init_testcase_logging(name, verbose=0, silent=False, color=False,
                           truncate=True):
-    """
-    Initialize testcase logging and default loggers. First removes any
+    """ Initialize testcase logging and default loggers. First removes any
     existing testcase loggers, creates a new directory for testcase logs under
     the root logging directory, initializes the default bench logger and
     removes any child loggers it may have.
-
     :param name: Name of the testcase
     :param verbose: Log level debug
     :param silent: Log level warning
@@ -405,12 +570,12 @@ def init_testcase_logging(name, verbose=True, silent=False, color=False,
     global LOGTCNAME
     global LOGGERS
     global REPEATNUM
-    global VERBOSE_ON
+    global VERBOSE_LEVEL
     global SILENT_ON
     global TRUNCATE_LOG
 
     if name is None or not isinstance(name, str) or not name:
-        raise EnvironmentError("Invalid testcase name for logging configuration")
+        raise EnvironmentError("{} is invalid testcase name for logging configuration".format(name))
 
     if STANDALONE_LOGGING:
         init_base_logging()
@@ -448,27 +613,26 @@ def init_testcase_logging(name, verbose=True, silent=False, color=False,
         raise ImportError("Missing module: coloredlogs. Please install"
                           "with pip to use colors in logging.")
     stream_handler.formatter = BenchFormatterWithType(color)
-    VERBOSE_ON = verbose
+    VERBOSE_LEVEL = verbose
     SILENT_ON = silent
-    if verbose:
+    if verbose and not silent:
         stream_handler.setLevel(logging.DEBUG)
     elif silent:
         stream_handler.setLevel(logging.WARN)
     else:
-        stream_handler.setLevel(logging.INFO)
+        configs = LOGGING_CONFIG.get("Bench", {})
+        stream_handler.setLevel(getattr(logging,
+                                        configs.get("level", DEFAULT_LOGGING_CONFIG.get("level"))))
     benchlogger.addHandler(stream_handler)
     # file handler for bench and all child loggers
-    func = get_testcase_logfilename("bench.log")
-    handler = _get_filehandler_with_formatter(func, BenchFormatterWithType())
-    handler.setLevel(logging.DEBUG)
-    benchlogger.addHandler(handler)
+    filename = LOGGING_CONFIG.get("Bench",
+                                  DEFAULT_LOGGING_CONFIG).get("file").get("name", "bench.log")
+    benchlogger = _add_filehandler(benchlogger, get_testcase_logfilename(filename), name="Bench")
     LOGGERS["bench"] = BenchLoggerAdapter(benchlogger, {"source": "TC"})
 
 
 def finish_testcase_logging():
-    """
-    Finalize testcase logging by removing loggers
-    """
+    """ Finalize testcase logging by removing loggers """
     del LOGFILES[:]
     if LOGGERS:
         # From local list of loggers, retrieve one(first one)
@@ -492,15 +656,13 @@ def finish_testcase_logging():
 
 
 def _get_filehandler_with_formatter(logname, formatter=None):
-    """
-    Return a logging FileHandler for given logname using a given
-    logging formatter.
-
+    """ Return a logging FileHandler for given logname using a given
+    logging formatter
     :param logname: Name of the file where logs will be stored, ".log"
     extension will be added
     :param formatter: An instance of logging.Formatter or None if the default
     should be used
-    :return: FileHandler
+    :return:
     """
     handler = logging.FileHandler(logname)
     if formatter is not None:
@@ -521,6 +683,7 @@ class ContextFilter(logging.Filter):  # pylint: disable=too-few-public-methods
         :param record: Record to filter
         :return:
         """
+
         def modify(value):
             """
             Modify logged record, truncating it to max length and logging remaining length
@@ -555,7 +718,6 @@ def traverse_json_obj(obj, path=None, callback=None):
     """
     Recursively loop through object and perform the function defined
     in callback for every element. Only JSON data types are supported.
-
     :param obj: object to traverse
     :param path: current path
     :param callback: callback executed on every element
@@ -576,3 +738,24 @@ def traverse_json_obj(obj, path=None, callback=None):
     if callback is None:
         return value
     return callback(value)
+
+
+def _read_config(config_location):
+    """
+    Read configuration for logging from a json file. Merges the read dictionary to LOGGING_CONFIG.
+
+    :param config_location: Location of file.
+    :return: nothing.
+    """
+    global LOGGING_CONFIG
+    with open(config_location, "r") as config_loc:
+        cfg_file = json.load(config_loc)
+        if "logging" in cfg_file:
+            log_dict = cfg_file.get("logging")
+            with open(os.path.abspath(os.path.join(__file__,
+                                                   os.path.pardir,
+                                                   'logging_schema.json'))) as schema_file:
+                logging_schema = json.load(schema_file)
+                jsonschema.validate(log_dict, logging_schema)
+                merged = jsonmerge.merge(LOGGING_CONFIG, log_dict)
+                LOGGING_CONFIG = merged

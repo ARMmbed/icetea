@@ -14,7 +14,8 @@ limitations under the License.
 
 This is an example of the implementation of an allocator type global plugin for Icetea.
 """
-
+# pylint: disable=missing-docstring,unnecessary-pass,unused-argument,useless-super-delegation
+# pylint: disable=too-few-public-methods
 from icetea_lib.Plugin.PluginBase import RunPluginBase
 from icetea_lib.ResourceProvider.Allocators.BaseAllocator import BaseAllocator
 from icetea_lib.AllocationContext import AllocationContextList
@@ -50,3 +51,6 @@ class ExampleAllocator(BaseAllocator):
 
     def release(self, dut=None):
         pass
+
+    def share_allocations(self):
+        return False
