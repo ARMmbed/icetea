@@ -59,7 +59,7 @@ class ParserManager(object):
         :param kwargs: dict, not used
         :return: dictionary or return value of called callable from parser.
         """
-        #pylint: disable=W0703
+        # pylint: disable=W0703
         cmd = args[0]
         resp = args[1]
         if cmd in self.parsers:

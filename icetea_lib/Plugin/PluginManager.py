@@ -71,7 +71,8 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
         :return: Nothing
         """
         if plugin_name in self.registered_plugins:
-            raise PluginException("Plugin %s already registered! Duplicate plugins?", plugin_name)
+            raise PluginException("Plugin {} already registered! Duplicate "
+                                  "plugins?".format(plugin_name))
         self.logger.debug("Registering plugin %s", plugin_name)
         plugin_class.init(bench=self.bench)
         if plugin_class.get_bench_api() is not None:
@@ -96,7 +97,8 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
         :return: Nothing
         """
         if plugin_name in self.registered_plugins:
-            raise PluginException("Plugin %s already registered! Duplicate plugins?", plugin_name)
+            raise PluginException("Plugin {} already registered! "
+                                  "Duplicate plugins?".format(plugin_name))
         self.logger.debug("Registering plugin %s", plugin_name)
         if plugin_class.get_allocators():
             register_func = self.plugin_types[PluginTypes.ALLOCATOR]
@@ -213,7 +215,7 @@ class PluginManager(object): # pylint: disable=too-many-instance-attributes
                 service.start()
             except PluginException:
                 self.logger.exception("Starting service %s caused an exception!", service_name)
-                raise PluginException("Failed to start external service %s", service_name)
+                raise PluginException("Failed to start external service {}".format(service_name))
             self._started_services.append(service)
             setattr(self.bench, service_name, service)
         else:

@@ -1,3 +1,4 @@
+# pylint: disable=useless-super-delegation,too-few-public-methods
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +18,18 @@ limitations under the License.
 from icetea_lib.Plugin.PluginBase import RunPluginBase
 from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import LocalAllocator
 
+
 class LocalAllocatorPlugin(RunPluginBase):
+    """
+    Plugin interface for the LocalAllocator allocator.
+    """
     def __init__(self):
         super(LocalAllocatorPlugin, self).__init__()
 
     def get_allocators(self):
+        """
+        Get plugin descriptor for the LocalAllocator.
+
+        :return: dict
+        """
         return {"LocalAllocator": LocalAllocator}

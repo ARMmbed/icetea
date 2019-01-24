@@ -18,6 +18,8 @@ campaigns, suites etc.
 
 @Author: Joonas Nikula
 """
+# pylint: disable=unused-argument,too-many-arguments
+
 
 def create(host, port, result_converter=None, testcase_converter=None, args=None):
     """
@@ -28,12 +30,18 @@ def create(host, port, result_converter=None, testcase_converter=None, args=None
     return SampleClient(host, port, result_converter, testcase_converter, args)
 
 
-class SampleClient():
-    def __init__(self, host='localhost', port=3000, result_converter=None, testcase_converter=None, args=None):
-        #Optional converter for result data from format provided by test framework to format supported by server
-        self.resultConverter = result_converter
-        #Optional converter for testcase metadata from format provided by test framework to one supported by server
-        self.tcConverter = testcase_converter
+class SampleClient(object):
+    """
+    Example of a cloud client class.
+    """
+    def __init__(self, host='localhost', port=3000, result_converter=None,
+                 testcase_converter=None, args=None):
+        # Optional converter for result data from format provided by test framework to
+        # format supported by server
+        self.result_converter = result_converter
+        # Optional converter for testcase metadata from format provided by test framework to
+        # one supported by server
+        self.tc_converter = testcase_converter
 
         self.host = host
         self.port = port
@@ -52,7 +60,6 @@ class SampleClient():
         returns suite information as a dictionary object.
         '''
         pass
-
 
     def get_campaign_id(self, campaign_name):
         """
@@ -85,12 +92,14 @@ class SampleClient():
 
     def send_results(self, result):
         """
-        Upload a result object to server. If resultConverter has been provided, use it to convert result object to
-        format accepted by server. If needed, use testcase_converter to convert tc metadata in result to suitable format.
+        Upload a result object to server.
+        If resultConverter has been provided, use it to convert result object to format accepted
+        by the server.
+        If needed, use testcase_converter to convert tc metadata in result to suitable format.
 
         returns new result entry as a dictionary or None.
         """
-        if self.resultConverter:
-            print(self.resultConverter(result))
+        if self.result_converter:
+            print(self.result_converter(result))
         else:
-            print result
+            print(result)

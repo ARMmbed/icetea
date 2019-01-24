@@ -45,6 +45,12 @@ class ResourceProvider(object):
         self._pluginmanager = None
 
     def set_pluginmanager(self, pluginmanager):
+        """
+        Setter for pluginmanager
+
+        :param pluginmanager: PluginManager
+        :return: Nothing
+        """
         self._pluginmanager = pluginmanager
 
     def __del__(self):
@@ -72,7 +78,6 @@ class ResourceProvider(object):
         :return: List of DUT objects
         :raises: ResourceInitError
         """
-        cnt_hrdwr = resource_configuration.count_hardware()
         if not self.allocator:
             self.allocator = self.__get_allocator()
         try:
@@ -148,8 +153,8 @@ class ResourceProvider(object):
             with open(allocator_cfg_file, "r") as cfg_file:
                 try:
                     data = json.load(cfg_file)
-                except ValueError as e:
-                    self.logger.error(e)
+                except ValueError as error:
+                    self.logger.error(error)
                     raise ResourceInitError("Failed to decode json "
                                             "from allocator config file {}".format(cfg_file))
 

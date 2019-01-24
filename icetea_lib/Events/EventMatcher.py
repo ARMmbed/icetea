@@ -20,7 +20,11 @@ from icetea_lib.tools.tools import IS_PYTHON3
 
 
 class EventMatcher(Observer):
-    def __init__(self, event_type, match_data, caller=None,
+    """
+    EventMatcher class. This is an Observer that listens to certain events and tries to match
+    them to a preset match data.
+    """
+    def __init__(self, event_type, match_data, caller=None,  # pylint: disable=too-many-arguments
                  flag=None, callback=None):
         Observer.__init__(self)
         self.caller = caller
@@ -31,6 +35,13 @@ class EventMatcher(Observer):
         self.observe(event_type, self._event_received)
 
     def _event_received(self, ref, data):
+        """
+        Handle received event.
+
+        :param ref: ref is the object that generated the event.
+        :param data: event data.
+        :return: Nothing.
+        """
         if self._resolve_match_data(ref, data):
             if self.flag_to_set:
                 self.flag_to_set.set()
@@ -42,6 +53,7 @@ class EventMatcher(Observer):
         """
         If match_data is prefixed with regex: compile it to a regular expression pattern.
         Match event data with match_data as either regex or string.
+
         :param ref: Reference to object that generated this event.
         :param event_data: Data from event, as string.
         :return: return re.MatchObject if match found, False if ref is not caller

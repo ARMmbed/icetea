@@ -20,6 +20,7 @@ from icetea_lib.tools import strip_escape
 from icetea_lib.tools import num
 from icetea_lib.DeviceConnectors.Dut import Dut
 
+
 class DutTcp(Dut):
     '''
     Draft version of TCP -dut type
@@ -69,8 +70,11 @@ class DutTcp(Dut):
     def print_info(self):
         pass
 
-    def _flash_needed(self):
+    def _flash_needed(self, **kwargs):
         pass
 
     def get_info(self):
+        pass
+
+    def reset(self, method=None):
         pass

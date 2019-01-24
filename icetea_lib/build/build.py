@@ -30,7 +30,7 @@ class NotFoundError(Exception):
     pass
 
 
-class Build(object):
+class Build(object):  # pylint: disable=too-many-instance-attributes
     """
     Class Build
     """
@@ -105,7 +105,6 @@ class Build(object):
         """
         raise NotImplementedError()
 
-
     def _load(self):
         """
         Load test case
@@ -114,6 +113,11 @@ class Build(object):
 
     @property
     def url(self):
+        """
+        Build URL.
+
+        :return: URL reference.
+        """
         return self._ref
 
     @url.setter
@@ -155,6 +159,7 @@ class BuildFile(Build):
         if self.is_exists():
             return open(self._ref, "rb").read()
         raise NotFoundError("File %s not found" % self._ref)
+
 
 class BuildHttp(Build):
     """
@@ -203,7 +208,7 @@ class BuildHttp(Build):
             return None
         filename = "temporary_file.bin"
         with open(filename, "wb") as file_name:
-           file_name.write(content)
+            file_name.write(content)
         return filename
 
 

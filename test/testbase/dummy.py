@@ -15,24 +15,26 @@ limitations under the License.
 
 from icetea_lib.bench import Bench
 from icetea_lib.bench import TestStepError
+# pylint: disable=missing-docstring
+
 
 class Testcase(Bench):
-
     def __init__(self):
         Bench.__init__(self,
                        name="dummy",
-                       title = "dummy",
+                       title="dummy",
                        status="unknown",
                        type="functional",
-                       purpose = "dummy",
+                       purpose="dummy",
                        requirements={
                            "duts": {
-                               '*': { #requirements for all nodes
-                                    "count":0,
-                                }
-                           }}
-        )
+                               '*': {
+                                   "count": 0
+                               }
+                           }
+                       }
+                      )
 
     def case(self):
         if "--fail" in self.unknown:
-            raise TestStepError( str(self.unknown) )
+            raise TestStepError(str(self.unknown))

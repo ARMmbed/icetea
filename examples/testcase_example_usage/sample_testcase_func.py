@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# pylint: disable=missing-docstring,pointless-string-statement
 from icetea_lib.bench import Bench
 
 
@@ -39,7 +39,8 @@ Mandatory:
 Optional:
     1. setup()
         """
-        Prerequisites for test case execution: like setting up dut configurations, initializing network interfaces etc.
+        Prerequisites for test case execution: like setting up dut configurations,
+        initializing network interfaces etc.
         """
 
     2. teardown()
@@ -59,13 +60,13 @@ class Testcase(Bench):
                        purpose="show an example usage of Icetea test case functions",
                        component=["Icetea"],
                        requirements={
-                            "duts": {
-                                '*': {
-                                    "count": 0,  # devices number
-                                }
-                            }
-                        }
-                       )
+                           "duts": {
+                               '*': {
+                                   "count": 0,  # devices number
+                               }
+                           }
+                       }
+                      )
 
     def setup(self):
         self.logger.info("Here is your test case customized setUp!")

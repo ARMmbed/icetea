@@ -139,32 +139,56 @@ class ResultList(Iterator):
 
     @property
     def skipped(self):
+        """
+        True if all results were skipped. Else False.
+
+        :return: Boolean
+        """
         return True if self.skip_count() == len(self) else False
 
     @property
     def inconclusive(self):
+        """
+        True if all failures were inconclusive. False if there are any fails or all tests passed.
+
+        :return: Boolean
+        """
         return True if self.inconclusive_count() and not self.failure else False
 
     @property
     def success(self):
+        """
+        If all tests passed, return True, else False.
+
+        :return: Boolean
+        """
         return True if not self.inconclusive and not self.failure else False
 
     @property
     def failure(self):
+        """
+        If any tests failed, return True, else False.
+
+        :return: Boolean
+        """
         for item in self.data:
             if item.failure:
                 return True
         return False
 
     def get_verdict(self):
+        """
+        Get success state as a string from pass, fail, skip and inconclusive.
+
+        :return: str
+        """
         if self.success:
             return "pass"
         elif self.failure:
             return "fail"
         elif self.skipped:
             return "skip"
-        else:
-            return "inconclusive"
+        return "inconclusive"
 
     def total_duration(self):
         """
