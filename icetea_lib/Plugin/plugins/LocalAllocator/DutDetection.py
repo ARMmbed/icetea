@@ -11,19 +11,18 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+DutDetection module. Uses mbedls to detect available devices for LocalAllocator.
 """
 
 # Disable "Method could be function" warning
-#pylint: disable=R0201
-
-"""
-DutDetection module. Uses mbedls to detect available devices for LocalAllocator.
-"""
+# pylint: disable=R0201
 
 from serial.tools import list_ports
 from serial import SerialException, Serial
 
 from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
+
 
 class DutDetection(object):
     """

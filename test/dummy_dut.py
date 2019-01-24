@@ -19,6 +19,11 @@ import subprocess
 
 
 def compile_dummy_dut():
+    """
+    Compile the dummy dut.
+
+    :return: Nothing
+    """
     current_dir = os.path.dirname(os.path.abspath(__file__))
     if sys.platform == 'win32':
         dut_file = os.path.join(current_dir, "dut", "dummyDut.exe")

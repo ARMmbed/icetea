@@ -16,6 +16,9 @@ limitations under the License.
 import os
 from ast import literal_eval as le
 
+# pylint: disable=too-many-locals,unsupported-membership-test
+
+
 class TestcaseFilter(object):
     """
     TestcaseFilter class. Provides the handling for different filtering arguments.
@@ -26,11 +29,17 @@ class TestcaseFilter(object):
                         'group': False, 'type': False, 'subtype': False,
                         'comp': False, 'feature': False, 'platform': False}
 
-    def tc(self, value):
+    def tc(self, value):  # pylint: disable=invalid-name,too-many-branches
+        """
+        Tc filter.
+
+        :param value: test case.
+        :return: TestcaseFilter (self)
+        """
         # tc can be:
         # int, tuple, list or str(any of the above)
         if isinstance(value, str):
-            # Wildcard chjeck
+            # Wildcard check
             if value == 'all':
                 self._filter['name'] = 'all'
                 return self
@@ -63,7 +72,7 @@ class TestcaseFilter(object):
                     # It was a single string.
                     self._filter['name'] = pfilter[0]
                     return self
-                elif len(pfilter) == 0:
+                elif len(pfilter) == 0:  # pylint: disable=len-as-condition
                     pass
 
             value = pfilter
@@ -73,13 +82,15 @@ class TestcaseFilter(object):
                 raise TypeError("Error, createFilter: non-positive integer " + str(value))
             else:
                 self._filter['list'] = [value - 1]
-        elif isinstance(value, list) or isinstance(value, tuple):
+        elif isinstance(value, (list, tuple)):
             if len(value) < 1:
                 raise IndexError("Error, createFilter: Index list empty.")
             for i in value:
                 if not isinstance(i, int) and not isinstance(i, str):
-                    raise TypeError("Error, createFilter: Index list has invalid member: %s" % str(value))
+                    raise TypeError("Error, createFilter: "
+                                    "Index list has invalid member: {}".format(str(value)))
             self._filter['list'] = [x - 1 for x in value if isinstance(x, int)]
+            # pylint: disable=no-member
             self._filter['list'].extend([x for x in value if isinstance(x, str)])
         elif value is None:
             raise TypeError("tc filter cannot be None")
@@ -152,9 +163,14 @@ class TestcaseFilter(object):
         return self._add_filter_key("platform", platform)
 
     def get_filter(self):
+        """
+        Get the filter dictionary.
+
+        :return: dict.
+        """
         return self._filter
 
-    def match(self, testcase, tc_index):
+    def match(self, testcase, tc_index):  # pylint: disable=too-many-branches,too-many-statements
         """
         Match function. Matches testcase information with this filter.
 
@@ -166,7 +182,7 @@ class TestcaseFilter(object):
         list_ok = False
         testcase = testcase.get_infodict()
         if 'list' in self._filter.keys() and self._filter['list']:
-            for index in self._filter['list']:
+            for index in self._filter['list']:  # pylint: disable=not-an-iterable
                 if isinstance(index, int):
                     if index < 0:
                         raise TypeError(
@@ -189,10 +205,10 @@ class TestcaseFilter(object):
 
         group_ok = False
         if 'group' in self._filter.keys() and self._filter['group']:
-            group = self._filter['group'].split(os.sep)
-            group = [x for x in group if len(x)] # Remove empty members
+            group = self._filter['group'].split(os.sep)  # pylint: disable=no-member
+            group = [x for x in group if len(x)]  # Remove empty members
             if len(group) == 1:
-                group = self._filter['group'].split(',')
+                group = self._filter['group'].split(',')  # pylint: disable=no-member
             tcgroup = testcase['group'].split(os.sep)
             for member in group:
                 if member not in tcgroup:
@@ -218,19 +234,20 @@ class TestcaseFilter(object):
 
         rest_ok = True
         keys = ['status', 'type', 'subtype', 'comp', 'name', 'feature']
-        for key in keys:
+        for key in keys:  # pylint: disable=too-many-nested-blocks
             if key in self._filter.keys() and self._filter[key]:
                 # Possible that string comparison can cause encoding comparison error.
                 # In the case where the caseFilter is 'all', the step is skipped
                 if key == 'name' and self._filter[key] == 'all':
                     continue
                 if isinstance(testcase[key], list):
-                    if isinstance(self._filter[key], str) and self._filter[key] not in testcase[key]:
+                    if isinstance(
+                            self._filter[key], str) and self._filter[key] not in testcase[key]:
                         rest_ok = False
                         break
                     if isinstance(self._filter[key], list):
                         one_found = False
-                        for k in self._filter[key]:
+                        for k in self._filter[key]:  # pylint: disable=not-an-iterable
                             if k in testcase[key]:
                                 one_found = True
                                 break
@@ -241,13 +258,21 @@ class TestcaseFilter(object):
                     if isinstance(self._filter[key], str) and testcase[key] != self._filter[key]:
                         rest_ok = False
                         break
-                    elif isinstance(self._filter[key], list) and testcase[key] not in self._filter[key]:
+                    elif isinstance(
+                            self._filter[key], list) and testcase[key] not in self._filter[key]:
                         rest_ok = False
                         break
 
         return list_ok and group_ok and rest_ok and platform_ok
 
     def _add_filter_key(self, key, value):
+        """
+        Helper for populating filter keys.
+
+        :param key: str
+        :param value: multiple types, value to set.
+        :return: TestcaseFilter (self).
+        """
         if not key or not value:
             return self
         if not isinstance(value, str):

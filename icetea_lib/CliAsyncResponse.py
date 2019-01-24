@@ -27,7 +27,10 @@ class CliAsyncResponse(object):  # pylint: disable=too-few-public-methods
     """
 
     def __init__(self, dut):
-        self.logger = LogManager.get_bench_logger()
+        try:
+            self.logger = LogManager.get_bench_logger()
+        except KeyError:
+            self.logger = None
         self.response = None
         self.dut = dut
 

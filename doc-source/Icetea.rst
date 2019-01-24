@@ -44,8 +44,9 @@ installed by `Icetea` installation.
     * six (`pip install six`)
     * mbed-ls (`pip install mbed-ls`)
     * netifaces (`pip install netifaces`), for unit tests
-* Mbed-flasher (available in github at
-  https://github.com/ARMmbed/mbed-flasher)
+    * pydash (`pip install pydash`)
+    * transitions (`pip install transitions`)
+    * Mbed-flasher (`pip install mbed-flasher`)
 
 ****************
 Folder structure
@@ -62,6 +63,9 @@ Folder structure
 |  │   ├───build             // build object implementation
 |  │   ├───Events            // Event system implementation
 |  │   ├───Reports           // Reporters
+|  │   ├───TestBench         // Test bench implementation
+|  │   ├───Plugins           // Plugin implementation and default plugins
+|  │   ├───Randomize         // Random seed generator implementation
 |  │   ├───ResourceProvider  // Allocators and ResourceProvider
 |  │   ├───TestSuite         // Test runner implementation
 |  └───test         // unit tests

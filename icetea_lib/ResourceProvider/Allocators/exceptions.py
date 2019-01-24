@@ -15,5 +15,8 @@ limitations under the License.
 
 
 class AllocationError(Exception):
-    def __init__(self, message=""):
+    """
+    Exception for allocation errors.
+    """
+    def __init__(self, message=""):  # pylint: disable=useless-super-delegation
         super(AllocationError, self).__init__(message)

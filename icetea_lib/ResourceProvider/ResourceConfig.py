@@ -106,7 +106,6 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
         self._resolve_requirements(configuration["requirements"])
         self._resolve_dut_count()
 
-
     def _resolve_requirements(self, requirements):
         """
         Internal method for resolving requirements into resource configurations.
@@ -156,6 +155,7 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
                                                                         idx))
             self._solve_location(req, len(dut_requirements), idx)
         self._dut_requirements = dut_requirements
+        return None
 
     def _solve_location(self, req, dut_req_len, idx):
         """
@@ -246,6 +246,14 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
         :return: Hardware resource count
         """
         return self._hardware_count
+
+    def get_dut_range(self, i=0):
+        """
+        get range of length dut_count with offset i.
+        :param i: Offset
+        :return: range
+        """
+        return range(1 + i, self.count_duts() + i + 1)
 
     def _resolve_hardware_count(self):
         """

@@ -11,13 +11,11 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+PluginBase implementations.
 """
 
 import re
-
-"""
-PluginBase implementations.
-"""
 
 
 # pylint: disable=too-few-public-methods,no-self-use,unused-argument
@@ -88,7 +86,6 @@ class PluginBase(object):
         :return: Nothing
         """
         return None
-
 
     @staticmethod
     def find_one(line, lookup):

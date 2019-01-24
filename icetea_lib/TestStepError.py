@@ -64,3 +64,10 @@ class TestStepTimeout(TestStepFail):
     TestStepTimeout, failure for  showing timeouts.
     """
     pass
+
+
+class SkippedTestcaseException(Exception):
+    """
+    Error that indicates that this test case should be skipped for one reason or another.
+    """
+    pass

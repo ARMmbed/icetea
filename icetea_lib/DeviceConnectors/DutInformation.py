@@ -18,8 +18,8 @@ several helper methods to get some relevant information from it's contents.
 """
 
 
-#Disable too many arguments warning, too few public methods warning
-#pylint: disable=R0913,R0903
+# Disable too many arguments warning, too few public methods warning
+# pylint: disable=R0913,R0903
 
 from jsonmerge import merge
 
@@ -91,8 +91,13 @@ class DutInformationList(object):
         self.dutinformations = content if content else []
 
     def get(self, index):
-        #Disable len(seq) as condition value warning
-        #pylint: disable=C1801
+        """
+        Get DutInformation at index index.
+
+        :param index: index as int
+        :return: DutInformation
+        """
+        # pylint: disable=len-as-condition
         if index > len(self):
             return None
         return self.dutinformations[index]

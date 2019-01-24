@@ -1,3 +1,5 @@
+# pylint: disable=no-name-in-module,import-error
+
 """
 Copyright 2017-2018 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,7 +47,9 @@ INSTALL_REQUIRES = [
     "mbed-ls>=1.5.1,==1.*",
     "semver==2.*",
     "mbed-flasher>=0.10.1,==0.10.*",
-    "six==1.*"
+    "six==1.*",
+    "pydash==4.*",
+    "transitions==0.*"
 ]
 TEST_REQUIRES = [
     "coverage==4.*",

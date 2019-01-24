@@ -15,24 +15,27 @@ limitations under the License.
 
 from icetea_lib.bench import Bench
 
+
 class Testcase(Bench):
+    """
+    Test case that should pass.
+    """
     def __init__(self):
         Bench.__init__(self,
                        name="test_run_retcodes_success",
-                       title = "unittest dut crash in testcase",
+                       title="unittest dut crash in testcase",
                        status="development",
                        type="acceptance",
-                       purpose = "dummy",
+                       purpose="dummy",
                        component=["Icetea_ut"],
                        requirements={
                            "duts": {
-                               '*': { #requirements for all nodes
-                                    "count":0,
-                                    "allowed_platforms": ["TEST_PLAT"]
+                               '*': {
+                                   "count": 0,
+                                   "allowed_platforms": ["TEST_PLAT"]
                                }
                            }}
-        )
+                      )
 
-
-    def case(self):
+    def case(self):  # pylint: disable=missing-docstring
         pass

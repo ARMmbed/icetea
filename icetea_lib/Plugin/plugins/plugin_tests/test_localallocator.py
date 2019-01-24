@@ -15,6 +15,7 @@ limitations under the License.
 
 # pylint: disable=missing-docstring,old-style-class,protected-access,no-self-use,invalid-name
 # pylint: disable=attribute-defined-outside-init,too-few-public-methods,unused-argument
+# pylint: disable=too-many-public-methods
 
 import unittest
 import logging
@@ -25,8 +26,8 @@ from icetea_lib.ResourceProvider.Allocators.exceptions import AllocationError
 from icetea_lib.ResourceProvider.ResourceRequirements import ResourceRequirements
 from icetea_lib.ResourceProvider.exceptions import ResourceInitError
 
-from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import LocalAllocator, init_hardware_dut
-from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import init_process_dut
+from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import LocalAllocator, init_process_dut
+from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import init_hardware_dut
 
 
 @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutDetection", create=False)

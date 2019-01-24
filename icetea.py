@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# pylint: disable=invalid-name
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,8 @@ limitations under the License.
 
 import sys
 
-import icetea_lib.IceteaManager as management
-ctm = management.IceteaManager()
-returnCode = ctm.run()
-sys.exit(returnCode)
+from icetea_lib.IceteaManager import IceteaManager as management
+
+iceteamanagement = management()
+returncode = iceteamanagement.run()
+sys.exit(returncode)

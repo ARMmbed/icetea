@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# pylint: disable=invalid-name,relative-import
 from example_bench_plugin import BenchPlugin
 from example_multi_plugin import ExamplePlugin
 from example_allocator import ExampleAllocatorPlugin

@@ -12,9 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
-__author__ = 'jaakuk03'
-
+# pylint: disable=missing-docstring
 # Import Bench Class
 from icetea_lib.bench import Bench
 
@@ -23,23 +21,24 @@ class Testcase(Bench):
     def __init__(self):
         Bench.__init__(self,
                        name="sample_process_multidut_testcase",
-                       title = "unittest exception in testcase",
+                       title="unittest exception in testcase",
                        status="development",
                        type="acceptance",
                        purpose="dummy",
                        requirements={
                            "duts": {
                                '*': {
-                                    "count":200,
-                                    "type": "process",
-                                    "application": {
-                                        "name": "sample", "version": "1.0",
-                                        "bin": "tools/sample"
-                                    }
-                                }
+                                   "count": 200,
+                                   "type": "process",
+                                   "application": {
+                                       "name": "sample",
+                                       "version": "1.0",
+                                       "bin": "tools/sample"
+                                   }
+                               }
                            }
                        }
-        )
+                      )
 
     def case(self):
         self.command("*", "Hello")
