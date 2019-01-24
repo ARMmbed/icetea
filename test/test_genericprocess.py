@@ -25,6 +25,10 @@ from icetea_lib.IceteaManager import ExitCodes
 
 
 class GenericProcessTestcase(unittest.TestCase):
+    @unittest.skipIf(
+        platform.system() == "Windows",
+        "Launching process in Windows ends in icetea warning"
+        "\"This OS is not supporting select.poll() or select.kqueue()\"")
     def test_quick_process(self):
         # Run testcase
         icetea_cmd = ["python", "icetea.py",
