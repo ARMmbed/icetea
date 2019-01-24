@@ -16,15 +16,20 @@ limitations under the License.
 import os
 
 
-class LockFile:
+class LockFile(object):
     """
     Simple lock class for locking a file.
     """
     def __init__(self, filename):
         self._lock_filename = filename + ".lock"
-        self._lockfd = None
+        self._lock_fd = None
 
     def acquire(self):
+        """
+        Acquire the lock.
+
+        :return: Boolean.
+        """
         try:
             self._lock_fd = os.open(self._lock_filename, os.O_CREAT | os.O_EXCL)
         except OSError:
@@ -32,6 +37,11 @@ class LockFile:
         return True
 
     def release(self):
+        """
+        Release the lock.
+
+        :return: Nothing
+        """
         if self._lock_fd is not None:
             os.close(self._lock_fd)
             try:
@@ -61,7 +71,7 @@ def remove_file(filename, path=None):
         os.remove(filename)
         os.chdir(cwd)
         return True
-    except OSError as e:
+    except OSError:
         os.chdir(cwd)
         raise
 

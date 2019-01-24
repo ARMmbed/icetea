@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# pylint: disable=pointless-string-statement,missing-docstring
 from icetea_lib.bench import Bench
 
 '''
@@ -33,17 +33,17 @@ class Testcase(Bench):
                        purpose="show an example usage of Icetea get_time() functions",
                        component=["Icetea"],
                        requirements={
-                            "duts": {
-                                '*': {
-                                    "count": 1, # devices number
-                                    "type": "process", # "hardware" (by default) or "process"
-                                    "application": {
-                                        "bin": "build_path/build_full_name",  # build binary path
-                                    }
-                                }
-                            }
-                        }
-                       )
+                           "duts": {
+                               '*': {
+                                   "count": 1, # devices number
+                                   "type": "process", # "hardware" (by default) or "process"
+                                   "application": {
+                                       "bin": "build_path/build_full_name",  # build binary path
+                                   }
+                               }
+                           }
+                       }
+                      )
 
     def case(self):
         # wait for 3 seconds

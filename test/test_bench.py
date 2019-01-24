@@ -1,3 +1,6 @@
+# pylint: disable=missing-docstring,broad-except,too-few-public-methods,too-many-instance-attributes
+# pylint: disable=too-many-arguments,protected-access,too-many-branches,unused-argument
+# pylint: disable=too-many-statements,no-member,wrong-import-order
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,18 +16,23 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import inspect
 import unittest
-import mock
 import threading
 import logging
 
+import mock
 
 from icetea_lib.bench import Bench, ReturnCodes
+from icetea_lib.LogManager import BenchLoggerAdapter
+from icetea_lib.Plugin.PluginManager import PluginManager
+from icetea_lib.ResourceProvider.ResourceConfig import ResourceConfig
+from icetea_lib.ResourceProvider.ResourceProvider import ResourceProvider
 from icetea_lib.TestStepError import TestStepFail, TestStepError, InconclusiveError, TestStepTimeout
 from test.tests.test_tcTearDown import Testcase as TearDownTest
 
 
-class MockDut:
+class MockDut(object):
     def __init__(self):
         self.traces = ["this is test line 1", "this is test line 2"]
 
@@ -33,47 +41,46 @@ class TestingTestcase(Bench):
     """
     Testcase class for testing all exception cases
     """
-    def __init__(self, testStepFail=False, testStepError=False,
-                 nameError=False, valueError=False, kbinterrupt=False,
-                 exception=False, inconclusive_error=False, inRampUp=False,
-                 inCase=False, inRampDown=False, test_step_timeout=False):
-        self.testStepError = testStepError
-        self.testStepFail = testStepFail
-        self.nameError = nameError
-        self.valueError = valueError
+    def __init__(self, teststep_fail=False, teststep_error=False,
+                 name_error=False, value_error=False, kbinterrupt=False,
+                 exception=False, inconclusive_error=False, in_setup=False,
+                 in_case=False, in_teardown=False, test_step_timeout=False):
+        self.teststep_error = teststep_error
+        self.teststep_fail = teststep_fail
+        self.name_error = name_error
+        self.value_error = value_error
         self.kbinterrupt = kbinterrupt
         self.exception = exception
-        self.inRampUp = inRampUp
-        self.inCase = inCase
-        self.inRampDown = inRampDown
+        self.in_setup = in_setup
+        self.in_case = in_case
+        self.in_teardown = in_teardown
         self.inconclusive = inconclusive_error
         self.test_step_timeout = test_step_timeout
         Bench.__init__(self,
                        name="ut_exception",
-                       title = "unittest exception in testcase",
+                       title="unittest exception in testcase",
                        status="development",
                        type="acceptance",
-                       purpose = "dummy",
+                       purpose="dummy",
                        requirements={
                            "duts": {
-                               '*': { #requirements for all nodes
-                                    "count":0,
-                                }
+                               '*': {  # requirements for all nodes
+                                   "count": 0,
+                               }
                            }}
-        )
+                      )
 
-
-    def raiseExc(self):
-        if self.testStepFail:
+    def raise_exc(self):
+        if self.teststep_fail:
             raise TestStepFail("This is a TestStepFail")
-        if self.testStepError:
+        if self.teststep_error:
             raise TestStepError("This is a TestStepError")
-        elif self.nameError:
+        elif self.name_error:
             raise NameError("This is a NameError")
-        elif self.valueError:
+        elif self.value_error:
             raise ValueError("This is a ValueError")
         elif self.exception:
-            raise Exception( "This is a generic exception" )
+            raise Exception("This is a generic exception")
         elif self.kbinterrupt:
             raise KeyboardInterrupt()
         elif self.inconclusive:
@@ -81,247 +88,570 @@ class TestingTestcase(Bench):
         elif self.test_step_timeout:
             raise TestStepTimeout("This is TestStepTimeout")
 
-    def rampUp(self):
+    def setup(self):
         self.args.silent = True
-        if self.inRampUp:
-            self.raiseExc()
+        if self.in_setup:
+            self.raise_exc()
 
     def case(self):
-        if self.inCase:
-            self.raiseExc()
+        if self.in_case:
+            self.raise_exc()
 
-    def rampDown(self):
-        if self.inRampDown:
-            self.raiseExc()
+    def teardown(self):
+        if self.in_teardown:
+            self.raise_exc()
+
+
+class ApiTestcase(Bench):
+    """
+    Testcase class for testing all exception cases
+    """
+
+    def __init__(self):
+        Bench.__init__(self,
+                       name="ut_apis",
+                       title="unittest apis in testcase",
+                       status="development",
+                       type="acceptance",
+                       purpose="dummy",
+                       component=["UT"],
+                       feature=["public apis"],
+                       requirements={
+                           "duts": {
+                               '*': {
+                                   "count": 0,
+                                   "allowed_platforms": ["TEST1"]
+                               }
+                           }
+                       }
+                      )
+        self.expected_config = {'status': 'development',
+                                'component': ["UT"],
+                                'feature': ["public apis"],
+                                'requirements': {
+                                    'duts': {
+                                        '*': {
+                                            'count': 0,
+                                            'application': {
+                                                'bin': None
+                                            },
+                                            "allowed_platforms": ["TEST1"]
+                                        }
+                                    },
+                                    'external': {
+                                        'apps': []
+                                    }
+                                },
+                                'name': 'ut_apis',
+                                'title': 'unittest apis in testcase',
+                                'compatible': {
+                                    'framework': {
+                                        'version': '>=1.0.0',
+                                        'name': 'Icetea'
+                                    }, 'hw': {
+                                        'value': True
+                                    }, 'automation': {
+                                        'value': True}
+                                }, 'purpose': 'dummy',
+                                'type': 'acceptance',
+                                'sub_type': None
+                               }
+
+    def setup(self):
+        pass
+
+    def raise_exc(self, step):  # pylint: disable=no-self-use
+        print(step)
+        raise TestStepFail(step)
+
+    def case(self):
+        if self.test_name != "ut_apis":
+            self.raise_exc("test_name broken.")
+
+        if self.config != self.expected_config:
+            self.raise_exc("config getter broken.")
+        self.expected_config["test"] = "test"
+        self.config = self.expected_config
+
+        if self.config != self.expected_config:
+            self.raise_exc("config setter broken.")
+
+        if self.env != {'sniffer': {'iface': 'Sniffer'}}:
+            self.raise_exc("env broken.")
+
+        if self.is_hardware_in_use():
+            self.raise_exc("is_hardware_in_use broken.")
+
+        if self.get_platforms() != list():
+            self.raise_exc("get_platforms broken.")
+
+        if self.get_serialnumbers():
+            self.raise_exc("get_serialnumbers broken")
+
+        if self.get_test_component() != self.expected_config["component"]:
+            self.raise_exc("get_test_component broken")
+        if len(self.get_allowed_platforms()) != 1 or self.get_allowed_platforms()[0] != "TEST1":
+            self.raise_exc("Allowed platforms broken.")
+        if self.status() != self.expected_config['status']:
+            self.raise_exc("status broken")
+        if self.type() != self.expected_config["type"]:
+            self.raise_exc("type broken")
+        if self.get_features_under_test() != self.expected_config["feature"]:
+            self.raise_exc("features broken")
+        if self.subtype() != self.expected_config["sub_type"]:
+            self.raise_exc("subtype broken")
+        if self.config != self.get_config():
+            self.raise_exc("config not the same as get_config()")
+        if self.skip() is not None:
+            self.raise_exc("skip is not None")
+        if self.skip_info() is not None:
+            self.raise_exc("skip_info is not None")
+        if self.skip_reason() != "":
+            self.raise_exc("skip_reason is not empty")
+        if self.check_skip() is not False:
+            self.raise_exc("check_skip was not False")
+        if self.get_tc_abspath(__file__) != __file__:
+            self.raise_exc("get_tc_abspath file name did not match")
+        self.set_config({"test": "test1"})
+        if self.config != {"test": "test1"}:
+            self.raise_exc("set_config broken.")
+        self.set_config(self.expected_config)
+        if self.dut_count() != 0:
+            self.raise_exc("dut_count broken.")
+        if self.get_dut_count() != 0:
+            self.raise_exc("get_dut_count broken.")
+        if not isinstance(self.resource_provider, ResourceProvider):
+            self.raise_exc("resource_provider broken.")
+        if not isinstance(self.resource_configuration, ResourceConfig):
+            self.raise_exc("resource_configuration broken.")
+        if self.duts != list():
+            self.raise_exc("duts broken.")
+        self.duts = ["D1"]
+        if self.duts != ["D1"]:
+            self.raise_exc("duts setter broken.")
+        self.duts = []
+        if self.dut_indexes:
+            self.raise_exc("dut_indexes broken.")
+        if not inspect.isgenerator(self.duts_iterator_all()):
+            self.raise_exc("duts_iterator_all broken.")
+        if not inspect.isgenerator(self.duts_iterator()):
+            self.raise_exc("duts_iterator is broken.")
+        if self.is_allowed_dut_index(1) is not False:
+            self.raise_exc("is_allowed_dut_index broken")
+        try:
+            self.get_dut(1)
+        except ValueError:
+            pass
+        except Exception:
+            self.raise_exc("get_dut is broken.")
+        try:
+            self.get_node_endpoint(1)
+        except ValueError:
+            pass
+        except Exception:
+            self.raise_exc("get_node_endpoint is broken.")
+        if not self.is_my_dut_index(1):
+            self.raise_exc("is_my_dut_index is broken.")
+        if self.dutinformations != list():
+            self.raise_exc("dutinformations is broken.")
+        if self.get_dut_nick(1) != "1":
+            self.raise_exc("get_dut_nick is broken.")
+        try:
+            self.get_dut_nick("does not exists")
+        except KeyError:
+            pass
+        except Exception:
+            self.raise_exc("get_dut_nick is broken.")
+        try:
+            self.get_dut_index("does not exist")
+        except ValueError:
+            pass
+        except Exception:
+            self.raise_exc("get_dut_index is broken.")
+        if not self.is_my_dut(1):
+            self.raise_exc("is_my_dut broken.")
+        if self.results is None:
+            self.raise_exc("results broken.")
+        if self.retcode != ReturnCodes.RETCODE_SUCCESS:
+            self.raise_exc("retcode broken.")
+        if self.wshark is not None:
+            self.raise_exc("wshark default is broken.")
+        if self.tshark_arguments != dict():
+            self.raise_exc("tshark_arguments default is broken.")
+        if self.sniffer_required is not False:
+            self.raise_exc("sniffer_required is broken.")
+        if not self.get_nw_log_filename().endswith("network.nw.pcap"):
+            self.raise_exc("get_nw_log_filename broken.")
+        if not isinstance(self.pluginmanager, PluginManager):
+            self.raise_exc("pluginmanager broken.")
+        logger = self.get_logger()
+        if not isinstance(logger, BenchLoggerAdapter):
+            self.raise_exc("get_logger broken.")
+        if not isinstance(self.unknown, list):
+            self.raise_exc("unknown broken.")
+        old_list = self.unknown
+        new_list = ["val1"]
+        self.unknown = new_list
+        if self.unknown is not new_list:
+            self.raise_exc("unknown setter broken.")
+        self.unknown = old_list
+        old_res_conf = self.resource_configuration
+        new_res_conf = ["val1"]
+        self.resource_configuration = new_res_conf
+        if self.resource_configuration is not new_res_conf:
+            self.raise_exc("resource_configuration setter broken.")
+        self.resource_configuration = old_res_conf
+        if self.retcode != 0:
+            self.raise_exc("retcode broken.")
+        self.retcode = 1
+        if self.retcode != 1:
+            self.raise_exc("retcode setter broken")
+        self.retcode = 0
+        try:
+            self.append_result()
+        except Exception:
+            self.raise_exc("append_result broken.")
+        self.delay(0.1)
+        if not isinstance(self.get_time(), float):
+            self.raise_exc("get_time broken.")
+        try:
+            self.verify_trace_skip_fail(1, "a")
+        except IndexError:
+            pass
+        except Exception:
+            self.raise_exc("verify_trace_skip_fail broken.")
+        retval = None
+        try:
+            retval = self.wait_for_async_response("a", "b")
+        except AttributeError:
+            pass
+        except Exception:
+            self.raise_exc("wait_for_async_response broken.")
+        if retval is not None:
+            self.raise_exc("wait_for_async_response broken.")
+        try:
+            self.execute_command(1, "a")
+        except ValueError:
+            pass
+        except Exception:
+            self.raise_exc("execute_command broken.")
+        old_pm = self.pluginmanager
+        new_pm = ["val1"]
+        self.pluginmanager = new_pm
+        if self.pluginmanager is not new_pm:
+            self.raise_exc("pluginmanager setter broken")
+        self.pluginmanager = old_pm
+        if self.parse_response("a", "b"):
+            self.raise_exc("parse_response broken.")
+        if self.get_test_name() != "ut_apis":
+            self.raise_exc("get_test_name broken.")
+        if self.dut_count() != 0:
+            self.raise_exc("dut_count broken.")
+        try:
+            self.init_duts()
+        except Exception:
+            self.raise_exc("init_duts broken")
+        if self.name != "ut_apis":
+            self.raise_exc("name broken.")
+        mock_dut = mock.MagicMock()
+        type(mock_dut).index = mock.PropertyMock(return_value=0)
+        mock_dut.close_dut = mock.MagicMock()
+        mock_dut.close_connection = mock.MagicMock()
+        try:
+            self.sync_cli("1", retries=0)
+        except ValueError:
+            pass
+        else:
+            self.raise_exc("sync_cli broken")
+
+    def teardown(self):
+        pass
+
 
 class TestVerify(unittest.TestCase):
+
     def setUp(self):
         logging.disable(logging.FATAL)
 
-    def test_exceptions_in_case(self):
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(exception=True, inCase=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(testStepFail=True, inCase=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(testStepError=True, inCase=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(nameError=True, inCase=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(valueError=True, inCase=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(test_step_timeout=True, inCase=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        result = TestingTestcase(kbinterrupt=True, inCase=True).run()
-        self.assertNotEqual( result, 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        self.assertTrue(result in ReturnCodes.INCONCLUSIVE_RETCODES, "Test return code not in inconclusive!")
-        result = TestingTestcase(inconclusive_error=True, inCase=True).run()
-        self.assertNotEqual(result, 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        self.assertTrue(result in ReturnCodes.INCONCLUSIVE_RETCODES, "Test return code not in inconclusive!")
+    def test_bench_apis(self):
+        testcase = ApiTestcase()
+        retcode = testcase.run()
+        self.assertEqual(retcode, ReturnCodes.RETCODE_SUCCESS)
 
-    def test_verifyTrace(self):
-        b = Bench()
-        b.duts.append(MockDut())
-        b.verify_trace(1, "this is test line 2")
-        b.verify_trace(1, ["this is test line 2"])
-        with self.assertRaises(LookupError) as e:
-            b.verify_trace(1, "This is not found in traces")
+    def test_exceptions_in_case(self):
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(exception=True, in_case=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(teststep_fail=True, in_case=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(teststep_error=True, in_case=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(name_error=True, in_case=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(value_error=True, in_case=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(test_step_timeout=True, in_case=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        result = TestingTestcase(kbinterrupt=True, in_case=True).run()
+        self.assertNotEqual(result, 0, "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        self.assertTrue(result in ReturnCodes.INCONCLUSIVE_RETCODES,
+                        "Test return code not in inconclusive!")
+        result = TestingTestcase(inconclusive_error=True, in_case=True).run()
+        self.assertNotEqual(result, 0, "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        self.assertTrue(result in ReturnCodes.INCONCLUSIVE_RETCODES,
+                        "Test return code not in inconclusive!")
+
+    def test_verify_trace(self):
+        bench = Bench()
+        bench.duts.append(MockDut())
+        bench.verify_trace(1, "this is test line 2")
+        bench.verify_trace(1, ["this is test line 2"])
+        with self.assertRaises(LookupError):
+            bench.verify_trace(1, "This is not found in traces")
 
     def test_exceptions_in_rampup(self):
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(exception=True, inRampUp=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(testStepFail=True, inRampUp=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(testStepError=True, inRampUp=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(nameError=True, inRampUp=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(valueError=True, inRampUp=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(kbinterrupt=True, inRampUp=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        result = TestingTestcase(inconclusive_error=True, inRampUp=True).run()
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(exception=True, in_setup=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(teststep_fail=True, in_setup=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(teststep_error=True, in_setup=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(name_error=True, in_setup=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(value_error=True, in_setup=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(kbinterrupt=True, in_setup=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        result = TestingTestcase(inconclusive_error=True, in_setup=True).run()
         self.assertNotEqual(result, 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        self.assertTrue(result in ReturnCodes.INCONCLUSIVE_RETCODES, "Test return code not in inconclusive!")
+        self.assertEqual(thread_count, threading.active_count())
+        self.assertTrue(result in ReturnCodes.INCONCLUSIVE_RETCODES,
+                        "Test return code not in inconclusive!")
 
     @mock.patch("test.tests.test_tcTearDown.Testcase.teardown")
-    def test_rampDown_called(self, mock_tearDown):
-        retCode = TearDownTest(testStepFail=True).run()
-        self.assertEquals(retCode, 1001)
-        self.assertTrue(mock_tearDown.called)
-        mock_tearDown.reset_mock()
+    def test_rampdown_called(self, mock_teardown):
+        retcode = TearDownTest(teststepfail=True).run()
+        self.assertEquals(retcode, 1001)
+        self.assertTrue(mock_teardown.called)
+        mock_teardown.reset_mock()
 
-        retCode = TearDownTest(testStepError=True).run()
-        self.assertEquals(retCode, 1001)
-        self.assertFalse(mock_tearDown.called)
+        retcode = TearDownTest(teststeperror=True).run()
+        self.assertEquals(retcode, 1001)
+        self.assertFalse(mock_teardown.called)
 
-        retCode = TearDownTest(exception=True).run()
-        self.assertEquals(retCode, 1001)
-        self.assertFalse(mock_tearDown.called)
+        retcode = TearDownTest(exception=True).run()
+        self.assertEquals(retcode, 1001)
+        self.assertFalse(mock_teardown.called)
 
-        retCode = TearDownTest(testStepTimeout=True).run()
-        self.assertEquals(retCode, 1001)
-        self.assertFalse(mock_tearDown.called)
+        retcode = TearDownTest(teststeptimeout=True).run()
+        self.assertEquals(retcode, 1001)
+        self.assertFalse(mock_teardown.called)
 
         # Test tearDown is called when TestStepTimeout raised in test case
-        retCode = TearDownTest(testStepTimeoutInCase=True).run()
-        self.assertEquals(retCode, 1005)
-        self.assertTrue(mock_tearDown.called)
-        mock_tearDown.reset_mock()
+        retcode = TearDownTest(teststeptimeout_in_case=True).run()
+        self.assertEquals(retcode, 1005)
+        self.assertTrue(mock_teardown.called)
+        mock_teardown.reset_mock()
 
-        retCode = TearDownTest(nameError=True).run()
-        self.assertEquals(retCode, 1001)
-        self.assertFalse(mock_tearDown.called)
+        retcode = TearDownTest(name_error=True).run()
+        self.assertEquals(retcode, 1001)
+        self.assertFalse(mock_teardown.called)
 
-        retCode = TearDownTest(valueError=True).run()
-        self.assertEquals(retCode, 1001)
-        self.assertFalse(mock_tearDown.called)
+        retcode = TearDownTest(value_error=True).run()
+        self.assertEquals(retcode, 1001)
+        self.assertFalse(mock_teardown.called)
 
     def test_exceptions_in_rampdown(self):
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(exception=True, inRampDown=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(testStepFail=True, inRampDown=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(testStepError=True, inRampDown=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(nameError=True, inRampDown=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(valueError=True, inRampDown=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        n = threading.active_count()
-        self.assertNotEqual( TestingTestcase(kbinterrupt=True, inRampDown=True).run(), 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        result = TestingTestcase(inconclusive_error=True, inRampDown=True).run()
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(exception=True, in_teardown=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(teststep_fail=True, in_teardown=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(teststep_error=True, in_teardown=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(name_error=True, in_teardown=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(value_error=True, in_teardown=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        thread_count = threading.active_count()
+        self.assertNotEqual(TestingTestcase(kbinterrupt=True, in_teardown=True).run(), 0,
+                            "Test execution returned success retcode")
+        self.assertEqual(thread_count, threading.active_count())
+        result = TestingTestcase(inconclusive_error=True, in_teardown=True).run()
         self.assertNotEqual(result, 0, "Test execution returned success retcode")
-        self.assertEqual(n, threading.active_count())
-        self.assertTrue(result in ReturnCodes.INCONCLUSIVE_RETCODES, "Test return code not in inconclusive!")
+        self.assertEqual(thread_count, threading.active_count())
+        self.assertTrue(result in ReturnCodes.INCONCLUSIVE_RETCODES,
+                        "Test return code not in inconclusive!")
 
     def test_no_hanging_threads(self):
-        n = threading.active_count()
+        thread_count = threading.active_count()
         TestingTestcase().run()
-        self.assertEqual(n, threading.active_count())
+        self.assertEqual(thread_count, threading.active_count())
 
-    @mock.patch('icetea_lib.bench.resource_provider', create=True)
-    @mock.patch('icetea_lib.bench.execute_command', create=True)
+    @mock.patch('icetea_lib.TestBench.Resources.ResourceFunctions.resource_provider', create=True)
+    @mock.patch('icetea_lib.TestBench.Commands.Commands.execute_command', create=True)
     def test_precmds_to_two_duts(self, mock_ec, mock_rp):
-        tc = Bench()
-        tc._resource_provider = mock.Mock()
-        tc.execute_command = mock.MagicMock()
+        # pylint: disable=no-self-use
+        bench = Bench()
+        bench._resource_provider = mock.Mock()
+        bench.args = mock.MagicMock()
+        bench.args.my_duts = mock.MagicMock(return_value=False)
+        bench.execute_command = mock.MagicMock()
         mock_resconf = mock.Mock()
-        mock_resconf.get_dut_configuration = mock.MagicMock(return_value=[{"pre_cmds": ["first", "second"]}, {"pre_cmds": ["first2", "second2"]}])
-        tc.resource_configuration = mock_resconf
+        mock_resconf.get_dut_configuration = mock.MagicMock(return_value=[{
+            "pre_cmds": ["first", "second"]}, {"pre_cmds": ["first2", "second2"]}])
+        bench.resource_configuration = mock_resconf
+        mock_resconf.count_duts = mock.MagicMock(return_value=2)
         # Call using mangled name of __send_pre_commands method
-        tc._Bench__send_pre_commands()
-        tc.execute_command.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"), mock.call(2, "first2"), mock.call(2, "second2")])
+        bench.send_pre_commands()
+        mock_ec.assert_has_calls([mock.call(1, "first"),
+                                  mock.call(1, "second"),
+                                  mock.call(2, "first2"),
+                                  mock.call(2, "second2")])
 
-        tc.execute_command.reset_mock()
+        bench.execute_command.reset_mock()
         # Test again with argument cmds
-        tc._Bench__send_pre_commands("somecommand")
-        tc.execute_command.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"),
-                                            mock.call(2, "first2"), mock.call(2, "second2"),
-                                            mock.call("*", "somecommand")])
+        bench.send_pre_commands("somecommand")
+        mock_ec.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"),
+                                  mock.call(2, "first2"), mock.call(2, "second2"),
+                                  mock.call("*", "somecommand")])
 
-    @mock.patch('icetea_lib.bench.resource_provider', create=True)
-    @mock.patch('icetea_lib.bench.execute_command', create=True)
+    @mock.patch('icetea_lib.TestBench.Resources.ResourceFunctions.resource_provider', create=True)
+    @mock.patch('icetea_lib.TestBench.Commands.Commands.execute_command', create=True)
     def test_postcmds_to_two_duts(self, mock_ec, mock_rp):
-        tc = Bench()
-        tc._resource_provider = mock.Mock()
-        tc.execute_command = mock.MagicMock()
+        # pylint: disable=no-self-use
+        bench = Bench()
+        bench._resource_provider = mock.MagicMock()
+        bench.execute_command = mock.MagicMock()
+        bench.args = mock.MagicMock()
+        bench.logger = mock.MagicMock()
+        type(bench.args).my_duts = mock.PropertyMock(return_value=False)
+        type(bench.args).pause_when_external_dut = mock.MagicMock(return_value=False)
+        bench._resources.init(mock.MagicMock())
+        bench._commands.init()
+        mock_dut1 = mock.MagicMock()
+        type(mock_dut1).index = mock.PropertyMock(return_value=1)
+        mock_dut2 = mock.MagicMock()
+        type(mock_dut2).index = mock.PropertyMock(return_value=2)
+        bench._resources.duts = [mock_dut1, mock_dut2]
         mock_resconf = mock.Mock()
         mock_resconf.get_dut_configuration = mock.MagicMock(
             return_value=[{"post_cmds": ["first", "second"]}, {"post_cmds": ["first2", "second2"]}])
-        tc.resource_configuration = mock_resconf
-        # Call using mangled name of __send_pre_commands method
-        tc._Bench__send_post_commands()
-        tc.execute_command.assert_has_calls(
-            [mock.call(1, "first"), mock.call(1, "second"), mock.call(2, "first2"), mock.call(2, "second2")])
+        bench.resource_configuration = mock_resconf
+        mock_resconf.count_duts = mock.MagicMock(return_value=2)
+        bench.send_post_commands()
+        mock_ec.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"),
+                                  mock.call(2, "first2"), mock.call(2, "second2")])
 
-        tc.execute_command.reset_mock()
+        mock_ec.reset_mock()
         # Test again with argument cmds
-        tc._Bench__send_post_commands("somecommand")
-        tc.execute_command.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"),
-                                            mock.call(2, "first2"), mock.call(2, "second2"),
-                                            mock.call("*", "somecommand")])
+        bench.send_post_commands("somecommand")
+        mock_ec.assert_has_calls([mock.call(1, "first"), mock.call(1, "second"),
+                                  mock.call(2, "first2"), mock.call(2, "second2"),
+                                  mock.call("*", "somecommand")])
 
     def test_reset_duts(self):
         bench = Bench()
+        bench.logger = mock.MagicMock()
+        bench.args = mock.MagicMock()
+        bench._resources._args = bench.args
+        type(bench.args).my_duts = mock.PropertyMock(return_value=False)
+        type(bench.args).pause_when_external_dut = mock.MagicMock(return_value=False)
+        bench._resources.init(mock.MagicMock())
         mock_dut = mock.MagicMock()
         dutconf = {"reset.return_value": True, "initCLI.return_value": True}
         mock_dut.configure_mock(**dutconf)
         mock_dutrange = range(2)
         mock_duts = [mock_dut, mock_dut]
         bench.duts = mock_duts
-        with mock.patch.object(bench, "get_dut_range", return_value=mock_dutrange):
-            with mock.patch.object(bench, "is_my_dut", return_value=True):
+        # TODO: This mocking does not work somehow
+        with mock.patch.object(bench.resource_configuration, "get_dut_range",
+                               return_value=mock_dutrange):
+            with mock.patch.object(bench, "is_my_dut_index", return_value=True):
                 for method in ["hard", "soft", None]:
                     bench.args.reset = method
                     bench.reset_dut()
                     mock_dut.reset.assert_called_with(method)
-                    self.assertEquals(mock_dut.reset.call_count, 2)
+                    self.assertEqual(mock_dut.reset.call_count, 2)
                     mock_dut.reset.reset_mock()
 
     def test_check_skip(self):
-        tc = TestingTestcase()
-        tc.config["requirements"]["duts"]["*"]["type"] = "process"
-        tc.config["execution"] = {"skip": {"value": True, "only_type": "process"}}
-        self.assertEqual(tc.run(), -1)
-        self.assertTrue(tc.get_result().skipped())
+        testcase = TestingTestcase()
+        testcase.config["requirements"]["duts"]["*"]["type"] = "process"
+        testcase.config["execution"] = {"skip": {"value": True, "only_type": "process"}}
+        self.assertEqual(testcase.run(), -1)
+        self.assertTrue(testcase.get_result().skipped())
 
-    def test_check_skip_invalid_platform(self):
-        tc = TestingTestcase()
-        tc.config["requirements"]["duts"]["*"]["allowed_platforms"] = ["K64F"]
-        tc.config["execution"] = {"skip": {"value": True, "platforms": ["K64F", "K65F"]}}
-        self.assertEqual(tc.run(), 0)
-        self.assertFalse(tc.get_result().skipped())
+    def test_check_skip_invalid_platform(self):  # pylint: disable=invalid-name
+        testcase = TestingTestcase()
+        testcase.config["requirements"]["duts"]["*"]["allowed_platforms"] = ["K64F"]
+        testcase.config["execution"] = {"skip": {"value": True, "platforms": ["K64F", "K65F"]}}
+        self.assertEqual(testcase.run(), 0)
+        self.assertFalse(testcase.get_result().skipped())
 
-    def test_check_skip_valid_platform(self):
-        tc = TestingTestcase()
-        tc.config["requirements"]["duts"]["*"]["allowed_platforms"] = ["K64F"]
-        tc.config["requirements"]["duts"]["*"]["platform_name"] = "K64F"
-        tc.config["execution"] = {"skip": {"value": True, "platforms": ["K64F"]}}
-        self.assertEqual(tc.run(), -1)
-        self.assertTrue(tc.get_result().skipped())
+    def test_check_skip_valid_platform(self):  # pylint: disable=invalid-name
+        testcase = TestingTestcase()
+        testcase.config["requirements"]["duts"]["*"]["allowed_platforms"] = ["K64F"]
+        testcase.config["requirements"]["duts"]["*"]["platform_name"] = "K64F"
+        testcase.config["execution"] = {"skip": {"value": True, "platforms": ["K64F"]}}
+        self.assertEqual(testcase.run(), -1)
+        self.assertTrue(testcase.get_result().skipped())
 
     def test_check_no_skip(self):
-        tc = TestingTestcase()
-        tc.config["execution"] = {"skip": {"value": True}}
-        self.assertEqual(tc.run(), 0)
-        self.assertFalse(tc.get_result().skipped())
+        testcase = TestingTestcase()
+        testcase.config["execution"] = {"skip": {"value": True}}
+        self.assertEqual(testcase.run(), 0)
+        self.assertFalse(testcase.get_result().skipped())
 
-    def test_config_validation_bin_not_defined(self):
+    def test_config_validation_bin_not_defined(self):  # pylint: disable=invalid-name
         duts_cfg = [{}]
         logger = logging.getLogger('unittest')
         logger.addHandler(logging.NullHandler())
         self.assertEqual(Bench._validate_dut_configs(duts_cfg, logger), None)
 
-    def test_config_validation_bin_defined_but_not_exists(self):
+    def test_config_validation_bin_defined_but_not_exists(self):  # pylint: disable=invalid-name
         duts_cfg = [{"application": {"bin": "not.exist"}}]
         logger = logging.getLogger('unittest')
         logger.addHandler(logging.NullHandler())
-        with self.assertRaises(EnvironmentError) as e:
+        with self.assertRaises(EnvironmentError):
             Bench._validate_dut_configs(duts_cfg, logger)
 
-    def test_config_validation_bin_defined(self):
+    def test_config_validation_bin_defined(self):  # pylint: disable=invalid-name
         duts_cfg = [{"application": {"bin": "./test/test_bench.py"}}]
         logger = logging.getLogger('unittest')
         logger.addHandler(logging.NullHandler())
@@ -338,8 +668,8 @@ class TestVerify(unittest.TestCase):
         test_data["reason"] = "this is a reason"
         bench = Bench()
         bench.add_new_result("fail", 1, 10, test_data)
-        self.assertEqual(len(bench._results), 1)
+        self.assertEqual(len(bench.results), 1)
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     unittest.main()

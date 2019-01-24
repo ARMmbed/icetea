@@ -157,7 +157,6 @@ class RPTestcase(unittest.TestCase):
         m_args = MockArgs()
         mock_resconf = mock.MagicMock()
         mock_resconf.count_hardware = mock.MagicMock(return_value=1)
-        mock_resconf.count_simulate = mock.MagicMock(return_value=0)
         mock_resconf.get_dut_configuration = mock.MagicMock(return_value=[mock.MagicMock()])
         mock_resconf.count_duts = mock.MagicMock(return_value=1)
         self.res_pro = ResourceProvider(m_args)

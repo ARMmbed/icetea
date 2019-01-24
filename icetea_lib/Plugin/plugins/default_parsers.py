@@ -1,3 +1,5 @@
+# pylint: disable=useless-super-delegation,too-few-public-methods
+
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,18 +15,15 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-
-import re
-import time
-
 from icetea_lib.Plugin.PluginBase import PluginBase
 
 
 class DefaultParsers(PluginBase):
-    # constructor
+    """
+    Default parsers as a plugin.
+    """
     def __init__(self):
         super(DefaultParsers, self).__init__()
 
     def get_parsers(self):
-        return {
-        }
+        return {}

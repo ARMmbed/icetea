@@ -11,17 +11,19 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+Example testcase file that implements multiple cases that share a setup and teardown function.
 """
 
 from icetea_lib.bench import Bench, TestStepFail
 from icetea_lib.tools.tools import test_case
 
-"""
-    Example testcase file that implements multiple cases that share a setUp and tearDown function.
-"""
 
-
+# pylint: disable=missing-docstring,unused-argument
 class MultipleTestcase(Bench):
+    """
+    Example test case for implementing multiple test cases that share setup and teardown functions.
+    """
     def __init__(self, **kwargs):
         tc_args = {
             'title': "dummy",
@@ -30,8 +32,8 @@ class MultipleTestcase(Bench):
             'purpose': "dummy",
             'requirements': {
                 "duts": {
-                    '*': { #requirements for all nodes
-                        "count":0,
+                    '*': {
+                        "count": 0,
                     }
                 }
             }
@@ -39,16 +41,17 @@ class MultipleTestcase(Bench):
         tc_args.update(kwargs)
         Bench.__init__(self, **tc_args)
 
-    def setUp(self):
+    def setup(self):
         pass
 
-    def tearDown(self):
+    def teardown(self):
         pass
 
 
 @test_case(MultipleTestcase, name="passing_case")
 def passcase(test_env):
     pass
+
 
 @test_case(MultipleTestcase, name="fail_case")
 def fail_case(test_env):

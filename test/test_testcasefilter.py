@@ -19,6 +19,7 @@ import unittest
 from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter
 from icetea_lib.TestSuite.TestcaseContainer import TestcaseContainer
 from icetea_lib.IceteaManager import TCMetaSchema
+# pylint: disable=protected-access,missing-docstring
 
 
 class TCFilterTestcase(unittest.TestCase):
@@ -71,27 +72,29 @@ class TCFilterTestcase(unittest.TestCase):
         filt.feature("test_feature")
         filt.platform("test_platform")
 
-        self.assertDictEqual(filt._filter, {"status": "test_status", "group": "test_group", "name": "test_test",
-                                            "type": "test_type", "subtype": "test_subtype",
-                                            "comp": "test_comp", 'list': False, 'feature': "test_feature",
-                                            "platform": "test_platform"})
+        self.assertDictEqual(filt._filter,
+                             {"status": "test_status", "group": "test_group", "name": "test_test",
+                              "type": "test_type", "subtype": "test_subtype",
+                              "comp": "test_comp", 'list': False, 'feature': "test_feature",
+                              "platform": "test_platform"})
 
         with self.assertRaises(TypeError):
             filt.component(2)
 
     def test_match(self):
-        tc = TestcaseContainer.find_testcases("examples.test_cmdline", "." + os.path.sep + "examples", TCMetaSchema().get_meta_schema())
+        testcase = TestcaseContainer.find_testcases(
+            "examples.test_cmdline", "." + os.path.sep + "examples",
+            TCMetaSchema().get_meta_schema())
         filt = TestcaseFilter().tc("test_cmdline")
-        self.assertTrue(filt.match(tc[0], 0))
+        self.assertTrue(filt.match(testcase[0], 0))
         filt.component("cmdline,testcomponent")
         filt.group("examples")
-        self.assertTrue(filt.match(tc[0], 0))
+        self.assertTrue(filt.match(testcase[0], 0))
         filt.tc("test_something_else")
-        self.assertFalse(filt.match(tc[0], 0))
+        self.assertFalse(filt.match(testcase[0], 0))
         filt = TestcaseFilter().tc([1])
-        self.assertTrue(filt.match(tc[0], 0))
-        self.assertFalse(filt.match(tc[0], 1))
-
+        self.assertTrue(filt.match(testcase[0], 0))
+        self.assertFalse(filt.match(testcase[0], 1))
 
 
 if __name__ == '__main__':

@@ -21,6 +21,7 @@ import icetea_lib.LogManager as LogManager
 
 #pylint: disable=no-self-use
 
+
 class ReportBase(object):
     """
     ReportBase is the baseclass of all other report types. It implements helpers related to

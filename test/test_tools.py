@@ -13,16 +13,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-__author__ = 'jaakuk03'
 import unittest
-import mock
 import sys
 import os
 import re
-import icetea_lib.tools.tools as tools
+import mock
 from pkg_resources import DistributionNotFound
+import icetea_lib.tools.tools as tools
+# pylint: disable=missing-docstring,too-few-public-methods
 
-class TestClass():
+
+class TestClass(object):
     def __init__(self):
         self.test = True
 
@@ -32,16 +33,16 @@ def testingfunction(arg1, arg2):  # pylint: disable=unused-argument
 
 
 class TestTools(unittest.TestCase):
-    def test_loadClass_Success(self):
+    def test_load_class_success(self):
         sys.path.append(os.path.dirname(__file__))
         # Test that loadClass can import a class that is initializable
         module = tools.load_class("test_tools.TestClass", verbose=False, silent=True)
         self.assertIsNotNone(module)
-        moduleInstance = module()
-        self.assertTrue(moduleInstance.test)
-        del moduleInstance
+        module_instance = module()
+        self.assertTrue(module_instance.test)
+        del module_instance
 
-    def test_loadClass_Fail(self):
+    def test_load_class_fail(self):
         with self.assertRaises(Exception):
             tools.load_class('testbase.level1.Testcase', verbose=False, silent=True)
 
@@ -70,20 +71,20 @@ class TestTools(unittest.TestCase):
             with open(os.path.join(setup_path, 'setup.py')) as setup_file:
                 lines = setup_file.readlines()
                 for line in lines:
-                    m = re.search(r"VERSION = \"([\S]{5,})\"", line)
-                    if m:
-                        version = m.group(1)
+                    match = re.search(r"VERSION = \"([\S]{5,})\"", line)
+                    if match:
+                        version = match.group(1)
                         break
-        except Exception as e:
+        except Exception:  # pylint: disable=broad-except
             pass
 
-        v = tools.get_fw_version()
-        self.assertEqual(v, version)
+        got_version = tools.get_fw_version()
+        self.assertEqual(got_version, version)
 
         with mock.patch("icetea_lib.tools.tools.require") as mocked_require:
             mocked_require.side_effect = [DistributionNotFound]
-            v = tools.get_fw_version()
-            self.assertEqual(v, version)
+            got_version = tools.get_fw_version()
+            self.assertEqual(got_version, version)
 
     def test_check_int(self):
         integer = "10"
@@ -95,17 +96,17 @@ class TestTools(unittest.TestCase):
         self.assertFalse(tools.check_int(1))
 
     def test_remove_empty_from_dict(self):
-        d = {"test": "val", "test2": None}
-        d = tools.remove_empty_from_dict(d)
-        self.assertDictEqual({"test": "val"}, d)
+        dictionary = {"test": "val", "test2": None}
+        dictionary = tools.remove_empty_from_dict(dictionary)
+        self.assertDictEqual({"test": "val"}, dictionary)
 
     def test_setordelete(self):
-        d = {"test": "val",
-             "test2": "val2"}
-        tools.set_or_delete(d, "test", "val3")
-        self.assertEqual(d.get("test"), "val3")
-        tools.set_or_delete(d, "test2", None)
-        self.assertTrue("test2" not in d)
+        dictionary = {"test": "val",
+                      "test2": "val2"}
+        tools.set_or_delete(dictionary, "test", "val3")
+        self.assertEqual(dictionary.get("test"), "val3")
+        tools.set_or_delete(dictionary, "test2", None)
+        self.assertTrue("test2" not in dictionary)
 
     def test_getargspec(self):
         expected_args = ["arg1", "arg2"]

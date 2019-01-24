@@ -13,14 +13,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from icetea_lib.TestStepError import TestStepFail
+# pylint: disable=invalid-name
+
 import inspect
 import os
 import json
 
+from icetea_lib.TestStepError import TestStepFail
+
+
 def format_message(msg):
     """
-    Formatting function for assert messages. Fetches the filename, function and line number of the code causing the fail
+    Formatting function for assert messages. Fetches the filename,
+    function and line number of the code causing the fail
     and formats it into a three-line error message. Stack inspection is used to get the information.
     Originally done by BLE-team for their testcases.
 
@@ -31,7 +36,9 @@ def format_message(msg):
     frame = callerframerecord[0]
     info = inspect.getframeinfo(frame)
     _, filename = os.path.split(info.filename)
-    caller_site = "In file {!s}, in function {!s}, at line {:d}".format(filename, info.function, info.lineno)
+    caller_site = "In file {!s}, in function {!s}, at line {:d}".format(filename,
+                                                                        info.function,
+                                                                        info.lineno)
     return "{!s}\n{!s}\n{!s}".format(msg, caller_site, info.code_context)
 
 
@@ -108,7 +115,8 @@ def assertTrue(expr, message=None):
     :raises: TestStepFail if not expr.
     """
     if not expr:
-        raise TestStepFail(format_message(message) if message is not None else 'Assert: %r != True' % expr)
+        raise TestStepFail(
+            format_message(message) if message is not None else 'Assert: %r != True' % expr)
 
 
 def assertFalse(expr, message=None):
@@ -120,7 +128,8 @@ def assertFalse(expr, message=None):
     :raises: TestStepFail if expr.
     """
     if expr:
-        raise TestStepFail(format_message(message) if message is not None else 'Assert: %r != False' % expr)
+        raise TestStepFail(
+            format_message(message) if message is not None else 'Assert: %r != False' % expr)
 
 
 def assertNone(expr, message=None):
@@ -132,7 +141,8 @@ def assertNone(expr, message=None):
     :raises: TestStepFail if expr is not None.
     """
     if expr is not None:
-        raise TestStepFail(format_message(message) if message is not None else "Assert: %s != None" % str(expr))
+        raise TestStepFail(
+            format_message(message) if message is not None else "Assert: %s != None" % str(expr))
 
 
 def assertNotNone(expr, message=None):
@@ -144,7 +154,8 @@ def assertNotNone(expr, message=None):
     :raises: TestStepFail if expr is None.
     """
     if expr is None:
-        raise TestStepFail(format_message(message) if message is not None else "Assert: %s == None" % str(expr))
+        raise TestStepFail(
+            format_message(message) if message is not None else "Assert: %s == None" % str(expr))
 
 
 def assertEqual(first, second, message=None):
@@ -157,7 +168,9 @@ def assertEqual(first, second, message=None):
     :raises: TestStepFail if not first == second
     """
     if not first == second:
-        raise TestStepFail(format_message(message) if message is not None else "Assert: %s != %s" % (str(first), str(second)))
+        raise TestStepFail(
+            format_message(message) if message is not None else "Assert: %s != %s" % (str(first),
+                                                                                      str(second)))
 
 
 def assertNotEqual(first, second, message=None):
@@ -170,7 +183,9 @@ def assertNotEqual(first, second, message=None):
     :raises: TestStepFail if not first != second
     """
     if not first != second:
-        raise TestStepFail(format_message(message) if message is not None else "Assert: %s == %s" % (str(first), str(second)))
+        raise TestStepFail(
+            format_message(message) if message is not None else "Assert: %s == %s" % (str(first),
+                                                                                      str(second)))
 
 
 def assertJsonContains(jsonStr=None, key=None, message=None):
@@ -187,8 +202,14 @@ def assertJsonContains(jsonStr=None, key=None, message=None):
         try:
             data = json.loads(jsonStr)
             if key not in data:
-                raise TestStepFail(format_message(message) if message is not None else "Assert: Key : %s is not in : %s" % (str(key), str(jsonStr)))
+                raise TestStepFail(
+                    format_message(message) if message is not None else "Assert: "
+                                                                        "Key : %s is not "
+                                                                        "in : %s" % (str(key),
+                                                                                     str(jsonStr)))
         except (TypeError, ValueError) as e:
-            raise TestStepFail(format_message(message) if message is not None else "Unable to parse json "+str(e))
+            raise TestStepFail(
+                format_message(message) if message is not None else "Unable to parse json "+str(e))
     else:
-        raise TestStepFail(format_message(message) if message is not None else "Json string is empty")
+        raise TestStepFail(
+            format_message(message) if message is not None else "Json string is empty")

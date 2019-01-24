@@ -12,27 +12,26 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+# pylint: disable=missing-docstring,no-self-use
 
-__author__ = 'joonik'
-
-import os
 from icetea_lib.bench import Bench
-from icetea_lib.TestStepError import TestStepFail
+
 
 class Testcase(Bench):
+    """
+    Test case for verifying json output feature.
+    """
     def __init__(self):
         Bench.__init__(self,
                        name="json_output_test",
-                       title = "Test list output as json",
+                       title="Test list output as json",
                        status="development",
                        type="acceptance",
-                       purpose ="dummy",
+                       purpose="dummy",
                        component=["Icetea_ut"],
                        requirements={
-                           "duts": {
-                           }
                        }
-        )
+                      )
 
     def setup(self):
         pass
@@ -40,5 +39,5 @@ class Testcase(Bench):
     def case(self):
         pass
 
-    def tearDown(self):
+    def teardown(self):
         pass

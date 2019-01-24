@@ -47,13 +47,13 @@ class DutConsole(DutProcess):
         "cwd": None,
         "args": "-tt",
         "shell": "bash"
-     }
+    }
 
     def __init__(self, name, conf=None, params=None):
         DutProcess.__init__(self, name=name, params=None)
         self.config.update(self.conf)
 
-        if conf != None:
+        if conf is not None:
             self.config.update(conf)
 
         # Set up SSH connection
@@ -108,5 +108,5 @@ class DutConsole(DutProcess):
     def get_config(self):
         return self.config
 
-    def _flash_needed(self):
+    def _flash_needed(self, **kwargs):
         pass

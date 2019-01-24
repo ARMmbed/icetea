@@ -18,6 +18,9 @@ from icetea_lib.TestStepError import TestStepFail
 
 
 class Testcase(Bench):
+    """
+    Test case for testing failing a test case.
+    """
     def __init__(self):
         Bench.__init__(self,
                        name="ut_failing_tc",
@@ -27,13 +30,13 @@ class Testcase(Bench):
                        purpose="dummy",
                        component=["Icetea_ut"],
                        requirements={
-                          "duts": {
-                              '*': {
+                           "duts": {
+                               '*': {
                                    "count": 0
                                }
-                          }
+                           }
                        }
-                       )
+                      )
 
-    def case(self):
+    def case(self):  # pylint: disable=missing-docstring,no-self-use
         raise TestStepFail("This is a failing test case")
