@@ -154,6 +154,9 @@ def get_base_arguments(parser):
     parser.add_argument('--env_cfg',
                         help='Use user specific environment configuration file',
                         default='')
+    parser.add_argument("--logging_cfg",
+                        help="Location of JSON configuration for logging.",
+                        default=None)
     parser.add_argument('--repeat',
                         help='Repeat testcases N times',
                         default=1)
@@ -165,7 +168,6 @@ def get_base_arguments(parser):
                         action='store_true',
                         default=False,
                         help='Clean old logs')
-
     parser.add_argument('--connector',
                         default=None,
                         help='Connector credentials for selecting and/or generating endpoint '
@@ -232,9 +234,9 @@ def get_tc_arguments(parser):
                         help='Silent mode, only prints results')
     group2.add_argument('-v', "--verbose",
                         dest='verbose',
-                        default=False,
-                        help="increase output verbosity (print dut traces)",
-                        action="store_true")
+                        default=0,
+                        help="increase output verbosity, max 2 times.",
+                        action="count")
     group2.add_argument('-w',
                         action='store_true',
                         dest='cloud',
