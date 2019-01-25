@@ -53,18 +53,21 @@ jobs:
       #    - v1-dependencies-{{ checksum "requirements.txt" }}
           # fallback to using the latest cache if no exact match is found
       #    - v1-dependencies-
-
       - run:
           name: install dependencies
+          # latest pyocd require setuptools >= 40 but 
+          # docker image circleci/python:3.5-jessie does older one,
+          # so updating new one  
           command: |
             python --version
             python -m venv venv || virtualenv venv
             echo activate
             . venv/bin/activate
+            pip install --upgrade setuptools
             pip install -r requirements.txt
             pip install -r dev_requirements.txt
             pip install coveralls
-            pip install --upgrade setuptools
+            
             python setup.py develop
 
       - save_cache:
