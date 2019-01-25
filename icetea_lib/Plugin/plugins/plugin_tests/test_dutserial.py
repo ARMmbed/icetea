@@ -36,7 +36,7 @@ class DutSerialTestcase(unittest.TestCase):
     # Mock base class
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_external_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
     def test_flasher_logger_insert(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
@@ -58,7 +58,7 @@ class DutSerialTestcase(unittest.TestCase):
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_external_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
     def test_flash_build_init_not_implemented(self, mock_build, mock_flasher, mocked_logger,
@@ -74,7 +74,7 @@ class DutSerialTestcase(unittest.TestCase):
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_external_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
     def test_flash_build_get_file_fail(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
@@ -92,7 +92,7 @@ class DutSerialTestcase(unittest.TestCase):
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_external_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
     def test_flash_fails(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
@@ -123,7 +123,7 @@ class DutSerialTestcase(unittest.TestCase):
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_external_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
     def test_flash_skip_flash(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
@@ -151,7 +151,7 @@ class DutSerialTestcase(unittest.TestCase):
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_external_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
     def test_peek(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
@@ -166,7 +166,7 @@ class DutSerialTestcase(unittest.TestCase):
 
     @mock.patch("icetea_lib.DeviceConnectors.Dut.LogManager.get_bench_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.getargspec")
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_resourceprovider_logger")
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.get_external_logger")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Flash")
     @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.DutSerial.Build")
     def test_readline(self, mock_build, mock_flasher, mocked_logger, mock_inspect,
