@@ -105,7 +105,7 @@ jobs:
   test-3.5:
     <<: *defaults
     docker:
-      - image: circleci/python:3.5-jessie
+      - image: circleci/python@sha256:61cba4c942db892b24711ed5e4f324923a08177c9053b8cc6748174f46c0c3f6
   test-2.7:
     <<: *defaults
     docker:
