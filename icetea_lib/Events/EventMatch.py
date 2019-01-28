@@ -16,7 +16,7 @@ EventMatch object. Describes a single matched event for EventMatcher.
 """
 
 
-class EventMatch(object):
+class EventMatch(object):  # pylint: disable=too-few-public-methods
     """
     EventMatcher callback object
     """
