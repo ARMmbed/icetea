@@ -1,2 +1,2 @@
-coloredlogs
-psutil
+coloredlogs==10.*
+psutil==5.*
