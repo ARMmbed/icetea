@@ -92,6 +92,7 @@ class NonBlockingStreamReader(object):
         Then find the matching StreamDescriptor by file_descr value.
 
         :param file_descr: file object
+        :return: Return number of bytes read
         """
         try:
             line = os.read(file_descr, 1024 * 1024)
@@ -101,12 +102,12 @@ class NonBlockingStreamReader(object):
                 stream_desc.has_error = True
                 if stream_desc.callback is not None:
                     stream_desc.callback()
-            return
+            return 0
 
         if line:
             stream_desc = NonBlockingStreamReader._get_sd(file_descr)
             if stream_desc is None:
-                return # Process closing
+                return 0 # Process closing
 
             if IS_PYTHON3:
                 try:
@@ -124,6 +125,8 @@ class NonBlockingStreamReader(object):
             # Store the remainded, its either '' if last char was '\n'
             # or remaining buffer before line end
             stream_desc.buf = split[-1]
+            return len(line)
+        return 0
 
     @staticmethod
     def _read_select_poll(poll):
@@ -142,6 +145,10 @@ class NonBlockingStreamReader(object):
                 if event == select.POLLIN:
                     NonBlockingStreamReader._read_fd(file_descr)
                 else:
+                    # Because event != select.POLLIN, the pipe is closed
+                    # but we still want to read all bytes
+                    while NonBlockingStreamReader._read_fd(file_descr) != 0:
+                        pass
                     # Dut died, signal the processing thread so it notices that no lines coming in
                     stream_descr = NonBlockingStreamReader._get_sd(file_descr)
                     if stream_descr is None:
@@ -244,13 +251,12 @@ class NonBlockingStreamReader(object):
         :return: popped line from descriptor queue. None if nothing found
         :raises: RuntimeError if errors happened while reading PIPE
         """
-        if self.has_error():
-            raise RuntimeError("Errors reading PIPE")
         try:
             return self._descriptor.read_queue.pop()
         except IndexError:
             # No lines in queue
-            pass
+            if self.has_error():
+                raise RuntimeError("Errors reading PIPE")
         return None
 
 
