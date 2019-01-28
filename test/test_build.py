@@ -60,13 +60,13 @@ class BuildTestCase(unittest.TestCase):
         with self.assertRaises(NotFoundError):
             build.get_data()
 
-    def test_build_http(self, ):
+    @mock.patch("icetea_lib.build.build.requests.get")
+    def test_build_http(self, mocked_get):
+        mocked_get.return_value = mock.MagicMock()
+        type(mocked_get).content = mock.PropertyMock(return_value="\r")
         build = Build.init("http://www.hep.com")
         self.assertEqual(build.get_type(), "http")
         self.assertEqual(build.get_url(), "http://www.hep.com")
-
-        build = Build.init("http://tools.ietf.org/rfc/rfc7583.txt")
-        self.assertEqual(build.get_type(), "http")
         self.assertTrue(build.get_data(), "\r")
 
     @mock.patch("icetea_lib.build.build.requests.get",
