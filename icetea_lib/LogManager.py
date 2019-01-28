@@ -1,5 +1,19 @@
 """
-LogManager module contains all logging related methods, classes and helpers used by Icetea.
+Copyright 2017 ARM Limited
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+LogManager module contains all logging related methods,
+classes and helpers used by Icetea.
 """
 
 import datetime
@@ -200,8 +214,8 @@ def get_testcase_log_dir():
 
 
 def get_testcase_logfilename(logname, prepend_tc_name=False):
-    """ Return filename for a logfile, filename will contain the actual path +
-    filename
+    """
+    Return filename for a logfile, filename will contain the actual path + filename.
 
     :param logname: Name of the log including the extension, should describe
     what it contains (eg. "device_serial_port.log")
@@ -218,7 +232,8 @@ def get_testcase_logfilename(logname, prepend_tc_name=False):
 
 
 def get_base_logfilename(logname):
-    """ Return filename for a logfile, filename will contain the actual path +
+    """
+    Return filename for a logfile, filename will contain the actual path +
     filename
 
     :param logname: Name of the log including the extension, should describe
@@ -250,6 +265,7 @@ def get_file_logger(name, formatter=None):
         raise ValueError("Can't make a logger without name")
 
     logger = logging.getLogger(name)
+    logger.propagate = False
     remove_handlers(logger)
     logger.setLevel(logging.INFO)
 
@@ -307,6 +323,7 @@ def _get_basic_logger(loggername, log_to_file, logpath):
     :return: Logger
     """
     logger = logging.getLogger(loggername)
+    logger.propagate = False
     remove_handlers(logger)
     logger.setLevel(logging.DEBUG)
     logger_config = LOGGING_CONFIG.get(loggername, DEFAULT_LOGGING_CONFIG)
@@ -436,20 +453,25 @@ def get_dummy_logger():
     :return: logger with NullHandler
     """
     logger = logging.getLogger("dummy")
+    logger.propagate = False
     logger.addHandler(logging.NullHandler())
     return logger
 
 
 def get_logfiles():
-    """Return a list of logfiles with relative paths from the log
-    root directory"""
+    """
+    Return a list of logfiles with relative paths from the log
+    root directory
+    """
     logfiles = [f for f in LOGFILES]
     logfiles.extend(GLOBAL_LOGFILES)
     return logfiles
 
 
 def set_level(name, level):
-    """ Set level for given logger
+    """
+    Set level for given logger.
+
     :param name: Name of logger to set the level for
     :param level: The new level, see possible levels from python logging library
     """
@@ -499,6 +521,7 @@ def init_base_logging(directory="./log", verbose=0, silent=False, color=False, n
 
     # Initialize the simple console logger for IceteaManager
     icetealogger = logging.getLogger("icetea")
+    icetealogger.propagate = False
     icetealogger.setLevel(logging.DEBUG)
     stream_handler = logging.StreamHandler()
     formatter = BenchFormatter(LOGGING_CONFIG.get("IceteaManager").get("format"),
@@ -556,10 +579,12 @@ def init_base_logging(directory="./log", verbose=0, silent=False, color=False, n
 
 def init_testcase_logging(name, verbose=0, silent=False, color=False,
                           truncate=True):
-    """ Initialize testcase logging and default loggers. First removes any
+    """
+    Initialize testcase logging and default loggers. First removes any
     existing testcase loggers, creates a new directory for testcase logs under
     the root logging directory, initializes the default bench logger and
     removes any child loggers it may have.
+
     :param name: Name of the testcase
     :param verbose: Log level debug
     :param silent: Log level warning
@@ -600,6 +625,7 @@ def init_testcase_logging(name, verbose=0, silent=False, color=False,
 
     # Get the bench logger and remove all existing handlers
     benchlogger = logging.getLogger("bench")
+    benchlogger.propagate = False
     remove_handlers(benchlogger)
     benchlogger.setLevel(logging.DEBUG)
 
@@ -632,7 +658,9 @@ def init_testcase_logging(name, verbose=0, silent=False, color=False,
 
 
 def finish_testcase_logging():
-    """ Finalize testcase logging by removing loggers """
+    """
+    Finalize testcase logging by removing loggers
+    """
     del LOGFILES[:]
     if LOGGERS:
         # From local list of loggers, retrieve one(first one)
@@ -656,13 +684,15 @@ def finish_testcase_logging():
 
 
 def _get_filehandler_with_formatter(logname, formatter=None):
-    """ Return a logging FileHandler for given logname using a given
-    logging formatter
+    """
+    Return a logging FileHandler for given logname using a given
+    logging formatter.
+
     :param logname: Name of the file where logs will be stored, ".log"
     extension will be added
     :param formatter: An instance of logging.Formatter or None if the default
     should be used
-    :return:
+    :return: FileHandler
     """
     handler = logging.FileHandler(logname)
     if formatter is not None:
@@ -718,6 +748,7 @@ def traverse_json_obj(obj, path=None, callback=None):
     """
     Recursively loop through object and perform the function defined
     in callback for every element. Only JSON data types are supported.
+
     :param obj: object to traverse
     :param path: current path
     :param callback: callback executed on every element
