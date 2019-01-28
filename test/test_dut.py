@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring
+# pylint: disable=missing-docstring,protected-access,unused-argument
 
 """
 Copyright 2017 ARM Limited

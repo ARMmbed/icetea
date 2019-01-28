@@ -300,7 +300,6 @@ class ResourceFunctions(object):
         if self._allocation_context:
             self._allocation_context.dutinformations = value
 
-
     def reset_dut(self, dut_index='*'):
         """
         Reset dut k.
@@ -356,6 +355,13 @@ class ResourceFunctions(object):
                                      " started before we started reading? Try adding --reset"
                                      " to your run command.")
                 raise DutConnectionError("Dut cli failed to initialize within set timeout!")
+            if self._args.sync_start:
+                self._logger.info("Synchronizing the command line interface.")
+                try:
+                    self._commands.sync_cli(dut.index)
+                except TestStepError:
+                    raise DutConnectionError("Synchronized start for dut {} failed!".format(
+                        dut.index))
 
     def _alloc_error_helper(self):
         """
