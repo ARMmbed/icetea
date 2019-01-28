@@ -1,6 +1,6 @@
-coverage
-mock
-sphinx
+coverage==4.*
+mock==2.*
+sphinx==1.*
 lxml
-pylint
-astroid
+pylint==1.*
+astroid==1.*

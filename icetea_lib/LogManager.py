@@ -184,6 +184,7 @@ def get_file_logger(name, formatter=None):
         raise ValueError("Can't make a logger without name")
 
     logger = logging.getLogger(name)
+    logger.propagate = False
     remove_handlers(logger)
     logger.setLevel(logging.INFO)
 
@@ -218,6 +219,7 @@ def get_resourceprovider_logger(name=None, short_name=" ", log_to_file=True):
         return LOGGERS[loggername]
 
     logger = logging.getLogger(loggername)
+    logger.propagate = False
     remove_handlers(logger)
     logger.setLevel(logging.DEBUG)
     if TRUNCATE_LOG:
@@ -273,6 +275,7 @@ def get_bench_logger(name=None, short_name="  ", log_to_file=True):
         return LOGGERS[loggername]
 
     logger = logging.getLogger(loggername)
+    logger.propagate = True
     remove_handlers(logger)
     logger.setLevel(logging.DEBUG)
     if TRUNCATE_LOG:
@@ -297,6 +300,7 @@ def get_dummy_logger():
     :return: logger with NullHandler
     """
     logger = logging.getLogger("dummy")
+    logger.propagate = False
     logger.addHandler(logging.NullHandler())
     return logger
 
@@ -352,6 +356,7 @@ def init_base_logging(directory="./log", verbose=False, silent=False, color=Fals
 
     # Initialize the simple console logger for IceteaManager
     icetealogger = logging.getLogger("icetea")
+    icetealogger.propagate = False
     icetealogger.setLevel(logging.DEBUG)
     stream_handler = logging.StreamHandler()
     formatter = logging.Formatter("%(asctime)s.%(msecs)03d %(message)s", "%H:%M:%S")
@@ -435,6 +440,7 @@ def init_testcase_logging(name, verbose=True, silent=False, color=False,
 
     # Get the bench logger and remove all existing handlers
     benchlogger = logging.getLogger("bench")
+    benchlogger.propagate = False
     remove_handlers(benchlogger)
     benchlogger.setLevel(logging.DEBUG)
 

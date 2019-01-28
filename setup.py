@@ -36,24 +36,24 @@ def read(fname):
 
 
 INSTALL_REQUIRES = [
-    "prettytable",
+    "prettytable==0.*",
     "requests",
-    "yattag",
+    "yattag==1.*",
     "pyserial>2.5",
-    "jsonmerge",
+    "jsonmerge==1.*",
     "jsonschema<3.0.0",
     "mbed-ls>=1.5.1,==1.*",
-    "semver",
+    "semver==2.*",
     "mbed-flasher==0.9.*",
-    "six"
+    "six==1.*"
 ]
 TEST_REQUIRES = [
-    "coverage",
-    "mock",
-    "sphinx",
+    "coverage==4.*",
+    "mock==2.*",
+    "sphinx==1.*",
     "lxml",
-    "pylint",
-    "astroid"
+    "pylint==1.*",
+    "astroid==1.*"
 ]
 # todo move pyshark as optional dep:
 # pyshark-legacy; python_version < "3.0"
