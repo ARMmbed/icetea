@@ -16,6 +16,7 @@ limitations under the License.
 import re
 
 from icetea_lib.Events.Generics import Observer
+from icetea_lib.Events.EventMatch import EventMatch
 from icetea_lib.tools.tools import IS_PYTHON3
 
 
@@ -25,13 +26,14 @@ class EventMatcher(Observer):
     them to a preset match data.
     """
     def __init__(self, event_type, match_data, caller=None,  # pylint: disable=too-many-arguments
-                 flag=None, callback=None):
+                 flag=None, callback=None, forget=True):
         Observer.__init__(self)
         self.caller = caller
         self.event_type = event_type
         self.flag_to_set = flag
         self.callback = callback
         self.match_data = match_data
+        self.__forget = forget
         self.observe(event_type, self._event_received)
 
     def _event_received(self, ref, data):
@@ -42,12 +44,14 @@ class EventMatcher(Observer):
         :param data: event data.
         :return: Nothing.
         """
-        if self._resolve_match_data(ref, data):
+        match = self._resolve_match_data(ref, data)
+        if match:
             if self.flag_to_set:
                 self.flag_to_set.set()
             if self.callback:
-                self.callback(ref, data)
-            self.forget()
+                self.callback(EventMatch(ref, data, match))
+            if self.__forget:
+                self.forget()
 
     def _resolve_match_data(self, ref, event_data):
         """
