@@ -32,7 +32,7 @@ from icetea_lib.enhancedserial import EnhancedSerial
 from icetea_lib.tools.tools import strip_escape, split_by_n, getargspec
 from icetea_lib.DeviceConnectors.DutInformation import DutInformation
 from icetea_lib.build.build import Build
-from icetea_lib.LogManager import get_resourceprovider_logger
+from icetea_lib.LogManager import get_external_logger
 
 try:
     from mbed_flasher.flash import Flash
@@ -272,7 +272,7 @@ class DutSerial(Dut):
         if "logger" in getargspec(Flash.__init__).args:
             # get_resourceprovider_logger returns previous logger if one already exists.
             # If no logger with name mbed-flasher exists, a new one is created.
-            logger = get_resourceprovider_logger("mbed-flasher", "FLS")
+            logger = get_external_logger("mbed-flasher", "FLS")
             flasher = Flash(logger=logger)
         else:
             # Backwards compatibility for older mbed-flasher versions.

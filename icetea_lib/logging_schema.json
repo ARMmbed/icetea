@@ -1,0 +1,54 @@
+{
+  "type": "object",
+  "additionalProperties": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "level": {
+        "type": "string",
+        "enum": [
+          "CRITICAL",
+          "ERROR",
+          "WARN",
+          "WARNING",
+          "INFO",
+          "DEBUG",
+          "NOTSET"
+        ]
+      },
+      "format": {
+        "type": "string"
+      },
+      "dateformat": {
+        "type": "string"
+      },
+      "file": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "CRITICAL",
+              "ERROR",
+              "WARN",
+              "WARNING",
+              "INFO",
+              "DEBUG",
+              "NOTSET"
+            ]
+          },
+          "format": {
+            "type": "string"
+          },
+          "dateformat": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
