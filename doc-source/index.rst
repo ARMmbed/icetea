@@ -20,6 +20,7 @@ Welcome to Icetea's documentation!
    plugin_framework
    suite_api
    tc_api
+   Logging
 
 .. toctree::
    :maxdepth: 2
