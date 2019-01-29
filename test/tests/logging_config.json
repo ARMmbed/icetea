@@ -1,0 +1,7 @@
+{
+  "logging": {
+    "test_logger": {
+      "level": "ERROR"
+    }
+  }
+}
