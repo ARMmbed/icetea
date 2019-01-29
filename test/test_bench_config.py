@@ -50,6 +50,11 @@ class ConfigMixerTests(unittest.TestCase):
         self.assertDictEqual(env_cfg, {"test_config": "test",
                                        "sniffer": {"iface": "test_iface"}})
 
+        with self.assertRaises(InconclusiveError):
+            env_cfg = cmixer._read_env_configs(
+                os.path.abspath(os.path.join(__file__, "..", "data",
+                                             "test_env_cfg_with_duplicates.json")), "test_iface")
+
     def test_read_exec_config(self):
         cmixer = Configurations()
         args = MockArgs()
@@ -81,6 +86,14 @@ class ConfigMixerTests(unittest.TestCase):
             },
             cmixer.config
         )
+
+        args.tc_cfg = os.path.abspath(os.path.join(__file__, "..", "data",
+                                                   "test_env_cfg_with_duplicates.json"))
+        with self.assertRaises(TestStepError):
+            cmixer._read_exec_configs(args)
+
+        args.tc_cfg = os.path.abspath(os.path.join(__file__, "..", "data", "test_env_cfg.json"))
+
         args.platform_name = "not-in-allowed"
         cmixer.config["requirements"]["duts"]["*"]["allowed_platforms"] = ["allowed"]
         with self.assertRaises(TestStepError):

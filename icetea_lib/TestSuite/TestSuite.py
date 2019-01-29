@@ -32,6 +32,7 @@ from icetea_lib.ResultList import ResultList
 from icetea_lib.TestSuite.TestcaseContainer import TestStatus, DummyContainer
 from icetea_lib.TestSuite.TestcaseList import TestcaseList
 from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter
+from icetea_lib.tools.tools import find_duplicate_keys
 
 
 class SuiteException(Exception):
@@ -521,14 +522,14 @@ class TestSuite(object):
             return suite
         try:
             with open(filepath) as fil:
-                suite = json.load(fil)
+                suite = json.load(fil, object_pairs_hook=find_duplicate_keys)
                 return suite
         except IOError:
             self.logger.error("Error, load_suite_file: "
                               "Test suite %s cannot be read.", name)
-        except ValueError:
+        except ValueError as error:
             self.logger.error("Error, load_suite_file: "
-                              "Could not load test suite. No JSON object could be decoded.")
+                              "Could not load test suite. %s.", error)
         return None
 
     def _load_suite_list(self):

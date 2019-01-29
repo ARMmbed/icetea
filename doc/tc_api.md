@@ -415,6 +415,8 @@ into the existing set. Example of a tc_cfg file is shown below:
 }
 ```
 
+**NOTE**: If the object that is read from a test case configuration file contains duplicate keys, Icetea will fail and exit.
+
 ## Environment configuration
 The test case can work with some external dependencies,
 applications and modules that are defined in the test case configuration.
@@ -434,6 +436,7 @@ defaults to the following dictionary:
 
 This merge is done at the start of the test case.
 
+**NOTE**: If the object that is read from an environment configuration file contains duplicate keys, Icetea will fail and exit.
 
 ## Multiple cases sharing setup and teardown
 Icetea contains a decorator called test_case which can be used
