@@ -263,7 +263,7 @@ def get_tc_arguments(parser):
                         help='Testcase Configuration file')
     group2.add_argument('--type',
                         help='Overrides DUT type.',
-                        choices=['hardware', 'process'])
+                        choices=['hardware', 'process', "serial", "mbed"])
     group2.add_argument('--platform_name',
                         help='Overrides used platform. Must be found in allowed_platforms in '
                              'dut configuration if allowed_platforms is defined and non-empty.',
