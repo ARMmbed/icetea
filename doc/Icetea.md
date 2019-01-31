@@ -48,9 +48,10 @@ installed by `Icetea` installation.
 ```
 /icetea> tree
 ├───doc         // these documents
+├───doc-source  // these documents in rst format
 ├───examples    // some test case examples
 ├───log         // test execution logs, when running Icetea directly from GIT repository root
-├───icetea_lib    // Icetea -libraries
+├───icetea_lib  // Icetea -libraries
 │   ├───DeviceConnectors  // DUT connectors
 │   ├───ExtApps           // test required external modules
 │   ├───Extensions        // default extensions, which is loaded automatically
@@ -154,7 +155,7 @@ Supported cli parameters are described below:
 | --bin | Used binary for DUTs when process/hardware is used. NOTE: Does not affect duts which specify their own binaries | Valid file name or path |  |  |
 | --tc_cfg | Test case configuration file | Valid file name or path |  |  |
 | --ch | Use specific rf channel |  |  |  |
-| --type | Overrides DUT type |  |  |  |
+| --type | Overrides DUT type | hardware, process, serial or mbed |  |  |
 | --platform_name | Overides used platform. Must be found in allowed_platforms in dut configuration if allowed_platforms is defined and non-empty |  |  |  |
 | --putty | Open putty after TC executed |  |  |  |
 | --skip_setup | Skip test case setup phase |  |  |  |
