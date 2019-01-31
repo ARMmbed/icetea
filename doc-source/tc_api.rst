@@ -150,7 +150,8 @@ It can contain dictionaries under the following keys:
     * "*", dictionary, contains default requirements for all nodes
         * "count", number of duts required
         * "type", type of duts,
-          allowed values: hardware(default), process
+          allowed values: hardware(default, same as mbed), process, serial, mbed
+        * "serial_port", serial port name when type of the dut is serial.
         * "allowed_platforms", list of platforms allowed
           for this test case. If no other platform is specified
           with platform_name, first item in this list will be used.

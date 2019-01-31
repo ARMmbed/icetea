@@ -53,21 +53,21 @@ Folder structure
 ****************
 
 |  /icetea> tree
-|  ├───doc         // these documents
+|  ├───doc         // these documents in md format
+|  ├───doc-source  // these documents
 |  ├───examples    // some test case examples
 |  ├───log         // test execution logs, when running Icetea directly from GIT repository root
 |  ├───icetea_lib    // Icetea -libraries
 |  │   ├───DeviceConnectors  // DUT connectors
-|  │   ├───ExtApps           // test required external modules
-|  │   ├───Extensions        // default extensions, which is loaded automatically
 |  │   ├───build             // build object implementation
 |  │   ├───Events            // Event system implementation
 |  │   ├───Reports           // Reporters
 |  │   ├───TestBench         // Test bench implementation
-|  │   ├───Plugins           // Plugin implementation and default plugins
+|  │   ├───Plugin            // Plugin implementation and default plugins
 |  │   ├───Randomize         // Random seed generator implementation
 |  │   ├───ResourceProvider  // Allocators and ResourceProvider
 |  │   ├───TestSuite         // Test runner implementation
+|  │   └───tools             // Tools
 |  └───test         // unit tests
 
 *******

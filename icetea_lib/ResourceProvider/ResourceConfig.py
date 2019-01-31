@@ -35,7 +35,7 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
         self._sim_config = None
         if self.logger is None:
             self.logger = LogManager.get_dummy_logger()
-        self._counts = {"total": 0, "hardware": 0, "process": 0}
+        self._counts = {"total": 0, "hardware": 0, "process": 0, "serial": 0, "mbed": 0}
 
     @property
     def _hardware_count(self):
@@ -44,7 +44,7 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
 
         :return: integer
         """
-        return self._counts.get("hardware")
+        return self._counts.get("hardware") + self._counts.get("serial") + self._counts.get("mbed")
 
     @_hardware_count.setter
     def _hardware_count(self, value):
@@ -261,7 +261,8 @@ class ResourceConfig(object):  # pylint: disable=too-many-instance-attributes
 
         :return: Nothing, adds results to self._hardware_count
         """
-        length = len([d for d in self._dut_requirements if d.get("type") == "hardware"])
+        length = len([d for d in self._dut_requirements if d.get("type") in ["hardware",
+                                                                             "serial", "mbed"]])
         self._hardware_count = length
 
     def count_process(self):
