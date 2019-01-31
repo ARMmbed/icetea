@@ -27,7 +27,7 @@ from icetea_lib.ResourceProvider.ResourceRequirements import ResourceRequirement
 from icetea_lib.ResourceProvider.exceptions import ResourceInitError
 
 from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import LocalAllocator, init_process_dut
-from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import init_hardware_dut
+from icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator import init_mbed_dut
 
 
 @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutDetection", create=False)
@@ -131,7 +131,8 @@ class TestVerify(unittest.TestCase):
         dutdetect.get_available_devices = mock.MagicMock(return_value=None)
 
         alloc = LocalAllocator()
-        self.assertRaises(AllocationError, alloc._allocate, {"type": "hardware"})
+        self.assertRaises(AllocationError, alloc._allocate,
+                          ResourceRequirements({"type": "hardware"}))
 
     def test_inter_alloc_suc_one_hardware_device_with_undef_allowed_platf(self, mock_logging,
                                                                           mock_dutdetection):
@@ -302,8 +303,8 @@ class TestVerify(unittest.TestCase):
         with self.assertRaises(ResourceInitError):
             self.assertIsNone(init_process_dut(con_list, conf, 1, mock.MagicMock()))
 
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutSerial")
-    def test_init_hw_dut(self, mock_ds, mock_logging, mock_dutdetection):
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutMbed")
+    def test_init_mbed_dut(self, mock_ds, mock_logging, mock_dutdetection):
         conf = {"allocated": {"serial_port": "port", "baud_rate": 115200,
                               "platform_name": "test", "target_id": "id"},
                 "application": {"bin": "binary"}}
@@ -335,15 +336,15 @@ class TestVerify(unittest.TestCase):
             mock_cfn = mock.MagicMock()
             mock_cfn.return_value = True
             mock_ds.return_value = dut1
-            init_hardware_dut(con_list, conf, 1, args)
+            init_mbed_dut(con_list, conf, 1, args)
 
             with self.assertRaises(ResourceInitError):
-                init_hardware_dut(con_list, conf, 1, args)
+                init_mbed_dut(con_list, conf, 1, args)
             dut1.close_dut.assert_called()
             dut1.close_connection.assert_called()
 
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutSerial")
-    def test_init_hw_dut_skip_flash(self, mock_ds, mock_logging, mock_dutdetection):
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutMbed")
+    def test_init_mbed_dut_skip_flash(self, mock_ds, mock_logging, mock_dutdetection):
         conf = {"allocated": {"serial_port": "port", "baud_rate": 115200,
                               "platform_name": "test", "target_id": "id"},
                 "application": {"bin": "binary"}}
@@ -375,11 +376,11 @@ class TestVerify(unittest.TestCase):
             mock_cfn = mock.MagicMock()
             mock_cfn.return_value = True
             mock_ds.return_value = dut1
-            init_hardware_dut(con_list, conf, 1, args)
+            init_mbed_dut(con_list, conf, 1, args)
             dut1.flash.assert_not_called()
 
-    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutSerial")
-    def test_init_hw_dut_nondefault_baud_rate(self, mock_ds, mock_logging, mock_dutdetection):
+    @mock.patch("icetea_lib.Plugin.plugins.LocalAllocator.LocalAllocator.DutMbed")
+    def test_init_mbed_dut_nondefault_baud_rate(self, mock_ds, mock_logging, mock_dutdetection):
         conf = {"allocated": {"serial_port": "port", "baud_rate": 115200,
                               "platform_name": "test", "target_id": "id"},
                 "application": {"bin": "binary", "baudrate": 9600}}
@@ -413,7 +414,7 @@ class TestVerify(unittest.TestCase):
             mock_cfn = mock.MagicMock()
             mock_cfn.return_value = True
             mock_ds.return_value = dut1
-            init_hardware_dut(con_list, conf, 1, args)
+            init_mbed_dut(con_list, conf, 1, args)
             mock_ds.assert_called_once_with(baudrate=9600,
                                             ch_mode_config={'ch_mode_ch_delay': True,
                                                             'ch_mode': True,
