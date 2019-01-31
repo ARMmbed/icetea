@@ -85,8 +85,13 @@
                                     "type": "string",
                                     "enum": [
                                         "hardware",
-                                        "process"
+                                        "process",
+                                        "serial",
+                                        "mbed"
                                     ]
+                                },
+                                "serial_port": {
+                                    "type": "string"
                                 },
                                 "allowed_platforms": {
                                     "type": "array",
