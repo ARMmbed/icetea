@@ -64,6 +64,7 @@ class ReportHtml(ReportBase):
         doc.asis('<!DOCTYPE html>')
         heads["Date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         heads["Pass rate"] = self.results.pass_rate()
+        heads["Pass rate excluding retries"] = self.results.pass_rate(include_retries=False)
 
         with tag('html'):
             with tag('head'):
@@ -127,6 +128,8 @@ class ReportHtml(ReportBase):
                         with tag('th'):
                             text("Skip Reason")
                         with tag('th'):
+                            text("Retried")
+                        with tag('th'):
                             text("Duration")
                     for result in self.results:
                         if result.success:
@@ -151,6 +154,8 @@ class ReportHtml(ReportBase):
                                 text(hex_escape_str(result.fail_reason))
                             with tag('td', width="300px"):
                                 text(result.skip_reason if result.skipped() else "")
+                            with tag('td', width="50px"):
+                                text("Yes" if result.retries_left != 0 else "No")
                             with tag('td', width="100px"):
                                 text(str(result.duration))
                         with tag('tr', klass='info hidden'):

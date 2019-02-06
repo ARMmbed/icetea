@@ -162,6 +162,8 @@ class TestSuite(object):
                 if not isinstance(result, ResultList):
                     result.build_result_metadata(args=self.args)
                 self._results.append(result)
+                if isinstance(result, ResultList):
+                    result = self._results.get(len(self._results) - 1)
                 if self.args.stop_on_failure and result.get_verdict() not in ['pass', 'skip']:
                     # Stopping run on failure,
                     self.logger.info("Test case %s failed or was inconclusive, "
@@ -171,6 +173,7 @@ class TestSuite(object):
                     break
                 if result.get_verdict() == 'pass':
                     self.logger.info("Test case %s passed.\n", test.get_name())
+                    result.retries_left = 0
                     break
                 if result.get_verdict() == 'skip':
                     iteration = iterations
@@ -180,6 +183,7 @@ class TestSuite(object):
                 elif retries > 0:
                     if retryreason == "includeFailures" or (retryreason == "inconclusive"
                                                             and result.inconclusive):
+
                         self.logger.error("Testcase %s failed, %d "
                                           "retries left.\n", test.get_name(), retries)
                         retries -= 1
