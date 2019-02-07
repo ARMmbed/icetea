@@ -38,6 +38,8 @@ all the required keys for the suite. These keys are:
           If both this key and the "default" key contain the same keys,
           the values in this object will overwrite
           the ones defined in "default".
+**NOTE**: If the object contains duplicate keys when it's read, Icetea will fail and exit
+the run.
 
 ******************
 Example suite file

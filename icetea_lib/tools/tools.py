@@ -514,6 +514,23 @@ def initLogger(name):  # pylint: disable=invalid-name
     return logger
 
 
+def find_duplicate_keys(data):
+    """
+    Find duplicate keys in a layer of ordered pairs. Intended as the object_pairs_hook callable
+    for json.load or loads.
+
+    :param data: ordered pairs
+    :return: Dictionary with no duplicate keys
+    :raises ValueError if duplicate keys are found
+    """
+    out_dict = {}
+    for key, value in data:
+        if key in out_dict:
+            raise ValueError("Duplicate key: {}".format(key))
+        out_dict[key] = value
+    return out_dict
+
+
 class Singleton(type):
     """
     Singleton metaclass implementation:

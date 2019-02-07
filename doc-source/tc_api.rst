@@ -475,6 +475,8 @@ into the existing set. Example of a tc_cfg file is shown below: ::
         }
     }
 
+**NOTE**: If the object that is read from a test case configuration file contains duplicate keys,
+ Icetea will fail and exit.
 
 *************************
 Environment configuration
@@ -494,6 +496,9 @@ defaults to the following dictionary: ::
     }
 
 This merge is done at the start of the test case.
+
+**NOTE**: If the object that is read from an environment configuration file contains duplicate
+keys, Icetea will fail and exit.
 
 *******************************
 Full code example with comments

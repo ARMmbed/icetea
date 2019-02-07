@@ -26,6 +26,7 @@ from pydash import get
 import icetea_lib.LogManager as LogManager
 from icetea_lib.TestStepError import TestStepError
 from icetea_lib.TestStepError import InconclusiveError
+from icetea_lib.tools.tools import find_duplicate_keys
 
 
 class Configurations(object):
@@ -263,7 +264,12 @@ class Configurations(object):
                                                             "env_cfg_json"))
         if os.path.exists(env_cfg_filename):
             with open(env_cfg_filename) as data_file:
-                data = json.load(data_file)
+                try:
+                    data = json.load(data_file, object_pairs_hook=find_duplicate_keys)
+                except ValueError as error:
+                    self._logger.error(error)
+                    raise InconclusiveError("Environment file {} read failed: {}".format(
+                        env_cfg_filename, error))
         elif env_cfg != '':
             raise InconclusiveError('Environment file {} does not exist'.format(env_cfg))
 
@@ -297,12 +303,12 @@ class Configurations(object):
                     "Execution configuration file {} does not exist.".format(tc_cfg))
             with open(tc_cfg) as data_file:
                 try:
-                    data = json.load(data_file)
+                    data = json.load(data_file, object_pairs_hook=find_duplicate_keys)
                     self._config = merge(self._config, data)
                 except Exception as error:
                     self._logger.error("Testcase configuration read from file (%s) failed!", tc_cfg)
                     self._logger.error(error)
-                    raise TestStepError("TC CFG read fail!")
+                    raise TestStepError("TC CFG read fail! {}".format(error))
 
         if args.type:
             self._config["requirements"]["duts"]["*"] = merge(
