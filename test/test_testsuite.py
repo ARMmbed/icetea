@@ -201,7 +201,7 @@ class TestSuiteTestcase(unittest.TestCase):
 
     def test_get_suite_files(self):
         lst = TestSuite.get_suite_files("./test/suites")
-        self.assertEqual(len(lst), 5)
+        self.assertEqual(len(lst), 6)
 
     def test_load_suite_list(self):
         self.args_tc.tc = "tc_no_exist"
@@ -363,6 +363,11 @@ class TestSuiteTestcase(unittest.TestCase):
             mock_cm.get_suite = mock.MagicMock()
             mock_cm.get_suite.return_value = None
             self.assertIsNone(suit._load_suite_file("name", "dir"))
+
+    def test_load_suite_with_duplicate_configs(self):  # pylint: disable=invalid-name
+        self.args_suite.suite = "duplicates_suite.json"
+        with self.assertRaises(SuiteException):
+            suit = TestSuite(args=self.args_suite)  # pylint: disable=unused-variable
 
 
 if __name__ == '__main__':
