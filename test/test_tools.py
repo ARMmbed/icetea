@@ -13,6 +13,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import json
 import unittest
 import sys
 import os
@@ -123,3 +124,13 @@ class TestTools(unittest.TestCase):
         mock_str.decode = mock.MagicMock(side_effect=[UnicodeDecodeError])
         with self.assertRaises(TypeError):
             tools.strip_escape(mock_str)
+
+    def test_json_duplicate_keys(self):
+        dict1 = '{"x": "1", "y": "1", "x": "2"}'
+        with self.assertRaises(ValueError):
+            json.loads(dict1, object_pairs_hook=tools.find_duplicate_keys)
+
+        dict2 = '{"x": "1", "y": {"x": "2"}}'
+        expected = {"y": {"x": "2"}, "x": "1"}
+        self.assertDictEqual(json.loads(dict2, object_pairs_hook=tools.find_duplicate_keys),
+                             expected)
