@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring
+# pylint: disable=missing-docstring,too-many-statements
 
 """
 Copyright 2017 ARM Limited
@@ -25,9 +25,8 @@ from icetea_lib.Result import Result
 from icetea_lib.ResultList import ResultList
 
 
-class ResultTestcase(unittest.TestCase):
+class ResultListTestcase(unittest.TestCase):
 
-    # RESULTLIST TESTCASES
     def setUp(self):
         self.args_tc = argparse.Namespace(
             available=False, version=False, bin=None, binary=False, channel=None,
@@ -80,7 +79,250 @@ class ResultTestcase(unittest.TestCase):
         reslist.append(res2)
         self.assertEquals(reslist.get_verdict(), "fail")
 
-    # RESULT TESTCASES
+    def test_get_summary(self):
+        expected = {"count": 3,
+                    "pass": 1,
+                    "fail": 1,
+                    "skip": 0,
+                    "inconclusive": 1,
+                    "retries": 1,
+                    "duration": 10}
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res3 = Result()
+        res3.set_verdict("inconclusive", 4, 5)
+        res3.retries_left = 1
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        self.assertDictEqual(resultlist.get_summary(), expected)
+
+    def test_inconc_count(self):
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res3 = Result()
+        res3.set_verdict("inconclusive", 4, 5)
+        res3.retries_left = 1
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        self.assertEqual(resultlist.inconclusive_count(), 1)
+        res4 = Result()
+        res4.set_verdict("inconclusive", 4, 5)
+        resultlist.append(res4)
+        self.assertEqual(resultlist.inconclusive_count(), 2)
+
+    def test_pass_count(self):
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res3 = Result()
+        res3.set_verdict("inconclusive", 4, 5)
+        res3.retries_left = 1
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        self.assertEqual(resultlist.success_count(), 1)
+        res4 = Result()
+        res4.set_verdict("pass", 4, 5)
+        resultlist.append(res4)
+        self.assertEqual(resultlist.success_count(), 2)
+
+    def test_fail_count(self):
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res3 = Result()
+        res3.set_verdict("inconclusive", 4, 5)
+        res3.retries_left = 1
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        self.assertEqual(resultlist.failure_count(), 1)
+        res4 = Result()
+        res4.set_verdict("fail", 4, 5)
+        resultlist.append(res4)
+        self.assertEqual(resultlist.failure_count(), 2)
+
+    def test_retries_count(self):
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res3 = Result()
+        res3.set_verdict("inconclusive", 4, 5)
+        res3.retries_left = 1
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        self.assertEqual(resultlist.retry_count(), 1)
+        res4 = Result()
+        res4.set_verdict("inconclusive", 4, 5)
+        resultlist.append(res4)
+        self.assertEqual(resultlist.retry_count(), 1)
+
+    def test_clean_fails(self):
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        res.set_verdict(verdict="pass", retcode=0, duration=0)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res3 = Result()
+        res3.set_verdict("inconclusive", 4, 5)
+        res3.retries_left = 1
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        res4 = Result()
+        res4.set_verdict("inconclusive", 4, 5)
+        resultlist.append(res4)
+        self.assertTrue(resultlist.clean_fails())
+
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        res.set_verdict(verdict="pass", retcode=0, duration=0)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res2.retries_left = 1
+        res3 = Result()
+        res3.set_verdict("fail", 4, 5)
+        res3.retries_left = 0
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        res4 = Result()
+        res4.set_verdict("inconclusive", 4, 5)
+        resultlist.append(res4)
+        self.assertTrue(resultlist.clean_fails())
+
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        res.set_verdict(verdict="pass", retcode=0, duration=0)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res2.retries_left = 1
+        res3 = Result()
+        res3.set_verdict("pass", 4, 5)
+        res3.retries_left = 0
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        res4 = Result()
+        res4.set_verdict("inconclusive", 4, 5)
+        resultlist.append(res4)
+        self.assertFalse(resultlist.clean_fails())
+
+    def test_clean_inconcs(self):
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        res.set_verdict(verdict="pass", retcode=0, duration=0)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res3 = Result()
+        res3.set_verdict("inconclusive", 4, 5)
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        self.assertTrue(resultlist.clean_inconcs())
+
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        res.set_verdict(verdict="pass", retcode=0, duration=0)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res2.retries_left = 1
+        res3 = Result()
+        res3.set_verdict("inconclusive", 4, 5)
+        res3.retries_left = 1
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        res4 = Result()
+        res4.set_verdict("inconclusive", 4, 5)
+        resultlist.append(res4)
+        self.assertTrue(resultlist.clean_inconcs())
+
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        res.set_verdict(verdict="pass", retcode=0, duration=0)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="inconclusive", retcode=1, duration=5)
+        res2.retries_left = 1
+        res3 = Result()
+        res3.set_verdict("pass", 4, 5)
+        res3.retries_left = 0
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        self.assertFalse(resultlist.clean_inconcs())
+
+    def test_pass_rate(self):
+        dictionary = {"retcode": 0}
+        res = Result(kwargs=dictionary)
+        res.set_verdict(verdict="pass", retcode=0, duration=0)
+        dictionary = {"retcode": 1}
+        res2 = Result(kwargs=dictionary)
+        res2.set_verdict(verdict="fail", retcode=1, duration=5)
+        res3 = Result()
+        res3.set_verdict("inconclusive", 4, 5)
+        res4 = Result(kwargs=dictionary)
+        res4.set_verdict(verdict="skip", retcode=1, duration=5)
+        resultlist = ResultList()
+        resultlist.append(res)
+        resultlist.append(res2)
+        resultlist.append(res3)
+        self.assertEquals(resultlist.pass_rate(), "50.00 %")
+        self.assertEquals(resultlist.pass_rate(include_inconclusive=True), "33.33 %")
+        self.assertEquals(resultlist.pass_rate(include_skips=True), "50.00 %")
+        resultlist.append(res4)
+        self.assertEquals(resultlist.pass_rate(include_skips=True, include_inconclusive=True),
+                          "25.00 %")
+
+
+class ResultTestcase(unittest.TestCase):
+
+    def setUp(self):
+        self.args_tc = argparse.Namespace(
+            available=False, version=False, bin=None, binary=False, channel=None,
+            clean=False, cloud=False, component=False, device='*', gdb=None,
+            gdbs=None, gdbs_port=2345, group=False, iface=None, kill_putty=False, list=False,
+            listsuites=False, log='./log', my_duts=None, nobuf=None, pause_when_external_dut=False,
+            putty=False, reset=False, silent=True, skip_case=False,
+            skip_rampdown=False, skip_rampup=False, platform=None,
+            status=False, suite=None, tc="test_cmdline", tc_cfg=None,
+            tcdir="examples", testtype=False, type="process",
+            subtype=None, use_sniffer=False, valgrind=False,
+            valgrind_tool=None, verbose=False, repeat=0, feature=None,
+            suitedir="./test/suites", forceflash_once=True, forceflash=False,
+            stop_on_failure=False, json=False)
 
     def test_init(self):
         dictionary = {"retcode": 0}
