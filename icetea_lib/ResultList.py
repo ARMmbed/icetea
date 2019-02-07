@@ -34,9 +34,19 @@ class ResultList(Iterator):
         self.data = []
         self.index = 0
 
+    def get(self, index=0):
+        """
+        Get object with index index.
+
+        :param index: int
+        :return: Result
+        """
+        return self.data[index]
+
     def append(self, result):
         """
-        Append a new Result to the list
+        Append a new Result to the list.
+
         :param result: Result to append
         :return: Nothing
         :raises: TypeError if result is not Result or ResultList
@@ -129,6 +139,15 @@ class ResultList(Iterator):
                              "unknown"])
         return inconc_count + unknown_count
 
+    def retry_count(self):
+        """
+        Amount of retried test cases in this list.
+
+        :return: integer
+        """
+        retries = len([i for i, result in enumerate(self.data) if result.retries_left > 0])
+        return retries
+
     def skip_count(self):
         """
         Amount of skipped test cases in this list.
@@ -136,6 +155,28 @@ class ResultList(Iterator):
         :return: integer
         """
         return len([i for i, result in enumerate(self.data) if result.skip])
+
+    def clean_fails(self):
+        """
+        Check if there are any fails that were not subsequently retried.
+
+        :return: Boolean
+        """
+        for item in self.data:
+            if item.failure and not item.retries_left > 0:
+                return True
+        return False
+
+    def clean_inconcs(self):
+        """
+        Check if there are any inconclusives or uknowns that were not subsequently retried.
+
+        :return: Boolean
+        """
+        for item in self.data:
+            if (item.inconclusive or item.get_verdict() == "unknown") and not item.retries_left > 0:
+                return True
+        return False
 
     @property
     def skipped(self):
@@ -199,7 +240,7 @@ class ResultList(Iterator):
         durations = [result.duration for result in self.data]
         return sum(durations)
 
-    def pass_rate(self, include_skips=False, include_inconclusive=False):
+    def pass_rate(self, include_skips=False, include_inconclusive=False, include_retries=True):
         """
         Calculate pass rate for tests in this list.
 
@@ -210,18 +251,30 @@ class ResultList(Iterator):
         """
         total = self.count()
         success = self.success_count()
+        retries = self.retry_count()
         try:
-            if include_inconclusive and include_skips:
+            if include_inconclusive and include_skips and include_retries:
                 val = 100.0*success/total
-            elif include_inconclusive:
+            elif include_inconclusive and include_skips and not include_retries:
+                val = 100.0 * success / (total - retries)
+            elif include_skips and include_retries and not include_inconclusive:
                 inconcs = self.inconclusive_count()
-                val = 100.0*success/(total-inconcs)
-            elif include_skips:
+                val = 100.0 * success / (total - inconcs)
+            elif include_skips and not include_retries and not include_inconclusive:
+                inconcs = self.inconclusive_count()
+                val = 100.0 * success / (total - inconcs - retries)
+            elif include_inconclusive and include_retries and not include_skips:
                 skipped = self.skip_count()
-                val = 100.0*success/(total-skipped)
-            else:
+                val = 100.0 * success / (total - skipped)
+            elif include_inconclusive and not include_retries and not include_skips:
+                skipped = self.skip_count()
+                val = 100.0 * success / (total - skipped - retries)
+            elif not include_inconclusive and not include_skips and include_retries:
                 failures = self.failure_count()
-                val = 100.0*success/(failures+success)
+                val = 100.0 * success / (failures + success)
+            else:
+                failures = self.clean_fails()
+                val = 100.0 * success / (failures + success)
         except ZeroDivisionError:
             val = 0
         return format(val, '.2f') + " %"
@@ -238,7 +291,8 @@ class ResultList(Iterator):
             "fail": self.failure_count(),
             "skip": self.skip_count(),
             "inconclusive": self.inconclusive_count(),
-            "duration": self.total_duration(),
+            "retries": self.retry_count(),
+            "duration": self.total_duration()
         }
 
     def count(self):
