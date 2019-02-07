@@ -171,7 +171,7 @@ class CloudTestcase(unittest.TestCase):
             def provider(self):
                 return {"name": "this_is_provider", "id": "123456abcdef", "ver": "1.0.0"}
 
-            def as_dict(self):
+            def as_dict(self):  # pylint: disable=no-self-use
                 return {"model": "K64F",
                         "sn": "123",
                         "provider": {"name": "this_is_provider",

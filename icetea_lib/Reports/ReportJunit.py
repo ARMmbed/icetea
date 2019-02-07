@@ -159,12 +159,12 @@ class ReportJunit(ReportBase):
                         with tag('skipped'):
                             text(result.skip_reason)
                     elif result.was_inconclusive():
-                        with tag('error', message=xml_escape_str(
-                                hex_escape_str(result.fail_reason))):
+                        with tag('error',
+                                 message=xml_escape_str(hex_escape_str(result.fail_reason))):
                             text(result.stderr)
                     else:
-                        with tag('failure', message=xml_escape_str(
-                                hex_escape_str(result.fail_reason))):
+                        with tag('failure',
+                                 message=xml_escape_str(hex_escape_str(result.fail_reason))):
                             text(result.stderr)
         return indent(
             doc.getvalue(),
