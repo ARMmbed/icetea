@@ -121,11 +121,16 @@ class IceteaManagerTestcase(unittest.TestCase):
 
     def test_list_suites(self):
         table = IceteaManager.list_suites(suitedir="./test/suites")
-        tab = "+------------------------+\n|    Testcase suites     " \
-              "|\n+------------------------+\n" \
-              "|    dummy_suite.json    |\n|   failing_suite.json   |\n|  malformed_suite.json  " \
-              "|\n| suite_missing_one.json |\n|   working_suite.json   |\n" \
-              "+------------------------+"
+        tab = u'+------------------------+\n' \
+              u'|    Testcase suites     |\n' \
+              u'+------------------------+\n' \
+              u'|    dummy_suite.json    |\n' \
+              u'| duplicates_suite.json  |\n' \
+              u'|   failing_suite.json   |\n' \
+              u'|  malformed_suite.json  |\n' \
+              u'| suite_missing_one.json |\n' \
+              u'|   working_suite.json   |\n' \
+              u'+------------------------+'
         self.assertEqual(table.get_string(), tab)
 
     @mock.patch("icetea_lib.IceteaManager._cleanlogs")
