@@ -102,6 +102,14 @@ class DutInformationList(object):
             return None
         return self.dutinformations[index]
 
+    def get_objects(self):
+        """
+        Get DutInformation objects as a list of dictionaries.
+
+        :return: list
+        """
+        return [info.as_dict() for info in self.dutinformations]
+
     def get_uniq_string_dutmodels(self):
         """
         Gets a string of dut models in this TC.
@@ -142,6 +150,50 @@ class DutInformationList(object):
                 resids.append(info.resource_id)
             return resids
         return "unknown"
+
+    def get_list_provider_field(self, field):
+        """Get a list of provider values from DutInformation objects in this list.
+
+        :param field: Field name
+        :type field: str
+        :return: list
+        """
+        providers = self.get_dut_providers()
+        field_list = []
+        for info in providers:
+            if info and info.get(field):
+                field_list.append(info.get(field))
+            else:
+                field_list.append("")
+        return field_list
+
+    def get_dut_providers(self):
+        """
+        Get a list of provider dictionaries from DutInformation objects
+        :return: dict
+        """
+        return [info.provider for info in self.dutinformations]
+
+    def get_string_provider_versions(self):
+        """
+        Get a string representation of provider version numbers for this list
+        :return: str
+        """
+        return ",".join(self.get_list_provider_field("ver"))
+
+    def get_string_provider_ids(self):
+        """
+        Get a string representation of provider ids for this list
+        :return: str
+        """
+        return ",".join(self.get_list_provider_field("id"))
+
+    def get_string_provider_names(self):
+        """
+        Get a string representation of provider names for this list
+        :return: str
+        """
+        return ",".join(self.get_list_provider_field("name"))
 
     def append(self, dutinfo):
         """

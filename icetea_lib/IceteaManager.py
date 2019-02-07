@@ -250,7 +250,8 @@ class IceteaManager(object):
             if self.args.cloud:
                 testsuite.update_testcases()
             testcases = testsuite.list_testcases()
-            print(testcases)
+            if testcases:
+                print(testcases)
             return retcodesummary
 
         results = self.runtestsuite(testsuite=testsuite)
@@ -279,7 +280,10 @@ class IceteaManager(object):
         # pylint: disable=W0106
         [handler.flush() for handler in self.logger.handlers]
         results.save(heads={'Build': '', 'Branch': self.args.branch})
-        sys.stdout.flush()
+        try:
+            sys.stdout.flush()
+        except IOError:
+            pass
         self._cleanup_resourceprovider()
         return results
 

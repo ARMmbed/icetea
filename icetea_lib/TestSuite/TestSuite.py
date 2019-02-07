@@ -32,6 +32,7 @@ from icetea_lib.ResultList import ResultList
 from icetea_lib.TestSuite.TestcaseContainer import TestStatus, DummyContainer
 from icetea_lib.TestSuite.TestcaseList import TestcaseList
 from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter
+from icetea_lib.ReturnCodes import ReturnCodes
 from icetea_lib.tools.tools import find_duplicate_keys
 
 
@@ -123,7 +124,10 @@ class TestSuite(object):
                         self.logger.error("Test run aborted.")
                         self.status = TestStatus.FINISHED
                         return self._results
-                    self._upload_results(result)
+                    try:
+                        self._upload_results(result)
+                    except Exception:  # pylint: disable=broad-except
+                        self.logger.exception("Failed while sending results to the cloud db.")
                 if result and result.get_verdict() not in ['pass',
                                                            'skip'] and self.args.stop_on_failure:
                     break
@@ -165,6 +169,7 @@ class TestSuite(object):
                 self._results.append(result)
                 if isinstance(result, ResultList):
                     result = self._results.get(len(self._results) - 1)
+                self.logger.info("Test case verdict: %s", result.get_verdict().upper())
                 if self.args.stop_on_failure and result.get_verdict() not in ['pass', 'skip']:
                     # Stopping run on failure,
                     self.logger.info("Test case %s failed or was inconclusive, "
@@ -185,10 +190,16 @@ class TestSuite(object):
                     if retryreason == "includeFailures" or (retryreason == "inconclusive"
                                                             and result.inconclusive):
 
+                        if result.retcode == ReturnCodes.RETCODE_FAIL_TC_NOT_FOUND:
+                            result.retries_left = 0
+                            break
                         self.logger.error("Testcase %s failed, %d "
                                           "retries left.\n", test.get_name(), retries)
                         retries -= 1
-                        self._upload_results(result)
+                        try:
+                            self._upload_results(result)
+                        except Exception:  # pylint: disable=broad-except
+                            self.logger.exception("Failed while sending result to cloud db.")
                         continue
                     else:
                         result.retries_left = 0
@@ -253,16 +264,15 @@ class TestSuite(object):
                 if self.args.export:
                     self._create_suite_file(testcases, self.args.export)
                 return json.dumps(testcases)
-            else:
-                self._create_rows_for_table(testcases)
-                from prettytable import PrettyTable
-                table = PrettyTable(
-                    ["Index", "Name", "Status", "Type", "Subtype", "Group", "Component",
-                     "Feature", "Allowed platforms"])
-                table.align["Index"] = "l"
-                for row in testcases:
-                    table.add_row(row)
-                return table
+            self._create_rows_for_table(testcases)
+            from prettytable import PrettyTable
+            table = PrettyTable(
+                ["Index", "Name", "Status", "Type", "Subtype", "Group", "Component",
+                 "Feature", "Allowed platforms"])
+            table.align["Index"] = "l"
+            for row in testcases:
+                table.add_row(row)
+            return table
         except TypeError:
             self.logger.error("Error, print_list_testcases: error during iteration.")
             return None

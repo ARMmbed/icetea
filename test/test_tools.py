@@ -65,6 +65,19 @@ class TestTools(unittest.TestCase):
         converted = tools.hex_escape_str(failing_message)
         self.assertEqual(converted, success_message)
 
+    def test_xml_escape(self):
+        failing_message = "aa"
+        success_message = "aa"
+
+        converted = tools.xml_escape_str(failing_message)
+        self.assertEqual(converted, success_message)
+
+        failing_message = "a < & > a"
+        success_message = "a &lt; &amp; &gt; a"
+
+        converted = tools.xml_escape_str(failing_message)
+        self.assertEqual(converted, success_message)
+
     def test_get_fw_version(self):
         version = None
         try:

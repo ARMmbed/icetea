@@ -25,9 +25,11 @@ from sys import platform as _platform
 import platform
 import re
 import string
+from xml.sax.saxutils import escape
 
 from pkg_resources import require, DistributionNotFound
 from six import iteritems
+
 
 try:
     from queue import Empty
@@ -494,6 +496,21 @@ def test_methods(target, test_filter=is_test):
         return callable(getattr(target, method_name))
     return [method_name for method_name in dir(target) if
             test_filter(method_name) and is_fnc(method_name)]
+
+def xml_escape_str(original_str):
+    # pylint: disable=line-too-long
+    """
+    Escape illegal xml chars from string.
+    Source for regex is:
+    https://stackoverflow.com/questions/1707890/fast-way-to-filter-illegal-xml-unicode-chars-in-python
+
+    :param original_str: Original string data
+    :return: Escaped data
+    """
+    original_str = escape(original_str)
+    illegal_xml_re = re.compile(
+        u'[\x00-\x08\x0b-\x1f\x7f-\x84\x86-\x9f\ud800-\udfff\ufdd0-\ufddf\ufffe-\uffff]')
+    return illegal_xml_re.sub('', original_str)
 
 
 def initLogger(name):  # pylint: disable=invalid-name

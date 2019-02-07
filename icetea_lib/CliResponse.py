@@ -64,6 +64,11 @@ class CliResponse(object):
         """
         return self.retcode != 0
 
+    def __getitem__(self, i):
+        if self.parsed:
+            return self.parsed[i]
+        return None
+
     # verify that response message is expected
     def verify_message(self, expected_response, break_in_fail=True):
         """

@@ -77,6 +77,15 @@ def create_result_object(result):
     if len(result.dut_models) == 1 and len(result.dut_resource_id) == 1:
         _result["exec"]["dut"]["sn"] = result.dut_resource_id[0]
 
+    if result.dut_providers:
+        _result["exec"]["dut"]["provider"] = {"name": result.dut_provider_name,
+                                              "ver": result.dut_provider_versions,
+                                              "id": result.dut_provider_ids}
+    # Generate duts-array
+    duts = result.get_dut_objects()
+    if duts:
+        _result["exec"]["duts"] = duts
+
     return remove_empty_from_dict(_result)
 
 
@@ -200,22 +209,19 @@ class Cloud(object):
         # Parse host and port from combined host
         if host is None:
             host = self._resolve_host()
-        host, port = self._find_port(host)
 
         # Ensure result converter has an implementation
         resconv = result_converter
         if resconv is None:
-            if self.args and self.args.with_logs:
-                resconv = create_result_object_with_logs
-            else:
-                resconv = create_result_object
+            resconv = create_result_object_with_logs if (
+                self.args and self.args.with_logs) else create_result_object
 
         # Ensure testcase converter has an implementation
         tc_conv = tc_converter if tc_converter else self._convert_to_db_tc_metadata
 
         # Setup client
         try:
-            self._client = self.module.create(host, port, resconv, tc_conv)
+            self._client = self.module.create(host, None, resconv, tc_conv)
             self._client.set_logger(logger)
         except AttributeError:
             raise ImportError("Cloud module was imported but it does not "
@@ -239,23 +245,6 @@ class Cloud(object):
             _host = os.environ.get("ICETEA_CLOUD_HOST", "localhost:3000")
 
         return _host
-
-    def _find_port(self, host):  # pylint: disable=no-self-use
-        """
-        Finds port number from host. Defaults to 3000 if not found
-        :param host: host as string
-        :return: (host, port)
-        """
-        ind = host.rfind(":")
-        if ind != -1:
-            try:
-                port = int(host[ind + 1:])
-                host = host[:ind]
-            except ValueError:
-                port = 3000
-        else:
-            port = 3000
-        return host, port
 
     def get_suite(self, suite, options=''):
         """
@@ -311,8 +300,6 @@ class Cloud(object):
             if self.logger is not None:
                 self.logger.info("Server didn't respond or client initialization has failed.")
             return None
-
-
 
 
 if __name__ == '__main__':

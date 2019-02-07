@@ -528,6 +528,61 @@ class Result(object):  # pylint: disable=too-many-instance-attributes,too-many-p
         """
         return self.dutinformation.get_uniq_list_dutmodels()
 
+    @property
+    def dut_provider_versions(self):
+        """
+        Get string of comma separated provider version from duts.
+        :return: str
+        """
+        return self.dutinformation.get_string_provider_versions()
+
+    @property
+    def dut_provider_version(self):
+        """
+        Get version of the provider of the first dut in DutInformationList.
+        :return: str
+        """
+        return self.dutinformation.get_list_provider_field("ver")[0]
+
+    @property
+    def dut_provider_ids(self):
+        """
+        Get ids of dut providers as a string with commas separating the elements.
+        :return: str
+        """
+        return self.dutinformation.get_string_provider_ids()
+
+    @property
+    def dut_provider_names(self):
+        """
+        Get names of dut providers as a string with commas separating the elements.
+        :return: str
+        """
+        return self.dutinformation.get_string_provider_names()
+
+    @property
+    def dut_provider_name(self):
+        """
+        Get name of the provider of the first dut in DutInformationList
+        :return: str
+        """
+        return self.dutinformation.get_list_provider_field("name")[0]
+
+    @property
+    def dut_providers(self):
+        """
+        Get dictionary objects that contain dut provider information
+        :return: list
+        """
+        return self.dutinformation.get_dut_providers()
+
+    def get_dut_objects(self):
+        """
+        Get DutInformation objects as dictionaries inside a list.
+        :return: list
+        """
+        return self.dutinformation.get_objects()
+
     def get_duration(self, seconds=False):
         """
         Get test case duration.

@@ -48,17 +48,3 @@ class TestVerify(unittest.TestCase):
 
         with self.assertRaises(LookupError):
             self.assertTrue(response.verify_trace(['oop eli']))
-
-    def test_traces_deprecated(self):
-        response = CliResponse()
-        response.traces = [
-            'aapeli',
-            'beeveli',
-            'oopeli',
-            'huhheli']
-        self.assertTrue(response.verify_trace(['oopeli'], False))
-        self.assertTrue(response.verify_trace(['oopeli', 'huhheli'], False))
-        self.assertFalse(response.verify_trace(['huhheli', 'oopeli'], False))
-
-        with self.assertRaises(LookupError):
-            self.assertTrue(response.verify_trace(['oop eli']))

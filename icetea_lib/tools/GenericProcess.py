@@ -36,7 +36,9 @@ class StreamDescriptor(object):  # pylint: disable=too-few-public-methods
         self.stream = stream
         self.buf = ""
         self.read_queue = deque()  # pylint: disable=invalid-name
+        self.rq_lock = Lock()
         self.has_error = False
+        self.error = None
         self.callback = callback
 
 
@@ -47,6 +49,7 @@ class NonBlockingStreamReader(object):
     _instance = None
     _streams = None
     _stream_mtx = None
+    _read_mtx = None
     _rt = None
     _run_flag = False
 
@@ -55,6 +58,7 @@ class NonBlockingStreamReader(object):
         if NonBlockingStreamReader._rt is None:
             NonBlockingStreamReader._streams = []
             NonBlockingStreamReader._stream_mtx = Lock()
+            NonBlockingStreamReader._read_mtx = Lock()
             NonBlockingStreamReader._run_flag = True
             NonBlockingStreamReader._rt = Thread(target=NonBlockingStreamReader.run)
             NonBlockingStreamReader._rt.setDaemon(True)
@@ -94,11 +98,13 @@ class NonBlockingStreamReader(object):
         :param file_descr: file object
         """
         try:
-            line = os.read(file_descr, 1024 * 1024)
-        except OSError:
+            with NonBlockingStreamReader._read_mtx:
+                line = os.read(file_descr, 1024 * 1024)
+        except OSError as error:
             stream_desc = NonBlockingStreamReader._get_sd(file_descr)
             if stream_desc is not None:
                 stream_desc.has_error = True
+                stream_desc.error = error
                 if stream_desc.callback is not None:
                     stream_desc.callback()
             return
@@ -114,16 +120,18 @@ class NonBlockingStreamReader(object):
                     line = line.decode("ascii")
                 except UnicodeDecodeError:
                     line = repr(line)
-            stream_desc.buf += line
-            # Break lines
-            split = stream_desc.buf.split(os.linesep)
-            for line in split[:-1]:
-                stream_desc.read_queue.appendleft(strip_escape(line.strip()))
-                if stream_desc.callback is not None:
-                    stream_desc.callback()
-            # Store the remainded, its either '' if last char was '\n'
-            # or remaining buffer before line end
-            stream_desc.buf = split[-1]
+            with stream_desc.rq_lock:
+                stream_desc.buf += line
+                # Break lines
+                split = stream_desc.buf.split(os.linesep)
+
+                for line in split[:-1]:
+                    stream_desc.read_queue.appendleft(strip_escape(line.strip()))
+                    if stream_desc.callback is not None:
+                        stream_desc.callback()
+                # Store the remainded, its either '' if last char was '\n'
+                # or remaining buffer before line end
+                stream_desc.buf = split[-1]
 
     @staticmethod
     def _read_select_poll(poll):
@@ -145,11 +153,12 @@ class NonBlockingStreamReader(object):
                     # Dut died, signal the processing thread so it notices that no lines coming in
                     stream_descr = NonBlockingStreamReader._get_sd(file_descr)
                     if stream_descr is None:
-                        return # PIPE closed but DUT already disappeared
+                        return  # PIPE closed but DUT already disappeared
                     stream_descr.has_error = True
+                    stream_descr.error = "Dut died."
                     if stream_descr.callback is not None:
                         stream_descr.callback()
-                        return # Force poll object to reregister only alive descriptors
+                        return  # Force poll object to reregister only alive descriptors
 
             # Check if new pipes added, don't need mutext just for reading the size
             # If we will not get it right now, we will at next time
@@ -244,13 +253,20 @@ class NonBlockingStreamReader(object):
         :return: popped line from descriptor queue. None if nothing found
         :raises: RuntimeError if errors happened while reading PIPE
         """
-        if self.has_error():
-            raise RuntimeError("Errors reading PIPE")
         try:
-            return self._descriptor.read_queue.pop()
+            with self._descriptor.rq_lock:
+                return self._descriptor.read_queue.pop()
         except IndexError:
             # No lines in queue
-            pass
+            if self.has_error():
+                self._descriptor.has_error = False
+                message = self._descriptor.error
+
+                if message:
+                    self._descriptor.error = None
+                    raise RuntimeError("File descriptor read raised an "
+                                       "OSError: {}".format(message))
+                raise RuntimeError("Errors reading PIPE. No error message available.")
         return None
 
 

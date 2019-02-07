@@ -28,7 +28,7 @@ from serial import SerialException
 from prettytable import PrettyTable
 
 from icetea_lib.DeviceConnectors.Dut import Dut, DutConnectionError
-from icetea_lib.enhancedserial import EnhancedSerial
+from icetea_lib.tools.enhancedserial import EnhancedSerial
 from icetea_lib.tools.tools import strip_escape, split_by_n
 from icetea_lib.DeviceConnectors.DutInformation import DutInformation
 

@@ -570,18 +570,10 @@ class DummyContainer(TestcaseContainer):
         Static method find_testcases. Returns a DummyContainer with attributes collected from
         function params.
         """
-        dummycontainer = DummyContainer(logger)
-        dummycontainer.tcname = modulename
-        dummycontainer._modulename = modulename
-        dummycontainer.status = TestStatus.PENDING
-        dummycontainer._instance = None
-        dummycontainer._final_configuration = {}
-        dummycontainer._moduleroot = moduleroot
-        dummycontainer._meta_schema = tc_meta_schema
-        dummycontainer._result = None
-        dummycontainer._filepath = path
-        dummycontainer._suiteconfig = suiteconfig if suiteconfig else {}
-        return dummycontainer
+        dummy = DummyContainer(logger)
+        dummy.generate_members(modulename, None, moduleroot, path, tc_meta_schema,
+                               None, suiteconfig)
+        return dummy
 
     def run(self, forceflash=False):
         """

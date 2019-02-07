@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring,protected-access
+# pylint: disable=missing-docstring,protected-access,unused-argument
 
 """
 Copyright 2017 ARM Limited
@@ -125,7 +125,7 @@ class CloudTestcase(unittest.TestCase):
             "retcode": 0,
             "duration": 1,
             "fw_name": "Icetea",
-            "fw_version": "0.10.2"
+            "fw_version": "2.0.0"
         }
         result = Result(test_res)
 
@@ -167,16 +167,29 @@ class CloudTestcase(unittest.TestCase):
             def build(self):
                 return DummyBuild()
 
+            @property
+            def provider(self):
+                return {"name": "this_is_provider", "id": "123456abcdef", "ver": "1.0.0"}
+
+            def as_dict(self):
+                return {"model": "K64F",
+                        "sn": "123",
+                        "provider": {"name": "this_is_provider",
+                                     "id": "123456abcdef",
+                                     "ver": "1.0.0"},
+                        "vendor": ""
+                       }
+
         result.set_dutinformation([DummyDut()])
-        res = create_result_object(result)
-        compare = {
+        result_object = create_result_object(result)
+        subset = {
             'exec': {
                 'verdict': 'pass',
                 'note': 'ohnou',
                 'duration': 1,
                 'env': {
                     'framework': {
-                        'ver': '0.10.2',
+                        'ver': '2.0.0',
                         'name': 'Icetea'
                     }
                 },
@@ -190,9 +203,17 @@ class CloudTestcase(unittest.TestCase):
                 },
                 'dut': {
                     'sn': '123',
-                    'model': 'K64F'
-                }
+                    'model': 'K64F',
+                    'provider': {"name": "this_is_provider", "ver": "1.0.0", "id": "123456abcdef"}
+                },
+                'duts': [{"model": "K64F", "sn": "123",
+                          "provider": {"name": "this_is_provider",
+                                       "id": "123456abcdef",
+                                       "ver": "1.0.0"}
+                         }
+                        ]
+
             },
             'tcid': 'tc_name'
         }
-        self.assertDictContainsSubset(compare, res)
+        self.assertDictContainsSubset(subset, result_object)

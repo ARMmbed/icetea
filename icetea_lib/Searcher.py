@@ -17,10 +17,8 @@ limitations under the License.
 
 import re
 # Python version compatibility fix
-try:
-    basestring
-except NameError:
-    basestring = str  # pylint: disable=invalid-name
+
+from six import string_types
 
 
 class Invert(object):  # pylint: disable=too-few-public-methods
@@ -44,7 +42,7 @@ def find_next(lines, find_str, start_index):
     :return: (boolean, index, line)
     """
     mode = None
-    if isinstance(find_str, basestring):
+    if isinstance(find_str, string_types):
         mode = 'normal'
         message = find_str
     elif isinstance(find_str, Invert):
@@ -73,7 +71,7 @@ def verify_message(lines, expected_response):
     LookUpError through FindNext function.
     """
     position = 0
-    if isinstance(expected_response, basestring):
+    if isinstance(expected_response, string_types):
         expected_response = [expected_response]
     if isinstance(expected_response, set):
         expected_response = list(expected_response)

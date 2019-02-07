@@ -5,7 +5,7 @@ import mock
 
 from serial import SerialException, SerialTimeoutException
 
-from icetea_lib.enhancedserial import EnhancedSerial
+from icetea_lib.tools.enhancedserial import EnhancedSerial
 
 
 class EnhancedSerialTests(unittest.TestCase):

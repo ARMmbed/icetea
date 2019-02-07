@@ -57,7 +57,7 @@ if __name__=='__main__':
 """
 
 from yattag import Doc, indent
-from icetea_lib.tools.tools import hex_escape_str
+from icetea_lib.tools.tools import hex_escape_str, xml_escape_str
 from icetea_lib.Reports.ReportBase import ReportBase
 
 
@@ -159,10 +159,12 @@ class ReportJunit(ReportBase):
                         with tag('skipped'):
                             text(result.skip_reason)
                     elif result.was_inconclusive():
-                        with tag('error', message=hex_escape_str(result.fail_reason)):
+                        with tag('error', message=xml_escape_str(
+                                hex_escape_str(result.fail_reason))):
                             text(result.stderr)
                     else:
-                        with tag('failure', message=hex_escape_str(result.fail_reason)):
+                        with tag('failure', message=xml_escape_str(
+                                hex_escape_str(result.fail_reason))):
                             text(result.stderr)
         return indent(
             doc.getvalue(),

@@ -101,6 +101,7 @@ class Dut(object):  # pylint: disable=too-many-instance-attributes,too-many-publ
         self.init_done = Event()
         self.init_event_matcher = None
         self.init_wait_timeout = None
+        self.error = None
         Dut._dutlist.append(self)
 
     @property
@@ -654,9 +655,12 @@ class Dut(object):  # pylint: disable=too-many-instance-attributes,too-many-publ
                     dut.logger.info(item.cmd, extra={'type': '-->'})
                     try:
                         dut.writeline(item.cmd)
-                    except RuntimeError:
+                    except RuntimeError as error:
                         dut.response_coming_in = -1
                         dut.response_received.set()
+                        dut.prev = item
+                        dut.error = error
+                        dut.logger.error(error)
                         continue
                     dut.prev = item # Save previous command for logging purposes
                     if item.wait:
@@ -669,9 +673,11 @@ class Dut(object):  # pylint: disable=too-many-instance-attributes,too-many-publ
 
                 try:
                     line = dut.readline()
-                except RuntimeError:
+                except RuntimeError as error:
                     dut.response_coming_in = -1
                     dut.response_received.set()
+                    dut.error = error
+                    dut.logger.error(error)
                     continue
                 if line:
                     if dut.store_traces:
@@ -694,8 +700,8 @@ class Dut(object):  # pylint: disable=too-many-instance-attributes,too-many-publ
         """
         try:
             line = self.readline()
-        except RuntimeError:
-            Dut._logger.warning("Failed to read PIPE", extra={'type': '!<-'})
+        except RuntimeError as error:
+            Dut._logger.warning("Failed to read PIPE: {}".format(error), extra={'type': '!<-'})
             return -1
         if line:
             if self.store_traces:
@@ -731,6 +737,8 @@ class Dut(object):  # pylint: disable=too-many-instance-attributes,too-many-publ
         match = re.search(r"retcode\: ([-\d]{1,})", line)
         if match:
             retcode = num(str(match.group(1)))
+            if retcode is None:
+                retcode = -1
 
         match = re.search("cmd tasklet init", line)
         if match:

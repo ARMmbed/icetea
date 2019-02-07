@@ -50,6 +50,13 @@ class DutInfoTestcase(unittest.TestCase):
     def test_get_resourceids(self):
         self.assertListEqual(self.testlist.get_resource_ids(), ['12345', '23456', '34567'])
 
+    def test_get_returns_empty_fields(self):
+        testlist = DutInformationList()
+        dut1 = DutInformation("plat1", "9999", "1")
+        testlist.append(dut1)
+        res = testlist.get_list_provider_field("vendor")
+        self.assertEqual(res[0], "")
+
     def test_cache(self):
         # pylint: disable=W0212
         DutInformationList._cache = dict()
