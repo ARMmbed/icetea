@@ -19,7 +19,8 @@ import os
 import sys
 import unittest
 
-from icetea_lib.arguments import get_parser, get_tc_arguments, get_base_arguments
+from icetea_lib.arguments import get_parser, get_tc_arguments, get_base_arguments, str_arg_to_bool
+from argparse import ArgumentTypeError
 
 
 def _parse_arguments():
@@ -68,6 +69,18 @@ class MyTestCase(unittest.TestCase):
         for arg in ["tcdir", "baudrate", "suitedir"]:
             self.assertTrue(hasattr(args, arg))
         self.assertEqual(args.tcdir, "shouldoverwrite")
+
+    def test_str2bool(self):
+        positives_list = ["y", "Y", "t", "T", "1", "yes", "YES", "True", "true"]
+        negatives_list = ["n", "N", "no", "No", "f", "F", "False", "false", "0"]
+        for bool_to_conv in positives_list:
+            self.assertTrue(str_arg_to_bool(bool_to_conv))
+        for bool_to_conv in negatives_list:
+            self.assertFalse(str_arg_to_bool(bool_to_conv))
+        with self.assertRaises(ArgumentTypeError):
+            str_arg_to_bool("2")
+        with self.assertRaises(ArgumentTypeError):
+            str_arg_to_bool("test")
 
 
 if __name__ == '__main__':
