@@ -13,9 +13,6 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-Testcase for Testcase and Bench, test teardown with invalid command sent to dut.
-Should fail in all cases and cause execution to skip case and go to from setup to teardown.
 """
 
 from icetea_lib.bench import Bench
