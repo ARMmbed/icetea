@@ -432,3 +432,19 @@ class LoadFromFile(argparse.Action):  # pylint: disable=too-few-public-methods
                     del data[index+1]
                     del data[index]
             parser.parse_args(data, namespace)
+
+
+def str_arg_to_bool(value):
+    """
+    Convert string argument into a boolean values.
+    :param value: str value to convert. Allowed values are y, yes, true, 1, t, n, no, false, 0, f.
+    The implementation is case insensitive.
+    :raises: argparse.ArgumentTypeError if value is not recognized as a boolean.
+    :return: boolean
+    """
+    if value.lower() in ["y", "yes", "true", "1", "t"]:
+        return True
+    elif value.lower() in ["n", "no", "false", "0", "f"]:
+        return False
+    else:
+        raise argparse.ArgumentTypeError("Boolean value expected.")
