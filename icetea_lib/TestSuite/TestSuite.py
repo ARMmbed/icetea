@@ -31,7 +31,7 @@ from icetea_lib.Result import Result
 from icetea_lib.ResultList import ResultList
 from icetea_lib.TestSuite.TestcaseContainer import TestStatus, DummyContainer
 from icetea_lib.TestSuite.TestcaseList import TestcaseList
-from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter
+from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter, FilterException
 from icetea_lib.tools.tools import find_duplicate_keys
 
 
@@ -476,7 +476,10 @@ class TestSuite(object):
         self.logger.info("Filtering testcases")
         if testcases == "all":
             testcases = None
-        final_tclist = tclist.filter(filt, testcases)
+        try:
+            final_tclist = tclist.filter(filt, testcases)
+        except FilterException as error:
+            raise SuiteException(error)
         if not final_tclist:
             self.logger.error("Error, create_suite: "
                               "Specified testcases not found in %s.", abs_tcpath)
@@ -574,7 +577,10 @@ class TestSuite(object):
                 testcases = None
         else:
             testcases = None
-        final_tclist = tclist.filter(filt, testcases)
+        try:
+            final_tclist = tclist.filter(filt, testcases)
+        except FilterException as error:
+            raise SuiteException(error)
         if not final_tclist:
             self.logger.error("Error, create_suite: "
                               "Specified testcases not found in %s.", abs_tcpath)

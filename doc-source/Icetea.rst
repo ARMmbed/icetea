@@ -196,6 +196,23 @@ argument if they match, but the check might not be foolproof.
 ========================  ================================================================================================================================  ================================================================================================  ==============================  ==========================================
 
 *******
+Running
+*******
+To run tests you first need to have the test cases in valid python modules.
+There are two ways to select which test cases to run: suites or filters.
+When using suites Icetea will search for test cases based on their name
+as described in the suite file. This is described in more detail in
+`suite_api.md <suite_api.html>`_.
+
+Icetea also supports filtering test cases by their metadata.
+All the available filters are described in the table above.
+The filters are provided on the command line in string format and
+they support basic boolean logic using keywords "and, or, not" and
+grouping by parenthesis. If you want to use filter values with
+multiple words, surround them with single quotes (').
+Example: --feature "feature1 and 'feature2 subfeature2'"
+
+*******
 Results
 *******
 Icetea creates the following kinds of results after execution:
