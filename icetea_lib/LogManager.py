@@ -264,7 +264,6 @@ def get_file_logger(name, formatter=None):
         raise ValueError("Can't make a logger without name")
 
     logger = logging.getLogger(name)
-    logger.propagate = False
     remove_handlers(logger)
     logger.setLevel(logging.INFO)
 
@@ -440,7 +439,7 @@ def get_bench_logger(name=None, short_name="  ", log_to_file=True):
         return logger
     logger = _get_basic_logger(loggername, log_to_file, get_testcase_logfilename(loggername +
                                                                                  ".log"))
-
+    logger.propagate = True
     LOGGERS[loggername] = BenchLoggerAdapter(logger, {"source": short_name})
 
     return LOGGERS[loggername]
@@ -452,7 +451,6 @@ def get_dummy_logger():
     :return: logger with NullHandler
     """
     logger = logging.getLogger("dummy")
-    logger.propagate = False
     logger.addHandler(logging.NullHandler())
     return logger
 
