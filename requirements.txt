@@ -6,5 +6,5 @@ jsonmerge==1.*
 jsonschema<3.0.0
 mbed-ls>=1.5.1,==1.*
 semver==2.*
-mbed-flasher>=0.10.1,==0.10.*,
+mbed-flasher>=0.10.1,
 six==1.*
