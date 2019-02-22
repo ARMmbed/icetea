@@ -440,8 +440,7 @@ class ResourceFunctions(object):
                            "for this testcase.", len(self._duts),
                            "dut" if len(self._duts) == 1 else "duts")
 
-    @staticmethod
-    def validate_dut_configs(dut_configuration_list, logger):
+    def validate_dut_configs(self, dut_configuration_list, logger):
         """
         Validate dut configurations.
 
@@ -450,16 +449,17 @@ class ResourceFunctions(object):
         :raises EnvironmentError if something is wrong
         """
         # for now we validate only binaries - if it exists or not.
-        for conf in dut_configuration_list:
-            try:
-                binar = conf.get("application").get("bin")
-                if binar:
-                    build = Build.init(binar)
-                    if not build.is_exists():
-                        logger.warning("Binary '{}' not found".format(binar))
-                        raise EnvironmentError("Binary not found")
-            except(KeyError, AttributeError):
-                pass
+        if not self._args.skip_flash:
+            for conf in dut_configuration_list:
+                try:
+                    binar = conf.get("application").get("bin")
+                    if binar:
+                        build = Build.init(binar)
+                        if not build.is_exists():
+                            logger.warning("Binary '{}' not found".format(binar))
+                            raise EnvironmentError("Binary not found")
+                except(KeyError, AttributeError):
+                    pass
 
         if logger is not None:
             logger.debug("Configurations seems to be ok")

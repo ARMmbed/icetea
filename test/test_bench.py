@@ -638,25 +638,6 @@ class TestVerify(unittest.TestCase):
         self.assertEqual(testcase.run(), 0)
         self.assertFalse(testcase.get_result().skipped())
 
-    def test_config_validation_bin_not_defined(self):  # pylint: disable=invalid-name
-        duts_cfg = [{}]
-        logger = logging.getLogger('unittest')
-        logger.addHandler(logging.NullHandler())
-        self.assertEqual(Bench._validate_dut_configs(duts_cfg, logger), None)
-
-    def test_config_validation_bin_defined_but_not_exists(self):  # pylint: disable=invalid-name
-        duts_cfg = [{"application": {"bin": "not.exist"}}]
-        logger = logging.getLogger('unittest')
-        logger.addHandler(logging.NullHandler())
-        with self.assertRaises(EnvironmentError):
-            Bench._validate_dut_configs(duts_cfg, logger)
-
-    def test_config_validation_bin_defined(self):  # pylint: disable=invalid-name
-        duts_cfg = [{"application": {"bin": "./test/test_bench.py"}}]
-        logger = logging.getLogger('unittest')
-        logger.addHandler(logging.NullHandler())
-        self.assertEqual(Bench._validate_dut_configs(duts_cfg, logger), None)
-
     def test_create_new_result(self):
         test_data = dict()
         test_data["reason"] = "this is a reason"
