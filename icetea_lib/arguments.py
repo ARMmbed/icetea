@@ -398,9 +398,9 @@ def get_tc_arguments(parser):
                                   help='Force flashing of hardware device if '
                                        'binary is given, but only once. Defaults to False')
     forceflash_group.add_argument("--skip_flash",
-                        default=False,
-                        action="store_true",
-                        help="Skip flashing hardware devices during this run.")
+                                  default=False,
+                                  action="store_true",
+                                  help="Skip flashing hardware devices during this run.")
     group2.add_argument('--interface',
                         dest='interface',
                         default='eth0',
