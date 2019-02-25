@@ -261,6 +261,11 @@ object. The Allocator should contain a method that generates an object like this
 provided configuration and cli arguments and returns it. The allocator should add a reference to
 this function and the dut type into the AllocationContextList it creates.
 
+If your dut object needs to check periodically for some indication that shows if the dut is dead,
+you can overwrite a private function called _dut_is_alive for this purpose. This function should raise
+an exception from icetea_lib.TestStepError with a suitable message if the dut has stopped for some reason.
+This function is called automatically in a loop while waiting for commands to finish.
+
 ********
 Examples
 ********
