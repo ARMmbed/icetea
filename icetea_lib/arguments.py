@@ -60,7 +60,6 @@ def get_base_arguments(parser):
                        default=False,
                        help='Show version')
 
-
     # Filters
     filter_group = parser.add_argument_group("Filter arguments", "Arguments used for filtering "
                                                                  "tc:s")
