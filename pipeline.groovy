@@ -55,7 +55,15 @@ def baseBuild(String platform) {
     setBuildStatus('PENDING', "${buildName}", 'unittest start')
     try {
         stage("${buildName}") {
-            execute 'coverage run --parallel-mode -m unittest discover -s test'
+            sh """
+                set -e
+                virtualenv --python=../usr/bin/python py2venv --no-site-packages
+                . py2venv/bin/activate
+                pip install -r dev_requirements.txt
+                python setup.py install
+                coverage run --parallel-mode -m unittest discover -s test
+                deactivate
+            """
         }
         setBuildStatus('SUCCESS', "${buildName}", 'unittest success')
     } catch (Exception e) {
@@ -71,7 +79,15 @@ def baseBuild(String platform) {
     setBuildStatus('PENDING', "${pluginBuildName}", 'plugin tests start')
     try {
         stage("${pluginBuildName}") {
-            execute 'coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests -v'
+            sh """
+                set -e
+                virtualenv --python=../usr/bin/python py2venv --no-site-packages
+                . py2venv/bin/activate
+                pip install -r dev_requirements.txt
+                python setup.py install
+                coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests -v
+                deactivate
+            """
         }
         setBuildStatus('SUCCESS', "${pluginBuildName}", 'plugin tests success')
     } catch (Exception e) {
