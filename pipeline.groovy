@@ -68,7 +68,7 @@ def baseBuild(String platform) {
             }
             if (platform == 'windows'){
                 bat """
-                    virtualenv --python=c:\\Python27\\python.exe py2venv --no-site-packages || goto :error
+                    virtualenv py2venv --no-site-packages || goto :error
                     echo "Activating venv"
                     call py2venv\\Scripts\\activate.bat || goto :error
                     pip install -r dev_requirements.txt || goto :error
@@ -112,7 +112,7 @@ def baseBuild(String platform) {
                 }
                 if (platform == 'windows'){
                     bat """
-                        virtualenv --python=c:\\Python27\\python.exe py2venv --no-site-packages || goto :error
+                        virtualenv py2venv --no-site-packages || goto :error
                         echo "Activating venv"
                         call py2venv\\Scripts\\activate.bat || goto :error
                         pip install -r dev_requirements.txt || goto :error
