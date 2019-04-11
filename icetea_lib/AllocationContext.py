@@ -387,7 +387,7 @@ class AllocationContextList(object):
                     extension_split = os.path.splitext(binary_file_name)
                     extension = extension_split[-1].lower()
                     if extension != '.bin' and extension != '.hex':
-                        self.logger.debug("File ('%s') is not supported to flash, skip it" %(
+                        self.logger.debug("File ('%s') is not supported to flash, skip it" % (
                             build_id))
                         return False
                     return True
