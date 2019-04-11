@@ -55,7 +55,35 @@ def baseBuild(String platform) {
     setBuildStatus('PENDING', "${buildName}", 'unittest start')
     try {
         stage("${buildName}") {
-            execute 'coverage run --parallel-mode -m unittest discover -s test'
+            if (platform == 'linux') {
+            sh """
+                set -e
+                virtualenv --python=../usr/bin/python py2venv --no-site-packages
+                . py2venv/bin/activate
+                pip install -r dev_requirements.txt
+                python setup.py install
+                coverage run --parallel-mode -m unittest discover -s test
+                deactivate
+            """
+            }
+            if (platform == 'windows'){
+                bat """
+                    virtualenv py2venv --no-site-packages || goto :error
+                    echo "Activating venv"
+                    call py2venv\\Scripts\\activate.bat || goto :error
+                    pip install -r dev_requirements.txt || goto :error
+                    pip freeze
+                    python setup.py install  || goto :error
+                    coverage run --parallel-mode -m unittest discover -s test
+                    deactivate
+
+
+                    :error
+                    echo "Failed with error %errorlevel%"
+                    exit /b %errorlevel%
+                """
+
+            }
         }
         setBuildStatus('SUCCESS', "${buildName}", 'unittest success')
     } catch (Exception e) {
@@ -71,7 +99,34 @@ def baseBuild(String platform) {
     setBuildStatus('PENDING', "${pluginBuildName}", 'plugin tests start')
     try {
         stage("${pluginBuildName}") {
-            execute 'coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests -v'
+            if (platform == 'linux') {
+                sh """
+                    set -e
+                    virtualenv --python=../usr/bin/python py2venv --no-site-packages
+                    . py2venv/bin/activate
+                    pip install -r dev_requirements.txt
+                    python setup.py install
+                    coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests -v
+                    deactivate
+                """
+                }
+                if (platform == 'windows'){
+                    bat """
+                        virtualenv py2venv --no-site-packages || goto :error
+                        echo "Activating venv"
+                        call py2venv\\Scripts\\activate.bat || goto :error
+                        pip install -r dev_requirements.txt || goto :error
+                        pip freeze
+                        python setup.py install  || goto :error
+                        coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests -v
+                        deactivate
+
+
+                        :error
+                        echo "Failed with error %errorlevel%"
+                        exit /b %errorlevel%
+                    """
+                }
         }
         setBuildStatus('SUCCESS', "${pluginBuildName}", 'plugin tests success')
     } catch (Exception e) {
