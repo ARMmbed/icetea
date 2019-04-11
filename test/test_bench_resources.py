@@ -44,6 +44,9 @@ class MockLogger(object):
     def debug(self, *args, **kwargs):
         pass
 
+    def warning(self, *args, **kwargs):
+        pass
+
     def error(self, *args, **kwargs):
         pass
 
@@ -121,6 +124,39 @@ class ResourceMixerTests(unittest.TestCase):
         self.assertEqual(resmixer.get_dut_index("test_device"), 2)
         with self.assertRaises(ValueError):
             resmixer.get_dut_index("3")
+
+    def test_config_validation_bin_not_defined(self):  # pylint: disable=invalid-name
+        duts_cfg = [{}]
+        mocked_args = mock.MagicMock()
+        type(mocked_args).skip_flash = mock.PropertyMock(return_value=False)
+        resources = ResourceFunctions(mocked_args,
+                                      mock.MagicMock(), mock.PropertyMock(return_value=TEST_REQS))
+        self.assertEqual(resources.validate_dut_configs(duts_cfg, MockLogger()), None)
+
+    def test_config_validation_no_bin(self):
+        duts_cfg = [{"application": {"bin": "not.exist"}}]
+        mocked_args = mock.MagicMock()
+        type(mocked_args).skip_flash = mock.PropertyMock(return_value=False)
+        resources = ResourceFunctions(mocked_args, mock.MagicMock(), mock.PropertyMock(
+            return_value=TEST_REQS))
+        with self.assertRaises(EnvironmentError):
+            resources.validate_dut_configs(duts_cfg, MockLogger())
+
+    def test_config_validation_bin_defined(self):  # pylint: disable=invalid-name
+        duts_cfg = [{"application": {"bin": __file__}}]
+        mocked_args = mock.MagicMock()
+        type(mocked_args).skip_flash = mock.PropertyMock(return_value=False)
+        resources = ResourceFunctions(mocked_args,
+                                      mock.MagicMock(), mock.PropertyMock(return_value=TEST_REQS))
+        self.assertEqual(resources.validate_dut_configs(duts_cfg, MockLogger()), None)
+
+    def test_config_validation_no_bin_skip_flash(self):  # pylint: disable=invalid-name
+        duts_cfg = [{"application": {"bin": "not.exist"}}]
+        mocked_args = mock.MagicMock()
+        type(mocked_args).skip_flash = mock.PropertyMock(return_value=True)
+        resources = ResourceFunctions(mocked_args,
+                                      mock.MagicMock(), mock.PropertyMock(return_value=TEST_REQS))
+        self.assertEqual(resources.validate_dut_configs(duts_cfg, MockLogger()), None)
 
 
 if __name__ == '__main__':

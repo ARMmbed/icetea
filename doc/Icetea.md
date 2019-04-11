@@ -183,10 +183,10 @@ Supported cli parameters are described below:
 | --serial_ch_size | Use chunk mode with size N when writing to serial port  | Integer, -1 for pre-defined mode, N=0 for normal mode, N>0 chunk mode with size N |  |  |
 | --serial_ch_delay | Use defined delay between characters. Used only when serial_ch_size > 0  | Float | 0.01 |  |
 | --kill_putty | Kill old putty/kitty processes |  |  |  |
-| --forceflash | Force flashing of hardware devices if binary is given. |  |  | Mutually exclusive with forceflash_once |
-| --forceflash_once | Force flashing of hardware devices if binary is given, but only once. |  |  | Mutually exclusive with forceflash |
+| --forceflash | Force flashing of hardware devices if binary is given. |  |  | Mutually exclusive with forceflash_once and skip_flash|
+| --forceflash_once | Force flashing of hardware devices if binary is given, but only once. |  |  | Mutually exclusive with forceflash and skip_flash |
+| --sync_start | Make sure dut applications have started using 'echo' command. | Boolean | False | Mutually exclusive with forceflash and forceflash_once. |
 | --skip_flash | Skip flashing duts. |  |  |  |
-| --sync_start | Make sure dut applications have started using 'echo' command. | Boolean | False |  |
 
 ## Running
 To run tests you first need to have the test cases in valid python modules.

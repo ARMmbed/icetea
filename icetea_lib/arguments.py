@@ -60,7 +60,6 @@ def get_base_arguments(parser):
                        default=False,
                        help='Show version')
 
-
     # Filters
     filter_group = parser.add_argument_group("Filter arguments", "Arguments used for filtering "
                                                                  "tc:s")
@@ -397,17 +396,15 @@ def get_tc_arguments(parser):
                                   default=False,
                                   help='Force flashing of hardware device if '
                                        'binary is given, but only once. Defaults to False')
-
+    forceflash_group.add_argument("--skip_flash",
+                                  default=False,
+                                  action="store_true",
+                                  help="Skip flashing hardware devices during this run.")
     group2.add_argument('--interface',
                         dest='interface',
                         default='eth0',
                         help='Network interface used in tests, unless the testcase specifies '
                              'which one to use. Defaults to eth0')
-    group2.add_argument("--skip_flash",
-                        default=False,
-                        action="store_true",
-                        help="Skip flashing hardware devices during this run.")
-
     return parser
 
 

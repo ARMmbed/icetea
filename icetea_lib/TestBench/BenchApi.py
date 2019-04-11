@@ -813,8 +813,7 @@ class BenchApi(object):
         """
         return self._plugins.parse_response(cmd, response)
 
-    @staticmethod
-    def _validate_dut_configs(dut_configuration_list, logger):
+    def _validate_dut_configs(self, dut_configuration_list, logger):
         """
         Validate dut configurations.
 
@@ -822,7 +821,7 @@ class BenchApi(object):
         :param logger: logger to be used
         :raises EnvironmentError if something is wrong
         """
-        return ResourceFunctions.validate_dut_configs(dut_configuration_list, logger)
+        return self._resources.validate_dut_configs(dut_configuration_list, logger)
 
     # Backwards compatibility functions here
 
