@@ -449,6 +449,14 @@ class Dut(object):  # pylint: disable=too-many-instance-attributes,too-many-publ
             self.close_connection()
             raise
 
+    def _dut_is_alive(self):
+        """
+        Raise an exception if the dut has stopped. Each dut should implement it's own if needed.
+
+        :return: Nothing
+        """
+        pass
+
     def _wait_for_exec_ready(self):
         """
         Wait for response.
@@ -456,7 +464,6 @@ class Dut(object):  # pylint: disable=too-many-instance-attributes,too-many-publ
         :return: CliResponse object coming in
         :raises: TestStepTimeout, TestStepError
         """
-        #wait for response
         while not self.response_received.wait(1) and self.query_timeout != 0:
             if self.query_timeout != 0 and self.query_timeout < self.get_time():
                 if self.prev:
@@ -468,6 +475,7 @@ class Dut(object):  # pylint: disable=too-many-instance-attributes,too-many-publ
                 raise TestStepTimeout(self.name + " CMD timeout: " + cmd)
             self.logger.debug("Waiting for response... "
                               "timeout=%d", self.query_timeout - self.get_time())
+            self._dut_is_alive()
 
         if self.response_coming_in == -1:
             if self.query_async_response is not None:
