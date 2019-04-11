@@ -83,7 +83,7 @@ class ContextFilterTest(unittest.TestCase):
 
     def test_filter_binary_data(self):
         msg = []
-        [msg.append(os.urandom(1024)) for _ in range(ContextFilter.MAXIMUM_LENGTH +1)]
+        [msg.append(os.urandom(1024)) for _ in range(ContextFilter.MAXIMUM_LENGTH + 1)]
         msg = b"".join(msg)
         expected = "{}...[10240974 more bytes]".format(msg[:50])
         record = self.create_log_record(msg)
