@@ -411,7 +411,7 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
             tc_cfg = self.args.tc_cfg
         #TODO: this bit is not compatible with IceteaManager's --tc argument.
         elif isinstance(self.args.tc, string_types) and os.path.exists(self.args.tc+'.json'):
-            tc_cfg = self.args.tc +'.json'
+            tc_cfg = self.args.tc + '.json'
 
         if tc_cfg:
             with open(tc_cfg) as data_file:
@@ -976,7 +976,7 @@ class Bench(object):  # pylint: disable=too-many-instance-attributes,too-many-pu
         if "kitty.exe" in putty_exe:
             params = params+' -title "'+self.duts[k-1].comport
 
-            params += ' - '+ self.get_test_name()
+            params += ' - ' + self.get_test_name()
             params += ' | DUT'+str(k)+' '+self.get_dut_nick(k)+'"'
             params += ' -log "' + LogManager.get_testcase_logfilename('DUT%d.manual' % k) + '"'
 

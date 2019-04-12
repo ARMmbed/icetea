@@ -461,7 +461,7 @@ class Dut(object):
                     cmd = self.prev.cmd
                 else:
                     cmd = "???"
-                self.logger.error("CMD timeout: "+ cmd)
+                self.logger.error("CMD timeout: " + cmd)
                 self.query_timeout = 0
                 raise TestStepTimeout(self.name + " CMD timeout: " + cmd)
             self.logger.debug("Waiting for response... "
