@@ -186,7 +186,7 @@ class GenericProcessUnittests(unittest.TestCase):
         self.assertTrue(my_process.valgrind_track_origins)
 
         self.assertFalse(my_process.valgrind_extra_params)
-        my_process.valgrind_extra_params= True
+        my_process.valgrind_extra_params = True
         self.assertTrue(my_process.valgrind_extra_params)
 
         self.assertFalse(my_process.ignore_return_code)
