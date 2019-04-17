@@ -20,9 +20,10 @@ import gc
 import time
 from inspect import isclass
 
-from jsonmerge import merge
+
 from jsonschema import validate, ValidationError, SchemaError
 from six import iteritems
+from jsonmerge import merge
 import semver
 
 import icetea_lib.LogManager as LogManager
