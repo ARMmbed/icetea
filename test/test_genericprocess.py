@@ -19,10 +19,10 @@ limitations under the License.
 import signal
 import subprocess
 import sys
-import mock
 import unittest
 import platform
 import os
+import mock
 
 from icetea_lib.IceteaManager import ExitCodes
 from icetea_lib.tools.GenericProcess import GenericProcess
