@@ -21,7 +21,7 @@ TestSuite class is a representation of a runnable suite of test cases.
 SuiteException is an Exception that is raised by TestSuite when it needs to exit with a critical
 failure.
 """
-# pylint: disable=too-many-branches,too-many-arguments
+# pylint: disable=too-many-branches,too-many-arguments,too-many-nested-blocks,too-many-statements
 
 import json
 import os
