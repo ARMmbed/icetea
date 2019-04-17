@@ -62,7 +62,7 @@ class TestSuiteTestcase(unittest.TestCase):
             putty=False, reset=False, silent=True, skip_case=False,
             skip_rampdown=False, skip_rampup=False,
             status=False, suite=False, tc='all', tc_cfg=None, tcdir=self.testdir,
-            testtype=False, type=None, platform_filter=None,
+            testtype=False, type=None, platform_filter=None, branch="",
             subtype=None, use_sniffer=False, valgrind=False, valgrind_tool=None,
             verbose=False, repeat=0, feature=None, json=False)
         self.args_tc_no_exist = argparse.Namespace(
@@ -72,7 +72,7 @@ class TestSuiteTestcase(unittest.TestCase):
             listsuites=False, log='./log', my_duts=None, nobuf=None,
             pause_when_external_dut=False, platform_filter=None,
             putty=False, reset=False, silent=True, skip_case=False,
-            skip_rampdown=False, skip_rampup=False,
+            skip_rampdown=False, skip_rampup=False, branch="",
             status=False, suite=False, tc='does_not_exist', tc_cfg=None, tcdir=self.testdir,
             testtype=False, type=None, subtype=None, use_sniffer=False,
             valgrind=False, valgrind_tool=None, verbose=False, repeat=0, feature=None,
@@ -81,7 +81,7 @@ class TestSuiteTestcase(unittest.TestCase):
             available=False, version=False, bin=None, binary=False, channel=None,
             clean=False, cloud=False, component=False, device='*', gdb=None,
             gdbs=None, gdbs_port=2345, group=False, iface=None,
-            kill_putty=False, list=False,
+            kill_putty=False, list=False, branch="",
             listsuites=False, log='./log', my_duts=None, nobuf=None,
             pause_when_external_dut=False, platform_filter=None,
             putty=False, reset=False, silent=True, skip_case=False,
@@ -92,7 +92,7 @@ class TestSuiteTestcase(unittest.TestCase):
             verbose=False, repeat=2, feature=None, suitedir="./test/suites", json=False)
         self.args_tc = argparse.Namespace(
             available=False, version=False, bin=None, binary=False, channel=None,
-            clean=False, cloud=False, component=False, device='*', gdb=None,
+            clean=False, cloud=False, component=False, device='*', gdb=None, branch="",
             gdbs=None, gdbs_port=2345, group=False, iface=None, kill_putty=False, list=False,
             listsuites=False, log='./log', my_duts=None, nobuf=None, pause_when_external_dut=False,
             putty=False, reset=False, silent=True, skip_case=False,
@@ -230,6 +230,7 @@ class TestSuiteTestcase(unittest.TestCase):
         skipped_result.set_verdict('skip', 0, 1)
         resultlist = ResultList()
         resultlist.append(pass_result)
+        resultlist.save = mock.MagicMock()
         testsuite._default_configs["retryCount"] = 1
         cont1.run.side_effect = [pass_result,
                                  fail_result,
@@ -244,16 +245,20 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 1)
         self.assertEqual(testsuite._results.get(0).get_verdict(), "pass")
         self.assertTrue(self.args_tc.forceflash)  # pylint: disable=no-member
+        self.assertEquals(testsuite._results.save.call_count, 1)
+
 
         # ResultList as result
         testsuite._testcases = []
         testsuite._testcases.append(cont_reslist)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 1)
@@ -263,6 +268,7 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 1)
@@ -272,6 +278,7 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 1)
@@ -284,6 +291,7 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite._testcases.append(cont1)
         testsuite._testcases.append(cont2)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 0)
@@ -293,6 +301,7 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         testsuite._default_configs["retryReason"] = "includeFailures"
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
@@ -304,6 +313,7 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         cont1.run.side_effect = [pass_result, pass_result, pass_result, pass_result]
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
@@ -318,6 +328,7 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         cont1.run.side_effect = [pass_result]
         cont2 = mock.MagicMock()
         cont2.run = mock.MagicMock()
@@ -331,6 +342,7 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(len(testsuite._results), 2)
         self.assertEqual(testsuite._results.get(0).get_verdict(), "pass")
         self.assertEqual(testsuite._results.get(1).get_verdict(), "fail")
+        self.assertEquals(testsuite._results.save.call_count, 2)
 
         # Skipped result, stop_on_failure
         self.args_tc.stop_on_failure = True
@@ -338,6 +350,7 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         cont1.run.side_effect = [skipped_result]
         cont2 = mock.MagicMock()
         cont2.run = mock.MagicMock()
@@ -348,6 +361,7 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(len(testsuite._results), 2)
         self.assertEqual(testsuite._results.get(0).get_verdict(), "skip")
         self.assertEqual(testsuite._results.get(1).get_verdict(), "pass")
+        self.assertEquals(testsuite._results.save.call_count, 2)
 
     @mock.patch("icetea_lib.TestSuite.TestSuite.TestSuite._create_tc_list")
     @mock.patch("icetea_lib.TestSuite.TestSuite.os.path")
