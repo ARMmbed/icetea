@@ -37,6 +37,28 @@ class ReturnCodes(object): #pylint: disable=no-init,too-few-public-methods
     RETCODE_FAIL_ABORTED_BY_USER = 1012
     RETCODE_FAIL_UNKNOWN = 1013
     RETCODE_FAIL_INCONCLUSIVE = 1014
-    INCONCLUSIVE_RETCODES = [RETCODE_FAIL_ABORTED_BY_USER, RETCODE_FAIL_INITIALIZE_BENCH,
-                             RETCODE_FAIL_TEARDOWN_BENCH, RETCODE_FAIL_SETUP_BENCH,
-                             RETCODE_FAIL_DUT_CONNECTION_FAIL, RETCODE_FAIL_INCONCLUSIVE]
+    RETCODE_FAIL_TC_NOT_FOUND = 1015
+
+    INCONCLUSIVE_RETCODES = [RETCODE_FAIL_ABORTED_BY_USER,
+                             RETCODE_FAIL_INITIALIZE_BENCH,
+                             RETCODE_FAIL_TEARDOWN_BENCH,
+                             RETCODE_FAIL_SETUP_BENCH,
+                             RETCODE_FAIL_DUT_CONNECTION_FAIL,
+                             RETCODE_FAIL_INCONCLUSIVE,
+                             RETCODE_FAIL_TC_NOT_FOUND]
+    ALL_RETCODES = [RETCODE_SKIP,
+                    RETCODE_SUCCESS,
+                    RETCODE_FAIL_SETUP_BENCH,
+                    RETCODE_FAIL_SETUP_TC,
+                    RETCODE_FAIL_MISSING_DUTS,
+                    RETCODE_FAIL_UNDEFINED_REQUIRED_DUTS_COUNT,
+                    RETCODE_FAIL_DUT_CONNECTION_FAIL,
+                    RETCODE_FAIL_TC_EXCEPTION,
+                    RETCODE_FAIL_TEARDOWN_BENCH,
+                    RETCODE_FAIL_TEARDOWN_TC,
+                    RETCODE_FAIL_INITIALIZE_BENCH,
+                    RETCODE_FAIL_NO_PRELIMINARY_VERDICT,
+                    RETCODE_FAIL_ABORTED_BY_USER,
+                    RETCODE_FAIL_UNKNOWN,
+                    RETCODE_FAIL_INCONCLUSIVE,
+                    RETCODE_FAIL_TC_NOT_FOUND]

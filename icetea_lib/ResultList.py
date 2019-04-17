@@ -33,6 +33,7 @@ class ResultList(Iterator):
         """
         self.data = []
         self.index = 0
+        self.retries_left = 0
 
     def get(self, index=0):
         """

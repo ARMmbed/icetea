@@ -370,7 +370,11 @@ class TestcaseContainer(object):
 
         stop_time = datetime.datetime.now()
 
-        result = tc_instance.get_result(tc_file=self._filepath)
+        if tc_instance.results:
+            result = tc_instance.results
+        else:
+            result = tc_instance.get_result(tc_file=self._filepath)
+
         # Force garbage collection
 
         # cleanup Testcase
