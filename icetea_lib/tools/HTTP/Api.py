@@ -27,9 +27,10 @@ HttpApi object or later with setter.
 
 import json
 import urllib
-import jsonmerge
 import requests
 from six import binary_type, string_types
+import jsonmerge
+
 from icetea_lib.tools.tools import combine_urls, initLogger
 
 

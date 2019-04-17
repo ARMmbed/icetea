@@ -508,37 +508,44 @@ class GenericProcess(object):
         TestStepError if process stops with non-default returncode and return code is not ignored.
         """
         if self.read_thread is not None:
-            self.logger.info("stop_process::readThread.stop()-in")
+            self.logger.debug("stop_process::readThread.stop()-in")
             self.read_thread.stop()
-            self.logger.info("stop_process::readThread.stop()-out")
+            self.logger.debug("stop_process::readThread.stop()-out")
         returncode = None
         if self.proc:
-            self.logger.info("os.killpg(%d)", self.proc.pid)
-            try:
+            self.logger.debug("os.killpg(%d)", self.proc.pid)
+
+            for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGKILL):
+                timeout = 5
                 try:
-                    os.killpg(self.proc.pid, signal.SIGTERM)
-                except AttributeError:
-                    self.logger.info("os.killpg::AttributeError")
-                    # Failed most likely because in windows,
-                    # so use taskkill to kill whole process tree of proc
-                    if platform.system() == "Windows":
-                        subprocess.call(['taskkill', '/F', '/T', '/PID', str(self.proc.pid)])
-                    else:
-                        self.logger.info("os.killpg::unknown env")
-                        raise EnvironmentError("Unknown platform, "
-                                               "don't know how to terminate process")
-                self.proc.communicate()  # Wait for pipes to clear and process to stop.
-                returncode = self.proc.wait()
-            except OSError:
-                self.logger.info("os.killpg::OSError")
-            del self.proc
+                    try:
+                        self.logger.debug("Trying signal %s", sig)
+                        os.killpg(self.proc.pid, sig)
+                    except AttributeError:
+                        self.logger.debug("os.killpg::AttributeError")
+                        # Failed most likely because in windows,
+                        # so use taskkill to kill whole process tree of proc
+                        if platform.system() == "Windows":
+                            subprocess.call(['taskkill', '/F', '/T', '/PID', str(self.proc.pid)])
+                        else:
+                            self.logger.debug("os.killpg::unknown env")
+                            raise EnvironmentError("Unknown platform, "
+                                                   "don't know how to terminate process")
+                    while self.proc.poll() is None and timeout > 0:
+                        time.sleep(1)
+                        timeout -= 1
+                    returncode = self.proc.poll()
+                    if returncode is not None:
+                        break
+                except OSError as error:
+                    self.logger.info("os.killpg::OSError: %s", error)
+            self.proc = None
 
         if returncode is not None:
-            self.logger.info("stop_process::returncode is not None:")
-            self.logger.info("Process stopped with returncode %s" % returncode)
+            self.logger.debug("Process stopped with returncode %s" % returncode)
             if returncode != self.default_retcode and not self.__ignore_return_code:
                 raise TestStepError("Process stopped with returncode %d" % returncode)
-        self.logger.info("stop_process-out")
+        self.logger.debug("stop_process-out")
 
     def stop(self):
         """

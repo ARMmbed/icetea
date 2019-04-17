@@ -19,9 +19,9 @@ Configuration handling helpers.
 
 import os
 import json
-from jsonmerge import merge
 from six import string_types
 from pydash import get
+from jsonmerge import merge
 
 import icetea_lib.LogManager as LogManager
 from icetea_lib.TestStepError import TestStepError

@@ -23,10 +23,12 @@ import logging.config
 import os
 import re
 
-import jsonmerge
 import jsonschema
 import pytz
 import six
+import jsonmerge
+
+
 
 COLORS = True
 try:
