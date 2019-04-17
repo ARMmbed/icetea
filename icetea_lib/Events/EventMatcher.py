@@ -16,32 +16,48 @@ limitations under the License.
 import re
 
 from icetea_lib.Events.Generics import Observer
+from icetea_lib.Events.EventMatch import EventMatch
 from icetea_lib.tools.tools import IS_PYTHON3
 
 
 class EventMatcher(Observer):
-    def __init__(self, event_type, match_data, caller=None,
-                 flag=None, callback=None):
+    """
+    EventMatcher class. This is an Observer that listens to certain events and tries to match
+    them to a preset match data.
+    """
+    def __init__(self, event_type, match_data, caller=None,  # pylint: disable=too-many-arguments
+                 flag=None, callback=None, forget=True):
         Observer.__init__(self)
         self.caller = caller
         self.event_type = event_type
         self.flag_to_set = flag
         self.callback = callback
         self.match_data = match_data
+        self.__forget = forget
         self.observe(event_type, self._event_received)
 
     def _event_received(self, ref, data):
-        if self._resolve_match_data(ref, data):
+        """
+        Handle received event.
+
+        :param ref: ref is the object that generated the event.
+        :param data: event data.
+        :return: Nothing.
+        """
+        match = self._resolve_match_data(ref, data)
+        if match:
             if self.flag_to_set:
                 self.flag_to_set.set()
             if self.callback:
-                self.callback(ref, data)
-            self.forget()
+                self.callback(EventMatch(ref, data, match))
+            if self.__forget:
+                self.forget()
 
     def _resolve_match_data(self, ref, event_data):
         """
         If match_data is prefixed with regex: compile it to a regular expression pattern.
         Match event data with match_data as either regex or string.
+
         :param ref: Reference to object that generated this event.
         :param event_data: Data from event, as string.
         :return: return re.MatchObject if match found, False if ref is not caller

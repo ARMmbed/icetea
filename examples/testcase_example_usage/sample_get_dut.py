@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# pylint: disable=missing-docstring,pointless-string-statement
 from icetea_lib.bench import Bench
 
 
@@ -20,7 +20,8 @@ from icetea_lib.bench import Bench
 Icetea test case additional function usage example.
 
 function:
-    self.get_dut(index):  Get a handle to a DUT with index. There are functions can be accessed using DUT handle.
+    self.get_dut(index):  Get a handle to a DUT with index.
+    There are functions can be accessed using DUT handle.
 
 
 DUT public API:
@@ -31,7 +32,8 @@ DUT public API:
 
     2. close_connection(): Close the communication channel to DUT (eg. serial port)
 
-    3. comport: returns serial port name or path (eg. COM0 or /dev/ttyACM0), If DUT has serial communication channel.
+    3. comport: returns serial port name or path (eg. COM0 or /dev/ttyACM0),
+                 If DUT has serial communication channel.
                  Please Note: only local hardware has comport!
 '''
 
@@ -46,17 +48,17 @@ class Testcase(Bench):
                        purpose="show an example usage of Icetea get_dut(index) functions",
                        component=["Icetea"],
                        requirements={
-                            "duts": {
-                                '*': {
-                                    "count": 1, # devices number
-                                    "type": "hardware", # "hardware" (by default) or "process"
-                                    "application": {
-                                        "bin": "build_path/build_full_name",  # build binary path
-                                    }
-                                }
-                            }
-                        }
-                       )
+                           "duts": {
+                               '*': {
+                                   "count": 1,  # devices number
+                                   "type": "hardware",  # "hardware" (by default) or "process"
+                                   "application": {
+                                       "bin": "build_path/build_full_name",  # build binary path
+                                   }
+                               }
+                           }
+                       }
+                      )
 
     def case(self):
         # Close connection

@@ -13,22 +13,27 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+# pylint: disable=ungrouped-imports,unused-argument
+
+import importlib
+import inspect
+import logging
 import os
 import sys
+from sys import version_info
+from sys import platform as _platform
 import platform
 import re
 import string
-import importlib
-import inspect
+
 from pkg_resources import require, DistributionNotFound
 from six import iteritems
-from sys import platform as _platform
+
 try:
     from queue import Empty
 except ImportError:
     from Queue import Empty
 
-from sys import version_info
 
 UNIXPLATFORM = _platform == "linux" or _platform == "linux2" or _platform == "darwin"
 IS_PYTHON3 = version_info[0] == 3
@@ -57,9 +62,9 @@ def get_fw_version():
             with open(os.path.join(setup_path, 'setup.py')) as setup_file:
                 lines = setup_file.readlines()
                 for line in lines:
-                    m = re.search(r"VERSION = \"([\S]{5,})\"", line)
-                    if m:
-                        version = m.group(1)
+                    match = re.search(r"VERSION = \"([\S]{5,})\"", line)
+                    if match:
+                        version = match.group(1)
                         break
         except Exception:  # pylint: disable=broad-except
             pass
@@ -79,37 +84,37 @@ def sha1_of_file(filepath):
     try:
         with open(filepath, 'rb') as file_to_hash:
             return hashlib.sha1(file_to_hash.read()).hexdigest()
-    except:
+    except:  # pylint: disable=bare-except
         return None
 
+
 # Check if number is integer or not
-def check_int(s):
+def check_int(integer):
     """
     Check if number is integer or not.
 
-    :param s: Number as str
+    :param integer: Number as str
     :return: Boolean
     """
-    if not isinstance(s, str):
+    if not isinstance(integer, str):
         return False
-    if s[0] in ('-', '+'):
-        return s[1:].isdigit()
-    return s.isdigit()
+    if integer[0] in ('-', '+'):
+        return integer[1:].isdigit()
+    return integer.isdigit()
 
 
 # Convert string to the number
-def num(s):
+def num(integer):
     """
     Convert string to the number.
 
-    :param s: String to convert
+    :param integer: String to convert
     :return: int or None
     """
     try:
-        if check_int(s):
-            return int(s)
-        else:
-            return -1
+        if check_int(integer):
+            return int(integer)
+        return -1
     except ValueError:
         return -1
 
@@ -151,19 +156,20 @@ def _is_pid_running_on_windows(pid):
         return False
     exit_code = ctypes.wintypes.DWORD()
     ret = kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code))
-    is_alive = (ret == 0 or exit_code.value == _STILL_ALIVE)
+    is_alive = (ret == 0 or exit_code.value == _STILL_ALIVE)  # pylint: disable=undefined-variable
     kernel32.CloseHandle(handle)
     return is_alive
 
-ansi_pattern = '\033\[((?:\d|;)*)([a-zA-Z])'
-ansi_eng = re.compile(ansi_pattern)
+ansi_pattern = r'\033\[((?:\d|;)*)([a-zA-Z])'  # pylint: disable=invalid-name
+ansi_eng = re.compile(ansi_pattern)  # pylint: disable=invalid-name
 
 
-def strip_escape(string='', encoding="utf-8"):
+def strip_escape(string='', encoding="utf-8"):  # pylint: disable=redefined-outer-name
     """
     Strip escape characters from string.
 
     :param string: string to work on
+    :param encoding: string name of the encoding used.
     :return: stripped string
     """
     matches = []
@@ -196,7 +202,7 @@ def load_class(full_class_string, verbose=False, silent=False):
         if not silent:
             print("Error, loadClass: input not a string: %s" % str(full_class_string))
         return None
-    if len(full_class_string) == 0:
+    if len(full_class_string) == 0:  # pylint: disable=len-as-condition
         if not silent:
             print("Error, loadClass: empty string")
         return None
@@ -209,8 +215,8 @@ def load_class(full_class_string, verbose=False, silent=False):
         return getattr(module_, class_str)
     except AttributeError:
         return None
-    except Exception as e:
-        raise e
+    except Exception:
+        raise
 
 
 def import_module(modulename):
@@ -257,8 +263,8 @@ def get_abs_path(relative_path):
     :param relative_path: Relative path
     :return: absolute path
     """
-    abs_path = os.path.sep.join(os.path.abspath(sys.modules[__name__].__file__).split(os.path.sep)[
-                               :-1])
+    abs_path = os.path.sep.join(
+        os.path.abspath(sys.modules[__name__].__file__).split(os.path.sep)[:-1])
     abs_path = os.path.abspath(abs_path + os.path.sep + relative_path)
     return abs_path
 
@@ -280,23 +286,25 @@ def get_pkg_version(pkg_name, parse=False):
         return None
 
 
-def get_number(s):
+def get_number(string_nums):
     """
-    :param s: string, where to look up numbers(integer)
+    :param string_nums: string, where to look up numbers(integer)
     :return: number or None if number(integer) is not found
     """
-    m = re.match(".*([\d]{1,})", s)
-    if m:
-        return int(m.group(1))
-    else:
-        return None
+    match = re.match(r".*([\d]{1,})", string_nums)
+    if match:
+        return int(match.group(1))
+    return None
 
 
-ogcounter = 0
+ogcounter = 0  # pylint: disable=invalid-name
+
+
 def generate_object_graphs_by_class(classlist):
     """
-    Generate reference and backreference graphs for objects of type class for each class given in classlist. Useful for
-    debugging reference leaks in framework etc.
+    Generate reference and backreference graphs
+    for objects of type class for each class given in classlist.
+    Useful for debugging reference leaks in framework etc.
 
     Usage example to generate graphs for class "someclass":
     >>> import someclass
@@ -306,19 +314,21 @@ def generate_object_graphs_by_class(classlist):
     Needs "objgraph" module installed.
     """
     try:
-        import objgraph, gc
+        import objgraph
+        import gc
     except ImportError:
         return
-    interesting_classes = []
     graphcount = 0
     if not isinstance(classlist, list):
         classlist = [classlist]
-    for ic in classlist:
+    for class_item in classlist:
         for obj in gc.get_objects():
-            if isinstance(obj, ic):
+            if isinstance(obj, class_item):
                 graphcount += 1
-                objgraph.show_refs([obj], filename='%d_%s_%d_refs.png' % (ogcounter, obj.__class__.__name__, graphcount))
-                objgraph.show_backrefs([obj], filename='%d_%s_%d_backrefs.png' % (ogcounter, obj.__class__.__name__, graphcount))
+                objgraph.show_refs([obj], filename='%d_%s_%d_refs.png' % (
+                    ogcounter, obj.__class__.__name__, graphcount))
+                objgraph.show_backrefs([obj], filename='%d_%s_%d_backrefs.png' % (
+                    ogcounter, obj.__class__.__name__, graphcount))
 
 
 def combine_urls(path1, path2):
@@ -332,29 +342,29 @@ def combine_urls(path1, path2):
     """
     if path1.endswith("/") and path2.startswith("/"):
         path2 = path2.replace("/", "", 1)
-    elif path1.endswith("/") == False and path2.startswith("/") == False:
+    elif path1.endswith("/") is False and path2.startswith("/") is False:
         path2 = "/" + path2
     return path1 + path2
 
 
-def recursive_dictionary_get(keys, dict):
+def recursive_dictionary_get(keys, dictionary):
     """
     Gets contents of requirement key recursively so users can search
     for specific keys inside nested requirement dicts.
 
-    :param key: key or dot separated string of keys to look for.
-    :param dict: Dictionary to search from
+    :param keys: key or dot separated string of keys to look for.
+    :param dictionary: Dictionary to search from
     :return: results of search or None
     """
     if "." in keys and len(keys) > 1:
         key = keys.split(".", 1)
-        new_dict = dict.get(key[0])
+        new_dict = dictionary.get(key[0])
         # Make sure that the next level actually has a dict we can continue the search from.
         if not new_dict or not hasattr(new_dict, "get"):
             return None
         return recursive_dictionary_get(key[1], new_dict)
     else:
-        return dict.get(keys) if (dict and hasattr(dict, "get")) else None
+        return dictionary.get(keys) if (dictionary and hasattr(dictionary, "get")) else None
 
 
 def test_case(testcasebase, **kwargs):
@@ -367,15 +377,14 @@ def test_case(testcasebase, **kwargs):
     :param kwargs: Dictionary of arguments that will be passed as initialization
     parameters of the test case
     """
-    def wrap(case_function):
+    def wrap(case_function):  # pylint: disable=missing-docstring
         kwargs['name'] = name = kwargs.get('name', case_function.__name__)
         class_name = "class_" + name
         func_globals = case_function.__globals__ if IS_PYTHON3 else case_function.func_globals
         func_globals[class_name] = type(
             class_name,
-            (testcasebase,object), {
-                '__init__': lambda self:
-                    testcasebase.__init__(self, **kwargs),
+            (testcasebase, object), {
+                '__init__': lambda self: testcasebase.__init__(self, **kwargs),
                 'IS_TEST': True,
                 'case': case_function
             }
@@ -384,21 +393,21 @@ def test_case(testcasebase, **kwargs):
     return wrap
 
 
-def remove_empty_from_dict(d):
+def remove_empty_from_dict(dictionary):
     """
     Remove empty items from dictionary d
 
-    :param d:
+    :param dictionary:
     :return:
     """
-    if type(d) is dict:
+    if isinstance(dictionary, dict):
         return dict(
             (k,
-             remove_empty_from_dict(v)) for k, v in iteritems(d) if v and remove_empty_from_dict(v))
-    elif type(d) is list:
-        return [remove_empty_from_dict(v) for v in d if v and remove_empty_from_dict(v)]
-    else:
-        return d
+             remove_empty_from_dict(v)) for k, v in iteritems(
+                 dictionary) if v and remove_empty_from_dict(v))
+    elif isinstance(dictionary, list):
+        return [remove_empty_from_dict(v) for v in dictionary if v and remove_empty_from_dict(v)]
+    return dictionary
 
 
 def hex_escape_str(original_str):
@@ -438,13 +447,13 @@ def set_or_delete(dictionary, key, value):
             del dictionary[key]
 
 
-def split_by_n(seq, n):
+def split_by_n(seq, n_var):
     """
     A generator to divide a sequence into chunks of n units.
     """
     while seq:
-        yield seq[:n]
-        seq = seq[n:]
+        yield seq[:n_var]
+        seq = seq[n_var:]
 
 
 def getargspec(fnct):
@@ -457,6 +466,165 @@ def getargspec(fnct):
     if IS_PYTHON3:
         return inspect.getfullargspec(fnct)  # pylint: disable=no-member
     return inspect.getargspec(fnct)
+
+
+def is_test(method_name):
+    """
+    :param method_name: Method name to check.
+    :return: True if method name starts with test or if it is case.
+    """
+    # TODO: Implement other methods of recognicing which are tests.
+    return method_name == "case"  # or method_name.startswith("test_")
+
+
+def test_methods(target, test_filter=is_test):
+    """
+    Return a list of test methods.
+
+    :param target: Target object whose methods to find.
+    :param test_filter: filtering function.
+    :return: list
+    """
+    def is_fnc(method_name):
+        """
+        Check that method name attr of target object is callable.
+        :param method_name: Attribute name as string
+        :return: True if target.method_name is callable
+        """
+        return callable(getattr(target, method_name))
+    return [method_name for method_name in dir(target) if
+            test_filter(method_name) and is_fnc(method_name)]
+
+
+def initLogger(name):  # pylint: disable=invalid-name
+    '''
+    Initializes a basic logger. Can be replaced when constructing the
+    HttpApi object or afterwards with setter
+    '''
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.INFO)
+    # Skip attaching StreamHandler if one is already attached to logger
+    if not getattr(logger, "streamhandler_set", None):
+        consolehandler = logging.StreamHandler()
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        consolehandler.setFormatter(formatter)
+        consolehandler.setLevel(logging.INFO)
+        logger.addHandler(consolehandler)
+        logger.streamhandler_set = True
+    return logger
+
+def _create_combined_set(words, startindex):
+    """
+    Combines a single string wrapped in parenthesis from a list of words.
+    Example: ['feature1', 'or', '(feature2', 'and', 'feature3)'] -> '(feature2 and feature3)'
+    :param words: List of words
+    :param startindex: Index of starting parenthesis.
+    :return: string
+    """
+    counter = 0
+    for i, word in enumerate(words[startindex:]):
+        if ")" in word and counter == 0:
+            return " ".join(words[startindex:startindex + i + 1]), i
+        elif ")" in word and counter != 0:
+            amount = word.count(")")
+            counter -= amount
+        if "(" in word:
+            counter += word.count("(")
+        if counter == 0:
+            return " ".join(words[startindex:startindex + i + 1]), i
+    return None, 0
+
+
+def _create_combined_words(words, startindex):
+    """
+    Helper for create_match_bool, used to combine words inside single quotes from a list into a
+    single string.
+    :param words: List of words.
+    :param startindex: Index where search is started.
+    :return: (str, int) or (None, 0) if no closing quote is found.
+    """
+    for i, word in enumerate(words[startindex+1:]):
+        if "'" in word:
+            return " ".join(words[startindex:startindex+i+2]), i+1
+    return None, 0
+
+
+# pylint: disable=too-many-branches
+def create_match_bool(words_as_string, eval_function, eval_function_args):
+    """
+    Evaluates components of words_as_string step by step into a single boolean value using
+    eval_function to evaluate each separate component of words_as_string into booleans.
+    :param words_as_string: String to evaluate
+    :param eval_function: Function for evaluating each component of the string
+    :param eval_function_args: Arguments for eval_function as list or tuple
+    :return: Boolean
+    :raises: SyntaxError if eval raises one.
+    """
+    new_set = []
+    count = 0
+    words_as_string = words_as_string.replace(",", " or ")
+    words = words_as_string.split(" ")
+    # First we combine items that contain spaces back into single entries
+    for i, word in enumerate(words):
+        if count != 0:
+            count -= 1
+            continue
+        if "'" in word:
+            # Combine stuff between quotes into single entry
+            combined_data, count = _create_combined_words(words, i)
+            if combined_data is None:
+                raise SyntaxError("Missing closing quote for: {}".format(word))
+            # Count needed to skip over the N next items while we continue
+            new_set.append(combined_data)
+        else:
+            new_set.append(word)
+
+    newest_set = []
+
+    # Then we combine elements inside parentheses into single entries.
+    for i, word in enumerate(new_set):
+        if count != 0:
+            count -= 1
+            continue
+        if "(" in word:
+            # Combine stuff between parentheses into single entry that can be reduced later.
+            combined_data, count = _create_combined_set(new_set, i)
+            if combined_data is None:
+                raise SyntaxError("Missing closing parenthesis for: {}".format(word))
+            # Count needed to skip over the N next items while we continue
+            newest_set.append(combined_data)
+        else:
+            newest_set.append(word)
+
+    # Finally we enter deeper inside the parenthesis structure and start working upwards
+    for i, word in enumerate(newest_set):
+        if "(" in word:
+            # Still parentheses remaining, we must go deeper.
+            result = create_match_bool(word[1:len(word) - 1], eval_function,
+                                       eval_function_args)
+            newest_set[i] = str(result)
+    for i, word in enumerate(newest_set):
+        if word not in ["True", "False", "or", "and", "not"]:
+            newest_set[i] = str(eval_function(word.replace("'", ""), eval_function_args))
+    result = eval(" ".join(newest_set))  # pylint: disable=eval-used
+    return result
+
+
+def find_duplicate_keys(data):
+    """
+    Find duplicate keys in a layer of ordered pairs. Intended as the object_pairs_hook callable
+    for json.load or loads.
+
+    :param data: ordered pairs
+    :return: Dictionary with no duplicate keys
+    :raises ValueError if duplicate keys are found
+    """
+    out_dict = {}
+    for key, value in data:
+        if key in out_dict:
+            raise ValueError("Duplicate key: {}".format(key))
+        out_dict[key] = value
+    return out_dict
 
 
 class Singleton(type):

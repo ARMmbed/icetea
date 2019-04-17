@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# pylint: disable=invalid-name,relative-import
 from plugin import Plugin
 
 plugins_to_load = {"test_plugin": Plugin}

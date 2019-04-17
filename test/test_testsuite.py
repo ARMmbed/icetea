@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring,protected-access,unused-argument
+# pylint: disable=missing-docstring,protected-access,unused-argument,unused-variable
 
 """
 Copyright 2017 ARM Limited
@@ -28,18 +28,19 @@ from icetea_lib.TestSuite.TestSuite import TestSuite, SuiteException, TestStatus
 from icetea_lib.TestSuite.TestcaseContainer import DummyContainer
 from icetea_lib.Result import Result
 from icetea_lib.ResultList import ResultList
-from icetea_lib.DeviceConnectors.DutInformation import DutInformation
-from icetea_lib.build.build import Build
 
 
 def mock_get_suite_tcs(arg1, arg2):
     return None
 
+
 def mock_get_local_tcs(tcpath):
     return []
 
-def mock_create_filter(tc):
+
+def mock_create_filter(testcase):
     return -1
+
 
 def mock_parse_local_tcs(arg1, arg2):
     return []
@@ -103,16 +104,18 @@ class TestSuiteTestcase(unittest.TestCase):
             suitedir="./test/suites", forceflash_once=True, forceflash=False,
             stop_on_failure=False, json=False)
 
-    def test_create_suite_suitefile_some_not_found(self):
+    def test_create_suite_suitefile_some_not_found(self):  # pylint: disable=invalid-name
         suit = TestSuite(args=self.args_suite)
         self.assertEqual(len(suit), 5)
 
     def test_create_suite_list_success(self):
         suit = TestSuite(args=self.args_noprint)
-        self.assertEqual(len(suit), 7, "Suite length ({}) did not match expected length of {}!".format(len(suit), 7))
+        self.assertEqual(len(suit), 7,
+                         "Suite length ({}) did not match expected length of {}!".format(
+                             len(suit), 7))
         self.assertEqual(suit.status, TestStatus.READY)
 
-    def test_create_suite_suitefile_fail(self):
+    def test_create_suite_suitefile_fail(self):  # pylint: disable=invalid-name
         self.args_suite.suite = "malformed_suite.json"
         with self.assertRaises(SuiteException):
             suite = TestSuite(args=self.args_suite)
@@ -125,38 +128,38 @@ class TestSuiteTestcase(unittest.TestCase):
         self.args_suite.suite = "working_suite.json"
         suit = TestSuite(args=self.args_suite)
         self.assertEqual(suit.status, TestStatus.READY)
-        tc = suit.get_testcases().get(0)
-        self.assertEqual(tc.status, TestStatus.READY)
+        testcase = suit.get_testcases().get(0)
+        self.assertEqual(testcase.status, TestStatus.READY)
 
-    def test_prepare_suite_merge_configs(self):
+    def test_prepare_suite_merge_configs(self):  # pylint: disable=invalid-name
         self.args_suite.suite = "working_suite.json"
         suit = TestSuite(args=self.args_suite)
         tcs = suit.get_testcases()
         self.assertEqual(len(tcs), 2)
-        tc = tcs.get(1)
-        sconf = tc.get_suiteconfig()
-        with open("test/suites/working_suite.json") as f:
-            suite = json.load(f)
+        testcase = tcs.get(1)
+        sconf = testcase.get_suiteconfig()
+        with open("test/suites/working_suite.json") as file_handle:
+            suite = json.load(file_handle)
             cases = suite.get("testcases")
             case2 = cases[1]
             self.assertDictEqual(case2.get("config"), sconf)
-        conf = tc.get_final_config()
-        self.assertDictEqual(merge(tc.get_instance().get_config(), sconf), conf)
+        conf = testcase.get_final_config()
+        self.assertDictEqual(merge(testcase.get_instance().get_config(), sconf), conf)
 
-    def test_prepare_suite_merge_configs_missing_tc(self):
+    def test_prepare_suite_merge_configs_missing_tc(self):  # pylint: disable=invalid-name
         self.args_suite.suite = "suite_missing_one.json"
         suit = TestSuite(args=self.args_suite)
         tcs = suit.get_testcases()
         self.assertEqual(len(tcs), 3)
-        tc = tcs.get(2)
-        sconf = tc.get_suiteconfig()
-        with open("test/suites/suite_missing_one.json") as f:
-            suite = json.load(f)
+        testcase = tcs.get(2)
+        sconf = testcase.get_suiteconfig()
+        with open("test/suites/suite_missing_one.json") as file_handle:
+            suite = json.load(file_handle)
             cases = suite.get("testcases")
             case2 = cases[2]
             self.assertDictEqual(case2.get("config"), sconf)
-        conf = tc.get_final_config()
-        self.assertDictEqual(merge(tc.get_instance().get_config(), sconf), conf)
+        conf = testcase.get_final_config()
+        self.assertDictEqual(merge(testcase.get_instance().get_config(), sconf), conf)
         self.assertTrue(isinstance(tcs.get(1), DummyContainer))
         all_duts = conf.get("requirements").get("duts").get("*")
         self.assertIsNotNone(all_duts)
@@ -178,8 +181,11 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertIsNone(suit._get_suite_tcs("dir", []))
         tcs = suit._get_suite_tcs("./examples", 'all')
         self.assertNotEqual(len(tcs), 0)
-        # Make sure that the same testcase is found twice and that they both have different instances.
-        tcs = suit._get_suite_tcs("./examples", ["sample_process_multidut_testcase", "sample_process_multidut_testcase"])
+        # Make sure that the same testcase is found twice and
+        # that they both have different instances.
+        tcs = suit._get_suite_tcs("./examples",
+                                  ["sample_process_multidut_testcase",
+                                   "sample_process_multidut_testcase"])
         self.assertEqual(len(tcs), 2)
 
     @mock.patch("icetea_lib.TestSuite.TestSuite.TestcaseFilter")
@@ -195,10 +201,9 @@ class TestSuiteTestcase(unittest.TestCase):
 
     def test_get_suite_files(self):
         lst = TestSuite.get_suite_files("./test/suites")
-        self.assertEqual(len(lst), 5)
+        self.assertEqual(len(lst), 6)
 
     def test_load_suite_list(self):
-
         self.args_tc.tc = "tc_no_exist"
         suit = TestSuite(args=self.args_tc)
         suit._load_suite_list()
@@ -214,7 +219,7 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertIsNot(suit._load_suite_list(), False)
 
     @mock.patch("icetea_lib.TestSuite.TestSuite.TestSuite._create_tc_list")
-    def test_run(self, mock_tclist):
+    def test_run(self, mock_tclist):  # pylint: disable=too-many-statements
         testsuite = TestSuite(args=self.args_tc)
         cont1 = mock.MagicMock()
         pass_result = Result()
@@ -226,46 +231,51 @@ class TestSuiteTestcase(unittest.TestCase):
         resultlist = ResultList()
         resultlist.append(pass_result)
         testsuite._default_configs["retryCount"] = 1
-        cont1.run.side_effect = [pass_result, fail_result, skipped_result, KeyboardInterrupt, fail_result, pass_result]
+        cont1.run.side_effect = [pass_result,
+                                 fail_result,
+                                 skipped_result,
+                                 KeyboardInterrupt,
+                                 fail_result,
+                                 pass_result]
         cont_reslist = mock.MagicMock()
         cont_reslist.run = mock.MagicMock()
         cont_reslist.run.return_value = resultlist
         # Passing result
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
-        testsuite._results = []
+        testsuite._results = ResultList()
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 1)
-        self.assertEqual(testsuite._results[0].get_verdict(), "pass")
-        self.assertTrue(self.args_tc.forceflash)
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "pass")
+        self.assertTrue(self.args_tc.forceflash)  # pylint: disable=no-member
 
         # ResultList as result
         testsuite._testcases = []
         testsuite._testcases.append(cont_reslist)
-        testsuite._results = []
+        testsuite._results = ResultList()
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 1)
-        self.assertEqual(testsuite._results[0].get_verdict(), "pass")
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "pass")
 
         # Failing result, no retry
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
-        testsuite._results = []
+        testsuite._results = ResultList()
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 1)
-        self.assertEqual(testsuite._results[0].get_verdict(), "fail")
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "fail")
 
         # skipped result
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
-        testsuite._results = []
+        testsuite._results = ResultList()
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 1)
-        self.assertEqual(testsuite._results[0].get_verdict(), "skip")
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "skip")
 
         # Interrupt
         cont2 = mock.MagicMock()
@@ -273,7 +283,7 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
         testsuite._testcases.append(cont2)
-        testsuite._results = []
+        testsuite._results = ResultList()
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 0)
@@ -282,24 +292,24 @@ class TestSuiteTestcase(unittest.TestCase):
         # Failing result, retried
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
-        testsuite._results = []
+        testsuite._results = ResultList()
         testsuite._default_configs["retryReason"] = "includeFailures"
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 2)
-        self.assertEqual(testsuite._results[0].get_verdict(), "fail")
-        self.assertEqual(testsuite._results[1].get_verdict(), "pass")
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "fail")
+        self.assertEqual(testsuite._results.get(1).get_verdict(), "pass")
 
         self.args_tc.repeat = 2
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
-        testsuite._results = []
+        testsuite._results = ResultList()
         cont1.run.side_effect = [pass_result, pass_result, pass_result, pass_result]
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 2)
-        self.assertEqual(testsuite._results[0].get_verdict(), "pass")
-        self.assertFalse(self.args_tc.forceflash)
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "pass")
+        self.assertFalse(self.args_tc.forceflash)  # pylint: disable=no-member
 
         # Failing result, stop_on_failure
         self.args_tc.stop_on_failure = True
@@ -307,7 +317,7 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite._default_configs["retryCount"] = 0
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
-        testsuite._results = []
+        testsuite._results = ResultList()
         cont1.run.side_effect = [pass_result]
         cont2 = mock.MagicMock()
         cont2.run = mock.MagicMock()
@@ -319,15 +329,15 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 2)
-        self.assertEqual(testsuite._results[0].get_verdict(), "pass")
-        self.assertEqual(testsuite._results[1].get_verdict(), "fail")
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "pass")
+        self.assertEqual(testsuite._results.get(1).get_verdict(), "fail")
 
         # Skipped result, stop_on_failure
         self.args_tc.stop_on_failure = True
         self.args_tc.repeat = 0
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
-        testsuite._results = []
+        testsuite._results = ResultList()
         cont1.run.side_effect = [skipped_result]
         cont2 = mock.MagicMock()
         cont2.run = mock.MagicMock()
@@ -336,8 +346,8 @@ class TestSuiteTestcase(unittest.TestCase):
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
         self.assertEqual(len(testsuite._results), 2)
-        self.assertEqual(testsuite._results[0].get_verdict(), "skip")
-        self.assertEqual(testsuite._results[1].get_verdict(), "pass")
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "skip")
+        self.assertEqual(testsuite._results.get(1).get_verdict(), "pass")
 
     @mock.patch("icetea_lib.TestSuite.TestSuite.TestSuite._create_tc_list")
     @mock.patch("icetea_lib.TestSuite.TestSuite.os.path")
@@ -354,6 +364,10 @@ class TestSuiteTestcase(unittest.TestCase):
             mock_cm.get_suite.return_value = None
             self.assertIsNone(suit._load_suite_file("name", "dir"))
 
+    def test_load_suite_with_duplicate_configs(self):  # pylint: disable=invalid-name
+        self.args_suite.suite = "duplicates_suite.json"
+        with self.assertRaises(SuiteException):
+            suit = TestSuite(args=self.args_suite)  # pylint: disable=unused-variable
 
 
 if __name__ == '__main__':

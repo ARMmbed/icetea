@@ -125,7 +125,8 @@ It can contain dictionaries under the following keys:
     * "*", dictionary, contains default requirements for all nodes
         * "count", number of duts required
         * "type", type of duts,
-        allowed values: hardware(default), process
+        allowed values: hardware(default, same as mbed), process, serial, mbed
+        * "serial_port": defines the serial port this dut is connected to, as a string, when using serial type dut.
         * "allowed_platforms", list of platforms allowed
         for this test case. If no other platform is specified
         with platform_name, first item in this list will be used.
@@ -208,7 +209,7 @@ with the test case configuration as parameters.
 See code example below and configuration description
 above for more details.
 
-**setUp**
+**setup**
 All prerequisites for test case execution should be handled here.
 This can include things like setting up dut configurations,
 initializing network interfaces etc.
@@ -216,7 +217,7 @@ initializing network interfaces etc.
 **case**
 Test case functionality should be implemented here.
 
-**tearDown**
+**teardown**
 Cleanup can be performed here. This can include things
 like deleting temporary files, powering down dut interfaces etc.
 
@@ -254,14 +255,17 @@ This error can be raised by the testcase if the testcase seems
 to fail for reasons not related to the SUT, for example unstable
 3rd party service causing a failure.
 
+**SkippedTestcaseException**
+This error can be raised in the test case setup or case functions to skip the test case for whatever reason.
+
 ## DUT public API
 
-**openConnection()**
+**open_connection()**
 Open the communication channel to DUT (eg. serial port).
 By default testcase automatically calls this during rampup.
 Raises `DutConnectionError` if communication channel was already open.
 
-**closeConnection()**
+**close_connection()**
 Close the communication channel to DUT (eg. serial port).
 By default testcase automatically calls this during rampdown.
 This can be used during testcase to close the channel for example
@@ -388,6 +392,52 @@ The following asserts are available:
     convert json into dict.
     * Asserts that key exists in jsonStr.
 
+## Test case configuration
+Test case configuration is loaded in four steps.
+Step 1 is the base configuration loaded from the test case
+__init__ method arguments. The second and third steps are from
+the possible suite configuration file, that has configuration
+fields for both suite wide default configuration values
+applied to all test cases and test case specific configurations.
+The final step a possible json configuration file defined on the cli
+as --tc_cfg. At each step the configurations are merged
+into the existing set. Example of a tc_cfg file is shown below:
+
+```
+{
+    "requirements": {
+        "duts: {
+            {"*": {
+                "count": 5
+                }
+            }
+        }
+    }
+}
+```
+
+**NOTE**: If the object that is read from a test case configuration file contains duplicate keys, Icetea will fail and exit.
+
+## Environment configuration
+The test case can work with some external dependencies,
+applications and modules that are defined in the test case configuration.
+The configuration for these external modules can be set in the same place, but
+it can also be defined in a separate environment configuration file
+that is defined on the cli --env_cfg argument. This file is a json
+file and it's merged into the test bench __env variable that
+defaults to the following dictionary:
+
+```
+{
+    "sniffer": {
+        "iface": "Sniffer"
+    }
+}
+```
+
+This merge is done at the start of the test case.
+
+**NOTE**: If the object that is read from an environment configuration file contains duplicate keys, Icetea will fail and exit.
 
 ## Multiple cases sharing setup and teardown
 Icetea contains a decorator called test_case which can be used
@@ -405,3 +455,37 @@ It will cause errors in the execution.
 ## Full code example with comments
 Full code example and template for a testcase is available in
 [sample.py](../examples/sample.py)
+
+# Test bench
+The test bench is implemented by a group of modules in icetea_lib/TestBench.
+All of the implementation has been split into separate modules related to their function.
+The runner itself is a state machine that has been implemented in the RunnerSM module.
+All available functions of the test bench are defined in the BenchApi module.
+
+## Implementation
+Implementation has been split into 10 modules. Each one implements a set of functionalities for the
+test bench.
+Many of these refer to several attributes of the other modules. For ease of use these are called
+through the common BenchApi class that provides the test bench with the interface to use these
+functions.
+
+* ArgsHandler
+    * Handling of cli arguments.
+* BenchFunctions
+    * Different kinds of functions that don't really fit anywhere else.
+* Commands
+    * Implements DUT command handling.
+* Configurations
+    * Different kinds of API:s for DUT and environment configurations.
+* Logger
+    * Logger
+* Plugins
+    * Handling for Plugins.
+* Resources
+    * Handling for Duts and other resources.
+* Results
+    * Handling for Results.
+* Topology
+    * Functions for handling network topology.
+* NetworkSniffer
+    * Functions for handling the network sniffer.

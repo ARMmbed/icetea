@@ -1,3 +1,5 @@
+# pylint: disable=no-name-in-module,import-error
+
 """
 Copyright 2017-2018 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +25,7 @@ from setuptools.command.install import install
 DESCRIPTION = "Icetea - test framework"
 OWNER_NAMES = "Jussi Vatjus-Anttila"
 OWNER_EMAILS = "jussi.vatjus-anttila@arm.com"
-VERSION = "1.2.2"
+VERSION = "1.2.2-d"
 
 
 def read(fname):
@@ -45,7 +47,9 @@ INSTALL_REQUIRES = [
     "mbed-ls>=1.5.1,==1.*",
     "semver==2.*",
     "mbed-flasher>=0.10.1,==0.10.*",
-    "six==1.*"
+    "six==1.*",
+    "pydash==4.*",
+    "transitions==0.*"
 ]
 TEST_REQUIRES = [
     "coverage==4.*",
@@ -93,7 +97,7 @@ setup(name="icetea",
       maintainer_email=OWNER_EMAILS,
       url="https://github.com/ARMmbed/icetea.git",
       packages=find_packages(include=["icetea_lib.*", "icetea_lib"]),
-      data_files=[("icetea_lib", ["icetea_lib/tc_schema.json"])],
+      data_files=[("icetea_lib", ["icetea_lib/tc_schema.json", "icetea_lib/logging_schema.json"])],
       include_package_data=True,
       keywords="armbed mbed-os mbed-cli ci framework testing automation",
       license="(R) ARM",

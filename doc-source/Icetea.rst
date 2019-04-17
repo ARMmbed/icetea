@@ -44,26 +44,30 @@ installed by `Icetea` installation.
     * six (`pip install six`)
     * mbed-ls (`pip install mbed-ls`)
     * netifaces (`pip install netifaces`), for unit tests
-* Mbed-flasher (available in github at
-  https://github.com/ARMmbed/mbed-flasher)
+    * pydash (`pip install pydash`)
+    * transitions (`pip install transitions`)
+    * Mbed-flasher (`pip install mbed-flasher`)
 
 ****************
 Folder structure
 ****************
 
 |  /icetea> tree
-|  ├───doc         // these documents
+|  ├───doc         // these documents in md format
+|  ├───doc-source  // these documents
 |  ├───examples    // some test case examples
 |  ├───log         // test execution logs, when running Icetea directly from GIT repository root
 |  ├───icetea_lib    // Icetea -libraries
 |  │   ├───DeviceConnectors  // DUT connectors
-|  │   ├───ExtApps           // test required external modules
-|  │   ├───Extensions        // default extensions, which is loaded automatically
 |  │   ├───build             // build object implementation
 |  │   ├───Events            // Event system implementation
 |  │   ├───Reports           // Reporters
+|  │   ├───TestBench         // Test bench implementation
+|  │   ├───Plugin            // Plugin implementation and default plugins
+|  │   ├───Randomize         // Random seed generator implementation
 |  │   ├───ResourceProvider  // Allocators and ResourceProvider
 |  │   ├───TestSuite         // Test runner implementation
+|  │   └───tools             // Tools
 |  └───test         // unit tests
 
 *******
@@ -187,8 +191,26 @@ argument if they match, but the check might not be foolproof.
 --kill_putty              Kill old putty/kitty processes
 --forceflash              Force flashing of hardware devices if binary is given.                                                                                                                                                                                                              Mutually exclusive with forceflash_once
 --forceflash_once         Force flashing of hardware devices if binary is given, but only once.                                                                                                                                                                                               Mutually exclusive with forceflash
---skip_flash              Skip flashing of duts.
+--skip_flash              Skip flashing of duts.                                                                                                                                                                                                                                              Mutually exclusive with forceflash args
+--sync_start              Use echo-command to try and make sure duts have started before proceeding with test.
 ========================  ================================================================================================================================  ================================================================================================  ==============================  ==========================================
+
+*******
+Running
+*******
+To run tests you first need to have the test cases in valid python modules.
+There are two ways to select which test cases to run: suites or filters.
+When using suites Icetea will search for test cases based on their name
+as described in the suite file. This is described in more detail in
+`suite_api.md <suite_api.html>`_.
+
+Icetea also supports filtering test cases by their metadata.
+All the available filters are described in the table above.
+The filters are provided on the command line in string format and
+they support basic boolean logic using keywords "and, or, not" and
+grouping by parenthesis. If you want to use filter values with
+multiple words, surround them with single quotes (').
+Example: --feature "feature1 and 'feature2 subfeature2'"
 
 *******
 Results
@@ -232,20 +254,21 @@ Console results
 ===============
 Console results look like this::
 
-  +--------------+---------+-------------+-------------+-----------+-----------+
-  | Testcase     | Verdict | Fail Reason | Skip Reason | platforms |  duration |
-  +--------------+---------+-------------+-------------+-----------+-----------+
-  | test_cmdline |   pass  |             |             |    K64F   | 10.950142 |
-  +--------------+---------+-------------+-------------+-----------+-----------+
-  +---------------+----------------+
-  |    Summary    |                |
-  +---------------+----------------+
-  | Final Verdict |      PASS      |
-  |     count     |       1        |
-  |    passrate   |    100.00 %    |
-  |      pass     |       1        |
-  |    Duration   | 0:00:10.950142 |
-  +---------------+----------------+
+  +--------------+---------+-------------+-------------+-----------+----------+---------+
+  | Testcase     | Verdict | Fail Reason | Skip Reason | Platforms | Duration | Retried |
+  +--------------+---------+-------------+-------------+-----------+----------+---------+
+  | test_cmdline |   pass  |             |             |  process  | 0.946598 |    No   |
+  +--------------+---------+-------------+-------------+-----------+----------+---------+
+  +----------------------------+----------------+
+  |          Summary           |                |
+  +----------------------------+----------------+
+  |       Final Verdict        |      PASS      |
+  |           count            |       1        |
+  |          passrate          |    100.00 %    |
+  | passrate excluding retries |    100.00 %    |
+  |            pass            |       1        |
+  |          Duration          | 0:00:00.946598 |
+  +----------------------------+----------------+
 
 ***********************
 Bash command completion

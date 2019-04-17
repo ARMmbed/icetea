@@ -39,23 +39,28 @@ installed by `Icetea` installation.
  * six (`pip install six`)
  * mbed-ls (`pip install mbed-ls`)
  * netifaces (`pip install netifaces`), for unit tests
-* Mbed-flasher (available in
-github at https://github.com/ARMmbed/mbed-flasher)
+ * pydash (`pip install pydash`)
+ * transitions (`pip install transitions`)
+ * Mbed-flasher (`pip install mbed-flasher`)
 
 ## Folder structure
 
 ```
 /icetea> tree
 ├───doc         // these documents
+├───doc-source  // these documents in rst format
 ├───examples    // some test case examples
 ├───log         // test execution logs, when running Icetea directly from GIT repository root
-├───icetea_lib    // Icetea -libraries
+├───icetea_lib  // Icetea -libraries
 │   ├───DeviceConnectors  // DUT connectors
 │   ├───ExtApps           // test required external modules
 │   ├───Extensions        // default extensions, which is loaded automatically
 │   ├───build             // build object implementation
 │   ├───Events            // Event system implementation
 │   ├───Reports           // Reporters
+│   ├───TestBench         // Test bench implementation
+│   ├───Plugins           // Plugin implementation and default plugins
+│   ├───Randomize         // Random seed generator implementation
 │   ├───ResourceProvider  // Allocators and ResourceProvider
 │   ├───TestSuite         // Test runner implementation
 └───test         // unit tests
@@ -150,7 +155,7 @@ Supported cli parameters are described below:
 | --bin | Used binary for DUTs when process/hardware is used. NOTE: Does not affect duts which specify their own binaries | Valid file name or path |  |  |
 | --tc_cfg | Test case configuration file | Valid file name or path |  |  |
 | --ch | Use specific rf channel |  |  |  |
-| --type | Overrides DUT type |  |  |  |
+| --type | Overrides DUT type | hardware, process, serial or mbed |  |  |
 | --platform_name | Overides used platform. Must be found in allowed_platforms in dut configuration if allowed_platforms is defined and non-empty |  |  |  |
 | --putty | Open putty after TC executed |  |  |  |
 | --skip_setup | Skip test case setup phase |  |  |  |
@@ -178,9 +183,25 @@ Supported cli parameters are described below:
 | --serial_ch_size | Use chunk mode with size N when writing to serial port  | Integer, -1 for pre-defined mode, N=0 for normal mode, N>0 chunk mode with size N |  |  |
 | --serial_ch_delay | Use defined delay between characters. Used only when serial_ch_size > 0  | Float | 0.01 |  |
 | --kill_putty | Kill old putty/kitty processes |  |  |  |
-| --forceflash | Force flashing of hardware devices if binary is given. |  |  | Mutually exclusive with forceflash_once |
-| --forceflash_once | Force flashing of hardware devices if binary is given, but only once. |  |  | Mutually exclusive with forceflash |
+| --forceflash | Force flashing of hardware devices if binary is given. |  |  | Mutually exclusive with forceflash_once and skip_flash|
+| --forceflash_once | Force flashing of hardware devices if binary is given, but only once. |  |  | Mutually exclusive with forceflash and skip_flash |
+| --sync_start | Make sure dut applications have started using 'echo' command. | Boolean | False | Mutually exclusive with forceflash and forceflash_once. |
 | --skip_flash | Skip flashing duts. |  |  |  |
+
+## Running
+To run tests you first need to have the test cases in valid python modules.
+There are two ways to select which test cases to run: suites or filters.
+When using suites Icetea will search for test cases based on their name
+as described in the suite file. This is described in more detail in
+[suite_api.md](suite_api.md).
+
+Icetea also supports filtering test cases by their metadata.
+All the available filters are described in the table above.
+The filters are provided on the command line in string format and
+they support basic boolean logic using keywords "and, or, not" and
+grouping by parenthesis. If you want to use filter values with
+multiple words, surround them with single quotes (').
+Example: --feature "feature1 and 'feature2 subfeature2'"
 
 ## Results
 
@@ -217,20 +238,21 @@ See [suite api](suite_api.md) for more info.
 
 ### console results
 ```
-  +--------------+---------+-------------+-------------+-----------+-----------+
-  | Testcase     | Verdict | Fail Reason | Skip Reason | platforms |  duration |
-  +--------------+---------+-------------+-------------+-----------+-----------+
-  | test_cmdline |   pass  |             |             |    K64F   | 10.950142 |
-  +--------------+---------+-------------+-------------+-----------+-----------+
-  +---------------+----------------+
-  |    Summary    |                |
-  +---------------+----------------+
-  | Final Verdict |      PASS      |
-  |     count     |       1        |
-  |    passrate   |    100.00 %    |
-  |      pass     |       1        |
-  |    Duration   | 0:00:10.950142 |
-  +---------------+----------------+
+    +--------------+---------+-------------+-------------+-----------+----------+---------+
+    | Testcase     | Verdict | Fail Reason | Skip Reason | Platforms | Duration | Retried |
+    +--------------+---------+-------------+-------------+-----------+----------+---------+
+    | test_cmdline |   pass  |             |             |  process  | 0.946598 |    No   |
+    +--------------+---------+-------------+-------------+-----------+----------+---------+
+    +----------------------------+----------------+
+    |          Summary           |                |
+    +----------------------------+----------------+
+    |       Final Verdict        |      PASS      |
+    |           count            |       1        |
+    |          passrate          |    100.00 %    |
+    | passrate excluding retries |    100.00 %    |
+    |            pass            |       1        |
+    |          Duration          | 0:00:00.946598 |
+    +----------------------------+----------------+
 
 ```
 

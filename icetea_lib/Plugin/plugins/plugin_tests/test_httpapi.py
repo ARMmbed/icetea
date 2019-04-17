@@ -1,3 +1,4 @@
+# pylint: disable=missing-docstring,unused-argument,too-many-arguments,too-few-public-methods
 """
 Copyright 2017 ARM Limited
 Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,16 +22,19 @@ from icetea_lib.TestStepError import TestStepFail
 
 
 # Schema to make sure header fields are overwritten
-schema = {
+SCHEMA = {
     "properties": {
         "mergeStrategy": "overwrite"
     }
 }
 
 
-class MockedRequestsResponse():
-    def __init__(self, status_code=200, json_data={"key1": "value1"}):
-        self.json_data = json_data
+class MockedRequestsResponse(object):
+    """
+    Mocked Response object.
+    """
+    def __init__(self, status_code=200, json_data=None):
+        self.json_data = json_data if json_data else {"key1": "value1"}
         self.status_code = status_code
         self.url = ''
         self.headers = {"head": "ers"}
@@ -44,27 +48,23 @@ class MockedRequestsResponse():
 class APITestCase(unittest.TestCase):
 
     def setUp(self):
+        self.http = None
         self.host = "http://somesite.com"
 
     @mock.patch("icetea_lib.tools.HTTP.Api.HttpApi.get", side_effect=iter([
-        MockedRequestsResponse(
-        status_code=200), MockedRequestsResponse(status_code=404),
+        MockedRequestsResponse(status_code=200), MockedRequestsResponse(status_code=404),
         MockedRequestsResponse(status_code=404)]))
     @mock.patch("icetea_lib.tools.HTTP.Api.HttpApi.put", side_effect=iter([
-        MockedRequestsResponse(
-        status_code=200), MockedRequestsResponse(status_code=404),
+        MockedRequestsResponse(status_code=200), MockedRequestsResponse(status_code=404),
         MockedRequestsResponse(status_code=404)]))
     @mock.patch("icetea_lib.tools.HTTP.Api.HttpApi.post", side_effect=iter([
-        MockedRequestsResponse(
-        status_code=200), MockedRequestsResponse(status_code=404),
+        MockedRequestsResponse(status_code=200), MockedRequestsResponse(status_code=404),
         MockedRequestsResponse(status_code=404)]))
     @mock.patch("icetea_lib.tools.HTTP.Api.HttpApi.delete", side_effect=iter([
-        MockedRequestsResponse(
-        status_code=200), MockedRequestsResponse(status_code=404),
+        MockedRequestsResponse(status_code=200), MockedRequestsResponse(status_code=404),
         MockedRequestsResponse(status_code=404)]))
     @mock.patch("icetea_lib.tools.HTTP.Api.HttpApi.patch", side_effect=iter([
-        MockedRequestsResponse(
-        status_code=200), MockedRequestsResponse(status_code=404),
+        MockedRequestsResponse(status_code=200), MockedRequestsResponse(status_code=404),
         MockedRequestsResponse(status_code=404)]))
     def test_tcapi(self, mock_patch, mock_delete, mock_post, mock_put, mock_get):
         self.http = tc_api(host=self.host, headers=None, cert=None, logger=None)
@@ -76,22 +76,26 @@ class APITestCase(unittest.TestCase):
         path = "/test"
         data = {"testkey1": "testvalue1"}
         self.assertEquals(self.http.put(path, data).status_code, 200)
-        self.assertEquals(self.http.put(path, data, expected=200, raiseException=False).status_code, 404)
+        self.assertEquals(self.http.put(path, data, expected=200,
+                                        raiseException=False).status_code, 404)
         with self.assertRaises(TestStepFail):
-            self.http.put(path, data,  expected=200, raiseException=True)
+            self.http.put(path, data, expected=200, raiseException=True)
 
         self.assertEquals(self.http.post(path, json=data).status_code, 200)
-        self.assertEquals(self.http.post(path, json=data, expected=200, raiseException=False).status_code, 404)
+        self.assertEquals(self.http.post(path, json=data, expected=200,
+                                         raiseException=False).status_code, 404)
         with self.assertRaises(TestStepFail):
             self.http.post(path, json=data, expected=200, raiseException=True)
 
         self.assertEquals(self.http.delete(path).status_code, 200)
-        self.assertEquals(self.http.delete(path, expected=200, raiseException=False).status_code, 404)
+        self.assertEquals(self.http.delete(path, expected=200,
+                                           raiseException=False).status_code, 404)
         with self.assertRaises(TestStepFail):
             self.http.delete(path, expected=200, raiseException=True)
 
         self.assertEquals(self.http.patch(path, data=data).status_code, 200)
-        self.assertEquals(self.http.patch(path, data=data, expected=200, raiseException=False).status_code, 404)
+        self.assertEquals(self.http.patch(path, data=data, expected=200,
+                                          raiseException=False).status_code, 404)
         with self.assertRaises(TestStepFail):
             self.http.patch(path, data=data, expected=200, raiseException=True)
 

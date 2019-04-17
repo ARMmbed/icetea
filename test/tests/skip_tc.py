@@ -13,35 +13,36 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import sys
 from icetea_lib.bench import Bench
 
 
 class Testcase(Bench):
-
+    """
+    Test case for testing skipping test cases.
+    """
     def __init__(self):
         Bench.__init__(self,
-                        name="skipcasetest",
-                        title="Testcase test file",
-                        status="development",
-                        purpose="dummy",
-                        component=["None"],
-                        type="compatibility",
-                        requirements={
-                            "duts": {
-                                '*': {
-                                    "count": 0
-                                    }
-                                }
-                            },
-                        execution={
-                            "skip":{
-                                "value": True,
-                                "only_type": "process",
-                                "reason": "Because"
-                            }
-                        }
-                    )
+                       name="skipcasetest",
+                       title="Testcase test file",
+                       status="development",
+                       purpose="dummy",
+                       component=["None"],
+                       type="compatibility",
+                       requirements={
+                           "duts": {
+                               '*': {
+                                   "count": 0
+                               }
+                           }
+                       },
+                       execution={
+                           "skip": {
+                               "value": True,
+                               "only_type": "process",
+                               "reason": "Because"
+                           }
+                       }
+                      )
 
-    def case(self):
+    def case(self):  # pylint: disable=missing-docstring
         pass

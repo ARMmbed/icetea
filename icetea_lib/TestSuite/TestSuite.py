@@ -20,7 +20,6 @@ TestSuite class is a representation of a runnable suite of test cases.
 
 SuiteException is an Exception that is raised by TestSuite when it needs to exit with a critical
 failure.
-
 """
 # pylint: disable=too-many-branches,too-many-arguments
 
@@ -32,7 +31,8 @@ from icetea_lib.Result import Result
 from icetea_lib.ResultList import ResultList
 from icetea_lib.TestSuite.TestcaseContainer import TestStatus, DummyContainer
 from icetea_lib.TestSuite.TestcaseList import TestcaseList
-from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter
+from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter, FilterException
+from icetea_lib.tools.tools import find_duplicate_keys
 
 
 class SuiteException(Exception):
@@ -44,6 +44,9 @@ class SuiteException(Exception):
 
 
 class TestSuite(object):
+    """
+    Test suite container object.
+    """
     def __init__(self, logger=None, cloud_module=None, args=None):
         self.logger = logger
         if logger is None:
@@ -160,6 +163,8 @@ class TestSuite(object):
                 if not isinstance(result, ResultList):
                     result.build_result_metadata(args=self.args)
                 self._results.append(result)
+                if isinstance(result, ResultList):
+                    result = self._results.get(len(self._results) - 1)
                 if self.args.stop_on_failure and result.get_verdict() not in ['pass', 'skip']:
                     # Stopping run on failure,
                     self.logger.info("Test case %s failed or was inconclusive, "
@@ -169,6 +174,7 @@ class TestSuite(object):
                     break
                 if result.get_verdict() == 'pass':
                     self.logger.info("Test case %s passed.\n", test.get_name())
+                    result.retries_left = 0
                     break
                 if result.get_verdict() == 'skip':
                     iteration = iterations
@@ -178,6 +184,7 @@ class TestSuite(object):
                 elif retries > 0:
                     if retryreason == "includeFailures" or (retryreason == "inconclusive"
                                                             and result.inconclusive):
+
                         self.logger.error("Testcase %s failed, %d "
                                           "retries left.\n", test.get_name(), retries)
                         retries -= 1
@@ -208,13 +215,18 @@ class TestSuite(object):
                     self._upload_result(result_item)
 
     def _upload_result(self, result_object):
+        """
+        Upload a single result to the cloud.
+
+        :param result_object: Result
+        :return: Nothing
+        """
         if not result_object.uploaded:
             response_data = self.cloud_module.send_result(result_object)
             if response_data:
                 data = response_data
                 self.logger.info("Results sent to the server. ID: %s", data.get('_id'))
                 result_object.uploaded = True
-
 
     def get_default_configs(self):
         """
@@ -253,9 +265,16 @@ class TestSuite(object):
                 return table
         except TypeError:
             self.logger.error("Error, print_list_testcases: error during iteration.")
-            return
+            return None
 
     def _create_suite_file(self, testcases, suite_name):  # pylint: disable=no-self-use
+        """
+        Create a suite file at suite_name.
+
+        :param testcases: Test case list.
+        :param suite_name: File path
+        :return: Nothing
+        """
         base_json = dict()
         base_json["default"] = {}
         base_json["testcases"] = []
@@ -265,13 +284,23 @@ class TestSuite(object):
             filehandle.write(json.dumps(base_json))
 
     def _create_json_objects(self, testcases):
+        """
+        Create test case config json object list.
+
+        :param testcases: Test case list.
+        :return: list
+        """
         for testcase in self._testcases:
             info = testcase.get_instance_config()
             testcases.append(info)
-
         return testcases
 
     def _create_rows_for_table(self, rows):
+        """
+        Internal helper for creating rows for test case display table.
+        :param rows: list
+        :return: Nothing
+        """
         index = 0
         for testcase in self._testcases:
             info = testcase.get_infodict()
@@ -302,14 +331,14 @@ class TestSuite(object):
             self.logger.error("Cloud module has not been initialized! "
                               "Skipping testcase update.")
             return False
-        else:
-            for testcase in self._testcases:
-                try:
-                    tc_instance = testcase.get_instance()
-                    self.cloud_module.update_testcase(tc_instance.config)
-                except Exception as err:  # pylint: disable=broad-except
-                    self.logger.error(err)
-                    self.logger.debug("Invalid TC: " + testcase.tcname)
+        for testcase in self._testcases:
+            try:
+                tc_instance = testcase.get_instance()
+                self.cloud_module.update_testcase(tc_instance.config)
+            except Exception as err:  # pylint: disable=broad-except
+                self.logger.error(err)
+                self.logger.debug("Invalid TC: %s", testcase.tcname)
+        return True
 
     @staticmethod
     def get_suite_files(path):
@@ -387,6 +416,11 @@ class TestSuite(object):
         self._prepare_suite()
 
     def _print_search_errors(self):
+        """
+        Logs errors that were collected during test case search.
+
+        :return: Nothing
+        """
         for testcase in self._testcases:
             if isinstance(testcase, DummyContainer):
                 self.logger.error("Some test cases were not found.")
@@ -406,7 +440,6 @@ class TestSuite(object):
                 raise SuiteException("Test case preparation failed for "
                                      "test case {}: {}".format(i, err))
             except SyntaxError:
-                pass
                 if self.args.list:
                     pass
                 else:
@@ -443,7 +476,10 @@ class TestSuite(object):
         self.logger.info("Filtering testcases")
         if testcases == "all":
             testcases = None
-        final_tclist = tclist.filter(filt, testcases)
+        try:
+            final_tclist = tclist.filter(filt, testcases)
+        except FilterException as error:
+            raise SuiteException(error)
         if not final_tclist:
             self.logger.error("Error, create_suite: "
                               "Specified testcases not found in %s.", abs_tcpath)
@@ -493,14 +529,14 @@ class TestSuite(object):
             return suite
         try:
             with open(filepath) as fil:
-                suite = json.load(fil)
+                suite = json.load(fil, object_pairs_hook=find_duplicate_keys)
                 return suite
         except IOError:
             self.logger.error("Error, load_suite_file: "
                               "Test suite %s cannot be read.", name)
-        except ValueError:
+        except ValueError as error:
             self.logger.error("Error, load_suite_file: "
-                              "Could not load test suite. No JSON object could be decoded.")
+                              "Could not load test suite. %s.", error)
         return None
 
     def _load_suite_list(self):
@@ -541,7 +577,10 @@ class TestSuite(object):
                 testcases = None
         else:
             testcases = None
-        final_tclist = tclist.filter(filt, testcases)
+        try:
+            final_tclist = tclist.filter(filt, testcases)
+        except FilterException as error:
+            raise SuiteException(error)
         if not final_tclist:
             self.logger.error("Error, create_suite: "
                               "Specified testcases not found in %s.", abs_tcpath)

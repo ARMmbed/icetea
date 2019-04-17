@@ -113,6 +113,7 @@ class IceteaManagerTestcase(unittest.TestCase):
             suitedir="./test/suites", forceflash_once=False, forceflash=False,
             ignore_invalid_params=True, failure_return_value=False, stop_on_failure=False,
             branch="", platform_name=None, json=False)
+        self.maxdiff = None
 
     def tearDown(self):
         if os.path.exists("test_suite.json"):
@@ -120,16 +121,21 @@ class IceteaManagerTestcase(unittest.TestCase):
 
     def test_list_suites(self):
         table = IceteaManager.list_suites(suitedir="./test/suites")
-        tab = "+------------------------+\n|    Testcase suites     " \
-              "|\n+------------------------+\n" \
-              "|    dummy_suite.json    |\n|   failing_suite.json   |\n|  malformed_suite.json  " \
-              "|\n| suite_missing_one.json |\n|   working_suite.json   |\n" \
-              "+------------------------+"
+        tab = u'+------------------------+\n' \
+              u'|    Testcase suites     |\n' \
+              u'+------------------------+\n' \
+              u'|    dummy_suite.json    |\n' \
+              u'| duplicates_suite.json  |\n' \
+              u'|   failing_suite.json   |\n' \
+              u'|  malformed_suite.json  |\n' \
+              u'| suite_missing_one.json |\n' \
+              u'|   working_suite.json   |\n' \
+              u'+------------------------+'
         self.assertEqual(table.get_string(), tab)
 
     @mock.patch("icetea_lib.IceteaManager._cleanlogs")
     @mock.patch("icetea_lib.IceteaManager.TestSuite")
-    def test_run(self, mock_suite, mock_clean):
+    def test_run(self, mock_suite, mock_clean):  # pylint: disable=unused-argument
         ctm = IceteaManager()
 
         # Testing different return codes
@@ -305,7 +311,7 @@ class IceteaManagerTestcase(unittest.TestCase):
         self.assertTrue(re.search(b"This is a failing test case", output))
 
     def test_list_json_output(self):
-        self.maxDiff = None
+        self.maxdiff = None
         expected_test_path = os.path.abspath(os.path.join(__file__, "..", "tests",
                                                           "json_output_test",
                                                           "json_output_test_case.py"))
@@ -325,7 +331,7 @@ class IceteaManagerTestcase(unittest.TestCase):
              u"component": [u"Icetea_ut"],
              u"compatible": {
                  u"framework": {
-                     u"version": u">=1.0.0-rc1",
+                     u"version": u">=1.0.0",
                      u"name": u"Icetea"},
                  u"hw": {u"value": True},
                  u"automation": {u"value": True}
@@ -355,7 +361,7 @@ class IceteaManagerTestcase(unittest.TestCase):
                                 stdin=subprocess.PIPE,
                                 stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
-        output, _ = proc.communicate()
+        output, _ = proc.communicate()  # pylint: disable=unused-variable
         with open("test_suite.json", "r") as file_handle:
             read_data = file_handle.read()
         self.assertDictEqual(json.loads(expected_call), json.loads(read_data))

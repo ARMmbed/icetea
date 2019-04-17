@@ -19,7 +19,7 @@ serial and chunk mode parameters.
 # Disable too many arguments warning and string statement has no effect warning
 # Disable Too few public methods warning, too many public methods warning
 # pylint: disable=R0913,W0105,R0903,R0904
-# pylint: disable=too-many-instance-attributes
+# pylint: disable=too-many-instance-attributes,unused-argument
 
 import time
 from collections import deque
@@ -29,22 +29,8 @@ from prettytable import PrettyTable
 
 from icetea_lib.DeviceConnectors.Dut import Dut, DutConnectionError
 from icetea_lib.enhancedserial import EnhancedSerial
-from icetea_lib.tools.tools import strip_escape, split_by_n, getargspec
+from icetea_lib.tools.tools import strip_escape, split_by_n
 from icetea_lib.DeviceConnectors.DutInformation import DutInformation
-from icetea_lib.build.build import Build
-from icetea_lib.LogManager import get_resourceprovider_logger
-
-try:
-    from mbed_flasher.flash import Flash
-except ImportError:
-    Flash = None
-
-try:
-    from mbed_flasher.common import FlashError
-    FLASHER_ERRORS = (NotImplementedError, SyntaxError, FlashError)
-except ImportError:
-    FlashError = None
-    FLASHER_ERRORS = (NotImplementedError, SyntaxError)
 
 
 class SerialParams(object):
@@ -111,7 +97,7 @@ class DutSerial(Dut):
                                                                               0.01),
                                                start_delay=ch_mode_config.get("ch_mode_start_delay",
                                                                               0))
-        self.input_queue = deque() # Input queue
+        self.input_queue = deque()  # Input queue
         self.daemon = True  # Allow Python to stop us
         self.keep_reading = False
 
@@ -128,8 +114,9 @@ class DutSerial(Dut):
                 post_cli_cmds = config["application"]["post_cli_cmds"]
             if post_cli_cmds is not None:
                 self.set_post_cli_cmds(post_cli_cmds)
-        self.dutinformation = DutInformation("unknown",
-                                             self.config.get('allocated').get('target_id'),
+        tid = self.config.get('allocated', {}).get('target_id', "unknown")
+        self.dutinformation = DutInformation("serial",
+                                             tid,
                                              index=self.index, build=self.build)
 
     """Properties"""
@@ -240,70 +227,12 @@ class DutSerial(Dut):
         """
         return self.config.get('allocated').get('target_id')
 
-    def flash(self, binary, forceflash=None):  # pylint: disable=too-many-branches
+    def flash(self, binary_location=None, forceflash=None):  # pylint: disable=too-many-branches
         """
-        Flash a binary to the target device using mbed-flasher.
-
-        :param binary: Binary to flash to device
-        :param forceflash: Boolean
-        :return: False if an error was encountered during flashing. True if flasher retcode == 0
-        :raises: ImportError if mbed-flasher not installed.
-        :raises: DutConnectionError if Build initialization fails (binary not found usually).
+        Nothing, not implemented.
         """
-        error_occured = False
-        if Flash is None:
-            self.logger.warning("mbed-flasher not installed. "
-                                "(https://github.com/ARMmbed/mbed-flasher)")
-            raise ImportError("Mbed-flasher not installed.")
-
-        try:
-            # Create build object.
-            self.build = Build.init(binary)
-        except NotImplementedError as error:
-            self.logger.error("Build initialization failed. Check your build location.")
-            self.logger.debug(error)
-            raise DutConnectionError(error)
-
-        # Check if flashing is needed. Depends on forceflash-option.
-        if not self._flash_needed(forceflash=forceflash):
-            self.logger.info("Skipping flash, not needed.")
-            return True
-
-        if "logger" in getargspec(Flash.__init__).args:
-            # get_resourceprovider_logger returns previous logger if one already exists.
-            # If no logger with name mbed-flasher exists, a new one is created.
-            logger = get_resourceprovider_logger("mbed-flasher", "FLS")
-            flasher = Flash(logger=logger)
-        else:
-            # Backwards compatibility for older mbed-flasher versions.
-            flasher = Flash()
-        retcode = None
-        try:
-            if self.device:
-                buildfile = self.build.get_file()
-                if not buildfile:
-                    raise DutConnectionError("Binary {} not found".format(buildfile))
-                self.logger.info('Flashing dev: %s', self.device['target_id'])
-                target_id = self.device.get("target_id")
-                retcode = flasher.flash(build=buildfile, target_id=target_id,
-                                        device_mapping_table=[self.device])
-            else:
-                error_occured = True
-        except FLASHER_ERRORS as error:
-            if error.__class__ == NotImplementedError:
-                self.logger.error("Flashing not supported for this platform!")
-            elif error.__class__ == SyntaxError:
-                self.logger.error("target_id required by mbed-flasher!")
-            if FlashError is not None:
-                if error.__class__ == FlashError:
-                    self.logger.error("Flasher raised the following error: %s Error code: %i",
-                                      error.message, error.return_code)
-            raise DutConnectionError(error)
-        if retcode != 0:
-            error_occured = True
-        else:
-            self.dutinformation.build_binary_sha1 = self.build.sha1
-        return not error_occured
+        self.logger.warning("Flashing is not supported for this dut type.")
+        return True
 
     def get_info(self):
         """
@@ -453,7 +382,7 @@ class DutSerial(Dut):
                 self.port.write((data + "\n").encode())
         except SerialException as err:
             self.logger.exception("SerialError occured while trying to write data {}.".format(data))
-            raise IOError(str(err))
+            raise RuntimeError(str(err))
 
     # read line from serial port
     def _readline(self, timeout=1):
@@ -563,8 +492,4 @@ class DutSerial(Dut):
         :param kwargs: Keyword arguments (forceflash: Boolean)
         :return: Boolean
         """
-        forceflash = kwargs.get("forceflash", False)
-        cur_binary_sha1 = self.dutinformation.build_binary_sha1
-        if not forceflash and self.build.sha1 == cur_binary_sha1:
-            return False
-        return True
+        return False

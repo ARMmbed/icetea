@@ -16,6 +16,17 @@ limitations under the License.
 import os
 from ast import literal_eval as le
 
+from icetea_lib.tools.tools import create_match_bool
+# pylint: disable=too-many-locals,unsupported-membership-test
+
+
+class FilterException(Exception):
+    """
+    Exception the filter can throw when something really goes wrong.
+    """
+    pass
+
+
 class TestcaseFilter(object):
     """
     TestcaseFilter class. Provides the handling for different filtering arguments.
@@ -26,11 +37,17 @@ class TestcaseFilter(object):
                         'group': False, 'type': False, 'subtype': False,
                         'comp': False, 'feature': False, 'platform': False}
 
-    def tc(self, value):
+    def tc(self, value):  # pylint: disable=invalid-name,too-many-branches
+        """
+        Tc filter.
+
+        :param value: test case.
+        :return: TestcaseFilter (self)
+        """
         # tc can be:
         # int, tuple, list or str(any of the above)
         if isinstance(value, str):
-            # Wildcard chjeck
+            # Wildcard check
             if value == 'all':
                 self._filter['name'] = 'all'
                 return self
@@ -63,7 +80,7 @@ class TestcaseFilter(object):
                     # It was a single string.
                     self._filter['name'] = pfilter[0]
                     return self
-                elif len(pfilter) == 0:
+                elif not pfilter:  # pylint: disable=len-as-condition
                     pass
 
             value = pfilter
@@ -73,13 +90,15 @@ class TestcaseFilter(object):
                 raise TypeError("Error, createFilter: non-positive integer " + str(value))
             else:
                 self._filter['list'] = [value - 1]
-        elif isinstance(value, list) or isinstance(value, tuple):
+        elif isinstance(value, (list, tuple)):
             if len(value) < 1:
                 raise IndexError("Error, createFilter: Index list empty.")
             for i in value:
                 if not isinstance(i, int) and not isinstance(i, str):
-                    raise TypeError("Error, createFilter: Index list has invalid member: %s" % str(value))
+                    raise TypeError("Error, createFilter: "
+                                    "Index list has invalid member: {}".format(str(value)))
             self._filter['list'] = [x - 1 for x in value if isinstance(x, int)]
+            # pylint: disable=no-member
             self._filter['list'].extend([x for x in value if isinstance(x, str)])
         elif value is None:
             raise TypeError("tc filter cannot be None")
@@ -152,21 +171,50 @@ class TestcaseFilter(object):
         return self._add_filter_key("platform", platform)
 
     def get_filter(self):
+        """
+        Get the filter dictionary.
+
+        :return: dict.
+        """
         return self._filter
 
-    def match(self, testcase, tc_index):
+    @staticmethod
+    def _match_group(string_to_match, args):
         """
-        Match function. Matches testcase information with this filter.
+        Matcher for group-filter.
 
-        :param testcase: TestcaseContainer instance
-        :param tc_index: Index of testcase in list
-        :return: True if all filter fields were successfully matched to information.
-        False otherwise.
+        :param string_to_match: Filter string.
+        :param args: tuple or list of arguments, args[0] must be the test case metadata.
+        args[1] must be the filter dictionary.
+        :return: Boolean
+        """
+        testcase = args[0]
+        filters = args[1]
+        group_ok = True
+        if 'group' in filters and string_to_match:
+            group = string_to_match.split(os.sep)  # pylint: disable=no-member
+            group = [x for x in group if len(x)]  # Remove empty members
+            if len(group) == 1:
+                group = string_to_match.split(',')  # pylint: disable=no-member
+            tcgroup = testcase['group'].split(os.sep)
+
+            for member in group:
+                if member not in tcgroup:
+                    group_ok = False
+                    break
+        return group_ok
+
+    def _match_list(self, testcase, tc_index):
+        """
+        Matcher for test case list.
+
+        :param testcase: Testcase metadata
+        :param tc_index: index
+        :return: Boolean
         """
         list_ok = False
-        testcase = testcase.get_infodict()
         if 'list' in self._filter.keys() and self._filter['list']:
-            for index in self._filter['list']:
+            for index in self._filter['list']:  # pylint: disable=not-an-iterable
                 if isinstance(index, int):
                     if index < 0:
                         raise TypeError(
@@ -186,26 +234,24 @@ class TestcaseFilter(object):
                 return False
         else:
             list_ok = True
+        return list_ok
 
-        group_ok = False
-        if 'group' in self._filter.keys() and self._filter['group']:
-            group = self._filter['group'].split(os.sep)
-            group = [x for x in group if len(x)] # Remove empty members
-            if len(group) == 1:
-                group = self._filter['group'].split(',')
-            tcgroup = testcase['group'].split(os.sep)
-            for member in group:
-                if member not in tcgroup:
-                    group_ok = False
-                    break
-                else:
-                    group_ok = True
-        else:
-            group_ok = True
+    @staticmethod
+    def _match_platform(string_to_match, args):
+        """
+        Matcher for allowed platforms
 
+        :param string_to_match: Filter string
+        :param args: Tuple or list of arguments, args[0] must be test case metadata dictionary,
+        args[1] must be filter dictionary.
+
+        :return: Boolean
+        """
+        testcase = args[0]
+        filters = args[1]
         platform_ok = True
-        if 'platform' in self._filter.keys() and self._filter['platform']:
-            platforms = self._filter['platform']
+        if 'platform' in filters and string_to_match:
+            platforms = string_to_match
             platforms = platforms if isinstance(platforms, list) else [platforms]
             tcplatforms = testcase['allowed_platforms']
             if tcplatforms:
@@ -215,45 +261,102 @@ class TestcaseFilter(object):
                     else:
                         platform_ok = True
                         break
+        return platform_ok
 
+    @staticmethod
+    def _match_rest(string_to_match, args):
+        """
+        Matcher for generic metadata
+
+        :param string_to_match: Filter string to match against.
+        :param args: arguments as list or tuple, args[0] must be test case metadata as
+        dictionary, args[1] must be list of filter keys, args[2] must be key currently
+        being processed.
+
+        :return: Boolean
+        """
+        testcase = args[0]
+        filter_keys = args[1]
+        filter_key = args[2]
         rest_ok = True
+        if filter_key in filter_keys and string_to_match:
+            # Possible that string comparison can cause encoding comparison error.
+            # In the case where the caseFilter is 'all', the step is skipped
+            if filter_key == 'name' and string_to_match == 'all':
+                return True
+            if isinstance(testcase[filter_key], list):
+                if isinstance(
+                        string_to_match, str) and string_to_match not in testcase[filter_key]:
+                    return False
+
+            elif isinstance(testcase[filter_key], str):
+                # pylint: disable=unsupported-membership-test
+                if isinstance(string_to_match, str) and testcase[filter_key] != string_to_match:
+                    return False
+                elif isinstance(
+                        string_to_match, list) and testcase[filter_key] not in string_to_match:
+                    return False
+        return rest_ok
+
+    def match(self, testcase, tc_index):  # pylint: disable=too-many-branches,too-many-statements
+        """
+        Match function. Matches testcase information with this filter.
+
+        :param testcase: TestcaseContainer instance
+        :param tc_index: Index of testcase in list
+        :return: True if all filter fields were successfully matched. False otherwise.
+        """
+        testcase = testcase.get_infodict()
+        filter_keys = self._filter.keys()
+        list_ok = self._match_list(testcase, tc_index)
+        try:
+            if self._filter["group"]:
+                group_ok = create_match_bool(self._filter["group"], self._match_group, (testcase,
+                                                                                        filter_keys)
+                                            )
+            else:
+                group_ok = True
+        except SyntaxError as error:
+            raise FilterException("Error while handling group filter {}".format(
+                self._filter["group"]), error)
+        try:
+            if self._filter["platform"]:
+                platform_ok = create_match_bool(self._filter["platform"],
+                                                self._match_platform, (testcase, filter_keys))
+            else:
+                platform_ok = True
+        except SyntaxError as error:
+            raise FilterException("Error while handling platform filter {}".format(
+                self._filter["platform"]), error)
+
         keys = ['status', 'type', 'subtype', 'comp', 'name', 'feature']
+        rest_ok = True
         for key in keys:
-            if key in self._filter.keys() and self._filter[key]:
-                # Possible that string comparison can cause encoding comparison error.
-                # In the case where the caseFilter is 'all', the step is skipped
-                if key == 'name' and self._filter[key] == 'all':
-                    continue
-                if isinstance(testcase[key], list):
-                    if isinstance(self._filter[key], str) and self._filter[key] not in testcase[key]:
+            try:
+                if self._filter[key]:
+                    key_ok = create_match_bool(self._filter[key], self._match_rest, (testcase,
+                                                                                     filter_keys,
+                                                                                     key))
+                    if not key_ok:
                         rest_ok = False
                         break
-                    if isinstance(self._filter[key], list):
-                        one_found = False
-                        for k in self._filter[key]:
-                            if k in testcase[key]:
-                                one_found = True
-                                break
-                        if not one_found:
-                            rest_ok = False
-                            break
-                elif isinstance(testcase[key], str):
-                    if isinstance(self._filter[key], str) and testcase[key] != self._filter[key]:
-                        rest_ok = False
-                        break
-                    elif isinstance(self._filter[key], list) and testcase[key] not in self._filter[key]:
-                        rest_ok = False
-                        break
+            except SyntaxError as error:
+                raise FilterException(
+                    "Error while handling filter {}: {}".format(key, self._filter[key]), error)
 
         return list_ok and group_ok and rest_ok and platform_ok
 
     def _add_filter_key(self, key, value):
+        """
+        Helper for populating filter keys.
+
+        :param key: str
+        :param value: multiple types, value to set.
+        :return: TestcaseFilter (self).
+        """
         if not key or not value:
             return self
         if not isinstance(value, str):
             raise TypeError("createFilter: filter argument {} not string.")
-        if len(value.split(",")) > 1:
-            self._filter[key] = value.split(",")
-        else:
-            self._filter[key] = value
+        self._filter[key] = value
         return self

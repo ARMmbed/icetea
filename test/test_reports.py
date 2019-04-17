@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring,pointless-string-statement
+# pylint: disable=missing-docstring,pointless-string-statement,invalid-name
 
 """
 Copyright 2017 ARM Limited
@@ -15,7 +15,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import json
 import unittest
 import sys
 
@@ -55,7 +54,7 @@ class ReportCase(unittest.TestCase):
             report.generate()
             output = out.getvalue().strip()
             lines = output.split("\n")
-            self.assertEqual(len(lines), 12)
+            self.assertEqual(len(lines), 13)
         finally:
             sys.stdout = saved_stdout
 
@@ -70,7 +69,7 @@ class ReportCase(unittest.TestCase):
             report.generate()
             output = out.getvalue().strip()
             lines = output.split("\n")
-            self.assertEqual(len(lines), 14)
+            self.assertEqual(len(lines), 15)
             self.assertRegexpMatches(lines[8], r"Final Verdict.*INCONCLUSIVE", lines[8])
             self.assertRegexpMatches(lines[9], r"count.*1", lines[9])
             self.assertRegexpMatches(lines[10], r"passrate.*0.00 \%", lines[10])
@@ -90,11 +89,69 @@ class ReportCase(unittest.TestCase):
             report.generate()
             output = out.getvalue().strip()
             lines = output.split("\n")
-            self.assertEqual(len(lines), 16)
+            self.assertEqual(len(lines), 17)
             self.assertRegexpMatches(lines[10], r"Final Verdict.*INCONCLUSIVE", lines[10])
             self.assertRegexpMatches(lines[11], r"count.*3", lines[11])
             self.assertRegexpMatches(lines[12], r"passrate.*0.00 \%", lines[12])
 
+        finally:
+            sys.stdout = saved_stdout
+
+    def test_console_multiple_results_with_retries(self):
+        saved_stdout = sys.stdout
+        results = ResultList()
+        res1 = Result()
+        res1.set_verdict("fail", 1001, 1)
+        res1.retries_left = 1
+        res2 = Result()
+        res2.set_verdict("pass", 0, 1)
+        res2.retries_left = 0
+        results.append(res1)
+        results.append(res2)
+        results.append(Result())
+        results.append(Result())
+        results.append(Result())
+        try:
+            out = StringIO()
+            sys.stdout = out
+            report = ReportConsole(results)
+            report.generate()
+            output = out.getvalue().strip()
+            lines = output.split("\n")
+            self.assertEqual(len(lines), 21)
+            self.assertRegexpMatches(lines[3], "Yes", lines[4])
+            self.assertRegexpMatches(lines[4], "No", lines[5])
+            self.assertRegexpMatches(lines[12], "Final Verdict.*INCONCLUSIVE", lines[12])
+            self.assertRegexpMatches(lines[13], "count.*5", lines[13])
+            self.assertRegexpMatches(lines[14], r"passrate.*50.00 \%", lines[14])
+        finally:
+            sys.stdout = saved_stdout
+
+    def test_console_pass_with_retries(self):
+        saved_stdout = sys.stdout
+        results = ResultList()
+        res1 = Result()
+        res1.set_verdict("fail", 1001, 1)
+        res1.retries_left = 1
+        res2 = Result()
+        res2.set_verdict("pass", 0, 1)
+        res2.retries_left = 0
+        results.append(res1)
+        results.append(res2)
+        try:
+            out = StringIO()
+            sys.stdout = out
+            report = ReportConsole(results)
+            report.generate()
+            output = out.getvalue().strip()
+            lines = output.split("\n")
+            self.assertEqual(len(lines), 17)
+            self.assertRegexpMatches(lines[3], "Yes", lines[4])
+            self.assertRegexpMatches(lines[4], "No", lines[5])
+            self.assertRegexpMatches(lines[9], "Final Verdict.*PASS", lines[9])
+            self.assertRegexpMatches(lines[10], "count.*2", lines[10])
+            self.assertRegexpMatches(lines[11], r"passrate.*50.00 \%", lines[11])
+            self.assertRegexpMatches(lines[12], r"passrate excluding retries.*100.00 \%", lines[12])
         finally:
             sys.stdout = saved_stdout
 
@@ -112,12 +169,12 @@ class ReportCase(unittest.TestCase):
             report.generate()
             output = out.getvalue().strip()
             lines = output.split("\n")
-            self.assertEqual(len(lines), 14)
+            self.assertEqual(len(lines), 15)
             self.assertRegexpMatches(lines[3], r"skip.*Skip_reason")
             self.assertRegexpMatches(lines[8], r"Final Verdict.*PASS", lines[8])
             self.assertRegexpMatches(lines[9], r"count.*1", lines[9])
-            self.assertRegexpMatches(lines[10], r"passrate.*0.00 \%", lines[10])
-            self.assertRegexpMatches(lines[11], r"skip.*1", lines[10])
+            self.assertRegexpMatches(lines[11], r"passrate.*0.00 \%", lines[10])
+            self.assertRegexpMatches(lines[12], r"skip.*1", lines[10])
         finally:
             sys.stdout = saved_stdout
 
@@ -137,7 +194,7 @@ class ReportCase(unittest.TestCase):
             output = out.getvalue().strip()
             lines = output.split("\n")
 
-            self.assertEqual(len(lines), 14)
+            self.assertEqual(len(lines), 15)
             self.assertRegexpMatches(lines[8], r"Final Verdict.*FAIL", lines[8])
             self.assertRegexpMatches(lines[9], r"count.*1", lines[9])
             self.assertRegexpMatches(lines[10], r"passrate.*0.00 \%", lines[10])

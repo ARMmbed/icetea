@@ -13,35 +13,36 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-__author__ = 'jaakuk01'
-
 from icetea_lib.bench import Bench
-from icetea_lib.TestStepError import TestStepFail, TestStepError, TestStepTimeout
+from icetea_lib.TestStepError import TestStepFail, TestStepTimeout
 
 
 class Testcase(Bench):
+    """
+    Test case for testing failing command return codes.
+    """
     def __init__(self):
         Bench.__init__(self,
                        name="ut_dut_failing_command",
-                       title = "unittest dut crash in testcase",
+                       title="unittest dut crash in testcase",
                        status="development",
                        type="acceptance",
-                       purpose = "dummy",
+                       purpose="dummy",
                        component=["Icetea_ut"],
                        requirements={
                            "duts": {
-                               '*': { #requirements for all nodes
-                                    "count":1,
-                                    "type": "process",
-                                    "application":{
-                                        "bin": "test/dut/dummyDut"
-                                    },
-                                }
+                               '*': {
+                                   "count": 1,
+                                   "type": "process",
+                                   "application": {
+                                       "bin": "test/dut/dummyDut"
+                                   },
+                               }
                            }
                        }
-        )
+                      )
 
-    def case(self):
+    def case(self):  # pylint: disable=missing-docstring
         # Failing command with retcode
         try:
             self.command(1, "retcode -1")
@@ -54,6 +55,3 @@ class Testcase(Bench):
             self.command(1, "sleep 5", timeout=4)
         except TestStepTimeout:
             print("TIMEOUT")
-            pass
-
-

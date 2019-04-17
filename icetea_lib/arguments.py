@@ -60,7 +60,6 @@ def get_base_arguments(parser):
                        default=False,
                        help='Show version')
 
-
     # Filters
     filter_group = parser.add_argument_group("Filter arguments", "Arguments used for filtering "
                                                                  "tc:s")
@@ -147,13 +146,16 @@ def get_base_arguments(parser):
                              help="Allocator to be used for allocating resources. "
                                   "Default is LocalAllocator")
     alloc_group.add_argument("--allocator_cfg",
-                            help="File that contains configuration for used allocator.",
-                            default=None)
+                             help="File that contains configuration for used allocator.",
+                             default=None)
 
     # Other arguments
     parser.add_argument('--env_cfg',
                         help='Use user specific environment configuration file',
                         default='')
+    parser.add_argument("--logging_cfg",
+                        help="Location of JSON configuration for logging.",
+                        default=None)
     parser.add_argument('--repeat',
                         help='Repeat testcases N times',
                         default=1)
@@ -165,7 +167,6 @@ def get_base_arguments(parser):
                         action='store_true',
                         default=False,
                         help='Clean old logs')
-
     parser.add_argument('--connector',
                         default=None,
                         help='Connector credentials for selecting and/or generating endpoint '
@@ -207,6 +208,9 @@ def get_base_arguments(parser):
                         help="Output results of --list as json instead of a table.")
     parser.add_argument("--export", default=None, metavar="SUITE_FILE_NAME",
                         help="Export list into suite template file.")
+    parser.add_argument("--sync_start", default=False, action="store_true",
+                        help="Use echo-command to try and make sure duts have "
+                             "started before proceeding with test.")
     return parser
 
 
@@ -229,9 +233,9 @@ def get_tc_arguments(parser):
                         help='Silent mode, only prints results')
     group2.add_argument('-v', "--verbose",
                         dest='verbose',
-                        default=False,
-                        help="increase output verbosity (print dut traces)",
-                        action="store_true")
+                        default=0,
+                        help="increase output verbosity, max 2 times.",
+                        action="count")
     group2.add_argument('-w',
                         action='store_true',
                         dest='cloud',
@@ -258,7 +262,7 @@ def get_tc_arguments(parser):
                         help='Testcase Configuration file')
     group2.add_argument('--type',
                         help='Overrides DUT type.',
-                        choices=['hardware', 'process'])
+                        choices=['hardware', 'process', "serial", "mbed"])
     group2.add_argument('--platform_name',
                         help='Overrides used platform. Must be found in allowed_platforms in '
                              'dut configuration if allowed_platforms is defined and non-empty.',
@@ -392,21 +396,19 @@ def get_tc_arguments(parser):
                                   default=False,
                                   help='Force flashing of hardware device if '
                                        'binary is given, but only once. Defaults to False')
-
+    forceflash_group.add_argument("--skip_flash",
+                                  default=False,
+                                  action="store_true",
+                                  help="Skip flashing hardware devices during this run.")
     group2.add_argument('--interface',
                         dest='interface',
                         default='eth0',
                         help='Network interface used in tests, unless the testcase specifies '
                              'which one to use. Defaults to eth0')
-    group2.add_argument("--skip_flash",
-                        default=False,
-                        action="store_true",
-                        help="Skip flashing hardware devices during this run.")
-
     return parser
 
 
-class Abspathify(argparse.Action):  #pylint: disable=too-few-public-methods
+class Abspathify(argparse.Action):  # pylint: disable=too-few-public-methods
     """
     Action to convert paths to absolute paths.
     """
@@ -414,7 +416,7 @@ class Abspathify(argparse.Action):  #pylint: disable=too-few-public-methods
         setattr(args, self.dest, os.path.abspath(values))
 
 
-class LoadFromFile(argparse.Action):  #pylint: disable=too-few-public-methods
+class LoadFromFile(argparse.Action):  # pylint: disable=too-few-public-methods
     """
     Action to load more arguments into parser from a file.
     """
@@ -427,3 +429,19 @@ class LoadFromFile(argparse.Action):  #pylint: disable=too-few-public-methods
                     del data[index+1]
                     del data[index]
             parser.parse_args(data, namespace)
+
+
+def str_arg_to_bool(value):
+    """
+    Convert string argument into a boolean values.
+    :param value: str value to convert. Allowed values are y, yes, true, 1, t, n, no, false, 0, f.
+    The implementation is case insensitive.
+    :raises: argparse.ArgumentTypeError if value is not recognized as a boolean.
+    :return: boolean
+    """
+    if value.lower() in ["y", "yes", "true", "1", "t"]:
+        return True
+    elif value.lower() in ["n", "no", "false", "0", "f"]:
+        return False
+    else:
+        raise argparse.ArgumentTypeError("Boolean value expected.")

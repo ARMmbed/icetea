@@ -1,4 +1,4 @@
-# pylint: disable=missing-docstring
+# pylint: disable=missing-docstring,protected-access,unused-argument
 
 """
 Copyright 2017 ARM Limited
@@ -120,6 +120,16 @@ class DutTestcase(unittest.TestCase):
             resp = dut._read_response()
             self.assertEqual(len(dut.traces), prior_len + 1)
             self.assertIsNone(resp)
+
+    def test_wait_for_exec_ready(self, mock_log):
+        dut_obj = Dut("test")
+        dut_obj.get_time = mock.MagicMock(return_value=10)
+        dut_obj.query_timeout = 9
+        mocked_response = mock.MagicMock()
+        type(dut_obj).response_received = mock.PropertyMock(return_value=mocked_response)
+        mocked_response.wait = mock.MagicMock(return_value=False)
+        with self.assertRaises(TestStepTimeout):
+            dut_obj._wait_for_exec_ready()
 
 
 if __name__ == '__main__':

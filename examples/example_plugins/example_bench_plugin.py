@@ -15,7 +15,7 @@ limitations under the License.
 This is an example plugin that implements no real functionality.
 It demonstrated the implementation of a BenchExtension type plugin.
 """
-
+# pylint: disable=missing-docstring,too-few-public-methods
 from icetea_lib.Plugin.PluginBase import PluginBase
 from icetea_lib.Plugin.PluginManager import PluginException
 
@@ -23,6 +23,7 @@ from icetea_lib.Plugin.PluginManager import PluginException
 class BenchPlugin(PluginBase):
     def __init__(self):
         super(BenchPlugin, self).__init__()
+        self.bench = None
 
     def init(self, bench=None):
         """

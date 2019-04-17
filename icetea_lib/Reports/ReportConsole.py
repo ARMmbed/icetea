@@ -40,8 +40,8 @@ class ReportConsole(ReportBase):
         """
         # Generate TC result table
         table = PrettyTable(
-            ["Testcase", "Verdict", "Fail Reason", "Skip Reason", "platforms", "duration"])
-        table.align["Testcase"] = "l"  # Left align
+            ["Testcase", "Verdict", "Fail Reason", "Skip Reason", "platforms", "duration",
+             "Retried"])
         for result in self.results:
             table.add_row([
                 result.get_tc_name(),
@@ -49,7 +49,9 @@ class ReportConsole(ReportBase):
                 hex_escape_str(result.fail_reason)[:60],
                 str(result.skip_reason) if result.skipped() else "",
                 result.get_dut_models(),
-                str(result.duration)])
+                str(result.duration),
+                "Yes" if result.retries_left != 0 else "No"
+            ])
             # Print to console
         print(table)  # pylint: disable=superfluous-parens
 
@@ -58,12 +60,15 @@ class ReportConsole(ReportBase):
         final_verdict = "FAIL"
         if self.summary["fail"] == 0 and self.summary["inconclusive"] == 0:
             final_verdict = "PASS"
-        elif self.summary["fail"] == 0 and self.summary["inconclusive"] > 0:
+        elif self.results.clean_inconcs() and not self.results.clean_fails():
             final_verdict = "INCONCLUSIVE"
+        elif self.summary["fail"] + self.summary["inconclusive"] == self.summary["retries"]:
+            final_verdict = "PASS"
         table.add_row(["Final Verdict", final_verdict])
         table.add_row(["count", str(self.summary["count"])])
 
         table.add_row(["passrate", self.results.pass_rate()])
+        table.add_row(["passrate excluding retries", self.results.pass_rate(include_retries=False)])
         if self.summary["pass"] > 0:
             table.add_row(["pass", str(self.summary["pass"])])
         if self.summary["fail"] > 0:

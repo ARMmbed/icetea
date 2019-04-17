@@ -12,33 +12,34 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+# pylint: disable=missing-docstring,no-self-use
 from icetea_lib.bench import Bench
 
 
 class Testcase(Bench):
 
     def __init__(self):
-        Bench.__init__(self, name="subdirtest",
-                        title="Level 1 testcase test file",
-                        status="development",
-                        purpose="dummy",
-                        component=["None"],
-                        type="compatibility",
-                        requirements={
-                            "duts": {
-                                '*': {
-                                    "count": 0
-                                    }
-                                }
-                            },
-                        execution={
-                            "skip":{
-                                "value": True,
-                                "reason": "Because"
-                            }
-                        }
-                    )
+        Bench.__init__(self,
+                       name="subdirtest",
+                       title="Level 1 testcase test file",
+                       status="development",
+                       purpose="dummy",
+                       component=["None"],
+                       type="compatibility",
+                       requirements={
+                           "duts": {
+                               '*': {
+                                   "count": 0
+                                   }
+                               }
+                           },
+                       execution={
+                           "skip": {
+                               "value": True,
+                               "reason": "Because"
+                           }
+                       }
+                      )
 
     def case(self):
         pass
