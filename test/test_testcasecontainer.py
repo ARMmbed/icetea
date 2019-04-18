@@ -1,5 +1,5 @@
 # pylint: disable=missing-docstring,no-self-use,redefined-builtin,too-many-arguments
-# pylint: disable=protected-access
+# pylint: disable=protected-access,unused-variable
 
 """
 Copyright 2017 ARM Limited
