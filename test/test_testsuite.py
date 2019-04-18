@@ -319,6 +319,25 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(testsuite._results.get(0).retries_left, 1)
         self.assertEqual(testsuite._results.get(1).retries_left, 0)
 
+        # Inconclusive result, retried, from a result list.
+        testsuite._testcases = []
+        fail_result_3 = Result()
+        fail_result_3.set_verdict('inconclusive', 1000, 10)
+        reslist = ResultList()
+        reslist.append(fail_result_3)
+        cont_retry = mock.MagicMock()
+        cont_retry.run.side_effect = [reslist, resultlist]
+        testsuite._testcases.append(cont_retry)
+        testsuite._results = ResultList()
+        testsuite._default_configs["retryReason"] = "includeFailures"
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 2)
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "inconclusive")
+        self.assertEqual(testsuite._results.get(1).get_verdict(), "pass")
+        self.assertEqual(testsuite._results.get(0).retries_left, 1)
+        self.assertEqual(testsuite._results.get(1).retries_left, 0)
+
         self.args_tc.repeat = 2
         testsuite._testcases = []
         testsuite._testcases.append(cont1)
