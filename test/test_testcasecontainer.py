@@ -151,6 +151,15 @@ class TCContainerTestcase(unittest.TestCase):
         with self.assertRaises(ValueError):
             TestcaseContainer.find_testcases("", "./test/testbase", self.tc_meta_schema)
 
+    @mock.patch("icetea_lib.TestSuite.TestcaseContainer.import_module")
+    def test_find_testcases_error(self, mocked_import):
+        mocked_import.side_effect = [ImportError]
+        with self.assertRaises(ImportError):
+            lst = TestcaseContainer.find_testcases("test.testbase.dummy_multiples",
+                                                   "./test/testbase",
+                                                   self.tc_meta_schema)
+
+
     def test_create_new_bench_instance(self):
         lst = TestcaseContainer.find_testcases("test.testbase.dummy", "./test/testbase",
                                                self.tc_meta_schema)
