@@ -1,4 +1,5 @@
 # pylint: disable=missing-docstring,protected-access,unused-argument,unused-variable
+# pylint: disable=too-many-locals
 
 """
 Copyright 2017 ARM Limited

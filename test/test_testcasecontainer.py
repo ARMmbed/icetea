@@ -159,7 +159,6 @@ class TCContainerTestcase(unittest.TestCase):
                                                    "./test/testbase",
                                                    self.tc_meta_schema)
 
-
     def test_create_new_bench_instance(self):
         lst = TestcaseContainer.find_testcases("test.testbase.dummy", "./test/testbase",
                                                self.tc_meta_schema)
