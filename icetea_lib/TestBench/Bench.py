@@ -55,5 +55,13 @@ class Bench(BenchApi):
         if skip is not None:
             return skip
         retval = self.runner.run()
-        self.logger.info("Test case verdict: %s", self.results.get_verdict().upper())
+        if retval in ReturnCodes.INCONCLUSIVE_RETCODES:
+            verdict = "INCONCLUSIVE"
+        elif retval == ReturnCodes.RETCODE_SKIP:
+            verdict = "SKIP"
+        elif retval == ReturnCodes.RETCODE_SUCCESS:
+            verdict = "PASS"
+        else:
+            verdict = "FAIL"
+        self.logger.info("Test case verdict: %s", verdict)
         return retval
