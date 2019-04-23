@@ -76,6 +76,26 @@ class ResourceMixerTests(unittest.TestCase):
         resmixer.duts_release()
         self.assertEqual(len(resmixer.duts), 0)
 
+    @mock.patch("icetea_lib.TestBench.Resources.time")
+    def test_dut_release_exception(self, mock_time):
+        mocked_dut = self._create_dut()
+        mocked_dut.close_connection = mock.MagicMock(side_effect=[Exception])
+        resmixer = ResourceFunctions(mock.MagicMock(), mock.MagicMock(), mock.MagicMock())
+        resmixer.duts = [mocked_dut]
+        resmixer._args = MockArgs()
+        resmixer._logger = MockLogger()
+        resmixer._resource_provider = mock.MagicMock()
+        resmixer._resource_provider.allocator = mock.MagicMock()
+        type(resmixer._resource_provider.allocator).share_allocations = mock.PropertyMock(
+            return_value=False)
+        resmixer._resource_provider.allocator.release = mock.MagicMock()
+        resmixer._call_exception = mock.MagicMock()
+        resmixer.is_my_dut_index = mock.MagicMock(return_value=True)
+        resmixer.duts_release()
+        mocked_dut.close_dut.assert_called_once()
+        mocked_dut.close_connection.assert_called_once()
+        resmixer._resource_provider.allocator.release.assert_called_once()
+
     def test_dut_count(self):
         resmixer = ResourceFunctions(mock.MagicMock(), mock.MagicMock(), mock.MagicMock())
         resmixer.resource_configuration.count_duts = mock.MagicMock(return_value=1)
