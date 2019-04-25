@@ -208,6 +208,9 @@ class TestSuite(object):
                     self.logger.error("Test case %s failed, No retries left.\n",
                                       test.get_name())
                     break
+        if self._results:
+            # Generate or update reports.
+            self._results.save(heads={'Build': '', 'Branch': self.args.branch}, console=False)
         return result, retries, repeat, iteration
 
     def _upload_results(self, result):
