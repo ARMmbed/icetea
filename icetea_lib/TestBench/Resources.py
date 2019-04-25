@@ -96,28 +96,29 @@ class ResourceFunctions(object):
             # try to close node's by nicely by `exit` command
             # if it didn't work, kill it by OS process kill command
             # also close reading threads if any
-            self._logger.debug("Close node connections")
+            self._logger.debug("Close dut connections")
             # pylint: disable=unused-variable
             for i, dut in self.duts_iterator():
                 try:
                     dut.close_dut()
                     dut.close_connection()
-                    if self._resource_provider.allocator:
-                        if hasattr(self._resource_provider.allocator, "share_allocations"):
-                            if getattr(self._resource_provider.allocator, "share_allocations"):
-                                pass
-                            else:
-                                self.resource_provider.allocator.release(dut=dut)
-                        else:
-                            self.resource_provider.allocator.release(dut=dut)
-                except Exception as exc:  # pylint: disable=broad-except
+                except Exception:  # pylint: disable=broad-except
                     # We want to catch all uncaught Exceptions here.
                     self._logger.error("Exception while closing dut %s!",
                                        dut.dut_name,
                                        exc_info=True if not self._args.silent else False)
-                    raise TestStepError(exc)
+                finally:
+                    if hasattr(self._resource_provider.allocator, "share_allocations"):
+                        if getattr(self._resource_provider.allocator, "share_allocations"):
+                            pass
+                        else:
+                            self._logger.debug("Releasing dut {}".format(dut.index))
+                            self.resource_provider.allocator.release(dut=dut)
+                    else:
+                        self._logger.debug("Releasing dut {}".format(dut.index))
+                        self.resource_provider.allocator.release(dut=dut)
 
-            self._logger.debug("Close node threads")
+            self._logger.debug("Close dut threads")
 
             # finalize dut thread
             for ind, dut in self.duts_iterator():
