@@ -61,18 +61,20 @@ class ResultList(Iterator):
         # @todo this could be used to generate html table after each test..
         # self._save_html_report({"NOTE": "TESTS EXECUTION IS ONGOING.."}, reload=5)
 
-    def save(self, heads):
+    def save(self, heads, console=True):
         """
         Create reports in different formats.
 
         :param heads: html table extra values in title rows
+        :param console: Boolean, default is True. If set, also print out the console log.
         """
         # Junit
         self._save_junit()
         # HTML
         self._save_html_report(heads)
-        # Console print
-        self._print_console_summary()
+        if console:
+            # Console print
+            self._print_console_summary()
 
     def _save_junit(self):
         """
@@ -247,6 +249,7 @@ class ResultList(Iterator):
         :param include_skips: Boolean, if True skipped tc:s will be included. Default is False
         :param include_inconclusive: Boolean, if True inconclusive tc:s will be included.
         Default is False.
+        :param include_retries: Boolean, if True retried tc:s will be included in percentages.
         :return: Percentage in format .2f %
         """
         total = self.count()
