@@ -318,6 +318,7 @@ class TestSuiteTestcase(unittest.TestCase):
         contx.run = mock.MagicMock(return_value=inconc_res)
         testsuite._testcases.append(contx)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         testsuite._default_configs["retryReason"] = "includeFailures"
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
@@ -334,6 +335,7 @@ class TestSuiteTestcase(unittest.TestCase):
         cont_retry.run.side_effect = [reslist, resultlist]
         testsuite._testcases.append(cont_retry)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         testsuite._default_configs["retryReason"] = "includeFailures"
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
@@ -353,6 +355,7 @@ class TestSuiteTestcase(unittest.TestCase):
         cont_retry.run.side_effect = [reslist, resultlist]
         testsuite._testcases.append(cont_retry)
         testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
         testsuite._default_configs["retryReason"] = "includeFailures"
         testsuite.run()
         self.assertEqual(testsuite.status, TestStatus.FINISHED)
