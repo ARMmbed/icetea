@@ -254,7 +254,6 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertTrue(self.args_tc.forceflash)  # pylint: disable=no-member
         self.assertEquals(testsuite._results.save.call_count, 1)
 
-
         # ResultList as result
         testsuite._testcases = []
         testsuite._testcases.append(cont_reslist)
@@ -310,7 +309,7 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(testsuite._results.get(0).get_verdict(), "fail")
         self.assertEqual(testsuite._results.get(1).get_verdict(), "pass")
 
-        # Failing result, retried
+        # TC not exist result, retried
         testsuite._testcases = []
         contx = mock.MagicMock()
         inconc_res = Result()
