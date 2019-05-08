@@ -72,10 +72,11 @@ class Results(object):
         :param retcode: Return code as int
         :param duration: Duration as time
         :param input_data: Input data as dict
-        :return: Nothing
+        :return: Result
         """
         new_result = Results.create_new_result(verdict, retcode, duration, input_data)
         self._result_list.append(new_result)
+        return new_result
 
     @property
     def retcode(self):

@@ -1,4 +1,5 @@
 # pylint: disable=missing-docstring,protected-access,unused-argument,unused-variable
+# pylint: disable=too-many-locals
 
 """
 Copyright 2017 ARM Limited
@@ -253,7 +254,6 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertTrue(self.args_tc.forceflash)  # pylint: disable=no-member
         self.assertEquals(testsuite._results.save.call_count, 1)
 
-
         # ResultList as result
         testsuite._testcases = []
         testsuite._testcases.append(cont_reslist)
@@ -308,6 +308,61 @@ class TestSuiteTestcase(unittest.TestCase):
         self.assertEqual(len(testsuite._results), 2)
         self.assertEqual(testsuite._results.get(0).get_verdict(), "fail")
         self.assertEqual(testsuite._results.get(1).get_verdict(), "pass")
+
+        # TC not exist result, retried
+        testsuite._testcases = []
+        contx = mock.MagicMock()
+        inconc_res = Result()
+        inconc_res.set_verdict("inconclusive", 1015, 0)
+        contx.run = mock.MagicMock(return_value=inconc_res)
+        testsuite._testcases.append(contx)
+        testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
+        testsuite._default_configs["retryReason"] = "includeFailures"
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 1)
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "inconclusive")
+
+        # Failing result, retried, from a result list.
+        testsuite._testcases = []
+        fail_result_2 = Result()
+        fail_result_2.set_verdict('fail', 1000, 10)
+        reslist = ResultList()
+        reslist.append(fail_result_2)
+        cont_retry = mock.MagicMock()
+        cont_retry.run.side_effect = [reslist, resultlist]
+        testsuite._testcases.append(cont_retry)
+        testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
+        testsuite._default_configs["retryReason"] = "includeFailures"
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 2)
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "fail")
+        self.assertEqual(testsuite._results.get(1).get_verdict(), "pass")
+        self.assertEqual(testsuite._results.get(0).retries_left, 1)
+        self.assertEqual(testsuite._results.get(1).retries_left, 0)
+
+        # Inconclusive result, retried, from a result list.
+        testsuite._testcases = []
+        fail_result_3 = Result()
+        fail_result_3.set_verdict('inconclusive', 1000, 10)
+        reslist = ResultList()
+        reslist.append(fail_result_3)
+        cont_retry = mock.MagicMock()
+        cont_retry.run.side_effect = [reslist, resultlist]
+        testsuite._testcases.append(cont_retry)
+        testsuite._results = ResultList()
+        testsuite._results.save = mock.MagicMock()
+        testsuite._default_configs["retryReason"] = "includeFailures"
+        testsuite.run()
+        self.assertEqual(testsuite.status, TestStatus.FINISHED)
+        self.assertEqual(len(testsuite._results), 2)
+        self.assertEqual(testsuite._results.get(0).get_verdict(), "inconclusive")
+        self.assertEqual(testsuite._results.get(1).get_verdict(), "pass")
+        self.assertEqual(testsuite._results.get(0).retries_left, 1)
+        self.assertEqual(testsuite._results.get(1).retries_left, 0)
 
         self.args_tc.repeat = 2
         testsuite._testcases = []

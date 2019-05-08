@@ -648,8 +648,9 @@ class TestVerify(unittest.TestCase):
         test_data = dict()
         test_data["reason"] = "this is a reason"
         bench = Bench()
-        bench.add_new_result("fail", 1, 10, test_data)
+        result = bench.add_new_result("fail", 1, 10, test_data)
         self.assertEqual(len(bench.results), 1)
+        self.assertEqual(result.fail_reason, "this is a reason")
 
 
 if __name__ == '__main__':

@@ -21,7 +21,7 @@ TestSuite class is a representation of a runnable suite of test cases.
 SuiteException is an Exception that is raised by TestSuite when it needs to exit with a critical
 failure.
 """
-# pylint: disable=too-many-branches,too-many-arguments
+# pylint: disable=too-many-branches,too-many-arguments,too-many-nested-blocks,too-many-statements
 
 import json
 import os
@@ -33,6 +33,7 @@ from icetea_lib.TestSuite.TestcaseContainer import TestStatus, DummyContainer
 from icetea_lib.TestSuite.TestcaseList import TestcaseList
 from icetea_lib.TestSuite.TestcaseFilter import TestcaseFilter, FilterException
 from icetea_lib.tools.tools import find_duplicate_keys
+from icetea_lib.ReturnCodes import ReturnCodes
 
 
 class SuiteException(Exception):
@@ -151,6 +152,12 @@ class TestSuite(object):
                 self.logger.debug("Starting test case run.")
                 result = test.run(forceflash=self.args.forceflash)
                 result.retries_left = retries
+                if isinstance(result, ResultList):
+                    for result_item in result:
+                        if not result_item.success:
+                            if retryreason == "includeFailures" or (retryreason == "inconclusive"
+                                                                    and result.inconclusive):
+                                result_item.retries_left = retries
             except KeyboardInterrupt:
                 self.logger.info("User aborted test run")
                 iteration = iterations
@@ -184,6 +191,10 @@ class TestSuite(object):
                 elif retries > 0:
                     if retryreason == "includeFailures" or (retryreason == "inconclusive"
                                                             and result.inconclusive):
+                        if not isinstance(result, ResultList):
+                            if result.retcode == ReturnCodes.RETCODE_FAIL_TC_NOT_FOUND:
+                                result.retries_left = 0
+                                break
 
                         self.logger.error("Testcase %s failed, %d "
                                           "retries left.\n", test.get_name(), retries)
