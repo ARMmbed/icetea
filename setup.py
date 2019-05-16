@@ -25,7 +25,7 @@ from setuptools.command.install import install
 DESCRIPTION = "Icetea - test framework"
 OWNER_NAMES = "Jussi Vatjus-Anttila"
 OWNER_EMAILS = "jussi.vatjus-anttila@arm.com"
-VERSION = "1.2.2-d"
+VERSION = "2.0.0-rc1"
 
 
 def read(fname):
