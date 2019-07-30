@@ -130,8 +130,10 @@ class NetworkSniffer(object):
         iface = self.__get_nw_interface()
         if not iface:
             raise TestStepError("Cannot capture wireshark log")
-
-        self.__create_wshark_object()
+        try:
+            self.__create_wshark_object()
+        except ImportError as error:
+            raise TestStepError(error)
         self.__capture_file = LogManager.get_testcase_logfilename("network.nw.pcap")
         self._logger.debug('Start wireshark capture: %s', self.capture_file)
         # Add self.tshark_preferences to parameters
