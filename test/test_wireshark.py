@@ -23,8 +23,9 @@ else:                         # Python3
     from unittest import mock
 from icetea_lib.wireshark import NwPacket
 from icetea_lib.wireshark import NwPacketManager
-from icetea_lib.wireshark import Wireshark
+# from icetea_lib.wireshark import Wireshark
 from icetea_lib.TestStepError import TestStepError
+
 
 class TestVerify(unittest.TestCase):
 

@@ -58,6 +58,21 @@ Note that you need `extra_requirements.txt` file locally.
 > pip install -r extra_requirements.txt
 ```
 
+#### Pyshark
+Sniffer integration component requires pyshark,
+which is not covered in requirements.txt due to installation issues with trollius (requirement for python 2
+version of pyshark called pyshark-legacy). To use this integration, you need to manually install pyshark for your setup.
+For python 3:
+
+```
+> pip install pyshark
+```
+For python 2:
+
+```
+> pip install pyshark-legacy
+```
+
 ### Installation
 
 `> pip install icetea`
