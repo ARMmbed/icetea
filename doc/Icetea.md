@@ -28,7 +28,8 @@ installed by `Icetea` installation.
  * pyserial version > 2.5(`pip install pyserial>2.5`
  or https://pypi.python.org/pypi/pyserial)
  * jsonmerge (`pip install jsonmerge`)
- * pyshark (`pip install pyshark`)
+ * pyshark for python 3(`pip install pyshark`)
+ * pyshark for python 2(`pip install pyshark-legacy`)
  * yattag (`pip install yattag`)
  * prettytable (`pip install prettytable`)
  * requests (`pip install requests`)

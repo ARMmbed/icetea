@@ -24,8 +24,8 @@ from setuptools.command.install import install
 
 DESCRIPTION = "Icetea - test framework"
 OWNER_NAMES = "Joonas Nikula"
-OWNER_EMAILS = "joonas.nikula@arm.com"
-VERSION = "2.0.0"
+OWNER_EMAILS = "oulab.mbedcloudtesting.com@arm.com"
+VERSION = "2.0.1"
 
 
 def read(fname):
@@ -59,13 +59,6 @@ TEST_REQUIRES = [
     "pylint==1.*",
     "astroid==1.*"
 ]
-# todo move pyshark as optional dep:
-# pyshark-legacy; python_version < "3.0"
-# pyshark; python_version >= "3.5"
-if sys.version_info[0] < 3:
-    INSTALL_REQUIRES.append("pyshark-legacy")
-else:
-    INSTALL_REQUIRES.append("pyshark")
 
 
 class VerifyVersionCommand(install):

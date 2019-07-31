@@ -19,7 +19,11 @@ import re
 from datetime import datetime
 from threading import Lock, Thread
 
-import pyshark
+try:
+    import pyshark
+except ImportError as error:
+    pyshark = None
+
 import icetea_lib.LogManager as LogManager
 from icetea_lib.TestStepError import TestStepError
 
@@ -244,6 +248,8 @@ class Wireshark(NwPacketManager):
         self.logger = LogManager.get_bench_logger("bench", "WS")
         self.__captureThreadLive = None
         self.__captureThreadFile = None
+        if not pyshark:
+            raise ImportError("Pyshark not installed.")
 
     def setMark(self, mark):
         self.setMarkForHead(mark)
