@@ -17,7 +17,10 @@ import re
 from datetime import datetime
 from threading import Lock, Thread
 
-import pyshark
+try:
+    import pyshark
+except ImportError:
+    pyshark = None
 import icetea_lib.LogManager as LogManager
 from icetea_lib.TestStepError import TestStepError
 
@@ -239,6 +242,8 @@ class Wireshark(NwPacketManager):
 
     def __init__(self):
         NwPacketManager.__init__(self)
+        if not pyshark:
+            raise ImportError("Pyshark not installed.")
         self.logger = LogManager.get_bench_logger("bench", "WS")
         self.__captureThreadLive = None
         self.__captureThreadFile = None
