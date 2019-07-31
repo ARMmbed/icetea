@@ -25,7 +25,7 @@ from setuptools.command.install import install
 DESCRIPTION = "Icetea - test framework"
 OWNER_NAMES = "Joonas Nikula"
 OWNER_EMAILS = "oulab.mbedcloudtesting.com@arm.com"
-VERSION = "2.0.1"
+VERSION = "2.0.1-rc1"
 
 
 def read(fname):
