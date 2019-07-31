@@ -55,7 +55,35 @@ def baseBuild(String platform) {
     setBuildStatus('PENDING', "${buildName}", 'unittest start')
     try {
         stage("${buildName}") {
-            execute 'coverage run --parallel-mode -m unittest discover -s test'
+            if (platform == 'linux') {
+            sh """
+                set -e
+                virtualenv --python=../usr/bin/python py2venv --no-site-packages
+                . py2venv/bin/activate
+                pip install -r dev_requirements.txt
+                python setup.py install
+                coverage run --parallel-mode -m unittest discover -s test
+                deactivate
+            """
+            }
+            if (platform == 'windows'){
+                bat """
+                    virtualenv py2venv --no-site-packages || goto :error
+                    echo "Activating venv"
+                    call py2venv\\Scripts\\activate.bat || goto :error
+                    pip install -r dev_requirements.txt || goto :error
+                    pip freeze
+                    python setup.py install  || goto :error
+                    coverage run --parallel-mode -m unittest discover -s test
+                    deactivate
+
+
+                    :error
+                    echo "Failed with error %errorlevel%"
+                    exit /b %errorlevel%
+                """
+
+            }
         }
         setBuildStatus('SUCCESS', "${buildName}", 'unittest success')
     } catch (Exception e) {
@@ -71,7 +99,34 @@ def baseBuild(String platform) {
     setBuildStatus('PENDING', "${pluginBuildName}", 'plugin tests start')
     try {
         stage("${pluginBuildName}") {
-            execute 'coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests -v'
+            if (platform == 'linux') {
+                sh """
+                    set -e
+                    virtualenv --python=../usr/bin/python py2venv --no-site-packages
+                    . py2venv/bin/activate
+                    pip install -r dev_requirements.txt
+                    python setup.py install
+                    coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests -v
+                    deactivate
+                """
+                }
+                if (platform == 'windows'){
+                    bat """
+                        virtualenv py2venv --no-site-packages || goto :error
+                        echo "Activating venv"
+                        call py2venv\\Scripts\\activate.bat || goto :error
+                        pip install -r dev_requirements.txt || goto :error
+                        pip freeze
+                        python setup.py install  || goto :error
+                        coverage run --parallel-mode -m unittest discover -s icetea_lib/Plugin/plugins/plugin_tests -v
+                        deactivate
+
+
+                        :error
+                        echo "Failed with error %errorlevel%"
+                        exit /b %errorlevel%
+                    """
+                }
         }
         setBuildStatus('SUCCESS', "${pluginBuildName}", 'plugin tests success')
     } catch (Exception e) {
@@ -100,6 +155,7 @@ def baseBuild(String platform) {
 
             // publish warnings checked for console log and pylint log
             warningPublisher('PyLint', '**/pylint.log')
+            archiveArtifacts artifacts: "**/pylint.log"
         }
 
         catchError {
@@ -155,7 +211,7 @@ def pylint_linux_check() {
     try {
         echo "REST OF THESE ARE FOR PYLINT"
         sh 'pip install astroid pylint'
-        sh 'pylint ./setup.py ./icetea.py ./icetea_lib ./test ./examples > pylint.log ||  exit 0'
+        sh 'pylint ./setup.py ./icetea.py ./icetea_lib ./test ./examples > pylint.log'
         setBuildStatus('SUCCESS', "${pylintBuildName}", 'done')
     } catch (Exception e) {
         // set build fail
@@ -200,7 +256,7 @@ def runPy3Unittests() {
 def py3LinuxBuild() {
     // Run unit tests on linux with python 3
 
-    // run clitest unittest
+    // run icetea unittest
     String buildName = "Py3 unittest in Linux"
 
 
