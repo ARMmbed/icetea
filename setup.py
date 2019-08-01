@@ -25,7 +25,7 @@ from setuptools.command.install import install
 DESCRIPTION = "Icetea - test framework"
 OWNER_NAMES = "Joonas Nikula"
 OWNER_EMAILS = "oulab.mbedcloudtesting.com@arm.com"
-VERSION = "2.0.1-rc1"
+VERSION = "2.0.1-rc2"
 
 
 def read(fname):
@@ -38,26 +38,26 @@ def read(fname):
 
 
 INSTALL_REQUIRES = [
-    "prettytable==0.*",
+    "prettytable<1.0",
     "requests",
-    "yattag==1.*",
+    "yattag>=1.0,<2.0",
     "pyserial>2.5",
-    "jsonmerge>=1.4.0,==1.*",
+    "jsonmerge>=1.4.0,<2.0",
     "jsonschema<3.0.0",
-    "mbed-ls>=1.5.1,==1.*",
-    "semver==2.*",
-    "mbed-flasher>=0.10.1,==0.10.*",
-    "six==1.*",
-    "pydash==4.*",
-    "transitions==0.*"
+    "mbed-ls>=1.5.1,<2.0",
+    "semver>=2.0,<3.0",
+    "mbed-flasher>=0.10.1,<0.11",
+    "six>=1.0,<2.0",
+    "pydash>=4.0,<5.0",
+    "transitions<1.0"
 ]
 TEST_REQUIRES = [
-    "coverage==4.*",
-    "mock==2.*",
-    "sphinx==1.*",
+    "coverage>=4.0,<5.0",
+    "mock>=2.0,<3.0",
+    "sphinx>=1.0,<2.0",
     "lxml",
-    "pylint==1.*",
-    "astroid==1.*"
+    "pylint>=1.0,<2.0",
+    "astroid>=1.0,<2.0"
 ]
 
 
