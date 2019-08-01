@@ -1,8 +1,8 @@
-prettytable==0.*
+prettytable
 requests
 yattag==1.*
 pyserial>2.5
-jsonmerge>=1.4.0,==1.*
+jsonmerge==1.*
 jsonschema<3.0.0
 mbed-ls>=1.5.1,==1.*
 semver==2.*
