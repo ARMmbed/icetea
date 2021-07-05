@@ -1,4 +1,5 @@
-prettytable<1.0
+PrettyTable<=1.0.1; python_version < '3.6'
+prettytable>=2.0,<3.0; python_version >= '3.6'
 requests
 yattag>=1.0,<2.0
 pyserial>2.5
