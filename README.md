@@ -1,3 +1,7 @@
+## Deprecation note!
+
+**Please note: This repository is deprecated and it is no longer actively maintained**.
+
 ## Icetea test framework
 
 Icetea is an automated testing framework for Mbed development.
